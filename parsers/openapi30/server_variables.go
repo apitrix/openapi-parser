@@ -1,0 +1,27 @@
+package openapi30
+
+import (
+	openapi30models "openapi-parser/models/openapi30"
+
+	"gopkg.in/yaml.v3"
+)
+
+// ParseVariables parses the Server.Variables field.
+func (p *serverParser) ParseVariables(parent *yaml.Node, c *ParseContext) (map[string]*openapi30models.ServerVariable, error) {
+	node := nodeGetValue(parent, "variables")
+	if node == nil || !nodeIsMapping(node) {
+		return nil, nil
+	}
+
+	variables := make(map[string]*openapi30models.ServerVariable)
+	vctx := c.Push("variables")
+	for _, name := range nodeKeys(node) {
+		varNode := nodeGetValue(node, name)
+		sv, err := parseSharedServerVariable(varNode, vctx.push(name))
+		if err != nil {
+			return nil, err
+		}
+		variables[name] = sv
+	}
+	return variables, nil
+}

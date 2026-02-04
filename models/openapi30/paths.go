@@ -1,0 +1,30 @@
+package openapi30
+
+// Paths holds the relative paths to individual endpoints.
+// https://spec.openapis.org/oas/v3.0.3#paths-object
+type Paths struct {
+	Node // embedded - provides NodeSource and Extensions
+
+	// Items maps paths to their definitions.
+	Items map[string]*PathItem `json:"-" yaml:"-"`
+}
+
+// PathItem describes operations available on a single path.
+// https://spec.openapis.org/oas/v3.0.3#path-item-object
+type PathItem struct {
+	Node // embedded - provides NodeSource and Extensions
+
+	Ref         string          `json:"$ref,omitempty" yaml:"$ref,omitempty"`
+	Summary     string          `json:"summary,omitempty" yaml:"summary,omitempty"`
+	Description string          `json:"description,omitempty" yaml:"description,omitempty"`
+	Get         *Operation      `json:"get,omitempty" yaml:"get,omitempty"`
+	Put         *Operation      `json:"put,omitempty" yaml:"put,omitempty"`
+	Post        *Operation      `json:"post,omitempty" yaml:"post,omitempty"`
+	Delete      *Operation      `json:"delete,omitempty" yaml:"delete,omitempty"`
+	Options     *Operation      `json:"options,omitempty" yaml:"options,omitempty"`
+	Head        *Operation      `json:"head,omitempty" yaml:"head,omitempty"`
+	Patch       *Operation      `json:"patch,omitempty" yaml:"patch,omitempty"`
+	Trace       *Operation      `json:"trace,omitempty" yaml:"trace,omitempty"`
+	Servers     []*Server       `json:"servers,omitempty" yaml:"servers,omitempty"`
+	Parameters  []*ParameterRef `json:"parameters,omitempty" yaml:"parameters,omitempty"`
+}

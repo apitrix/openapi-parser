@@ -1,0 +1,27 @@
+package openapi30
+
+import (
+	openapi30models "openapi-parser/models/openapi30"
+
+	"gopkg.in/yaml.v3"
+)
+
+// ParseContent parses the Parameter.Content field.
+func (p *parameterParser) ParseContent(parent *yaml.Node, c *ParseContext) (map[string]*openapi30models.MediaType, error) {
+	node := nodeGetValue(parent, "content")
+	if node == nil || !nodeIsMapping(node) {
+		return nil, nil
+	}
+
+	content := make(map[string]*openapi30models.MediaType)
+	cctx := c.Push("content")
+	for _, mediaTypeName := range nodeKeys(node) {
+		mtNode := nodeGetValue(node, mediaTypeName)
+		mt, err := parseSharedMediaType(mtNode, cctx.push(mediaTypeName))
+		if err != nil {
+			return nil, err
+		}
+		content[mediaTypeName] = mt
+	}
+	return content, nil
+}

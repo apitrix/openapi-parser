@@ -1,0 +1,49 @@
+package openapi30
+
+import (
+	openapi30models "openapi-parser/models/openapi30"
+	"gopkg.in/yaml.v3"
+)
+
+type externalDocsParser struct{}
+
+// defaultExternalDocsParser is the singleton instance used by parsing functions.
+var defaultExternalDocsParser = &externalDocsParser{}
+
+// parseSharedExternalDocs parses an ExternalDocs object from a yaml.Node.
+func parseSharedExternalDocs(node *yaml.Node, ctx *ParseContext) (*openapi30models.ExternalDocs, error) {
+	return defaultExternalDocsParser.Parse(node, ctx)
+}
+
+// Parse parses an ExternalDocs object.
+func (p *externalDocsParser) Parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.ExternalDocs, error) {
+	if node == nil {
+		return nil, nil
+	}
+
+	if !nodeIsMapping(node) {
+		return nil, ctx.errorAt(node, "externalDocs must be an object")
+	}
+
+	ed := &openapi30models.ExternalDocs{}
+
+	// All properties are simple - inline
+	ed.URL = p.ParseURL(node)
+	ed.Description = p.ParseDescription(node)
+
+	ed.Extensions = parseNodeExtensions(node)
+	ed.NodeSource = ctx.nodeSource(node)
+
+	// Detect unknown fields
+	ctx.detectUnknown(node, externalDocsKnownFields)
+
+	return ed, nil
+}
+
+func (p *externalDocsParser) ParseURL(node *yaml.Node) string {
+	return nodeGetString(node, "url")
+}
+
+func (p *externalDocsParser) ParseDescription(node *yaml.Node) string {
+	return nodeGetString(node, "description")
+}

@@ -1,0 +1,37 @@
+package openapi30
+
+import (
+	openapi30models "openapi-parser/models/openapi30"
+
+	"gopkg.in/yaml.v3"
+)
+
+// parseRequestBodyRef parses a RequestBodyRef from a yaml.Node.
+func parseRequestBodyRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.RequestBodyRef, error) {
+	if node == nil {
+		return nil, nil
+	}
+
+	if !nodeIsMapping(node) {
+		return nil, ctx.errorAt(node, "requestBody must be an object")
+	}
+
+	ref := &openapi30models.RequestBodyRef{}
+	ref.NodeSource = ctx.nodeSource(node)
+	ref.Extensions = parseNodeExtensions(node)
+
+	// Check for $ref
+	if nodeHasRef(node) {
+		ref.Ref = nodeGetRef(node)
+		return ref, nil
+	}
+
+	// Parse inline request body
+	requestBody, err := parseSharedRequestBody(node, ctx)
+	if err != nil {
+		return nil, err
+	}
+	ref.Value = requestBody
+
+	return ref, nil
+}

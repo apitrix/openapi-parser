@@ -1,0 +1,303 @@
+{
+  "id": "https://spec.openapis.org/oas/3.0/schema/2021-09-28",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "Info": {
+      "type": "object",
+      "properties": {
+        "title": {"type": "string"},
+        "description": {"type": "string"},
+        "termsOfService": {"type": "string"},
+        "contact": {"$ref": "#/definitions/Contact"},
+        "license": {"$ref": "#/definitions/License"},
+        "version": {"type": "string"}
+      }
+    },
+    "Contact": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "url": {"type": "string"},
+        "email": {"type": "string"}
+      }
+    },
+    "License": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "url": {"type": "string"}
+      }
+    },
+    "Server": {
+      "type": "object",
+      "properties": {
+        "url": {"type": "string"},
+        "description": {"type": "string"},
+        "variables": {"type": "object"}
+      }
+    },
+    "ServerVariable": {
+      "type": "object",
+      "properties": {
+        "enum": {"type": "array"},
+        "default": {"type": "string"},
+        "description": {"type": "string"}
+      }
+    },
+    "Components": {
+      "type": "object",
+      "properties": {
+        "schemas": {"type": "object"},
+        "responses": {"type": "object"},
+        "parameters": {"type": "object"},
+        "examples": {"type": "object"},
+        "requestBodies": {"type": "object"},
+        "headers": {"type": "object"},
+        "securitySchemes": {"type": "object"},
+        "links": {"type": "object"},
+        "callbacks": {"type": "object"}
+      }
+    },
+    "Schema": {
+      "type": "object",
+      "properties": {
+        "title": {"type": "string"},
+        "multipleOf": {"type": "number"},
+        "maximum": {"type": "number"},
+        "exclusiveMaximum": {"type": "boolean"},
+        "minimum": {"type": "number"},
+        "exclusiveMinimum": {"type": "boolean"},
+        "maxLength": {"type": "integer"},
+        "minLength": {"type": "integer"},
+        "pattern": {"type": "string"},
+        "maxItems": {"type": "integer"},
+        "minItems": {"type": "integer"},
+        "uniqueItems": {"type": "boolean"},
+        "maxProperties": {"type": "integer"},
+        "minProperties": {"type": "integer"},
+        "required": {"type": "array"},
+        "enum": {"type": "array"},
+        "type": {"type": "string"},
+        "not": {},
+        "allOf": {"type": "array"},
+        "oneOf": {"type": "array"},
+        "anyOf": {"type": "array"},
+        "items": {},
+        "properties": {"type": "object"},
+        "additionalProperties": {},
+        "description": {"type": "string"},
+        "format": {"type": "string"},
+        "default": {},
+        "nullable": {"type": "boolean"},
+        "discriminator": {"$ref": "#/definitions/Discriminator"},
+        "readOnly": {"type": "boolean"},
+        "writeOnly": {"type": "boolean"},
+        "example": {},
+        "externalDocs": {"$ref": "#/definitions/ExternalDocumentation"},
+        "deprecated": {"type": "boolean"},
+        "xml": {"$ref": "#/definitions/XML"}
+      }
+    },
+    "Discriminator": {
+      "type": "object",
+      "properties": {
+        "propertyName": {"type": "string"},
+        "mapping": {"type": "object"}
+      }
+    },
+    "XML": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "namespace": {"type": "string"},
+        "prefix": {"type": "string"},
+        "attribute": {"type": "boolean"},
+        "wrapped": {"type": "boolean"}
+      }
+    },
+    "ExternalDocumentation": {
+      "type": "object",
+      "properties": {
+        "description": {"type": "string"},
+        "url": {"type": "string"}
+      }
+    },
+    "Response": {
+      "type": "object",
+      "properties": {
+        "description": {"type": "string"},
+        "headers": {"type": "object"},
+        "content": {"type": "object"},
+        "links": {"type": "object"}
+      }
+    },
+    "MediaType": {
+      "type": "object",
+      "properties": {
+        "schema": {},
+        "example": {},
+        "examples": {"type": "object"},
+        "encoding": {"type": "object"}
+      }
+    },
+    "Example": {
+      "type": "object",
+      "properties": {
+        "summary": {"type": "string"},
+        "description": {"type": "string"},
+        "value": {},
+        "externalValue": {"type": "string"}
+      }
+    },
+    "Header": {
+      "type": "object",
+      "properties": {
+        "description": {"type": "string"},
+        "required": {"type": "boolean"},
+        "deprecated": {"type": "boolean"},
+        "allowEmptyValue": {"type": "boolean"},
+        "style": {"type": "string"},
+        "explode": {"type": "boolean"},
+        "allowReserved": {"type": "boolean"},
+        "schema": {},
+        "content": {"type": "object"},
+        "example": {},
+        "examples": {"type": "object"}
+      }
+    },
+    "PathItem": {
+      "type": "object",
+      "properties": {
+        "$ref": {"type": "string"},
+        "summary": {"type": "string"},
+        "description": {"type": "string"},
+        "servers": {"type": "array"},
+        "parameters": {"type": "array"}
+      }
+    },
+    "Operation": {
+      "type": "object",
+      "properties": {
+        "tags": {"type": "array"},
+        "summary": {"type": "string"},
+        "description": {"type": "string"},
+        "externalDocs": {"$ref": "#/definitions/ExternalDocumentation"},
+        "operationId": {"type": "string"},
+        "parameters": {"type": "array"},
+        "requestBody": {},
+        "responses": {"$ref": "#/definitions/Responses"},
+        "callbacks": {"type": "object"},
+        "deprecated": {"type": "boolean"},
+        "security": {"type": "array"},
+        "servers": {"type": "array"}
+      }
+    },
+    "Responses": {
+      "type": "object",
+      "properties": {
+        "default": {}
+      }
+    },
+    "Parameter": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "in": {"type": "string"},
+        "description": {"type": "string"},
+        "required": {"type": "boolean"},
+        "deprecated": {"type": "boolean"},
+        "allowEmptyValue": {"type": "boolean"},
+        "style": {"type": "string"},
+        "explode": {"type": "boolean"},
+        "allowReserved": {"type": "boolean"},
+        "schema": {},
+        "content": {"type": "object"},
+        "example": {},
+        "examples": {"type": "object"}
+      }
+    },
+    "RequestBody": {
+      "type": "object",
+      "properties": {
+        "description": {"type": "string"},
+        "content": {"type": "object"},
+        "required": {"type": "boolean"}
+      }
+    },
+    "Callback": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/definitions/PathItem"}
+    },
+    "Link": {
+      "type": "object",
+      "properties": {
+        "operationId": {"type": "string"},
+        "operationRef": {"type": "string"},
+        "parameters": {"type": "object"},
+        "requestBody": {},
+        "description": {"type": "string"},
+        "server": {"$ref": "#/definitions/Server"}
+      }
+    },
+    "Tag": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "description": {"type": "string"},
+        "externalDocs": {"$ref": "#/definitions/ExternalDocumentation"}
+      }
+    },
+    "Encoding": {
+      "type": "object",
+      "properties": {
+        "contentType": {"type": "string"},
+        "headers": {"type": "object"},
+        "style": {"type": "string"},
+        "explode": {"type": "boolean"},
+        "allowReserved": {"type": "boolean"}
+      }
+    },
+    "OAuthFlows": {
+      "type": "object",
+      "properties": {
+        "implicit": {"$ref": "#/definitions/ImplicitOAuthFlow"},
+        "password": {"$ref": "#/definitions/PasswordOAuthFlow"},
+        "clientCredentials": {"$ref": "#/definitions/ClientCredentialsFlow"},
+        "authorizationCode": {"$ref": "#/definitions/AuthorizationCodeOAuthFlow"}
+      }
+    },
+    "ImplicitOAuthFlow": {
+      "type": "object",
+      "properties": {
+        "authorizationUrl": {"type": "string"},
+        "refreshUrl": {"type": "string"},
+        "scopes": {"type": "object"}
+      }
+    },
+    "PasswordOAuthFlow": {
+      "type": "object",
+      "properties": {
+        "tokenUrl": {"type": "string"},
+        "refreshUrl": {"type": "string"},
+        "scopes": {"type": "object"}
+      }
+    },
+    "ClientCredentialsFlow": {
+      "type": "object",
+      "properties": {
+        "tokenUrl": {"type": "string"},
+        "refreshUrl": {"type": "string"},
+        "scopes": {"type": "object"}
+      }
+    },
+    "AuthorizationCodeOAuthFlow": {
+      "type": "object",
+      "properties": {
+        "authorizationUrl": {"type": "string"},
+        "tokenUrl": {"type": "string"},
+        "refreshUrl": {"type": "string"},
+        "scopes": {"type": "object"}
+      }
+    }
+  }
+}
