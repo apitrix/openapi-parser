@@ -12,11 +12,11 @@ var defaultServerVariableParser = &serverVariableParser{}
 
 // parseSharedServerVariable parses a ServerVariable object from a yaml.Node.
 func parseSharedServerVariable(node *yaml.Node, ctx *ParseContext) (*openapi30models.ServerVariable, error) {
-	return defaultServerVariableParser.Parse(node, ctx)
+	return defaultServerVariableParser.parse(node, ctx)
 }
 
 // Parse parses a ServerVariable object.
-func (p *serverVariableParser) Parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.ServerVariable, error) {
+func (p *serverVariableParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.ServerVariable, error) {
 	if node == nil {
 		return nil, nil
 	}

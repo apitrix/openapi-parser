@@ -12,11 +12,11 @@ var defaultParameterParser = &parameterParser{}
 
 // parseSharedParameter parses a Parameter object from a yaml.Node.
 func parseSharedParameter(node *yaml.Node, ctx *ParseContext) (*openapi30models.Parameter, error) {
-	return defaultParameterParser.Parse(node, ctx)
+	return defaultParameterParser.parse(node, ctx)
 }
 
 // Parse parses a Parameter object.
-func (p *parameterParser) Parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Parameter, error) {
+func (p *parameterParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Parameter, error) {
 	if node == nil {
 		return nil, nil
 	}

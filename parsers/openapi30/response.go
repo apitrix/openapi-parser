@@ -12,11 +12,11 @@ var defaultResponseParser = &responseParser{}
 
 // parseSharedResponse parses a Response object from a yaml.Node.
 func parseSharedResponse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Response, error) {
-	return defaultResponseParser.Parse(node, ctx)
+	return defaultResponseParser.parse(node, ctx)
 }
 
 // Parse parses a Response object.
-func (p *responseParser) Parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Response, error) {
+func (p *responseParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Response, error) {
 	if node == nil {
 		return nil, nil
 	}

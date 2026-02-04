@@ -12,11 +12,11 @@ var defaultSecuritySchemeParser = &securitySchemeParser{}
 
 // parseSharedSecurityScheme parses a SecurityScheme object from a yaml.Node.
 func parseSharedSecurityScheme(node *yaml.Node, ctx *ParseContext) (*openapi30models.SecurityScheme, error) {
-	return defaultSecuritySchemeParser.Parse(node, ctx)
+	return defaultSecuritySchemeParser.parse(node, ctx)
 }
 
 // Parse parses a SecurityScheme object.
-func (p *securitySchemeParser) Parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.SecurityScheme, error) {
+func (p *securitySchemeParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.SecurityScheme, error) {
 	if node == nil {
 		return nil, nil
 	}

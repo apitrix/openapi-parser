@@ -12,11 +12,11 @@ var defaultMediaTypeParser = &mediaTypeParser{}
 
 // parseSharedMediaType parses a MediaType object from a yaml.Node.
 func parseSharedMediaType(node *yaml.Node, ctx *ParseContext) (*openapi30models.MediaType, error) {
-	return defaultMediaTypeParser.Parse(node, ctx)
+	return defaultMediaTypeParser.parse(node, ctx)
 }
 
 // Parse parses a MediaType object.
-func (p *mediaTypeParser) Parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.MediaType, error) {
+func (p *mediaTypeParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.MediaType, error) {
 	if node == nil {
 		return nil, nil
 	}

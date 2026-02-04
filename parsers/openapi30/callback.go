@@ -13,11 +13,11 @@ var defaultCallbackParser = &callbackParser{}
 
 // parseSharedCallback parses a Callback object from a yaml.Node.
 func parseSharedCallback(node *yaml.Node, ctx *ParseContext) (*openapi30models.Callback, error) {
-	return defaultCallbackParser.Parse(node, ctx)
+	return defaultCallbackParser.parse(node, ctx)
 }
 
 // Parse parses a Callback object.
-func (p *callbackParser) Parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Callback, error) {
+func (p *callbackParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Callback, error) {
 	if node == nil {
 		return nil, nil
 	}

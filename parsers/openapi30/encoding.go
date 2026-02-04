@@ -12,11 +12,11 @@ var defaultEncodingParser = &encodingParser{}
 
 // parseSharedEncoding parses an Encoding object from a yaml.Node.
 func parseSharedEncoding(node *yaml.Node, ctx *ParseContext) (*openapi30models.Encoding, error) {
-	return defaultEncodingParser.Parse(node, ctx)
+	return defaultEncodingParser.parse(node, ctx)
 }
 
 // Parse parses an Encoding object.
-func (p *encodingParser) Parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Encoding, error) {
+func (p *encodingParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Encoding, error) {
 	if node == nil {
 		return nil, nil
 	}

@@ -12,11 +12,11 @@ var defaultHeaderParser = &headerParser{}
 
 // parseSharedHeader parses a Header object from a yaml.Node.
 func parseSharedHeader(node *yaml.Node, ctx *ParseContext) (*openapi30models.Header, error) {
-	return defaultHeaderParser.Parse(node, ctx)
+	return defaultHeaderParser.parse(node, ctx)
 }
 
 // Parse parses a Header object.
-func (p *headerParser) Parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Header, error) {
+func (p *headerParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Header, error) {
 	if node == nil {
 		return nil, nil
 	}

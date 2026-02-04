@@ -13,11 +13,11 @@ var defaultSchemaParser = &schemaParser{}
 // parseSharedSchema parses a Schema object from a yaml.Node.
 // OpenAPI 3.0.3 spec: https://spec.openapis.org/oas/v3.0.3#schema-object
 func parseSharedSchema(node *yaml.Node, ctx *ParseContext) (*openapi30models.Schema, error) {
-	return defaultSchemaParser.Parse(node, ctx)
+	return defaultSchemaParser.parse(node, ctx)
 }
 
 // Parse parses a Schema object from a yaml.Node.
-func (p *schemaParser) Parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Schema, error) {
+func (p *schemaParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Schema, error) {
 	if node == nil {
 		return nil, nil
 	}

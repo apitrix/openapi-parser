@@ -12,7 +12,7 @@ var defaultTagParser = &tagParser{}
 
 // parseSharedTag parses a Tag object from a yaml.Node.
 func parseSharedTag(node *yaml.Node, ctx *ParseContext) (*openapi30models.Tag, error) {
-	return defaultTagParser.Parse(node, ctx)
+	return defaultTagParser.parse(node, ctx)
 }
 
 // parseSharedTags parses an array of Tag objects.
@@ -33,7 +33,7 @@ func parseSharedTags(node *yaml.Node, ctx *ParseContext) ([]*openapi30models.Tag
 }
 
 // Parse parses a Tag object.
-func (p *tagParser) Parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Tag, error) {
+func (p *tagParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Tag, error) {
 	if node == nil {
 		return nil, nil
 	}

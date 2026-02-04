@@ -12,11 +12,11 @@ var defaultRequestBodyParser = &requestBodyParser{}
 
 // parseSharedRequestBody parses a RequestBody object from a yaml.Node.
 func parseSharedRequestBody(node *yaml.Node, ctx *ParseContext) (*openapi30models.RequestBody, error) {
-	return defaultRequestBodyParser.Parse(node, ctx)
+	return defaultRequestBodyParser.parse(node, ctx)
 }
 
 // Parse parses a RequestBody object.
-func (p *requestBodyParser) Parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.RequestBody, error) {
+func (p *requestBodyParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.RequestBody, error) {
 	if node == nil {
 		return nil, nil
 	}

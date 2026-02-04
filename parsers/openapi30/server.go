@@ -12,7 +12,7 @@ var defaultServerParser = &serverParser{}
 
 // parseSharedServer parses a Server object from a yaml.Node.
 func parseSharedServer(node *yaml.Node, ctx *ParseContext) (*openapi30models.Server, error) {
-	return defaultServerParser.Parse(node, ctx)
+	return defaultServerParser.parse(node, ctx)
 }
 
 // parseSharedServers parses an array of Server objects.
@@ -33,7 +33,7 @@ func parseSharedServers(node *yaml.Node, ctx *ParseContext) ([]*openapi30models.
 }
 
 // Parse parses a Server object.
-func (p *serverParser) Parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Server, error) {
+func (p *serverParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Server, error) {
 	if node == nil {
 		return nil, nil
 	}

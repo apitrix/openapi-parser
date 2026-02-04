@@ -12,11 +12,11 @@ var defaultExampleParser = &exampleParser{}
 
 // parseSharedExample parses an Example object from a yaml.Node.
 func parseSharedExample(node *yaml.Node, ctx *ParseContext) (*openapi30models.Example, error) {
-	return defaultExampleParser.Parse(node, ctx)
+	return defaultExampleParser.parse(node, ctx)
 }
 
 // Parse parses an Example object.
-func (p *exampleParser) Parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Example, error) {
+func (p *exampleParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Example, error) {
 	if node == nil {
 		return nil, nil
 	}

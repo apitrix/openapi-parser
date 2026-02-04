@@ -13,11 +13,11 @@ var defaultOAuthFlowsParser = &oauthFlowsParser{}
 
 // parseSharedOAuthFlows parses an OAuthFlows object from a yaml.Node.
 func parseSharedOAuthFlows(node *yaml.Node, ctx *ParseContext) (*openapi30models.OAuthFlows, error) {
-	return defaultOAuthFlowsParser.Parse(node, ctx)
+	return defaultOAuthFlowsParser.parse(node, ctx)
 }
 
 // Parse parses an OAuthFlows object.
-func (p *oauthFlowsParser) Parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.OAuthFlows, error) {
+func (p *oauthFlowsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.OAuthFlows, error) {
 	if node == nil {
 		return nil, nil
 	}

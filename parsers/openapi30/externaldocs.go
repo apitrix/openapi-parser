@@ -12,11 +12,11 @@ var defaultExternalDocsParser = &externalDocsParser{}
 
 // parseSharedExternalDocs parses an ExternalDocs object from a yaml.Node.
 func parseSharedExternalDocs(node *yaml.Node, ctx *ParseContext) (*openapi30models.ExternalDocs, error) {
-	return defaultExternalDocsParser.Parse(node, ctx)
+	return defaultExternalDocsParser.parse(node, ctx)
 }
 
 // Parse parses an ExternalDocs object.
-func (p *externalDocsParser) Parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.ExternalDocs, error) {
+func (p *externalDocsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.ExternalDocs, error) {
 	if node == nil {
 		return nil, nil
 	}

@@ -12,11 +12,11 @@ var defaultLinkParser = &linkParser{}
 
 // parseSharedLink parses a Link object from a yaml.Node.
 func parseSharedLink(node *yaml.Node, ctx *ParseContext) (*openapi30models.Link, error) {
-	return defaultLinkParser.Parse(node, ctx)
+	return defaultLinkParser.parse(node, ctx)
 }
 
 // Parse parses a Link object.
-func (p *linkParser) Parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Link, error) {
+func (p *linkParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.Link, error) {
 	if node == nil {
 		return nil, nil
 	}
