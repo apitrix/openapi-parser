@@ -8,7 +8,7 @@ import (
 
 // ParseExternalDocs parses the Schema.ExternalDocs field.
 // Complex property: nested ExternalDocs object
-func (p *schemaParser) ParseExternalDocs(parent *yaml.Node, c *ParseContext) (*openapi30models.ExternalDocs, error) {
+func (p *schemaParser) ParseExternalDocs(parent *yaml.Node, c *ParseContext) (*openapi30models.ExternalDocumentation, error) {
 	node := nodeGetValue(parent, "externalDocs")
 	if node == nil {
 		return nil, nil

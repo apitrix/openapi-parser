@@ -2,6 +2,7 @@ package openapi30
 
 import (
 	openapi30models "openapi-parser/models/openapi30"
+
 	"gopkg.in/yaml.v3"
 )
 
@@ -11,12 +12,12 @@ type externalDocsParser struct{}
 var defaultExternalDocsParser = &externalDocsParser{}
 
 // parseSharedExternalDocs parses an ExternalDocs object from a yaml.Node.
-func parseSharedExternalDocs(node *yaml.Node, ctx *ParseContext) (*openapi30models.ExternalDocs, error) {
+func parseSharedExternalDocs(node *yaml.Node, ctx *ParseContext) (*openapi30models.ExternalDocumentation, error) {
 	return defaultExternalDocsParser.parse(node, ctx)
 }
 
 // Parse parses an ExternalDocs object.
-func (p *externalDocsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.ExternalDocs, error) {
+func (p *externalDocsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.ExternalDocumentation, error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -25,7 +26,7 @@ func (p *externalDocsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi
 		return nil, ctx.errorAt(node, "externalDocs must be an object")
 	}
 
-	ed := &openapi30models.ExternalDocs{}
+	ed := &openapi30models.ExternalDocumentation{}
 
 	// All properties are simple - inline
 	ed.URL = p.ParseURL(node)

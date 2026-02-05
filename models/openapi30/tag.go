@@ -5,14 +5,14 @@ package openapi30
 type Tag struct {
 	Node // embedded - provides NodeSource and Extensions
 
-	Name         string        `json:"name" yaml:"name"`
-	Description  string        `json:"description,omitempty" yaml:"description,omitempty"`
-	ExternalDocs *ExternalDocs `json:"externalDocs,omitempty" yaml:"externalDocs,omitempty"`
+	Name         string                 `json:"name" yaml:"name"`
+	Description  string                 `json:"description,omitempty" yaml:"description,omitempty"`
+	ExternalDocs *ExternalDocumentation `json:"externalDocs,omitempty" yaml:"externalDocs,omitempty"`
 }
 
-// ExternalDocs allows referencing external documentation.
+// ExternalDocumentation allows referencing external documentation.
 // https://spec.openapis.org/oas/v3.0.3#external-documentation-object
-type ExternalDocs struct {
+type ExternalDocumentation struct {
 	Node // embedded - provides NodeSource and Extensions
 
 	Description string `json:"description,omitempty" yaml:"description,omitempty"`

@@ -7,7 +7,7 @@ import (
 )
 
 // ParseExternalDocs parses the Tag.ExternalDocs field.
-func (p *tagParser) ParseExternalDocs(parent *yaml.Node, c *ParseContext) (*openapi30models.ExternalDocs, error) {
+func (p *tagParser) ParseExternalDocs(parent *yaml.Node, c *ParseContext) (*openapi30models.ExternalDocumentation, error) {
 	node := nodeGetValue(parent, "externalDocs")
 	if node == nil {
 		return nil, nil

@@ -40,14 +40,14 @@ type Schema struct {
 	AdditionalPropertiesAllowed *bool      `json:"-" yaml:"-"`
 
 	// OpenAPI 3.0 specific fields
-	Nullable      bool           `json:"nullable,omitempty" yaml:"nullable,omitempty"`
-	Discriminator *Discriminator `json:"discriminator,omitempty" yaml:"discriminator,omitempty"`
-	ReadOnly      bool           `json:"readOnly,omitempty" yaml:"readOnly,omitempty"`
-	WriteOnly     bool           `json:"writeOnly,omitempty" yaml:"writeOnly,omitempty"`
-	XML           *XML           `json:"xml,omitempty" yaml:"xml,omitempty"`
-	ExternalDocs  *ExternalDocs  `json:"externalDocs,omitempty" yaml:"externalDocs,omitempty"`
-	Example       interface{}    `json:"example,omitempty" yaml:"example,omitempty"`
-	Deprecated    bool           `json:"deprecated,omitempty" yaml:"deprecated,omitempty"`
+	Nullable      bool                   `json:"nullable,omitempty" yaml:"nullable,omitempty"`
+	Discriminator *Discriminator         `json:"discriminator,omitempty" yaml:"discriminator,omitempty"`
+	ReadOnly      bool                   `json:"readOnly,omitempty" yaml:"readOnly,omitempty"`
+	WriteOnly     bool                   `json:"writeOnly,omitempty" yaml:"writeOnly,omitempty"`
+	XML           *XML                   `json:"xml,omitempty" yaml:"xml,omitempty"`
+	ExternalDocs  *ExternalDocumentation `json:"externalDocs,omitempty" yaml:"externalDocs,omitempty"`
+	Example       interface{}            `json:"example,omitempty" yaml:"example,omitempty"`
+	Deprecated    bool                   `json:"deprecated,omitempty" yaml:"deprecated,omitempty"`
 }
 
 // Discriminator is used for polymorphism support.
