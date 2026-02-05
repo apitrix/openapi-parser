@@ -1,0 +1,549 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Swagger 2.0 Schema (subset matching Go types)",
+    "definitions": {
+        "Swagger": {
+            "type": "object",
+            "properties": {
+                "swagger": {
+                    "type": "string"
+                },
+                "info": {
+                    "$ref": "#/definitions/Info"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "basePath": {
+                    "type": "string"
+                },
+                "schemes": {
+                    "type": "array"
+                },
+                "consumes": {
+                    "type": "array"
+                },
+                "produces": {
+                    "type": "array"
+                },
+                "paths": {
+                    "$ref": "#/definitions/Paths"
+                },
+                "definitions": {
+                    "type": "object"
+                },
+                "parameters": {
+                    "type": "object"
+                },
+                "responses": {
+                    "type": "object"
+                },
+                "securityDefinitions": {
+                    "type": "object"
+                },
+                "security": {
+                    "type": "array"
+                },
+                "tags": {
+                    "type": "array"
+                },
+                "externalDocs": {
+                    "$ref": "#/definitions/ExternalDocs"
+                }
+            }
+        },
+        "Info": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "termsOfService": {
+                    "type": "string"
+                },
+                "contact": {
+                    "$ref": "#/definitions/Contact"
+                },
+                "license": {
+                    "$ref": "#/definitions/License"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "Contact": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "License": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "Paths": {
+            "type": "object",
+            "properties": {}
+        },
+        "PathItem": {
+            "type": "object",
+            "properties": {
+                "$ref": {
+                    "type": "string"
+                },
+                "get": {
+                    "$ref": "#/definitions/Operation"
+                },
+                "put": {
+                    "$ref": "#/definitions/Operation"
+                },
+                "post": {
+                    "$ref": "#/definitions/Operation"
+                },
+                "delete": {
+                    "$ref": "#/definitions/Operation"
+                },
+                "options": {
+                    "$ref": "#/definitions/Operation"
+                },
+                "head": {
+                    "$ref": "#/definitions/Operation"
+                },
+                "patch": {
+                    "$ref": "#/definitions/Operation"
+                },
+                "parameters": {
+                    "type": "array"
+                }
+            }
+        },
+        "Operation": {
+            "type": "object",
+            "properties": {
+                "tags": {
+                    "type": "array"
+                },
+                "summary": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "externalDocs": {
+                    "$ref": "#/definitions/ExternalDocs"
+                },
+                "operationId": {
+                    "type": "string"
+                },
+                "consumes": {
+                    "type": "array"
+                },
+                "produces": {
+                    "type": "array"
+                },
+                "parameters": {
+                    "type": "array"
+                },
+                "responses": {
+                    "$ref": "#/definitions/Responses"
+                },
+                "schemes": {
+                    "type": "array"
+                },
+                "deprecated": {
+                    "type": "boolean"
+                },
+                "security": {
+                    "type": "array"
+                }
+            }
+        },
+        "Parameter": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "in": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
+                },
+                "allowEmptyValue": {
+                    "type": "boolean"
+                },
+                "schema": {
+                    "$ref": "#/definitions/Schema"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "format": {
+                    "type": "string"
+                },
+                "items": {
+                    "$ref": "#/definitions/Items"
+                },
+                "collectionFormat": {
+                    "type": "string"
+                },
+                "default": {},
+                "maximum": {
+                    "type": "number"
+                },
+                "exclusiveMaximum": {
+                    "type": "boolean"
+                },
+                "minimum": {
+                    "type": "number"
+                },
+                "exclusiveMinimum": {
+                    "type": "boolean"
+                },
+                "maxLength": {
+                    "type": "integer"
+                },
+                "minLength": {
+                    "type": "integer"
+                },
+                "pattern": {
+                    "type": "string"
+                },
+                "maxItems": {
+                    "type": "integer"
+                },
+                "minItems": {
+                    "type": "integer"
+                },
+                "uniqueItems": {
+                    "type": "boolean"
+                },
+                "enum": {
+                    "type": "array"
+                },
+                "multipleOf": {
+                    "type": "number"
+                }
+            }
+        },
+        "Items": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "format": {
+                    "type": "string"
+                },
+                "items": {
+                    "$ref": "#/definitions/Items"
+                },
+                "collectionFormat": {
+                    "type": "string"
+                },
+                "default": {},
+                "maximum": {
+                    "type": "number"
+                },
+                "exclusiveMaximum": {
+                    "type": "boolean"
+                },
+                "minimum": {
+                    "type": "number"
+                },
+                "exclusiveMinimum": {
+                    "type": "boolean"
+                },
+                "maxLength": {
+                    "type": "integer"
+                },
+                "minLength": {
+                    "type": "integer"
+                },
+                "pattern": {
+                    "type": "string"
+                },
+                "maxItems": {
+                    "type": "integer"
+                },
+                "minItems": {
+                    "type": "integer"
+                },
+                "uniqueItems": {
+                    "type": "boolean"
+                },
+                "enum": {
+                    "type": "array"
+                },
+                "multipleOf": {
+                    "type": "number"
+                }
+            }
+        },
+        "Schema": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "default": {},
+                "multipleOf": {
+                    "type": "number"
+                },
+                "maximum": {
+                    "type": "number"
+                },
+                "exclusiveMaximum": {
+                    "type": "boolean"
+                },
+                "minimum": {
+                    "type": "number"
+                },
+                "exclusiveMinimum": {
+                    "type": "boolean"
+                },
+                "maxLength": {
+                    "type": "integer"
+                },
+                "minLength": {
+                    "type": "integer"
+                },
+                "pattern": {
+                    "type": "string"
+                },
+                "maxItems": {
+                    "type": "integer"
+                },
+                "minItems": {
+                    "type": "integer"
+                },
+                "uniqueItems": {
+                    "type": "boolean"
+                },
+                "maxProperties": {
+                    "type": "integer"
+                },
+                "minProperties": {
+                    "type": "integer"
+                },
+                "required": {
+                    "type": "array"
+                },
+                "enum": {
+                    "type": "array"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "format": {
+                    "type": "string"
+                },
+                "allOf": {
+                    "type": "array"
+                },
+                "items": {
+                    "$ref": "#/definitions/Schema"
+                },
+                "properties": {
+                    "type": "object"
+                },
+                "additionalProperties": {},
+                "discriminator": {
+                    "type": "string"
+                },
+                "readOnly": {
+                    "type": "boolean"
+                },
+                "xml": {
+                    "$ref": "#/definitions/XML"
+                },
+                "externalDocs": {
+                    "$ref": "#/definitions/ExternalDocs"
+                },
+                "example": {}
+            }
+        },
+        "XML": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "namespace": {
+                    "type": "string"
+                },
+                "prefix": {
+                    "type": "string"
+                },
+                "attribute": {
+                    "type": "boolean"
+                },
+                "wrapped": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "Responses": {
+            "type": "object",
+            "properties": {
+                "default": {
+                    "$ref": "#/definitions/Response"
+                }
+            }
+        },
+        "Response": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "schema": {
+                    "$ref": "#/definitions/Schema"
+                },
+                "headers": {
+                    "type": "object"
+                },
+                "examples": {
+                    "type": "object"
+                }
+            }
+        },
+        "Header": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "format": {
+                    "type": "string"
+                },
+                "items": {
+                    "$ref": "#/definitions/Items"
+                },
+                "collectionFormat": {
+                    "type": "string"
+                },
+                "default": {},
+                "maximum": {
+                    "type": "number"
+                },
+                "exclusiveMaximum": {
+                    "type": "boolean"
+                },
+                "minimum": {
+                    "type": "number"
+                },
+                "exclusiveMinimum": {
+                    "type": "boolean"
+                },
+                "maxLength": {
+                    "type": "integer"
+                },
+                "minLength": {
+                    "type": "integer"
+                },
+                "pattern": {
+                    "type": "string"
+                },
+                "maxItems": {
+                    "type": "integer"
+                },
+                "minItems": {
+                    "type": "integer"
+                },
+                "uniqueItems": {
+                    "type": "boolean"
+                },
+                "enum": {
+                    "type": "array"
+                },
+                "multipleOf": {
+                    "type": "number"
+                }
+            }
+        },
+        "SecurityScheme": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "in": {
+                    "type": "string"
+                },
+                "flow": {
+                    "type": "string"
+                },
+                "authorizationUrl": {
+                    "type": "string"
+                },
+                "tokenUrl": {
+                    "type": "string"
+                },
+                "scopes": {
+                    "type": "object"
+                }
+            }
+        },
+        "Tag": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "externalDocs": {
+                    "$ref": "#/definitions/ExternalDocs"
+                }
+            }
+        },
+        "ExternalDocs": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
