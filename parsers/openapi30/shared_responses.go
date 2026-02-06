@@ -25,13 +25,11 @@ func parseSharedResponses(node *yaml.Node, ctx *ParseContext) (*openapi30models.
 	responses := &openapi30models.Responses{}
 	responses.Codes = make(map[string]*openapi30models.ResponseRef)
 
-	for _, key := range nodeKeys(node) {
+	for key, valueNode := range nodeMapPairs(node) {
 		// Skip extensions
 		if len(key) > 2 && key[0] == 'x' && key[1] == '-' {
 			continue
 		}
-
-		valueNode := nodeGetValue(node, key)
 
 		if key == "default" {
 			defaultResp, err := parseResponseRef(valueNode, ctx.push("default"))

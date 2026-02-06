@@ -15,8 +15,7 @@ func parseComponentsParameters(parent *yaml.Node, ctx *ParseContext) (map[string
 
 	params := make(map[string]*openapi30models.ParameterRef)
 	pctx := ctx.push("parameters")
-	for _, name := range nodeKeys(node) {
-		paramNode := nodeGetValue(node, name)
+	for name, paramNode := range nodeMapPairs(node) {
 		paramRef, err := parseParameterRef(paramNode, pctx.push(name))
 		if err != nil {
 			return nil, err

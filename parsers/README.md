@@ -1,57 +1,32 @@
-# OpenAPI 2.0 (Swagger) Parser
+# OpenAPI Parsers
 
-This package parses Swagger 2.0 specifications into strongly-typed Go models.
+This package contains parsers for OpenAPI specifications:
+
+| Package | Specification | Go Import |
+|---------|---------------|-----------|
+| `openapi30` | OpenAPI 3.0.x | `openapi-parser/parsers/openapi30` |
+| `openapi20` | OpenAPI 2.0 (Swagger) | `openapi-parser/parsers/openapi20` |
+
+Both parsers share identical architecture and design patterns.
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                         parse.go                                 │
-│  Parse() → ParseWithUnknownFields() → parseSwagger()            │
+│  Parse() → ParseWithUnknownFields() → parseOpenAPI/Swagger()    │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                       swagger.go                                 │
+│                    openapi.go / swagger.go                       │
 │  Root document parser - delegates to component parsers          │
 └─────────────────────────────────────────────────────────────────┘
           │           │           │           │
           ▼           ▼           ▼           ▼
     ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐
-    │ info.go │ │pathitem │ │ schema  │ │security │
+    │ info.go │ │pathitem │ │component│ │ server  │
     └─────────┘ └─────────┘ └─────────┘ └─────────┘
-         │           │
-         ▼           ▼
-    ┌─────────┐ ┌─────────┐
-    │ contact │ │operation│
-    │ license │ │parameter│
-    └─────────┘ └─────────┘
-```
-
-## Design Patterns
-
-### 1. Simple Properties Inline
-Simple scalar fields are parsed directly in the parent parser:
-```go
-info.Title = nodeGetString(node, "title")
-info.Version = nodeGetString(node, "version")
-```
-
-### 2. Complex Properties Delegated
-Complex nested objects get separate files:
-- `info.go` → delegates to `info_contact.go`, `info_license.go`
-- `schema.go` → handles properties, additionalProperties, allOf
-
-### 3. Reference Handling
-`$ref` is handled by ref parsers that check for reference or parse inline:
-```go
-// ref_schema.go
-if nodeHasRef(node) {
-    ref.Ref = nodeGetRef(node)
-    return ref, nil
-}
-// Parse inline schema
-ref.Value, err = parseSchema(node, ctx)
 ```
 
 ## Core Components
@@ -59,23 +34,24 @@ ref.Value, err = parseSchema(node, ctx)
 | File | Purpose |
 |------|---------|
 | `parse.go` | Entry points: `Parse()`, `ParseWithUnknownFields()` |
-| `context.go` | `ParseContext` - tracks JSON path, caches definitions |
+| `context.go` | `ParseContext` - tracks JSON path, caches components |
 | `node_helpers.go` | yaml.Node utilities for extracting values |
-| `known_fields.go` | Valid field lists for unknown detection |
-| `errors.go` | `ParseError` with path and location |
+| `known_fields.go` | Valid field lists for unknown field detection |
+| `errors.go` | `ParseError` with path and location info |
 
 ## Usage
 
 ```go
-import "openapi-parser/parsers/openapi20"
+// OpenAPI 3.0
+import "openapi-parser/parsers/openapi30"
+doc, err := openapi30.Parse(data)
 
+// OpenAPI 2.0 (Swagger)
+import "openapi-parser/parsers/openapi20"
 doc, err := openapi20.Parse(data)
-if err != nil {
-    log.Fatal(err)
-}
 
 // With unknown field detection
-result, err := openapi20.ParseWithUnknownFields(data)
+result, err := openapi30.ParseWithUnknownFields(data)
 for _, f := range result.UnknownFields {
     log.Printf("Unknown: %s at %s", f.Name, f.Path)
 }
@@ -83,22 +59,17 @@ for _, f := range result.UnknownFields {
 
 ## Testing
 
-Tests follow the **Arrange-Act-Assert (AAA)** pattern:
-```go
-func TestParseInfo_Contact(t *testing.T) {
-    // Arrange
-    yaml := `swagger: "2.0"...`
-    
-    // Act
-    doc, err := Parse([]byte(yaml))
-    
-    // Assert
-    require.NoError(t, err)
-    assert.Equal(t, "expected", doc.Info.Contact.Name)
-}
-```
+Tests follow the **Arrange-Act-Assert (AAA)** pattern.
 
-Run tests:
 ```bash
+# Run all parser tests
+go test -v ./parsers/...
+
+# Run specific parser tests
+go test -v ./parsers/openapi30/...
 go test -v ./parsers/openapi20/...
 ```
+
+## Implementation Details
+
+See [IMPLEMENTATION_DECISIONS.md](IMPLEMENTATION_DECISIONS.md) for design patterns and technical optimizations.

@@ -15,8 +15,7 @@ func parseComponentsLinks(parent *yaml.Node, ctx *ParseContext) (map[string]*ope
 
 	links := make(map[string]*openapi30models.LinkRef)
 	lctx := ctx.push("links")
-	for _, name := range nodeKeys(node) {
-		linkNode := nodeGetValue(node, name)
+	for name, linkNode := range nodeMapPairs(node) {
 		linkRef, err := parseLinkRef(linkNode, lctx.push(name))
 		if err != nil {
 			return nil, err

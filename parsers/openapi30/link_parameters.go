@@ -12,8 +12,7 @@ func (p *linkParser) ParseParameters(parent *yaml.Node, c *ParseContext) (map[st
 	}
 
 	params := make(map[string]interface{})
-	for _, name := range nodeKeys(node) {
-		paramNode := nodeGetValue(node, name)
+	for name, paramNode := range nodeMapPairs(node) {
 		params[name] = nodeToInterface(paramNode)
 	}
 	return params, nil

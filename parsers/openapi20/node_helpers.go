@@ -1,6 +1,7 @@
 package openapi20
 
 import (
+	"iter"
 	"strconv"
 
 	"gopkg.in/yaml.v3"
@@ -58,6 +59,21 @@ func nodeKeys(node *yaml.Node) []string {
 		keys = append(keys, node.Content[i].Value)
 	}
 	return keys
+}
+
+// nodeMapPairs iterates over key-value pairs in a mapping node (single-pass).
+// Returns a range-over-func iterator for use with Go 1.23+ range syntax.
+func nodeMapPairs(node *yaml.Node) iter.Seq2[string, *yaml.Node] {
+	return func(yield func(string, *yaml.Node) bool) {
+		if node == nil || node.Kind != yaml.MappingNode {
+			return
+		}
+		for i := 0; i < len(node.Content)-1; i += 2 {
+			if !yield(node.Content[i].Value, node.Content[i+1]) {
+				return
+			}
+		}
+	}
 }
 
 // nodeToSlice converts a sequence node to a slice of nodes.

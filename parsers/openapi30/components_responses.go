@@ -15,8 +15,7 @@ func parseComponentsResponses(parent *yaml.Node, ctx *ParseContext) (map[string]
 
 	responses := make(map[string]*openapi30models.ResponseRef)
 	rctx := ctx.push("responses")
-	for _, name := range nodeKeys(node) {
-		respNode := nodeGetValue(node, name)
+	for name, respNode := range nodeMapPairs(node) {
 		respRef, err := parseResponseRef(respNode, rctx.push(name))
 		if err != nil {
 			return nil, err

@@ -140,8 +140,7 @@ func parseSchemaProperties(node *yaml.Node, ctx *ParseContext) (map[string]*open
 
 	props := make(map[string]*openapi20models.SchemaRef)
 
-	for _, key := range nodeKeys(node) {
-		propNode := nodeGetValue(node, key)
+	for key, propNode := range nodeMapPairs(node) {
 		propRef, err := parseSchemaRef(propNode, ctx.push(key))
 		if err != nil {
 			return nil, err

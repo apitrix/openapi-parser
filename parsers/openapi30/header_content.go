@@ -15,8 +15,7 @@ func (p *headerParser) ParseContent(parent *yaml.Node, c *ParseContext) (map[str
 
 	content := make(map[string]*openapi30models.MediaType)
 	cctx := c.Push("content")
-	for _, mediaTypeName := range nodeKeys(node) {
-		mtNode := nodeGetValue(node, mediaTypeName)
+	for mediaTypeName, mtNode := range nodeMapPairs(node) {
 		mt, err := parseSharedMediaType(mtNode, cctx.push(mediaTypeName))
 		if err != nil {
 			return nil, err

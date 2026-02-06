@@ -15,8 +15,7 @@ func parseComponentsHeaders(parent *yaml.Node, ctx *ParseContext) (map[string]*o
 
 	headers := make(map[string]*openapi30models.HeaderRef)
 	hctx := ctx.push("headers")
-	for _, name := range nodeKeys(node) {
-		headerNode := nodeGetValue(node, name)
+	for name, headerNode := range nodeMapPairs(node) {
 		headerRef, err := parseHeaderRef(headerNode, hctx.push(name))
 		if err != nil {
 			return nil, err

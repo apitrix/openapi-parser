@@ -15,8 +15,7 @@ func parseComponentsSchemas(parent *yaml.Node, ctx *ParseContext) (map[string]*o
 
 	schemas := make(map[string]*openapi30models.SchemaRef)
 	sctx := ctx.push("schemas")
-	for _, name := range nodeKeys(node) {
-		schemaNode := nodeGetValue(node, name)
+	for name, schemaNode := range nodeMapPairs(node) {
 		schemaRef, err := parseSchemaRef(schemaNode, sctx.push(name))
 		if err != nil {
 			return nil, err

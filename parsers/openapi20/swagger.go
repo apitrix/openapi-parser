@@ -133,13 +133,12 @@ func parseSwaggerPaths(node *yaml.Node, ctx *ParseContext) (*openapi20models.Pat
 	paths := &openapi20models.Paths{}
 	paths.Items = make(map[string]*openapi20models.PathItem)
 
-	for _, key := range nodeKeys(node) {
+	for key, pathItemNode := range nodeMapPairs(node) {
 		// Skip extensions
 		if len(key) > 2 && key[0] == 'x' && key[1] == '-' {
 			continue
 		}
 
-		pathItemNode := nodeGetValue(node, key)
 		pathItem, err := parsePathItem(pathItemNode, ctx.push(key))
 		if err != nil {
 			return nil, err
@@ -165,13 +164,12 @@ func parseSwaggerDefinitions(node *yaml.Node, ctx *ParseContext) (map[string]*op
 
 	definitions := make(map[string]*openapi20models.SchemaRef)
 
-	for _, key := range nodeKeys(node) {
+	for key, schemaNode := range nodeMapPairs(node) {
 		// Skip extensions
 		if len(key) > 2 && key[0] == 'x' && key[1] == '-' {
 			continue
 		}
 
-		schemaNode := nodeGetValue(node, key)
 		schemaRef, err := parseSchemaRef(schemaNode, ctx.push(key))
 		if err != nil {
 			return nil, err
@@ -194,13 +192,12 @@ func parseSwaggerParameters(node *yaml.Node, ctx *ParseContext) (map[string]*ope
 
 	parameters := make(map[string]*openapi20models.ParameterRef)
 
-	for _, key := range nodeKeys(node) {
+	for key, paramNode := range nodeMapPairs(node) {
 		// Skip extensions
 		if len(key) > 2 && key[0] == 'x' && key[1] == '-' {
 			continue
 		}
 
-		paramNode := nodeGetValue(node, key)
 		paramRef, err := parseParameterRef(paramNode, ctx.push(key))
 		if err != nil {
 			return nil, err
@@ -223,13 +220,12 @@ func parseSwaggerResponses(node *yaml.Node, ctx *ParseContext) (map[string]*open
 
 	responses := make(map[string]*openapi20models.ResponseRef)
 
-	for _, key := range nodeKeys(node) {
+	for key, respNode := range nodeMapPairs(node) {
 		// Skip extensions
 		if len(key) > 2 && key[0] == 'x' && key[1] == '-' {
 			continue
 		}
 
-		respNode := nodeGetValue(node, key)
 		respRef, err := parseResponseRef(respNode, ctx.push(key))
 		if err != nil {
 			return nil, err
@@ -252,13 +248,12 @@ func parseSwaggerSecurityDefinitions(node *yaml.Node, ctx *ParseContext) (map[st
 
 	secDefs := make(map[string]*openapi20models.SecurityScheme)
 
-	for _, key := range nodeKeys(node) {
+	for key, schemeNode := range nodeMapPairs(node) {
 		// Skip extensions
 		if len(key) > 2 && key[0] == 'x' && key[1] == '-' {
 			continue
 		}
 
-		schemeNode := nodeGetValue(node, key)
 		scheme, err := parseSecurityScheme(schemeNode, ctx.push(key))
 		if err != nil {
 			return nil, err

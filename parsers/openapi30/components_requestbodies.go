@@ -15,8 +15,7 @@ func parseComponentsRequestBodies(parent *yaml.Node, ctx *ParseContext) (map[str
 
 	requestBodies := make(map[string]*openapi30models.RequestBodyRef)
 	rctx := ctx.push("requestBodies")
-	for _, name := range nodeKeys(node) {
-		rbNode := nodeGetValue(node, name)
+	for name, rbNode := range nodeMapPairs(node) {
 		rbRef, err := parseRequestBodyRef(rbNode, rctx.push(name))
 		if err != nil {
 			return nil, err

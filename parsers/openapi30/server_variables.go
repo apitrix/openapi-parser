@@ -15,8 +15,7 @@ func (p *serverParser) ParseVariables(parent *yaml.Node, c *ParseContext) (map[s
 
 	variables := make(map[string]*openapi30models.ServerVariable)
 	vctx := c.Push("variables")
-	for _, name := range nodeKeys(node) {
-		varNode := nodeGetValue(node, name)
+	for name, varNode := range nodeMapPairs(node) {
 		sv, err := parseSharedServerVariable(varNode, vctx.push(name))
 		if err != nil {
 			return nil, err

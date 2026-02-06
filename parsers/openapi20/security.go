@@ -71,8 +71,7 @@ func parseSecurityRequirement(node *yaml.Node, ctx *ParseContext) (openapi20mode
 
 	req := make(openapi20models.SecurityRequirement)
 
-	for _, key := range nodeKeys(node) {
-		valNode := nodeGetValue(node, key)
+	for key, valNode := range nodeMapPairs(node) {
 		if valNode == nil || !nodeIsSequence(valNode) {
 			req[key] = []string{}
 			continue

@@ -15,8 +15,7 @@ func (p *mediaTypeParser) ParseEncoding(parent *yaml.Node, c *ParseContext) (map
 
 	encoding := make(map[string]*openapi30models.Encoding)
 	ectx := c.Push("encoding")
-	for _, propName := range nodeKeys(node) {
-		encNode := nodeGetValue(node, propName)
+	for propName, encNode := range nodeMapPairs(node) {
 		enc, err := parseSharedEncoding(encNode, ectx.push(propName))
 		if err != nil {
 			return nil, err

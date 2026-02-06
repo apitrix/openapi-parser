@@ -15,8 +15,7 @@ func (p *headerParser) ParseExamples(parent *yaml.Node, c *ParseContext) (map[st
 
 	examples := make(map[string]*openapi30models.ExampleRef)
 	ectx := c.Push("examples")
-	for _, name := range nodeKeys(node) {
-		exampleNode := nodeGetValue(node, name)
+	for name, exampleNode := range nodeMapPairs(node) {
 		exampleRef, err := parseExampleRef(exampleNode, ectx.push(name))
 		if err != nil {
 			return nil, err

@@ -15,8 +15,7 @@ func parseComponentsSecuritySchemes(parent *yaml.Node, ctx *ParseContext) (map[s
 
 	schemes := make(map[string]*openapi30models.SecuritySchemeRef)
 	sctx := ctx.push("securitySchemes")
-	for _, name := range nodeKeys(node) {
-		schemeNode := nodeGetValue(node, name)
+	for name, schemeNode := range nodeMapPairs(node) {
 		schemeRef, err := parseSecuritySchemeRef(schemeNode, sctx.push(name))
 		if err != nil {
 			return nil, err

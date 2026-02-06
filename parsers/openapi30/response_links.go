@@ -15,8 +15,7 @@ func (p *responseParser) ParseLinks(parent *yaml.Node, c *ParseContext) (map[str
 
 	links := make(map[string]*openapi30models.LinkRef)
 	lctx := c.Push("links")
-	for _, name := range nodeKeys(node) {
-		linkNode := nodeGetValue(node, name)
+	for name, linkNode := range nodeMapPairs(node) {
 		linkRef, err := parseLinkRef(linkNode, lctx.push(name))
 		if err != nil {
 			return nil, err

@@ -15,8 +15,7 @@ func (p *encodingParser) ParseHeaders(parent *yaml.Node, c *ParseContext) (map[s
 
 	headers := make(map[string]*openapi30models.HeaderRef)
 	hctx := c.Push("headers")
-	for _, name := range nodeKeys(node) {
-		headerNode := nodeGetValue(node, name)
+	for name, headerNode := range nodeMapPairs(node) {
 		headerRef, err := parseHeaderRef(headerNode, hctx.push(name))
 		if err != nil {
 			return nil, err

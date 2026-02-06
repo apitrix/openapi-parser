@@ -20,13 +20,12 @@ func parseSharedSecurityRequirement(node *yaml.Node, ctx *ParseContext) (openapi
 	req := make(openapi30models.SecurityRequirement)
 
 	// Each key is a security scheme name, value is array of scope names
-	for _, name := range nodeKeys(node) {
+	for name, scopeNode := range nodeMapPairs(node) {
 		// Skip extensions
 		if len(name) > 2 && name[0] == 'x' && name[1] == '-' {
 			continue
 		}
 
-		scopeNode := nodeGetValue(node, name)
 		scopes := make([]string, 0)
 		if scopeNode != nil && nodeIsSequence(scopeNode) {
 			for _, s := range scopeNode.Content {

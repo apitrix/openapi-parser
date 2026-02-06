@@ -49,13 +49,12 @@ func (p *callbackParser) ParsePaths(node *yaml.Node, c *ParseContext) (map[strin
 
 	paths := make(map[string]*openapi30models.PathItem)
 	ctx := c
-	for _, expr := range nodeKeys(node) {
+	for expr, pathItemNode := range nodeMapPairs(node) {
 		// Skip extensions
 		if len(expr) > 2 && expr[0] == 'x' && expr[1] == '-' {
 			continue
 		}
 
-		pathItemNode := nodeGetValue(node, expr)
 		pathItem, err := parseOpenAPIPathsPathItem(pathItemNode, ctx.push(expr))
 		if err != nil {
 			return nil, err

@@ -16,8 +16,7 @@ func (p *schemaParser) ParseProperties(parent *yaml.Node, c *ParseContext) (map[
 
 	props := make(map[string]*openapi30models.SchemaRef)
 	pctx := c.Push("properties")
-	for _, name := range nodeKeys(node) {
-		propNode := nodeGetValue(node, name)
+	for name, propNode := range nodeMapPairs(node) {
 		ref, err := parseSchemaRef(propNode, pctx.push(name))
 		if err != nil {
 			return nil, err

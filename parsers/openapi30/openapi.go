@@ -108,13 +108,12 @@ func parseOpenAPIPaths(node *yaml.Node, ctx *ParseContext) (*openapi30models.Pat
 	paths := &openapi30models.Paths{}
 	paths.Items = make(map[string]*openapi30models.PathItem)
 
-	for _, key := range nodeKeys(node) {
+	for key, pathItemNode := range nodeMapPairs(node) {
 		// Skip extensions
 		if len(key) > 2 && key[0] == 'x' && key[1] == '-' {
 			continue
 		}
 
-		pathItemNode := nodeGetValue(node, key)
 		pathItem, err := parseOpenAPIPathsPathItem(pathItemNode, ctx.push(key))
 		if err != nil {
 			return nil, err

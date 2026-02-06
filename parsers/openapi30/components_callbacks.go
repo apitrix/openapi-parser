@@ -15,8 +15,7 @@ func parseComponentsCallbacks(parent *yaml.Node, ctx *ParseContext) (map[string]
 
 	callbacks := make(map[string]*openapi30models.CallbackRef)
 	cctx := ctx.push("callbacks")
-	for _, name := range nodeKeys(node) {
-		cbNode := nodeGetValue(node, name)
+	for name, cbNode := range nodeMapPairs(node) {
 		cbRef, err := parseCallbackRef(cbNode, cctx.push(name))
 		if err != nil {
 			return nil, err

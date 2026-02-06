@@ -18,13 +18,12 @@ func parseHeaders(node *yaml.Node, ctx *ParseContext) (map[string]*openapi20mode
 
 	headers := make(map[string]*openapi20models.Header)
 
-	for _, key := range nodeKeys(node) {
+	for key, headerNode := range nodeMapPairs(node) {
 		// Skip extensions
 		if len(key) > 2 && key[0] == 'x' && key[1] == '-' {
 			continue
 		}
 
-		headerNode := nodeGetValue(node, key)
 		header, err := parseHeader(headerNode, ctx.push(key))
 		if err != nil {
 			return nil, err

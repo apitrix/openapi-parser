@@ -20,13 +20,12 @@ func parseResponses(node *yaml.Node, ctx *ParseContext) (*openapi20models.Respon
 	responses.Codes = make(map[string]*openapi20models.ResponseRef)
 	var err error
 
-	for _, key := range nodeKeys(node) {
+	for key, respNode := range nodeMapPairs(node) {
 		// Skip extensions
 		if len(key) > 2 && key[0] == 'x' && key[1] == '-' {
 			continue
 		}
 
-		respNode := nodeGetValue(node, key)
 		respRef, err := parseResponseRef(respNode, ctx.push(key))
 		if err != nil {
 			return nil, err
@@ -80,8 +79,8 @@ func parseResponse(node *yaml.Node, ctx *ParseContext) (*openapi20models.Respons
 	// Examples - map of mime type to example
 	if examplesNode := nodeGetValue(node, "examples"); examplesNode != nil && nodeIsMapping(examplesNode) {
 		resp.Examples = make(map[string]interface{})
-		for _, key := range nodeKeys(examplesNode) {
-			resp.Examples[key] = nodeToInterface(nodeGetValue(examplesNode, key))
+		for key, exampleNode := range nodeMapPairs(examplesNode) {
+			resp.Examples[key] = nodeToInterface(exampleNode)
 		}
 	}
 
