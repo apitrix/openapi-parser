@@ -1,0 +1,95 @@
+package openapi20
+
+import (
+	openapi20models "openapi-parser/models/openapi20"
+
+	"gopkg.in/yaml.v3"
+)
+
+// parseResponses parses a Responses container from a yaml.Node.
+func parseResponses(node *yaml.Node, ctx *ParseContext) (*openapi20models.Responses, error) {
+	if node == nil {
+		return nil, nil
+	}
+
+	if !nodeIsMapping(node) {
+		return nil, ctx.errorAt(node, "responses must be an object")
+	}
+
+	responses := &openapi20models.Responses{}
+	responses.Codes = make(map[string]*openapi20models.ResponseRef)
+	var err error
+
+	for _, key := range nodeKeys(node) {
+		// Skip extensions
+		if len(key) > 2 && key[0] == 'x' && key[1] == '-' {
+			continue
+		}
+
+		respNode := nodeGetValue(node, key)
+		respRef, err := parseResponseRef(respNode, ctx.push(key))
+		if err != nil {
+			return nil, err
+		}
+
+		if key == "default" {
+			responses.Default = respRef
+		} else {
+			responses.Codes[key] = respRef
+		}
+	}
+
+	responses.Extensions = parseNodeExtensions(node)
+	responses.NodeSource = ctx.nodeSource(node)
+
+	return responses, err
+}
+
+// parseResponse parses a Response object from a yaml.Node.
+func parseResponse(node *yaml.Node, ctx *ParseContext) (*openapi20models.Response, error) {
+	if node == nil {
+		return nil, nil
+	}
+
+	if !nodeIsMapping(node) {
+		return nil, ctx.errorAt(node, "response must be an object")
+	}
+
+	resp := &openapi20models.Response{}
+	var err error
+
+	// Simple properties - inline
+	resp.Description = nodeGetString(node, "description")
+
+	// Complex property - Schema
+	if schemaNode := nodeGetValue(node, "schema"); schemaNode != nil {
+		resp.Schema, err = parseSchemaRef(schemaNode, ctx.push("schema"))
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// Complex property - Headers
+	if headersNode := nodeGetValue(node, "headers"); headersNode != nil {
+		resp.Headers, err = parseHeaders(headersNode, ctx.push("headers"))
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// Examples - map of mime type to example
+	if examplesNode := nodeGetValue(node, "examples"); examplesNode != nil && nodeIsMapping(examplesNode) {
+		resp.Examples = make(map[string]interface{})
+		for _, key := range nodeKeys(examplesNode) {
+			resp.Examples[key] = nodeToInterface(nodeGetValue(examplesNode, key))
+		}
+	}
+
+	resp.Extensions = parseNodeExtensions(node)
+	resp.NodeSource = ctx.nodeSource(node)
+
+	// Detect unknown fields
+	ctx.detectUnknown(node, responseKnownFields)
+
+	return resp, nil
+}
