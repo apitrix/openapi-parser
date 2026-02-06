@@ -11,17 +11,11 @@ type UnknownField struct {
 	Column int    // Column number (1-based)
 }
 
-// detectUnknownNodeFields checks a yaml.Node for fields not in the known list.
+// detectUnknownNodeFields checks a yaml.Node for fields not in the known set.
 // Extensions (x-*) are excluded from the result.
-func detectUnknownNodeFields(node *yaml.Node, knownFields []string, basePath string) []UnknownField {
+func detectUnknownNodeFields(node *yaml.Node, knownFields map[string]struct{}, basePath string) []UnknownField {
 	if node == nil || node.Kind != yaml.MappingNode {
 		return nil
-	}
-
-	// Build a set of known fields for O(1) lookup
-	known := make(map[string]bool, len(knownFields))
-	for _, f := range knownFields {
-		known[f] = true
 	}
 
 	var unknown []UnknownField
@@ -34,7 +28,7 @@ func detectUnknownNodeFields(node *yaml.Node, knownFields []string, basePath str
 		}
 
 		// Check if known
-		if !known[key] {
+		if _, ok := knownFields[key]; !ok {
 			path := key
 			if basePath != "" {
 				path = basePath + "." + key

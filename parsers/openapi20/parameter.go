@@ -71,7 +71,7 @@ func parseParameter(node *yaml.Node, ctx *ParseContext) (*openapi20models.Parame
 	param.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, parameterKnownFields)
+	ctx.detectUnknown(node, parameterKnownFieldsSet)
 
 	return param, nil
 }

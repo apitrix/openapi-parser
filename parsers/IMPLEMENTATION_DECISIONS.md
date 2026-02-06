@@ -70,3 +70,45 @@ for key, value := range nodeMapPairs(node) {
 **Trade-off:** Requires Go 1.23+ (uses `iter.Seq2` from the `iter` package).
 
 **Files affected:** All parsers that iterate over YAML mappings (37 total). The `nodeMapPairs` function is defined in `node_helpers.go` for each parser package.
+
+---
+
+## Precomputed Known-Field Sets
+
+**Problem:** Unknown field detection built a `map[string]bool` from a `[]string` slice on every call:
+
+```go
+// Old pattern - O(n) map construction per node
+func detectUnknownNodeFields(node *yaml.Node, knownFields []string, path string) {
+    known := make(map[string]bool, len(knownFields))
+    for _, f := range knownFields {
+        known[f] = true
+    }
+    // check fields...
+}
+```
+
+With many nodes in a document, this caused repeated allocations and slice iteration.
+
+**Solution:** Precompute `map[string]struct{}` sets at init time in `known_fields.go`:
+
+```go
+// Precomputed once at init
+var schemaKnownFieldsSet = toSet(schemaKnownFields)
+
+// O(1) lookup, zero allocations per call
+func detectUnknownNodeFields(node *yaml.Node, knownFields map[string]struct{}, path string) {
+    if _, ok := knownFields[key]; !ok {
+        // unknown field
+    }
+}
+```
+
+**Benefits:**
+| Aspect | Before | After |
+|--------|--------|-------|
+| Map construction | Per node | Once at init |
+| Memory per call | 1 map allocation | Zero |
+| Lookup | O(1) after O(n) build | O(1) |
+
+**Files affected:** `known_fields.go`, `unknown_fields.go`, `context.go`, and all parser files calling `ctx.detectUnknown()` in both packages (40 call sites total).

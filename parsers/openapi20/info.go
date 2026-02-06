@@ -40,7 +40,7 @@ func parseSwaggerInfo(node *yaml.Node, ctx *ParseContext) (*openapi20models.Info
 	info.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, infoKnownFields)
+	ctx.detectUnknown(node, infoKnownFieldsSet)
 
 	return info, nil
 }

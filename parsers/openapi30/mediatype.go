@@ -2,6 +2,7 @@ package openapi30
 
 import (
 	openapi30models "openapi-parser/models/openapi30"
+
 	"gopkg.in/yaml.v3"
 )
 
@@ -51,7 +52,7 @@ func (p *mediaTypeParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30m
 	mt.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, mediaTypeKnownFields)
+	ctx.detectUnknown(node, mediaTypeKnownFieldsSet)
 
 	return mt, nil
 }

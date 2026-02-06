@@ -260,3 +260,33 @@ var knownFieldsMap = map[string][]string{
 	"SecurityScheme": securitySchemeKnownFields,
 	"Reference":      referenceKnownFields,
 }
+
+// toSet converts a slice of field names to a set for O(1) lookup.
+func toSet(fields []string) map[string]struct{} {
+	m := make(map[string]struct{}, len(fields))
+	for _, f := range fields {
+		m[f] = struct{}{}
+	}
+	return m
+}
+
+// Precomputed sets for O(1) lookup during unknown field detection.
+// These are built once at init time to avoid repeated slice-to-map conversion.
+var (
+	swaggerKnownFieldsSet        = toSet(swaggerKnownFields)
+	infoKnownFieldsSet           = toSet(infoKnownFields)
+	contactKnownFieldsSet        = toSet(contactKnownFields)
+	licenseKnownFieldsSet        = toSet(licenseKnownFields)
+	pathItemKnownFieldsSet       = toSet(pathItemKnownFields)
+	operationKnownFieldsSet      = toSet(operationKnownFields)
+	externalDocsKnownFieldsSet   = toSet(externalDocsKnownFields)
+	parameterKnownFieldsSet      = toSet(parameterKnownFields)
+	itemsKnownFieldsSet          = toSet(itemsKnownFields)
+	responseKnownFieldsSet       = toSet(responseKnownFields)
+	headerKnownFieldsSet         = toSet(headerKnownFields)
+	tagKnownFieldsSet            = toSet(tagKnownFields)
+	schemaKnownFieldsSet         = toSet(schemaKnownFields)
+	xmlKnownFieldsSet            = toSet(xmlKnownFields)
+	securitySchemeKnownFieldsSet = toSet(securitySchemeKnownFields)
+	referenceKnownFieldsSet      = toSet(referenceKnownFields)
+)

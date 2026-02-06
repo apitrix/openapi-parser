@@ -29,7 +29,7 @@ func parseInfoContact(parent *yaml.Node, ctx *ParseContext) (*openapi20models.Co
 	contact.NodeSource = cctx.nodeSource(node)
 
 	// Detect unknown fields
-	cctx.detectUnknown(node, contactKnownFields)
+	cctx.detectUnknown(node, contactKnownFieldsSet)
 
 	return contact, nil
 }

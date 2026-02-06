@@ -22,7 +22,7 @@ version: "1.0"`
 	_ = yaml.Unmarshal([]byte(yamlContent), &node)
 	docNode := node.Content[0]
 
-	knownFields := []string{"name", "version"}
+	knownFields := map[string]struct{}{"name": {}, "version": {}}
 
 	// Act
 	result := detectUnknownNodeFields(docNode, knownFields, "info")
@@ -40,7 +40,7 @@ version: "1.0"`
 	_ = yaml.Unmarshal([]byte(yamlContent), &node)
 	docNode := node.Content[0]
 
-	knownFields := []string{"name", "version"}
+	knownFields := map[string]struct{}{"name": {}, "version": {}}
 
 	// Act
 	result := detectUnknownNodeFields(docNode, knownFields, "info")
@@ -60,7 +60,7 @@ x-another: true`
 	_ = yaml.Unmarshal([]byte(yamlContent), &node)
 	docNode := node.Content[0]
 
-	knownFields := []string{"name"}
+	knownFields := map[string]struct{}{"name": {}}
 
 	// Act
 	result := detectUnknownNodeFields(docNode, knownFields, "info")
@@ -79,7 +79,7 @@ unknown2: "b"`
 	_ = yaml.Unmarshal([]byte(yamlContent), &node)
 	docNode := node.Content[0]
 
-	knownFields := []string{"name", "version"}
+	knownFields := map[string]struct{}{"name": {}, "version": {}}
 
 	// Act
 	result := detectUnknownNodeFields(docNode, knownFields, "info")
@@ -98,7 +98,7 @@ unknownField: "value"`
 	_ = yaml.Unmarshal([]byte(yamlContent), &node)
 	docNode := node.Content[0]
 
-	knownFields := []string{"name"}
+	knownFields := map[string]struct{}{"name": {}}
 
 	// Act
 	result := detectUnknownNodeFields(docNode, knownFields, "root")

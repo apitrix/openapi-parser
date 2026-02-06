@@ -2,6 +2,7 @@ package openapi30
 
 import (
 	openapi30models "openapi-parser/models/openapi30"
+
 	"gopkg.in/yaml.v3"
 )
 
@@ -37,7 +38,7 @@ func (p *oauthFlowParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30m
 	flow.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, oauthFlowKnownFields)
+	ctx.detectUnknown(node, oauthFlowKnownFieldsSet)
 
 	return flow, nil
 }

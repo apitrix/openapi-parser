@@ -2,6 +2,7 @@ package openapi30
 
 import (
 	openapi30models "openapi-parser/models/openapi30"
+
 	"gopkg.in/yaml.v3"
 )
 
@@ -37,7 +38,7 @@ func (p *exampleParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30mod
 	example.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, exampleKnownFields)
+	ctx.detectUnknown(node, exampleKnownFieldsSet)
 
 	return example, nil
 }

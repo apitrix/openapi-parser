@@ -97,8 +97,8 @@ func (ctx *ParseContext) nodeSource(node *yaml.Node) openapi20models.NodeSource 
 }
 
 // detectUnknown checks a node for unknown fields and records them.
-// knownFields is the list of valid field names for this object type.
-func (ctx *ParseContext) detectUnknown(node *yaml.Node, knownFields []string) {
+// knownFields is the precomputed set of valid field names for this object type.
+func (ctx *ParseContext) detectUnknown(node *yaml.Node, knownFields map[string]struct{}) {
 	if ctx.unknownFields == nil {
 		return
 	}

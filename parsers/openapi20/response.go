@@ -88,7 +88,7 @@ func parseResponse(node *yaml.Node, ctx *ParseContext) (*openapi20models.Respons
 	resp.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, responseKnownFields)
+	ctx.detectUnknown(node, responseKnownFieldsSet)
 
 	return resp, nil
 }

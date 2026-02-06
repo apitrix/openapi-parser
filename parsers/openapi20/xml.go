@@ -29,7 +29,7 @@ func parseXML(node *yaml.Node, ctx *ParseContext) (*openapi20models.XML, error) 
 	xml.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, xmlKnownFields)
+	ctx.detectUnknown(node, xmlKnownFieldsSet)
 
 	return xml, nil
 }

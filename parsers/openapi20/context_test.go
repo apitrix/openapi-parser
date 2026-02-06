@@ -111,7 +111,7 @@ x-extension: value
 	ctx.unknownFields = &[]UnknownField{}
 
 	// Act
-	ctx.detectUnknown(docNode, []string{"known"})
+	ctx.detectUnknown(docNode, map[string]struct{}{"known": {}})
 
 	// Assert
 	assert.Len(t, *ctx.unknownFields, 1)

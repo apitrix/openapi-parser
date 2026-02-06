@@ -28,7 +28,7 @@ func parseInfoLicense(parent *yaml.Node, ctx *ParseContext) (*openapi20models.Li
 	license.NodeSource = lctx.nodeSource(node)
 
 	// Detect unknown fields
-	lctx.detectUnknown(node, licenseKnownFields)
+	lctx.detectUnknown(node, licenseKnownFieldsSet)
 
 	return license, nil
 }

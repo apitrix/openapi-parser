@@ -326,3 +326,43 @@ var knownFieldsMap = map[string][]string{
 	"OAuthFlow":      oauthFlowKnownFields,
 	"Reference":      referenceKnownFields,
 }
+
+// toSet converts a slice of field names to a set for O(1) lookup.
+func toSet(fields []string) map[string]struct{} {
+	m := make(map[string]struct{}, len(fields))
+	for _, f := range fields {
+		m[f] = struct{}{}
+	}
+	return m
+}
+
+// Precomputed sets for O(1) lookup during unknown field detection.
+// These are built once at init time to avoid repeated slice-to-map conversion.
+var (
+	openAPIKnownFieldsSet        = toSet(openAPIKnownFields)
+	infoKnownFieldsSet           = toSet(infoKnownFields)
+	contactKnownFieldsSet        = toSet(contactKnownFields)
+	licenseKnownFieldsSet        = toSet(licenseKnownFields)
+	serverKnownFieldsSet         = toSet(serverKnownFields)
+	serverVariableKnownFieldsSet = toSet(serverVariableKnownFields)
+	componentsKnownFieldsSet     = toSet(componentsKnownFields)
+	pathItemKnownFieldsSet       = toSet(pathItemKnownFields)
+	operationKnownFieldsSet      = toSet(operationKnownFields)
+	externalDocsKnownFieldsSet   = toSet(externalDocsKnownFields)
+	parameterKnownFieldsSet      = toSet(parameterKnownFields)
+	requestBodyKnownFieldsSet    = toSet(requestBodyKnownFields)
+	mediaTypeKnownFieldsSet      = toSet(mediaTypeKnownFields)
+	encodingKnownFieldsSet       = toSet(encodingKnownFields)
+	responseKnownFieldsSet       = toSet(responseKnownFields)
+	headerKnownFieldsSet         = toSet(headerKnownFields)
+	linkKnownFieldsSet           = toSet(linkKnownFields)
+	tagKnownFieldsSet            = toSet(tagKnownFields)
+	exampleKnownFieldsSet        = toSet(exampleKnownFields)
+	schemaKnownFieldsSet         = toSet(schemaKnownFields)
+	discriminatorKnownFieldsSet  = toSet(discriminatorKnownFields)
+	xmlKnownFieldsSet            = toSet(xmlKnownFields)
+	securitySchemeKnownFieldsSet = toSet(securitySchemeKnownFields)
+	oauthFlowsKnownFieldsSet     = toSet(oauthFlowsKnownFields)
+	oauthFlowKnownFieldsSet      = toSet(oauthFlowKnownFields)
+	referenceKnownFieldsSet      = toSet(referenceKnownFields)
+)

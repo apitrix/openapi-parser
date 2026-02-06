@@ -56,7 +56,7 @@ func parseItems(node *yaml.Node, ctx *ParseContext) (*openapi20models.Items, err
 	items.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, itemsKnownFields)
+	ctx.detectUnknown(node, itemsKnownFieldsSet)
 
 	return items, nil
 }

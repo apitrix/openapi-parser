@@ -30,7 +30,7 @@ func (p *schemaParser) ParseDiscriminator(parent *yaml.Node, c *ParseContext) (*
 	disc.NodeSource = pctx.nodeSource(node)
 
 	// Detect unknown fields
-	pctx.detectUnknown(node, discriminatorKnownFields)
+	pctx.detectUnknown(node, discriminatorKnownFieldsSet)
 
 	return disc, nil
 }

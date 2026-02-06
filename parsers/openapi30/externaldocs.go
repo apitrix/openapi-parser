@@ -36,7 +36,7 @@ func (p *externalDocsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi
 	ed.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, externalDocsKnownFields)
+	ctx.detectUnknown(node, externalDocsKnownFieldsSet)
 
 	return ed, nil
 }
