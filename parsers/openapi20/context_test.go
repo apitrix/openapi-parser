@@ -23,7 +23,7 @@ func TestNewParseContext(t *testing.T) {
 	// Assert
 	assert.NotNil(t, ctx)
 	assert.Equal(t, node, ctx.Root)
-	assert.Empty(t, ctx.Path)
+	assert.Empty(t, ctx.path())
 }
 
 // --- Push ---
@@ -38,8 +38,8 @@ func TestParseContext_Push(t *testing.T) {
 	grandchild := child.push("/pets")
 
 	// Assert
-	assert.Equal(t, []string{"paths"}, child.Path)
-	assert.Equal(t, []string{"paths", "/pets"}, grandchild.Path)
+	assert.Equal(t, []string{"paths"}, child.path())
+	assert.Equal(t, []string{"paths", "/pets"}, grandchild.path())
 }
 
 // --- CurrentPath ---

@@ -9,10 +9,11 @@ import (
 )
 
 // ParseContext holds parsing state and provides utilities for error reporting
-// and reference resolution.
+// and reference resolution. Uses a stack-based path to avoid allocations.
 type ParseContext struct {
 	Root          *yaml.Node      // Document root for $ref resolution
-	Path          []string        // Current JSON path (e.g., ["paths", "/pets", "get"])
+	pathStack     *[]string       // Shared backing slice for path segments
+	depth         int             // Current depth in the path stack
 	Components    *yaml.Node      // Cached components section
 	unknownFields *[]UnknownField // Pointer to shared slice for accumulating unknown fields
 }
@@ -20,9 +21,11 @@ type ParseContext struct {
 // newParseContext creates a new ParseContext from the document root.
 func newParseContext(root *yaml.Node) *ParseContext {
 	unknown := make([]UnknownField, 0)
+	pathStack := make([]string, 0, 16) // Pre-allocate for typical depth
 	ctx := &ParseContext{
 		Root:          root,
-		Path:          []string{},
+		pathStack:     &pathStack,
+		depth:         0,
 		unknownFields: &unknown,
 	}
 
@@ -33,18 +36,31 @@ func newParseContext(root *yaml.Node) *ParseContext {
 }
 
 // Push creates a new context with the given path segment appended.
-// Implements *ParseContext interface.
+// Uses a shared backing slice to avoid allocations on each call.
 func (ctx *ParseContext) Push(segment string) *ParseContext {
-	newPath := make([]string, len(ctx.Path), len(ctx.Path)+1)
-	copy(newPath, ctx.Path)
-	newPath = append(newPath, segment)
+	stack := *ctx.pathStack
+	newDepth := ctx.depth + 1
+
+	if newDepth > len(stack) {
+		// Grow the backing slice
+		*ctx.pathStack = append(stack, segment)
+	} else {
+		// Reuse existing slot
+		stack[ctx.depth] = segment
+	}
 
 	return &ParseContext{
 		Root:          ctx.Root,
-		Path:          newPath,
+		pathStack:     ctx.pathStack,
+		depth:         newDepth,
 		Components:    ctx.Components,
 		unknownFields: ctx.unknownFields, // Share the same slice
 	}
+}
+
+// Path returns the current path as a slice.
+func (ctx *ParseContext) path() []string {
+	return (*ctx.pathStack)[:ctx.depth]
 }
 
 // push is a convenience method that returns *ParseContext for internal use.
@@ -55,7 +71,7 @@ func (ctx *ParseContext) push(segment string) *ParseContext {
 // Errorf creates a ParseError with the current path.
 // Implements *ParseContext interface.
 func (ctx *ParseContext) Errorf(format string, args ...interface{}) error {
-	return newParseError(ctx.Path, format, args...)
+	return newParseError(ctx.path(), format, args...)
 }
 
 // errorf is an alias for Errorf for internal use.
@@ -65,7 +81,7 @@ func (ctx *ParseContext) errorf(format string, args ...interface{}) error {
 
 // errorAt creates a ParseError with line/column info from a node.
 func (ctx *ParseContext) errorAt(node *yaml.Node, format string, args ...interface{}) error {
-	err := newParseError(ctx.Path, format, args...)
+	err := newParseError(ctx.path(), format, args...)
 	if node != nil {
 		err.Line = node.Line
 		err.Column = node.Column
@@ -75,7 +91,7 @@ func (ctx *ParseContext) errorAt(node *yaml.Node, format string, args ...interfa
 
 // CurrentPath returns the current path as a dot-separated string.
 func (ctx *ParseContext) CurrentPath() string {
-	return strings.Join(ctx.Path, ".")
+	return strings.Join(ctx.path(), ".")
 }
 
 // nodeSource creates a NodeSource for the given yaml.Node with full position info.
