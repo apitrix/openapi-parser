@@ -1,5 +1,7 @@
 package openapi20
 
+import "openapi-parser/parsers/internal/shared"
+
 // Known fields for each Swagger 2.0 object type.
 // These are used for detecting unknown/unrecognized fields during parsing.
 // Extensions (x-*) are always allowed and handled separately.
@@ -263,11 +265,7 @@ var knownFieldsMap = map[string][]string{
 
 // toSet converts a slice of field names to a set for O(1) lookup.
 func toSet(fields []string) map[string]struct{} {
-	m := make(map[string]struct{}, len(fields))
-	for _, f := range fields {
-		m[f] = struct{}{}
-	}
-	return m
+	return shared.ToSet(fields)
 }
 
 // Precomputed sets for O(1) lookup during unknown field detection.

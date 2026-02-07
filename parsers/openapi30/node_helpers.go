@@ -2,306 +2,111 @@ package openapi30
 
 import (
 	"iter"
-	"strconv"
+
+	"openapi-parser/parsers/internal/shared"
 
 	"gopkg.in/yaml.v3"
 )
 
-// nodeGetValue gets a child node by key from a mapping node.
-// Returns nil if not found or if node is not a mapping.
+// Thin wrappers delegating to shared.Node* functions.
+// This preserves the unexported API so all callers within the package work unchanged.
+
 func nodeGetValue(node *yaml.Node, key string) *yaml.Node {
-	if node == nil || node.Kind != yaml.MappingNode {
-		return nil
-	}
-	// MappingNode Content is [key1, val1, key2, val2, ...]
-	for i := 0; i < len(node.Content)-1; i += 2 {
-		if node.Content[i].Value == key {
-			return node.Content[i+1]
-		}
-	}
-	return nil
+	return shared.NodeGetValue(node, key)
 }
 
-// nodeGetKeyNode gets the key node itself (for position info).
 func nodeGetKeyNode(node *yaml.Node, key string) *yaml.Node {
-	if node == nil || node.Kind != yaml.MappingNode {
-		return nil
-	}
-	for i := 0; i < len(node.Content)-1; i += 2 {
-		if node.Content[i].Value == key {
-			return node.Content[i]
-		}
-	}
-	return nil
+	return shared.NodeGetKeyNode(node, key)
 }
 
-// nodeToMap converts a mapping node to iterate over key-value pairs.
-// Returns key string, value node pairs.
 func nodeToMap(node *yaml.Node) map[string]*yaml.Node {
-	if node == nil || node.Kind != yaml.MappingNode {
-		return nil
-	}
-	result := make(map[string]*yaml.Node)
-	for i := 0; i < len(node.Content)-1; i += 2 {
-		key := node.Content[i].Value
-		result[key] = node.Content[i+1]
-	}
-	return result
+	return shared.NodeToMap(node)
 }
 
-// nodeKeys returns all keys in a mapping node.
 func nodeKeys(node *yaml.Node) []string {
-	if node == nil || node.Kind != yaml.MappingNode {
-		return nil
-	}
-	keys := make([]string, 0, len(node.Content)/2)
-	for i := 0; i < len(node.Content)-1; i += 2 {
-		keys = append(keys, node.Content[i].Value)
-	}
-	return keys
+	return shared.NodeKeys(node)
 }
 
-// nodeMapPairs iterates over key-value pairs in a mapping node (single-pass).
-// Returns a range-over-func iterator for use with Go 1.23+ range syntax.
 func nodeMapPairs(node *yaml.Node) iter.Seq2[string, *yaml.Node] {
-	return func(yield func(string, *yaml.Node) bool) {
-		if node == nil || node.Kind != yaml.MappingNode {
-			return
-		}
-		for i := 0; i < len(node.Content)-1; i += 2 {
-			if !yield(node.Content[i].Value, node.Content[i+1]) {
-				return
-			}
-		}
-	}
+	return shared.NodeMapPairs(node)
 }
 
-// nodeToSlice converts a sequence node to a slice of nodes.
 func nodeToSlice(node *yaml.Node) []*yaml.Node {
-	if node == nil || node.Kind != yaml.SequenceNode {
-		return nil
-	}
-	return node.Content
+	return shared.NodeToSlice(node)
 }
 
-// nodeGetString gets a string value from a mapping node by key.
 func nodeGetString(node *yaml.Node, key string) string {
-	valNode := nodeGetValue(node, key)
-	if valNode == nil {
-		return ""
-	}
-	return valNode.Value
+	return shared.NodeGetString(node, key)
 }
 
-// nodeGetBool gets a bool value from a mapping node by key.
 func nodeGetBool(node *yaml.Node, key string) bool {
-	valNode := nodeGetValue(node, key)
-	if valNode == nil {
-		return false
-	}
-	// Handle various bool representations
-	switch valNode.Value {
-	case "true", "True", "TRUE", "yes", "Yes", "YES", "on", "On", "ON":
-		return true
-	default:
-		return false
-	}
+	return shared.NodeGetBool(node, key)
 }
 
-// nodeGetBoolPtr gets a *bool value from a mapping node by key.
 func nodeGetBoolPtr(node *yaml.Node, key string) *bool {
-	valNode := nodeGetValue(node, key)
-	if valNode == nil {
-		return nil
-	}
-	// Handle various bool representations
-	var b bool
-	switch valNode.Value {
-	case "true", "True", "TRUE", "yes", "Yes", "YES", "on", "On", "ON":
-		b = true
-	default:
-		b = false
-	}
-	return &b
+	return shared.NodeGetBoolPtr(node, key)
 }
 
-// nodeGetInt gets an int value from a mapping node by key.
 func nodeGetInt(node *yaml.Node, key string) int {
-	valNode := nodeGetValue(node, key)
-	if valNode == nil {
-		return 0
-	}
-	i, _ := strconv.Atoi(valNode.Value)
-	return i
+	return shared.NodeGetInt(node, key)
 }
 
-// nodeGetFloat64 gets a float64 value from a mapping node by key.
 func nodeGetFloat64(node *yaml.Node, key string) float64 {
-	valNode := nodeGetValue(node, key)
-	if valNode == nil {
-		return 0
-	}
-	f, _ := strconv.ParseFloat(valNode.Value, 64)
-	return f
+	return shared.NodeGetFloat64(node, key)
 }
 
-// nodeGetFloat64Ptr gets a *float64 value from a mapping node by key.
 func nodeGetFloat64Ptr(node *yaml.Node, key string) *float64 {
-	valNode := nodeGetValue(node, key)
-	if valNode == nil {
-		return nil
-	}
-	f, err := strconv.ParseFloat(valNode.Value, 64)
-	if err != nil {
-		return nil
-	}
-	return &f
+	return shared.NodeGetFloat64Ptr(node, key)
 }
 
-// nodeGetIntPtr gets a *int value from a mapping node by key.
 func nodeGetIntPtr(node *yaml.Node, key string) *int {
-	valNode := nodeGetValue(node, key)
-	if valNode == nil {
-		return nil
-	}
-	i, err := strconv.Atoi(valNode.Value)
-	if err != nil {
-		return nil
-	}
-	return &i
+	return shared.NodeGetIntPtr(node, key)
 }
 
-// nodeGetUint64Ptr gets a *uint64 value from a mapping node by key.
 func nodeGetUint64Ptr(node *yaml.Node, key string) *uint64 {
-	valNode := nodeGetValue(node, key)
-	if valNode == nil {
-		return nil
-	}
-	u, err := strconv.ParseUint(valNode.Value, 10, 64)
-	if err != nil {
-		return nil
-	}
-	return &u
+	return shared.NodeGetUint64Ptr(node, key)
 }
 
-// nodeGetStringSlice gets a string slice from a mapping node by key.
 func nodeGetStringSlice(node *yaml.Node, key string) []string {
-	valNode := nodeGetValue(node, key)
-	if valNode == nil || valNode.Kind != yaml.SequenceNode {
-		return nil
-	}
-	result := make([]string, 0, len(valNode.Content))
-	for _, item := range valNode.Content {
-		result = append(result, item.Value)
-	}
-	return result
+	return shared.NodeGetStringSlice(node, key)
 }
 
-// nodeGetStringMap gets a map[string]string from a mapping node by key.
 func nodeGetStringMap(node *yaml.Node, key string) map[string]string {
-	valNode := nodeGetValue(node, key)
-	if valNode == nil || valNode.Kind != yaml.MappingNode {
-		return nil
-	}
-	result := make(map[string]string)
-	for i := 0; i < len(valNode.Content)-1; i += 2 {
-		k := valNode.Content[i].Value
-		v := valNode.Content[i+1].Value
-		result[k] = v
-	}
-	return result
+	return shared.NodeGetStringMap(node, key)
 }
 
-// nodeGetAny gets the raw interface{} value by decoding the node.
 func nodeGetAny(node *yaml.Node, key string) interface{} {
-	valNode := nodeGetValue(node, key)
-	if valNode == nil {
-		return nil
-	}
-	return nodeToInterface(valNode)
+	return shared.NodeGetAny(node, key)
 }
 
-// nodeToInterface converts a yaml.Node to interface{} (for Raw storage).
 func nodeToInterface(node *yaml.Node) interface{} {
-	if node == nil {
-		return nil
-	}
-	switch node.Kind {
-	case yaml.ScalarNode:
-		// Try to decode as proper type
-		var v interface{}
-		_ = node.Decode(&v)
-		return v
-	case yaml.SequenceNode:
-		result := make([]interface{}, len(node.Content))
-		for i, child := range node.Content {
-			result[i] = nodeToInterface(child)
-		}
-		return result
-	case yaml.MappingNode:
-		result := make(map[string]interface{})
-		for i := 0; i < len(node.Content)-1; i += 2 {
-			key := node.Content[i].Value
-			result[key] = nodeToInterface(node.Content[i+1])
-		}
-		return result
-	case yaml.DocumentNode:
-		if len(node.Content) > 0 {
-			return nodeToInterface(node.Content[0])
-		}
-		return nil
-	case yaml.AliasNode:
-		return nodeToInterface(node.Alias)
-	default:
-		return nil
-	}
+	return shared.NodeToInterface(node)
 }
 
-// nodeIsMapping checks if a node is a mapping node.
 func nodeIsMapping(node *yaml.Node) bool {
-	return node != nil && node.Kind == yaml.MappingNode
+	return shared.NodeIsMapping(node)
 }
 
-// nodeIsSequence checks if a node is a sequence node.
 func nodeIsSequence(node *yaml.Node) bool {
-	return node != nil && node.Kind == yaml.SequenceNode
+	return shared.NodeIsSequence(node)
 }
 
-// nodeIsScalar checks if a node is a scalar node.
 func nodeIsScalar(node *yaml.Node) bool {
-	return node != nil && node.Kind == yaml.ScalarNode
+	return shared.NodeIsScalar(node)
 }
 
-// parseNodeExtensions extracts extension fields (x-*) from a yaml.Node.
 func parseNodeExtensions(node *yaml.Node) map[string]interface{} {
-	if node == nil || node.Kind != yaml.MappingNode {
-		return nil
-	}
-
-	var extensions map[string]interface{}
-	for i := 0; i < len(node.Content)-1; i += 2 {
-		key := node.Content[i].Value
-		if len(key) > 2 && key[0] == 'x' && key[1] == '-' {
-			if extensions == nil {
-				extensions = make(map[string]interface{})
-			}
-			extensions[key] = nodeToInterface(node.Content[i+1])
-		}
-	}
-	return extensions
+	return shared.ParseNodeExtensions(node)
 }
 
-// nodeHasKey checks if a key exists in a mapping node.
 func nodeHasKey(node *yaml.Node, key string) bool {
-	return nodeGetValue(node, key) != nil
+	return shared.NodeHasKey(node, key)
 }
 
-// nodeHasRef checks if the node contains a $ref key.
 func nodeHasRef(node *yaml.Node) bool {
-	return nodeHasKey(node, "$ref")
+	return shared.NodeHasRef(node)
 }
 
-// nodeGetRef retrieves the $ref value from a node, returning empty string if not found.
 func nodeGetRef(node *yaml.Node) string {
-	return nodeGetString(node, "$ref")
+	return shared.NodeGetRef(node)
 }

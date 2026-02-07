@@ -12,8 +12,9 @@ This is a Go-based OpenAPI parser library that handles parsing and validation of
 
 ## Testing
 - Write tests for all new functionality
+- Run tests after every change
 - Follow the existing test patterns in `*_test.go` files.
-- All `.go` files should have a corresponding `.test.go` file.
+- All `.go` files should have a corresponding `_test.go` file.
 - Use table-driven tests where appropriate
 - Ensure schema conformance tests pass after model changes
 - Use Arrange Act Assert(AAA) pattern for tests

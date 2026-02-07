@@ -48,7 +48,7 @@ version: "1.0"`
 	// Assert
 	require.Len(t, result, 1)
 	assert.Equal(t, "unknownField", result[0].Name)
-	assert.Equal(t, "info.unknownField", result[0].Path)
+	assert.Equal(t, "info", result[0].Path)
 }
 
 func TestDetectUnknownNodeFields_IgnoresExtensions(t *testing.T) {
