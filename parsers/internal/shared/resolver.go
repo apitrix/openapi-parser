@@ -2,16 +2,19 @@ package shared
 
 import (
 	"fmt"
+	"io"
+	"net/http"
 	"net/url"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 )
 
-// RefResolver resolves $ref references, both local (JSON pointer) and external (file).
-// It caches loaded files and detects circular references.
+// RefResolver resolves $ref references — local (JSON pointer), external (file), and remote (HTTP/HTTPS URL).
+// It caches loaded documents and detects circular references.
 type RefResolver struct {
 	// BasePath is the directory of the root document, used to resolve relative file paths.
 	BasePath string
@@ -23,13 +26,20 @@ type RefResolver struct {
 	// Defaults to afero.OsFs if nil.
 	Fs afero.Fs
 
-	// fileCache caches loaded external files to avoid re-reading.
+	// HTTPClient is the HTTP client used for fetching remote $ref URLs.
+	// Defaults to a client with a 30-second timeout.
+	HTTPClient *http.Client
+
+	// fileCache caches loaded external documents (files and URLs) to avoid re-fetching.
 	fileCache map[string]*yaml.Node
 
 	// visiting tracks refs currently being resolved for cycle detection.
 	// key is the canonical ref string (e.g. "schemas/pet.yaml#/Pet").
 	visiting map[string]bool
 }
+
+// defaultHTTPClient is the default HTTP client with a 30-second timeout.
+var defaultHTTPClient = &http.Client{Timeout: 30 * time.Second}
 
 // NewRefResolver creates a new RefResolver using the real OS filesystem.
 // basePath is the directory containing the root document.
@@ -42,11 +52,12 @@ func NewRefResolver(basePath string, root *yaml.Node) *RefResolver {
 // This is useful for testing with in-memory filesystems.
 func NewRefResolverWithFs(basePath string, root *yaml.Node, fs afero.Fs) *RefResolver {
 	return &RefResolver{
-		BasePath:  basePath,
-		Root:      root,
-		Fs:        fs,
-		fileCache: make(map[string]*yaml.Node),
-		visiting:  make(map[string]bool),
+		BasePath:   basePath,
+		Root:       root,
+		Fs:         fs,
+		HTTPClient: defaultHTTPClient,
+		fileCache:  make(map[string]*yaml.Node),
+		visiting:   make(map[string]bool),
 	}
 }
 
@@ -64,7 +75,7 @@ func SplitRef(ref string) (filePath, pointer string) {
 	return ref, ""
 }
 
-// IsExternalRef returns true if the ref points to an external file.
+// IsExternalRef returns true if the ref points to an external file or URL.
 func IsExternalRef(ref string) bool {
 	filePath, _ := SplitRef(ref)
 	return filePath != ""
@@ -73,6 +84,12 @@ func IsExternalRef(ref string) bool {
 // IsLocalRef returns true if the ref is a local JSON pointer (starts with #).
 func IsLocalRef(ref string) bool {
 	return strings.HasPrefix(ref, "#")
+}
+
+// IsRemoteRef returns true if the ref points to a remote URL (http:// or https://).
+func IsRemoteRef(ref string) bool {
+	filePath, _ := SplitRef(ref)
+	return strings.HasPrefix(filePath, "http://") || strings.HasPrefix(filePath, "https://")
 }
 
 // ResolveResult contains the result of resolving a $ref.
@@ -105,6 +122,13 @@ func (r *RefResolver) Resolve(ref string) (*ResolveResult, error) {
 	if filePath == "" {
 		// Local reference — resolve within root document
 		targetRoot = r.Root
+	} else if isRemoteURL(filePath) {
+		// Remote URL reference — fetch and cache
+		node, err := r.loadURL(filePath)
+		if err != nil {
+			return nil, fmt.Errorf("failed to resolve remote ref %q: %w", ref, err)
+		}
+		targetRoot = node
 	} else {
 		// External file reference — load and cache the file
 		node, err := r.loadFile(filePath)
@@ -233,6 +257,14 @@ func (r *RefResolver) canonicalize(ref string) string {
 		return "#" + pointer
 	}
 
+	// Remote URLs are already globally unique — use as-is
+	if isRemoteURL(filePath) {
+		if pointer != "" {
+			return filePath + "#" + pointer
+		}
+		return filePath
+	}
+
 	// Resolve to absolute path for consistent keys
 	absPath := filePath
 	if !filepath.IsAbs(filePath) {
@@ -244,6 +276,53 @@ func (r *RefResolver) canonicalize(ref string) string {
 		return absPath + "#" + pointer
 	}
 	return absPath
+}
+
+// loadURL fetches and caches a remote YAML/JSON document from an HTTP/HTTPS URL.
+func (r *RefResolver) loadURL(rawURL string) (*yaml.Node, error) {
+	// Check cache
+	if cached, ok := r.fileCache[rawURL]; ok {
+		return cached, nil
+	}
+
+	resp, err := r.HTTPClient.Get(rawURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch URL %q: %w", rawURL, err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to fetch URL %q: HTTP %d", rawURL, resp.StatusCode)
+	}
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response body from %q: %w", rawURL, err)
+	}
+
+	// Parse YAML
+	var rootNode yaml.Node
+	if err := yaml.Unmarshal(data, &rootNode); err != nil {
+		return nil, fmt.Errorf("failed to parse response from %q: %w", rawURL, err)
+	}
+
+	// Unwrap document node
+	var docNode *yaml.Node
+	if rootNode.Kind == yaml.DocumentNode && len(rootNode.Content) > 0 {
+		docNode = rootNode.Content[0]
+	} else {
+		docNode = &rootNode
+	}
+
+	// Cache the result
+	r.fileCache[rawURL] = docNode
+
+	return docNode, nil
+}
+
+// isRemoteURL returns true if the path starts with http:// or https://.
+func isRemoteURL(path string) bool {
+	return strings.HasPrefix(path, "http://") || strings.HasPrefix(path, "https://")
 }
 
 // unescapeJSONPointer unescapes a JSON pointer token per RFC 6901.

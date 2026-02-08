@@ -1,6 +1,8 @@
 package shared
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/spf13/afero"
@@ -43,9 +45,22 @@ func TestSplitRef_EmptyRef(t *testing.T) {
 	assert.Equal(t, "", pointer)
 }
 
+func TestSplitRef_RemoteURL(t *testing.T) {
+	file, pointer := SplitRef("https://example.com/schemas/pet.yaml#/definitions/Pet")
+	assert.Equal(t, "https://example.com/schemas/pet.yaml", file)
+	assert.Equal(t, "/definitions/Pet", pointer)
+}
+
+func TestSplitRef_RemoteURLNoPointer(t *testing.T) {
+	file, pointer := SplitRef("https://example.com/schemas/pet.yaml")
+	assert.Equal(t, "https://example.com/schemas/pet.yaml", file)
+	assert.Equal(t, "", pointer)
+}
+
 func TestIsExternalRef(t *testing.T) {
 	assert.True(t, IsExternalRef("./schemas/pet.yaml"))
 	assert.True(t, IsExternalRef("./common.yaml#/definitions/Error"))
+	assert.True(t, IsExternalRef("https://example.com/pet.yaml"))
 	assert.False(t, IsExternalRef("#/components/schemas/Pet"))
 	assert.False(t, IsExternalRef(""))
 }
@@ -53,7 +68,17 @@ func TestIsExternalRef(t *testing.T) {
 func TestIsLocalRef(t *testing.T) {
 	assert.True(t, IsLocalRef("#/components/schemas/Pet"))
 	assert.False(t, IsLocalRef("./schemas/pet.yaml"))
+	assert.False(t, IsLocalRef("https://example.com/pet.yaml"))
 	assert.False(t, IsLocalRef(""))
+}
+
+func TestIsRemoteRef(t *testing.T) {
+	assert.True(t, IsRemoteRef("https://example.com/pet.yaml"))
+	assert.True(t, IsRemoteRef("http://example.com/pet.yaml"))
+	assert.True(t, IsRemoteRef("https://example.com/common.yaml#/definitions/Error"))
+	assert.False(t, IsRemoteRef("./schemas/pet.yaml"))
+	assert.False(t, IsRemoteRef("#/components/schemas/Pet"))
+	assert.False(t, IsRemoteRef(""))
 }
 
 // =============================================================================
@@ -254,4 +279,115 @@ func TestRefResolver_MissingPointer(t *testing.T) {
 	_, err := resolver.Resolve("#/nonexistent/path")
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "not found")
+}
+
+// =============================================================================
+// Remote ref tests with httptest
+// =============================================================================
+
+func TestRefResolver_RemoteRef(t *testing.T) {
+	// Arrange — start a test server serving a YAML schema
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/yaml")
+		w.Write([]byte("type: object\nproperties:\n  name:\n    type: string\n"))
+	}))
+	defer srv.Close()
+
+	root := parseYAML(t, `type: object`)
+	resolver := NewRefResolverWithFs(".", root, afero.NewMemMapFs())
+	resolver.HTTPClient = srv.Client()
+
+	// Act
+	result, err := resolver.Resolve(srv.URL + "/schemas/pet.yaml")
+
+	// Assert
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.False(t, result.Circular)
+	assert.Equal(t, yaml.MappingNode, result.Node.Kind)
+}
+
+func TestRefResolver_RemoteRefWithPointer(t *testing.T) {
+	// Arrange
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/yaml")
+		w.Write([]byte("definitions:\n  Error:\n    type: object\n    properties:\n      message:\n        type: string\n"))
+	}))
+	defer srv.Close()
+
+	root := parseYAML(t, `type: object`)
+	resolver := NewRefResolverWithFs(".", root, afero.NewMemMapFs())
+	resolver.HTTPClient = srv.Client()
+
+	// Act
+	result, err := resolver.Resolve(srv.URL + "/common.yaml#/definitions/Error")
+
+	// Assert
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Equal(t, yaml.MappingNode, result.Node.Kind)
+}
+
+func TestRefResolver_RemoteRefCaching(t *testing.T) {
+	// Arrange — count requests to verify caching
+	requestCount := 0
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requestCount++
+		w.Write([]byte("type: string"))
+	}))
+	defer srv.Close()
+
+	root := parseYAML(t, `type: object`)
+	resolver := NewRefResolverWithFs(".", root, afero.NewMemMapFs())
+	resolver.HTTPClient = srv.Client()
+
+	refURL := srv.URL + "/schema.yaml"
+
+	// Act — resolve same URL twice
+	r1, err := resolver.Resolve(refURL)
+	require.NoError(t, err)
+	r2, err := resolver.Resolve(refURL)
+	require.NoError(t, err)
+
+	// Assert — only one HTTP request was made
+	assert.Equal(t, 1, requestCount, "second resolve should use cache")
+	assert.Equal(t, r1.Node, r2.Node)
+}
+
+func TestRefResolver_RemoteRefNotFound(t *testing.T) {
+	// Arrange — return 404
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.NotFound(w, r)
+	}))
+	defer srv.Close()
+
+	root := parseYAML(t, `type: object`)
+	resolver := NewRefResolverWithFs(".", root, afero.NewMemMapFs())
+	resolver.HTTPClient = srv.Client()
+
+	// Act
+	_, err := resolver.Resolve(srv.URL + "/missing.yaml")
+
+	// Assert
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "HTTP 404")
+}
+
+func TestRefResolver_RemoteRefInvalidYAML(t *testing.T) {
+	// Arrange — return invalid YAML
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("{{invalid yaml:::"))
+	}))
+	defer srv.Close()
+
+	root := parseYAML(t, `type: object`)
+	resolver := NewRefResolverWithFs(".", root, afero.NewMemMapFs())
+	resolver.HTTPClient = srv.Client()
+
+	// Act
+	_, err := resolver.Resolve(srv.URL + "/bad.yaml")
+
+	// Assert
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "failed to parse response")
 }
