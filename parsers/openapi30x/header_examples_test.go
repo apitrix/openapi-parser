@@ -1,0 +1,34 @@
+package openapi30x
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestParseHeaderExamples(t *testing.T) {
+	yaml := `openapi: "3.0.3"
+info:
+  title: "Test"
+  version: "1.0"
+paths:
+  /pets:
+    get:
+      responses:
+        "200":
+          description: "OK"
+          headers:
+            X-Custom:
+              schema:
+                type: string
+              examples:
+                ex1:
+                  value: "example"
+`
+	doc, err := Parse([]byte(yaml))
+	require.NoError(t, err)
+	header := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Custom"].Value
+	require.NotNil(t, header.Examples)
+	assert.Contains(t, header.Examples, "ex1")
+}
