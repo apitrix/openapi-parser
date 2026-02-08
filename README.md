@@ -70,8 +70,7 @@ Each parser package (`openapi20`, `openapi30x`, `openapi31x`) exposes the same s
 | `ParseReader(r io.Reader)` | Parse from an io.Reader |
 | `ParseWithUnknownFields(data []byte)` | Parse and detect unknown fields |
 | `ParseReaderWithUnknownFields(r io.Reader)` | Parse from reader with unknown field detection |
-| `ParseFile(filePath string)` | Parse from file with full `$ref` resolution |
-| `ParseURL(rawURL string)` | Parse from HTTP/HTTPS URL with full `$ref` resolution |
+| `ParseFile(pathOrURL string)` | Parse from file path or URL with full `$ref` resolution |
 
 ### Detecting Unknown Fields
 
