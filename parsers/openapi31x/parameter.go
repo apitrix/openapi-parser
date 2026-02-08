@@ -43,19 +43,19 @@ func (p *parameterParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31m
 	// Complex properties - delegated to dedicated files
 	param.Schema, err = p.ParseSchema(node, ctx)
 	if err != nil {
-		return nil, err
+		param.Trix.Errors = append(param.Trix.Errors, toParseError(err))
 	}
 
 	param.Example = p.ParseExample(node)
 
 	param.Examples, err = p.ParseExamples(node, ctx)
 	if err != nil {
-		return nil, err
+		param.Trix.Errors = append(param.Trix.Errors, toParseError(err))
 	}
 
 	param.Content, err = p.ParseContent(node, ctx)
 	if err != nil {
-		return nil, err
+		param.Trix.Errors = append(param.Trix.Errors, toParseError(err))
 	}
 
 	param.VendorExtensions = parseNodeExtensions(node)

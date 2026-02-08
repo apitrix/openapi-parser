@@ -38,7 +38,7 @@ func (p *encodingParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30mo
 	// Complex properties - delegated to dedicated files
 	enc.Headers, err = p.ParseHeaders(node, ctx)
 	if err != nil {
-		return nil, err
+		enc.Trix.Errors = append(enc.Trix.Errors, toParseError(err))
 	}
 
 	enc.VendorExtensions = parseNodeExtensions(node)

@@ -35,17 +35,17 @@ func (p *mediaTypeParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30m
 	// Complex properties - delegated to dedicated files
 	mt.Schema, err = p.ParseSchema(node, ctx)
 	if err != nil {
-		return nil, err
+		mt.Trix.Errors = append(mt.Trix.Errors, toParseError(err))
 	}
 
 	mt.Examples, err = p.ParseExamples(node, ctx)
 	if err != nil {
-		return nil, err
+		mt.Trix.Errors = append(mt.Trix.Errors, toParseError(err))
 	}
 
 	mt.Encoding, err = p.ParseEncoding(node, ctx)
 	if err != nil {
-		return nil, err
+		mt.Trix.Errors = append(mt.Trix.Errors, toParseError(err))
 	}
 
 	mt.VendorExtensions = parseNodeExtensions(node)

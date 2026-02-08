@@ -53,7 +53,7 @@ func (p *tagParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31models.
 	// Complex properties - delegated to dedicated files
 	tag.ExternalDocs, err = p.ParseExternalDocs(node, ctx)
 	if err != nil {
-		return nil, err
+		tag.Trix.Errors = append(tag.Trix.Errors, toParseError(err))
 	}
 
 	tag.VendorExtensions = parseNodeExtensions(node)

@@ -69,38 +69,38 @@ func (p *schemaParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mode
 	// Complex properties - delegated to dedicated files
 	schema.AllOf, err = p.ParseAllOf(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 
 	schema.OneOf, err = p.ParseOneOf(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 
 	schema.AnyOf, err = p.ParseAnyOf(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 
 	schema.Not, err = p.ParseNot(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 
 	schema.Items, err = p.ParseItems(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 
 	schema.Properties, err = p.ParseProperties(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 
 	// Additional properties (special handling for bool vs schema)
 	addPropsResult, err := p.ParseAdditionalProperties(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 	if addPropsResult != nil {
 		schema.AdditionalPropertiesAllowed = addPropsResult.Allowed
@@ -109,58 +109,58 @@ func (p *schemaParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mode
 
 	schema.Discriminator, err = p.ParseDiscriminator(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 
 	schema.XML, err = p.ParseXML(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 
 	schema.ExternalDocs, err = p.ParseExternalDocs(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 
 	// JSON Schema 2020-12 new complex properties
 	schema.If, err = p.ParseIf(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 
 	schema.Then, err = p.ParseThen(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 
 	schema.Else, err = p.ParseElse(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 
 	schema.PrefixItems, err = p.ParsePrefixItems(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 
 	schema.DependentSchemas, err = p.ParseDependentSchemas(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 
 	schema.ContentSchema, err = p.ParseContentSchema(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 
 	schema.UnevaluatedItems, err = p.ParseUnevaluatedItems(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 
 	schema.UnevaluatedProperties, err = p.ParseUnevaluatedProperties(node, ctx)
 	if err != nil {
-		return nil, err
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 	}
 
 	// Parse extensions

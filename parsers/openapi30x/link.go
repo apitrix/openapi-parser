@@ -38,12 +38,12 @@ func (p *linkParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models
 	// Complex properties - delegated to dedicated files
 	link.Parameters, err = p.ParseParameters(node, ctx)
 	if err != nil {
-		return nil, err
+		link.Trix.Errors = append(link.Trix.Errors, toParseError(err))
 	}
 
 	link.Server, err = p.ParseServer(node, ctx)
 	if err != nil {
-		return nil, err
+		link.Trix.Errors = append(link.Trix.Errors, toParseError(err))
 	}
 
 	link.VendorExtensions = parseNodeExtensions(node)

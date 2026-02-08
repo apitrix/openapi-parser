@@ -166,10 +166,12 @@ func TestParseMissingInfo(t *testing.T) {
 	data := []byte(`{"openapi": "3.0.0"}`)
 
 	// Act
-	_, err := Parse(data)
+	doc, err := Parse(data)
 
-	// Assert
-	assert.Error(t, err)
+	// Assert — info errors are now collected on doc.Trix.Errors, not returned
+	require.NoError(t, err)
+	require.NotNil(t, doc)
+	assert.NotEmpty(t, doc.Trix.Errors, "missing info should produce a Trix error")
 }
 
 func TestParseLineColumnNumbers(t *testing.T) {

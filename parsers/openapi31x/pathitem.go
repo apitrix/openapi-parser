@@ -28,53 +28,53 @@ func parseOpenAPIPathsPathItem(node *yaml.Node, ctx *ParseContext) (*openapi31mo
 	// HTTP method operations - complex but handled inline since same pattern
 	pathItem.Get, err = parseOpenAPIPathsPathItemOperation(node, "get", ctx)
 	if err != nil {
-		return nil, err
+		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
 
 	pathItem.Put, err = parseOpenAPIPathsPathItemOperation(node, "put", ctx)
 	if err != nil {
-		return nil, err
+		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
 
 	pathItem.Post, err = parseOpenAPIPathsPathItemOperation(node, "post", ctx)
 	if err != nil {
-		return nil, err
+		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
 
 	pathItem.Delete, err = parseOpenAPIPathsPathItemOperation(node, "delete", ctx)
 	if err != nil {
-		return nil, err
+		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
 
 	pathItem.Options, err = parseOpenAPIPathsPathItemOperation(node, "options", ctx)
 	if err != nil {
-		return nil, err
+		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
 
 	pathItem.Head, err = parseOpenAPIPathsPathItemOperation(node, "head", ctx)
 	if err != nil {
-		return nil, err
+		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
 
 	pathItem.Patch, err = parseOpenAPIPathsPathItemOperation(node, "patch", ctx)
 	if err != nil {
-		return nil, err
+		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
 
 	pathItem.Trace, err = parseOpenAPIPathsPathItemOperation(node, "trace", ctx)
 	if err != nil {
-		return nil, err
+		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
 
 	// Complex properties - delegated to dedicated files
 	pathItem.Servers, err = parsePathItemServers(node, ctx)
 	if err != nil {
-		return nil, err
+		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
 
 	pathItem.Parameters, err = parsePathItemParameters(node, ctx)
 	if err != nil {
-		return nil, err
+		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
 
 	pathItem.VendorExtensions = parseNodeExtensions(node)

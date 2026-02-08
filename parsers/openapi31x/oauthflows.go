@@ -32,22 +32,22 @@ func (p *oauthFlowsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31
 	// All properties are complex (nested OAuthFlow objects)
 	flows.Implicit, err = p.ParseImplicit(node, ctx)
 	if err != nil {
-		return nil, err
+		flows.Trix.Errors = append(flows.Trix.Errors, toParseError(err))
 	}
 
 	flows.Password, err = p.ParsePassword(node, ctx)
 	if err != nil {
-		return nil, err
+		flows.Trix.Errors = append(flows.Trix.Errors, toParseError(err))
 	}
 
 	flows.ClientCredentials, err = p.ParseClientCredentials(node, ctx)
 	if err != nil {
-		return nil, err
+		flows.Trix.Errors = append(flows.Trix.Errors, toParseError(err))
 	}
 
 	flows.AuthorizationCode, err = p.ParseAuthorizationCode(node, ctx)
 	if err != nil {
-		return nil, err
+		flows.Trix.Errors = append(flows.Trix.Errors, toParseError(err))
 	}
 
 	flows.VendorExtensions = parseNodeExtensions(node)

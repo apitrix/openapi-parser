@@ -30,7 +30,7 @@ func parseParameter(node *yaml.Node, ctx *ParseContext) (*openapi20models.Parame
 	if schemaNode := nodeGetValue(node, "schema"); schemaNode != nil {
 		param.Schema, err = parseSchemaRef(schemaNode, ctx.push("schema"))
 		if err != nil {
-			return nil, err
+			param.Trix.Errors = append(param.Trix.Errors, toParseError(err))
 		}
 	}
 
@@ -63,7 +63,7 @@ func parseParameter(node *yaml.Node, ctx *ParseContext) (*openapi20models.Parame
 	if itemsNode := nodeGetValue(node, "items"); itemsNode != nil {
 		param.Items, err = parseItems(itemsNode, ctx.push("items"))
 		if err != nil {
-			return nil, err
+			param.Trix.Errors = append(param.Trix.Errors, toParseError(err))
 		}
 	}
 

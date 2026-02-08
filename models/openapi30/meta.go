@@ -13,11 +13,18 @@ type NodeSource struct {
 	Raw   interface{} `json:"-" yaml:"-"` // Raw parsed data (map/slice/scalar)
 }
 
+// ParseError represents a parsing error associated with a specific node.
+type ParseError struct {
+	Message string   `json:"-" yaml:"-"` // Human-readable error message
+	Path    []string `json:"-" yaml:"-"` // JSON path where the error occurred
+}
+
 // Trix contains all library-level metadata and functionality.
 // Everything under Trix is provided by the apitrix library,
 // not part of the OpenAPI specification itself.
 type Trix struct {
-	Source NodeSource `json:"-" yaml:"-"` // Source location info
+	Source NodeSource   `json:"-" yaml:"-"` // Source location info
+	Errors []ParseError `json:"-" yaml:"-"` // Parsing errors attached to this node
 }
 
 // Node is embedded in all v30 types to provide vendor extensions and library metadata.

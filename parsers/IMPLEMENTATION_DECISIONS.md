@@ -15,18 +15,55 @@ type Node struct {
 }
 
 type Trix struct {
-    Source NodeSource `json:"-" yaml:"-"` // line/column, raw data
+    Source NodeSource   `json:"-" yaml:"-"` // line/column, raw data
+    Errors []ParseError `json:"-" yaml:"-"` // recoverable parsing errors
 }
 ```
 
 - **`VendorExtensions`** — Holds `x-*` extension fields defined by the user's spec. These are part of the OpenAPI standard but not part of any specific object schema, so they live on `Node` rather than on each struct.
-- **`Trix`** — Named after the library (apitrix). Contains all library-provided metadata and functionality. Currently holds `Source` (line/column numbers and raw parsed data). Future capabilities (validation, conversion, parent traversal) will be added here.
+- **`Trix`** — Named after the library (apitrix). Contains all library-provided metadata and functionality. Holds `Source` (line/column numbers and raw parsed data) and `Errors` (recoverable parsing errors encountered while parsing this node's children). Future capabilities (validation, conversion, parent traversal) will be added here.
 
 **Benefits:**
 - A developer sees `schema.Title` (spec) vs. `schema.Trix.Source.Start.Line` (library) — instantly clear which is which
 - Adding new library features only expands `Trix`, never the model struct itself
 - All `Trix` fields are `json:"-"`, so serialization stays clean
 - Each OpenAPI version (v2.0, v3.0, v3.1) has its own `Trix` that can diverge as needed
+
+### 1b. Error Collection on Nodes
+
+**Problem:** A "fail-fast" parser returns on the first error, forcing users to fix one issue at a time. For linting, IDE support, and batch validation, it's better to surface all issues at once.
+
+**Decision:** Recoverable errors encountered while parsing a node's children are **collected on that node's `Trix.Errors`** instead of causing the parser to return early:
+
+```go
+// Before (fail-fast)
+op.Responses, err = parseResponses(node, ctx)
+if err != nil {
+    return nil, err
+}
+
+// After (error collection)
+op.Responses, err = parseResponses(node, ctx)
+if err != nil {
+    op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
+}
+```
+
+`Parse()` always returns a (possibly partial) document. Errors are accessible per-node:
+
+```go
+doc, err := openapi30x.Parse(data)
+for _, e := range doc.Trix.Errors {
+    log.Printf("root-level error: %s", e.Message)
+}
+for _, e := range doc.Info.Trix.Errors {
+    log.Printf("info error: %s", e.Message)
+}
+```
+
+**Fatal errors** that prevent *any* parsing still return immediately:
+- Version validation (`openapi`/`swagger` field missing or unsupported)
+- Malformed YAML/JSON
 
 ### 2. Simple Properties Inline
 Simple scalar fields are parsed directly in the parent parser:

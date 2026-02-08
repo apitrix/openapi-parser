@@ -34,37 +34,37 @@ func parseOpenAPIPathsPathItemOperation(parent *yaml.Node, method string, ctx *P
 	// Complex properties - delegated to dedicated files
 	op.ExternalDocs, err = parseOperationExternalDocs(node, opCtx)
 	if err != nil {
-		return nil, err
+		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 	}
 
 	op.Parameters, err = parseOperationParameters(node, opCtx)
 	if err != nil {
-		return nil, err
+		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 	}
 
 	op.RequestBody, err = parseOperationRequestBody(node, opCtx)
 	if err != nil {
-		return nil, err
+		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 	}
 
 	op.Responses, err = parseOperationResponses(node, opCtx)
 	if err != nil {
-		return nil, err
+		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 	}
 
 	op.Callbacks, err = parseOperationCallbacks(node, opCtx)
 	if err != nil {
-		return nil, err
+		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 	}
 
 	op.Security, err = parseOperationSecurity(node, opCtx)
 	if err != nil {
-		return nil, err
+		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 	}
 
 	op.Servers, err = parseOperationServers(node, opCtx)
 	if err != nil {
-		return nil, err
+		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 	}
 
 	op.VendorExtensions = parseNodeExtensions(node)

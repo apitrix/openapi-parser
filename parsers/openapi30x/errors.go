@@ -1,6 +1,11 @@
 package openapi30x
 
-import "openapi-parser/parsers/internal/shared"
+import (
+	"errors"
+
+	openapi30models "openapi-parser/models/openapi30"
+	"openapi-parser/parsers/internal/shared"
+)
 
 // ParseError represents an error that occurred during parsing,
 // including the JSON path and source location where the error occurred.
@@ -15,4 +20,14 @@ func newParseError(path []string, format string, args ...interface{}) *ParseErro
 // newParseErrorWithCause creates a new ParseError that wraps another error.
 func newParseErrorWithCause(path []string, cause error, format string, args ...interface{}) *ParseError {
 	return shared.NewParseErrorWithCause(path, cause, format, args...)
+}
+
+// toParseError converts a parser-level ParseError (or generic error) into the
+// model-level ParseError for attachment to a node's Trix.Errors slice.
+func toParseError(err error) openapi30models.ParseError {
+	var pe *ParseError
+	if errors.As(err, &pe) {
+		return openapi30models.ParseError{Message: pe.Message, Path: pe.Path}
+	}
+	return openapi30models.ParseError{Message: err.Error()}
 }

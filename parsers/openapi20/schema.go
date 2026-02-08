@@ -67,7 +67,7 @@ func parseSchema(node *yaml.Node, ctx *ParseContext) (*openapi20models.Schema, e
 	if itemsNode := nodeGetValue(node, "items"); itemsNode != nil {
 		schema.Items, err = parseSchemaRef(itemsNode, ctx.push("items"))
 		if err != nil {
-			return nil, err
+			schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 		}
 	}
 
@@ -75,7 +75,7 @@ func parseSchema(node *yaml.Node, ctx *ParseContext) (*openapi20models.Schema, e
 	if propsNode := nodeGetValue(node, "properties"); propsNode != nil {
 		schema.Properties, err = parseSchemaProperties(propsNode, ctx.push("properties"))
 		if err != nil {
-			return nil, err
+			schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 		}
 	}
 
@@ -90,7 +90,7 @@ func parseSchema(node *yaml.Node, ctx *ParseContext) (*openapi20models.Schema, e
 			// Schema reference
 			schema.AdditionalProperties, err = parseSchemaRef(addPropsNode, ctx.push("additionalProperties"))
 			if err != nil {
-				return nil, err
+				schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 			}
 		}
 	}
@@ -99,7 +99,7 @@ func parseSchema(node *yaml.Node, ctx *ParseContext) (*openapi20models.Schema, e
 	if allOfNode := nodeGetValue(node, "allOf"); allOfNode != nil {
 		schema.AllOf, err = parseSchemaRefs(allOfNode, ctx.push("allOf"))
 		if err != nil {
-			return nil, err
+			schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 		}
 	}
 
@@ -107,7 +107,7 @@ func parseSchema(node *yaml.Node, ctx *ParseContext) (*openapi20models.Schema, e
 	if xmlNode := nodeGetValue(node, "xml"); xmlNode != nil {
 		schema.XML, err = parseXML(xmlNode, ctx.push("xml"))
 		if err != nil {
-			return nil, err
+			schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 		}
 	}
 
@@ -115,7 +115,7 @@ func parseSchema(node *yaml.Node, ctx *ParseContext) (*openapi20models.Schema, e
 	if edNode := nodeGetValue(node, "externalDocs"); edNode != nil {
 		schema.ExternalDocs, err = parseExternalDocs(edNode, ctx.push("externalDocs"))
 		if err != nil {
-			return nil, err
+			schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
 		}
 	}
 

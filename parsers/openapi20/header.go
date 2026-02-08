@@ -77,7 +77,7 @@ func parseHeader(node *yaml.Node, ctx *ParseContext) (*openapi20models.Header, e
 	if itemsNode := nodeGetValue(node, "items"); itemsNode != nil {
 		header.Items, err = parseItems(itemsNode, ctx.push("items"))
 		if err != nil {
-			return nil, err
+			header.Trix.Errors = append(header.Trix.Errors, toParseError(err))
 		}
 	}
 

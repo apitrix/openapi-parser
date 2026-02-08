@@ -23,10 +23,12 @@ paths:
     get:
       responses: "invalid"
 `
-	_, err := Parse([]byte(yaml))
-	require.Error(t, err)
-	// Error should contain path information
-	assert.Contains(t, err.Error(), "responses")
+	doc, err := Parse([]byte(yaml))
+	require.NoError(t, err)
+	// Error should be collected on the operation's Trix.Errors
+	op := doc.Paths.Items["/pets"].Get
+	require.NotEmpty(t, op.Trix.Errors, "invalid responses should produce a Trix error")
+	assert.Contains(t, op.Trix.Errors[0].Message, "responses")
 }
 
 // --- Complex Path ---

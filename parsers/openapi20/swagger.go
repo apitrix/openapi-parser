@@ -19,7 +19,7 @@ func parseSwagger(node *yaml.Node, ctx *ParseContext) (*openapi20models.Swagger,
 	// Simple property - version (inline)
 	swagger.Swagger, err = parseSwaggerVersion(node, ctx)
 	if err != nil {
-		return nil, err
+		return nil, err // version is fatal — can't proceed without it
 	}
 
 	// Simple properties - inline
@@ -33,42 +33,42 @@ func parseSwagger(node *yaml.Node, ctx *ParseContext) (*openapi20models.Swagger,
 	infoNode := nodeGetValue(node, "info")
 	swagger.Info, err = parseSwaggerInfo(infoNode, ctx.push("info"))
 	if err != nil {
-		return nil, err
+		swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
 	}
 
 	// Complex property - Paths (delegated)
 	pathsNode := nodeGetValue(node, "paths")
 	swagger.Paths, err = parseSwaggerPaths(pathsNode, ctx.push("paths"))
 	if err != nil {
-		return nil, err
+		swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
 	}
 
 	// Complex properties - definitions, parameters, responses, securityDefinitions
 	if defsNode := nodeGetValue(node, "definitions"); defsNode != nil {
 		swagger.Definitions, err = parseSwaggerDefinitions(defsNode, ctx.push("definitions"))
 		if err != nil {
-			return nil, err
+			swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
 		}
 	}
 
 	if paramsNode := nodeGetValue(node, "parameters"); paramsNode != nil {
 		swagger.Parameters, err = parseSwaggerParameters(paramsNode, ctx.push("parameters"))
 		if err != nil {
-			return nil, err
+			swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
 		}
 	}
 
 	if respNode := nodeGetValue(node, "responses"); respNode != nil {
 		swagger.Responses, err = parseSwaggerResponses(respNode, ctx.push("responses"))
 		if err != nil {
-			return nil, err
+			swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
 		}
 	}
 
 	if secDefsNode := nodeGetValue(node, "securityDefinitions"); secDefsNode != nil {
 		swagger.SecurityDefinitions, err = parseSwaggerSecurityDefinitions(secDefsNode, ctx.push("securityDefinitions"))
 		if err != nil {
-			return nil, err
+			swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
 		}
 	}
 
@@ -76,7 +76,7 @@ func parseSwagger(node *yaml.Node, ctx *ParseContext) (*openapi20models.Swagger,
 	if secNode := nodeGetValue(node, "security"); secNode != nil {
 		swagger.Security, err = parseSecurityRequirements(secNode, ctx.push("security"))
 		if err != nil {
-			return nil, err
+			swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
 		}
 	}
 
@@ -84,7 +84,7 @@ func parseSwagger(node *yaml.Node, ctx *ParseContext) (*openapi20models.Swagger,
 	if tagsNode := nodeGetValue(node, "tags"); tagsNode != nil {
 		swagger.Tags, err = parseTags(tagsNode, ctx.push("tags"))
 		if err != nil {
-			return nil, err
+			swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
 		}
 	}
 
@@ -92,7 +92,7 @@ func parseSwagger(node *yaml.Node, ctx *ParseContext) (*openapi20models.Swagger,
 	if edNode := nodeGetValue(node, "externalDocs"); edNode != nil {
 		swagger.ExternalDocs, err = parseExternalDocs(edNode, ctx.push("externalDocs"))
 		if err != nil {
-			return nil, err
+			swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
 		}
 	}
 

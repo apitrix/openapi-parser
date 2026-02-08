@@ -28,12 +28,12 @@ func parseOpenAPIInfo(node *yaml.Node, ctx *ParseContext) (*openapi30models.Info
 	// Complex properties - delegated to dedicated files
 	info.Contact, err = parseInfoContact(node, ctx)
 	if err != nil {
-		return nil, err
+		info.Trix.Errors = append(info.Trix.Errors, toParseError(err))
 	}
 
 	info.License, err = parseInfoLicense(node, ctx)
 	if err != nil {
-		return nil, err
+		info.Trix.Errors = append(info.Trix.Errors, toParseError(err))
 	}
 
 	info.VendorExtensions = parseNodeExtensions(node)

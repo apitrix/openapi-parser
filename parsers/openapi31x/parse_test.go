@@ -180,14 +180,17 @@ paths: {}
 	assert.Contains(t, err.Error(), "unsupported OpenAPI version")
 }
 
-// TestParseMissingInfo tests that missing info field is an error.
+// TestParseMissingInfo tests that missing info field is collected as a Trix error.
 func TestParseMissingInfo(t *testing.T) {
 	data := []byte(`openapi: "3.1.0"
 paths: {}
 `)
-	_, err := Parse(data)
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "info is required")
+	doc, err := Parse(data)
+	// Info errors are now collected on doc.Trix.Errors, not returned
+	require.NoError(t, err)
+	require.NotNil(t, doc)
+	require.NotEmpty(t, doc.Trix.Errors, "missing info should produce a Trix error")
+	assert.Contains(t, doc.Trix.Errors[0].Message, "info is required")
 }
 
 // TestParseLineColumnNumbers tests that line/column numbers are preserved.

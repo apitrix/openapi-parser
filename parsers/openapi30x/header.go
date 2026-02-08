@@ -42,17 +42,17 @@ func (p *headerParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30mode
 	// Complex properties - delegated to dedicated files
 	header.Schema, err = p.ParseSchema(node, ctx)
 	if err != nil {
-		return nil, err
+		header.Trix.Errors = append(header.Trix.Errors, toParseError(err))
 	}
 
 	header.Examples, err = p.ParseExamples(node, ctx)
 	if err != nil {
-		return nil, err
+		header.Trix.Errors = append(header.Trix.Errors, toParseError(err))
 	}
 
 	header.Content, err = p.ParseContent(node, ctx)
 	if err != nil {
-		return nil, err
+		header.Trix.Errors = append(header.Trix.Errors, toParseError(err))
 	}
 
 	header.VendorExtensions = parseNodeExtensions(node)

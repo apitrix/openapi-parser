@@ -36,7 +36,7 @@ func (p *requestBodyParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi3
 	// Complex properties - delegated to dedicated files
 	rb.Content, err = p.ParseContent(node, ctx)
 	if err != nil {
-		return nil, err
+		rb.Trix.Errors = append(rb.Trix.Errors, toParseError(err))
 	}
 
 	rb.VendorExtensions = parseNodeExtensions(node)

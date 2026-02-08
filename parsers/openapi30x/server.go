@@ -26,7 +26,11 @@ func parseSharedServers(node *yaml.Node, ctx *ParseContext) ([]*openapi30models.
 	for i, serverNode := range node.Content {
 		server, err := parseSharedServer(serverNode, ctx.push(itoa(i)))
 		if err != nil {
-			return nil, err
+			if server != nil {
+				server.Trix.Errors = append(server.Trix.Errors, toParseError(err))
+			} else {
+				continue // structural error, skip this entry
+			}
 		}
 		servers = append(servers, server)
 	}
@@ -53,7 +57,7 @@ func (p *serverParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30mode
 	// Complex properties - delegated to dedicated files
 	server.Variables, err = p.ParseVariables(node, ctx)
 	if err != nil {
-		return nil, err
+		server.Trix.Errors = append(server.Trix.Errors, toParseError(err))
 	}
 
 	server.VendorExtensions = parseNodeExtensions(node)

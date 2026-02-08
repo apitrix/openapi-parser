@@ -41,7 +41,7 @@ func (p *securitySchemeParser) parse(node *yaml.Node, ctx *ParseContext) (*opena
 	// Complex properties - delegated to dedicated files
 	scheme.Flows, err = p.ParseFlows(node, ctx)
 	if err != nil {
-		return nil, err
+		scheme.Trix.Errors = append(scheme.Trix.Errors, toParseError(err))
 	}
 
 	scheme.VendorExtensions = parseNodeExtensions(node)

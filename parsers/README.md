@@ -79,6 +79,15 @@ result, err := openapi30x.ParseWithUnknownFields(data)
 for _, f := range result.UnknownFields {
     log.Printf("Unknown: %s at %s", f.Key, f.Path)
 }
+
+// Check for recoverable parse errors on nodes
+doc, err := openapi30x.Parse(data)
+if err != nil {
+    log.Fatal(err) // fatal: bad YAML or unsupported version
+}
+for _, e := range doc.Trix.Errors {
+    log.Printf("parse error: %s (path: %v)", e.Message, e.Path)
+}
 ```
 
 ## Testing

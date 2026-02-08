@@ -21,7 +21,7 @@ func parseOpenAPI(node *yaml.Node, ctx *ParseContext) (*openapi31models.OpenAPI,
 	// Simple property - version (inline)
 	openapi.OpenAPI, err = parseOpenAPIVersion(node, ctx)
 	if err != nil {
-		return nil, err
+		return nil, err // version is fatal — can't proceed without it
 	}
 
 	// Simple property - jsonSchemaDialect
@@ -31,54 +31,54 @@ func parseOpenAPI(node *yaml.Node, ctx *ParseContext) (*openapi31models.OpenAPI,
 	infoNode := nodeGetValue(node, "info")
 	openapi.Info, err = parseOpenAPIInfo(infoNode, ctx.push("info"))
 	if err != nil {
-		return nil, err
+		openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
 	}
 
 	if serversNode := nodeGetValue(node, "servers"); serversNode != nil {
 		openapi.Servers, err = parseSharedServers(serversNode, ctx.push("servers"))
 		if err != nil {
-			return nil, err
+			openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
 		}
 	}
 
 	pathsNode := nodeGetValue(node, "paths")
 	openapi.Paths, err = parseOpenAPIPaths(pathsNode, ctx.push("paths"))
 	if err != nil {
-		return nil, err
+		openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
 	}
 
 	// Webhooks - new in 3.1
 	if webhooksNode := nodeGetValue(node, "webhooks"); webhooksNode != nil {
 		openapi.Webhooks, err = parseOpenAPIWebhooks(webhooksNode, ctx.push("webhooks"))
 		if err != nil {
-			return nil, err
+			openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
 		}
 	}
 
 	componentsNode := nodeGetValue(node, "components")
 	openapi.Components, err = parseOpenAPIComponents(componentsNode, ctx.push("components"))
 	if err != nil {
-		return nil, err
+		openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
 	}
 
 	if securityNode := nodeGetValue(node, "security"); securityNode != nil {
 		openapi.Security, err = parseSharedSecurityRequirements(securityNode, ctx.push("security"))
 		if err != nil {
-			return nil, err
+			openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
 		}
 	}
 
 	if tagsNode := nodeGetValue(node, "tags"); tagsNode != nil {
 		openapi.Tags, err = parseSharedTags(tagsNode, ctx.push("tags"))
 		if err != nil {
-			return nil, err
+			openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
 		}
 	}
 
 	if edNode := nodeGetValue(node, "externalDocs"); edNode != nil {
 		openapi.ExternalDocs, err = parseSharedExternalDocs(edNode, ctx.push("externalDocs"))
 		if err != nil {
-			return nil, err
+			openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
 		}
 	}
 

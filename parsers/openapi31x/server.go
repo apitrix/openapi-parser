@@ -53,7 +53,7 @@ func (p *serverParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mode
 	// Complex properties - delegated to dedicated files
 	server.Variables, err = p.ParseVariables(node, ctx)
 	if err != nil {
-		return nil, err
+		server.Trix.Errors = append(server.Trix.Errors, toParseError(err))
 	}
 
 	server.VendorExtensions = parseNodeExtensions(node)

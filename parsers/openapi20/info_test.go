@@ -230,9 +230,11 @@ paths: {}
 `
 
 	// Act
-	_, err := Parse([]byte(yaml))
+	doc, err := Parse([]byte(yaml))
 
-	// Assert
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "info is required")
+	// Assert — info errors are now collected on doc.Trix.Errors, not returned
+	require.NoError(t, err)
+	require.NotNil(t, doc)
+	require.NotEmpty(t, doc.Trix.Errors, "missing info should produce a Trix error")
+	assert.Contains(t, doc.Trix.Errors[0].Message, "info is required")
 }

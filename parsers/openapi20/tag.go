@@ -49,7 +49,7 @@ func parseTag(node *yaml.Node, ctx *ParseContext) (*openapi20models.Tag, error) 
 	if edNode := nodeGetValue(node, "externalDocs"); edNode != nil {
 		tag.ExternalDocs, err = parseExternalDocs(edNode, ctx.push("externalDocs"))
 		if err != nil {
-			return nil, err
+			tag.Trix.Errors = append(tag.Trix.Errors, toParseError(err))
 		}
 	}
 

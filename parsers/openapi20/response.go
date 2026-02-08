@@ -28,7 +28,7 @@ func parseResponses(node *yaml.Node, ctx *ParseContext) (*openapi20models.Respon
 
 		respRef, err := parseResponseRef(respNode, ctx.push(key))
 		if err != nil {
-			return nil, err
+			responses.Trix.Errors = append(responses.Trix.Errors, toParseError(err))
 		}
 
 		if key == "default" {
@@ -64,7 +64,7 @@ func parseResponse(node *yaml.Node, ctx *ParseContext) (*openapi20models.Respons
 	if schemaNode := nodeGetValue(node, "schema"); schemaNode != nil {
 		resp.Schema, err = parseSchemaRef(schemaNode, ctx.push("schema"))
 		if err != nil {
-			return nil, err
+			resp.Trix.Errors = append(resp.Trix.Errors, toParseError(err))
 		}
 	}
 
@@ -72,7 +72,7 @@ func parseResponse(node *yaml.Node, ctx *ParseContext) (*openapi20models.Respons
 	if headersNode := nodeGetValue(node, "headers"); headersNode != nil {
 		resp.Headers, err = parseHeaders(headersNode, ctx.push("headers"))
 		if err != nil {
-			return nil, err
+			resp.Trix.Errors = append(resp.Trix.Errors, toParseError(err))
 		}
 	}
 

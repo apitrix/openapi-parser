@@ -35,17 +35,17 @@ func (p *responseParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30mo
 	// Complex properties - delegated to dedicated files
 	resp.Headers, err = p.ParseHeaders(node, ctx)
 	if err != nil {
-		return nil, err
+		resp.Trix.Errors = append(resp.Trix.Errors, toParseError(err))
 	}
 
 	resp.Content, err = p.ParseContent(node, ctx)
 	if err != nil {
-		return nil, err
+		resp.Trix.Errors = append(resp.Trix.Errors, toParseError(err))
 	}
 
 	resp.Links, err = p.ParseLinks(node, ctx)
 	if err != nil {
-		return nil, err
+		resp.Trix.Errors = append(resp.Trix.Errors, toParseError(err))
 	}
 
 	resp.VendorExtensions = parseNodeExtensions(node)

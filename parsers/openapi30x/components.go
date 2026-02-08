@@ -32,37 +32,37 @@ func parseOpenAPIComponents(node *yaml.Node, ctx *ParseContext) (*openapi30model
 
 	components.Parameters, err = parseComponentsParameters(node, ctx)
 	if err != nil {
-		return nil, err
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
 
 	components.Examples, err = parseComponentsExamples(node, ctx)
 	if err != nil {
-		return nil, err
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
 
 	components.RequestBodies, err = parseComponentsRequestBodies(node, ctx)
 	if err != nil {
-		return nil, err
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
 
 	components.Headers, err = parseComponentsHeaders(node, ctx)
 	if err != nil {
-		return nil, err
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
 
 	components.SecuritySchemes, err = parseComponentsSecuritySchemes(node, ctx)
 	if err != nil {
-		return nil, err
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
 
 	components.Links, err = parseComponentsLinks(node, ctx)
 	if err != nil {
-		return nil, err
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
 
 	components.Callbacks, err = parseComponentsCallbacks(node, ctx)
 	if err != nil {
-		return nil, err
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
 
 	components.VendorExtensions = parseNodeExtensions(node)

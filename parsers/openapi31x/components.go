@@ -22,53 +22,53 @@ func parseOpenAPIComponents(node *yaml.Node, ctx *ParseContext) (*openapi31model
 	// All properties are complex (maps of refs) - delegated to dedicated files
 	components.Schemas, err = parseComponentsSchemas(node, ctx)
 	if err != nil {
-		return nil, err
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
 
 	components.Responses, err = parseComponentsResponses(node, ctx)
 	if err != nil {
-		return nil, err
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
 
 	components.Parameters, err = parseComponentsParameters(node, ctx)
 	if err != nil {
-		return nil, err
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
 
 	components.Examples, err = parseComponentsExamples(node, ctx)
 	if err != nil {
-		return nil, err
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
 
 	components.RequestBodies, err = parseComponentsRequestBodies(node, ctx)
 	if err != nil {
-		return nil, err
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
 
 	components.Headers, err = parseComponentsHeaders(node, ctx)
 	if err != nil {
-		return nil, err
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
 
 	components.SecuritySchemes, err = parseComponentsSecuritySchemes(node, ctx)
 	if err != nil {
-		return nil, err
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
 
 	components.Links, err = parseComponentsLinks(node, ctx)
 	if err != nil {
-		return nil, err
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
 
 	components.Callbacks, err = parseComponentsCallbacks(node, ctx)
 	if err != nil {
-		return nil, err
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
 
 	// PathItems - new in 3.1
 	components.PathItems, err = parseComponentsPathItems(node, ctx)
 	if err != nil {
-		return nil, err
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
 
 	components.VendorExtensions = parseNodeExtensions(node)

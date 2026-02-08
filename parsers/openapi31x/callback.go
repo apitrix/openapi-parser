@@ -32,7 +32,7 @@ func (p *callbackParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mo
 	// Callbacks are maps of expression -> PathItem
 	callback.Paths, err = p.ParsePaths(node, ctx)
 	if err != nil {
-		return nil, err
+		callback.Trix.Errors = append(callback.Trix.Errors, toParseError(err))
 	}
 
 	callback.VendorExtensions = parseNodeExtensions(node)

@@ -33,7 +33,7 @@ func parseOperation(node *yaml.Node, ctx *ParseContext) (*openapi20models.Operat
 	if edNode := nodeGetValue(node, "externalDocs"); edNode != nil {
 		op.ExternalDocs, err = parseExternalDocs(edNode, ctx.push("externalDocs"))
 		if err != nil {
-			return nil, err
+			op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 		}
 	}
 
@@ -41,7 +41,7 @@ func parseOperation(node *yaml.Node, ctx *ParseContext) (*openapi20models.Operat
 	if paramsNode := nodeGetValue(node, "parameters"); paramsNode != nil {
 		op.Parameters, err = parseParameterRefs(paramsNode, ctx.push("parameters"))
 		if err != nil {
-			return nil, err
+			op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 		}
 	}
 
@@ -49,7 +49,7 @@ func parseOperation(node *yaml.Node, ctx *ParseContext) (*openapi20models.Operat
 	if respNode := nodeGetValue(node, "responses"); respNode != nil {
 		op.Responses, err = parseResponses(respNode, ctx.push("responses"))
 		if err != nil {
-			return nil, err
+			op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 		}
 	}
 
@@ -57,7 +57,7 @@ func parseOperation(node *yaml.Node, ctx *ParseContext) (*openapi20models.Operat
 	if secNode := nodeGetValue(node, "security"); secNode != nil {
 		op.Security, err = parseSecurityRequirements(secNode, ctx.push("security"))
 		if err != nil {
-			return nil, err
+			op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 		}
 	}
 
