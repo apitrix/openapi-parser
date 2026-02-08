@@ -3,7 +3,7 @@ package openapi31
 // SecurityScheme defines a security scheme for the API.
 // https://spec.openapis.org/oas/v3.1.0#security-scheme-object
 type SecurityScheme struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Type             string      `json:"type" yaml:"type"`
 	Description      string      `json:"description,omitempty" yaml:"description,omitempty"`
@@ -18,7 +18,7 @@ type SecurityScheme struct {
 // OAuthFlows allows configuration of supported OAuth flows.
 // https://spec.openapis.org/oas/v3.1.0#oauth-flows-object
 type OAuthFlows struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Implicit          *OAuthFlow `json:"implicit,omitempty" yaml:"implicit,omitempty"`
 	Password          *OAuthFlow `json:"password,omitempty" yaml:"password,omitempty"`
@@ -29,7 +29,7 @@ type OAuthFlows struct {
 // OAuthFlow represents configuration for an OAuth flow.
 // https://spec.openapis.org/oas/v3.1.0#oauth-flow-object
 type OAuthFlow struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	AuthorizationURL string            `json:"authorizationUrl,omitempty" yaml:"authorizationUrl,omitempty"`
 	TokenURL         string            `json:"tokenUrl,omitempty" yaml:"tokenUrl,omitempty"`

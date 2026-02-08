@@ -116,8 +116,8 @@ paths:
 
 	// Check that node sources are recorded
 	op := doc.Paths.Items["/pets"].Get
-	assert.Greater(t, op.NodeSource.Start.Line, 0)
-	assert.Greater(t, op.NodeSource.Start.Column, 0)
+	assert.Greater(t, op.Trix.Source.Start.Line, 0)
+	assert.Greater(t, op.Trix.Source.Start.Column, 0)
 }
 
 // --- Extensions Preserved ---

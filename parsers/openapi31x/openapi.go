@@ -83,7 +83,7 @@ func parseOpenAPI(node *yaml.Node, ctx *ParseContext) (*openapi31models.OpenAPI,
 	}
 
 	openapi.VendorExtensions = parseNodeExtensions(node)
-	openapi.NodeSource = ctx.nodeSource(node)
+	openapi.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields at root level
 	ctx.detectUnknown(node, openAPIKnownFieldsSet)
@@ -133,7 +133,7 @@ func parseOpenAPIPaths(node *yaml.Node, ctx *ParseContext) (*openapi31models.Pat
 	}
 
 	paths.VendorExtensions = parseNodeExtensions(node)
-	paths.NodeSource = ctx.nodeSource(node)
+	paths.Trix.Source = ctx.nodeSource(node)
 
 	return paths, nil
 }

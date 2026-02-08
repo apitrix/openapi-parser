@@ -40,7 +40,7 @@ func (p *requestBodyParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi3
 	}
 
 	rb.VendorExtensions = parseNodeExtensions(node)
-	rb.NodeSource = ctx.nodeSource(node)
+	rb.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
 	ctx.detectUnknown(node, requestBodyKnownFieldsSet)

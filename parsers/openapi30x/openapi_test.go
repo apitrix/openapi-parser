@@ -137,7 +137,7 @@ paths: {}
 `
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Greater(t, doc.NodeSource.Start.Line, 0)
+	assert.Greater(t, doc.Trix.Source.Start.Line, 0)
 }
 
 // --- JSON Bytes ---

@@ -3,7 +3,7 @@ package openapi20
 // Parameter describes a single operation parameter.
 // https://swagger.io/specification/v2/#parameter-object
 type Parameter struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Name            string      `json:"name" yaml:"name"`
 	In              string      `json:"in" yaml:"in"`
@@ -37,7 +37,7 @@ type Parameter struct {
 // Items describes the type of items in an array parameter.
 // https://swagger.io/specification/v2/#items-object
 type Items struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Type             string        `json:"type" yaml:"type"`
 	Format           string        `json:"format,omitempty" yaml:"format,omitempty"`

@@ -29,7 +29,7 @@ func parseSecurityScheme(node *yaml.Node, ctx *ParseContext) (*openapi20models.S
 	scheme.Scopes = nodeGetStringMap(node, "scopes")
 
 	scheme.VendorExtensions = parseNodeExtensions(node)
-	scheme.NodeSource = ctx.nodeSource(node)
+	scheme.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
 	ctx.detectUnknown(node, securitySchemeKnownFieldsSet)

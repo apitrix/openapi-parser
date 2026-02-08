@@ -3,7 +3,7 @@ package openapi20
 // Paths holds the relative paths to individual endpoints.
 // https://swagger.io/specification/v2/#paths-object
 type Paths struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	// Items maps paths to their definitions.
 	Items map[string]*PathItem `json:"-" yaml:"-"`
@@ -12,7 +12,7 @@ type Paths struct {
 // PathItem describes operations available on a single path.
 // https://swagger.io/specification/v2/#path-item-object
 type PathItem struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Ref        string          `json:"$ref,omitempty" yaml:"$ref,omitempty"`
 	Get        *Operation      `json:"get,omitempty" yaml:"get,omitempty"`

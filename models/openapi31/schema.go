@@ -29,7 +29,7 @@ func (t SchemaType) Values() []string {
 // Based on JSON Schema Draft 2020-12.
 // https://spec.openapis.org/oas/v3.1.0#schema-object
 type Schema struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	// JSON Schema fields
 	Title            string                `json:"title,omitempty" yaml:"title,omitempty"`
@@ -95,7 +95,7 @@ type Schema struct {
 // Discriminator is used for polymorphism support.
 // https://spec.openapis.org/oas/v3.1.0#discriminator-object
 type Discriminator struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	PropertyName string            `json:"propertyName" yaml:"propertyName"`
 	Mapping      map[string]string `json:"mapping,omitempty" yaml:"mapping,omitempty"`
@@ -104,7 +104,7 @@ type Discriminator struct {
 // XML provides additional metadata for XML serialization.
 // https://spec.openapis.org/oas/v3.1.0#xml-object
 type XML struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Name      string `json:"name,omitempty" yaml:"name,omitempty"`
 	Namespace string `json:"namespace,omitempty" yaml:"namespace,omitempty"`

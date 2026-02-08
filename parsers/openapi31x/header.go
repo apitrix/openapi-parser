@@ -56,7 +56,7 @@ func (p *headerParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mode
 	}
 
 	header.VendorExtensions = parseNodeExtensions(node)
-	header.NodeSource = ctx.nodeSource(node)
+	header.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
 	ctx.detectUnknown(node, headerKnownFieldsSet)

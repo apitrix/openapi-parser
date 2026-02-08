@@ -13,8 +13,15 @@ type NodeSource struct {
 	Raw   interface{} `json:"-" yaml:"-"` // Raw parsed data (map/slice/scalar)
 }
 
-// Node is embedded in all v30 types to provide source info and extensions.
+// Trix contains all library-level metadata and functionality.
+// Everything under Trix is provided by the apitrix library,
+// not part of the OpenAPI specification itself.
+type Trix struct {
+	Source NodeSource `json:"-" yaml:"-"` // Source location info
+}
+
+// Node is embedded in all v30 types to provide vendor extensions and library metadata.
 type Node struct {
-	NodeSource NodeSource             `json:"-" yaml:"-"`
 	VendorExtensions map[string]interface{} `json:"-" yaml:"-"`
+	Trix             Trix                   `json:"-" yaml:"-"`
 }

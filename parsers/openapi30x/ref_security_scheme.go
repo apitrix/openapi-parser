@@ -17,7 +17,7 @@ func parseSecuritySchemeRef(node *yaml.Node, ctx *ParseContext) (*openapi30model
 	}
 
 	ref := &openapi30models.SecuritySchemeRef{}
-	ref.NodeSource = ctx.nodeSource(node)
+	ref.Trix.Source = ctx.nodeSource(node)
 	ref.VendorExtensions = parseNodeExtensions(node)
 
 	// Check for $ref

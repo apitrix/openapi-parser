@@ -3,7 +3,7 @@ package openapi30
 // Parameter describes a single operation parameter.
 // https://spec.openapis.org/oas/v3.0.3#parameter-object
 type Parameter struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Name            string                 `json:"name" yaml:"name"`
 	In              string                 `json:"in" yaml:"in"`
@@ -23,7 +23,7 @@ type Parameter struct {
 // Header represents a Header Object.
 // https://spec.openapis.org/oas/v3.0.3#header-object
 type Header struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Description     string                 `json:"description,omitempty" yaml:"description,omitempty"`
 	Required        bool                   `json:"required,omitempty" yaml:"required,omitempty"`

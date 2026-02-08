@@ -3,7 +3,7 @@ package openapi30
 // OpenAPI is the root document object of the OpenAPI specification.
 // https://spec.openapis.org/oas/v3.0.3#openapi-object
 type OpenAPI struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	OpenAPI      string                 `json:"openapi" yaml:"openapi"`
 	Info         *Info                  `json:"info" yaml:"info"`

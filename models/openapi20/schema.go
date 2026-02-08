@@ -3,7 +3,7 @@ package openapi20
 // Schema represents the Swagger 2.0 Schema Object (JSON Schema subset).
 // https://swagger.io/specification/v2/#schema-object
 type Schema struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	// JSON Schema fields
 	Title               string                `json:"title,omitempty" yaml:"title,omitempty"`
@@ -43,7 +43,7 @@ type Schema struct {
 // XML provides additional metadata for XML serialization.
 // https://swagger.io/specification/v2/#xml-object
 type XML struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Name      string `json:"name,omitempty" yaml:"name,omitempty"`
 	Namespace string `json:"namespace,omitempty" yaml:"namespace,omitempty"`

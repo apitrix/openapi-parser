@@ -167,7 +167,7 @@ func (p *schemaParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mode
 	schema.VendorExtensions = parseNodeExtensions(node)
 
 	// Set node source info
-	schema.NodeSource = ctx.nodeSource(node)
+	schema.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
 	ctx.detectUnknown(node, schemaKnownFieldsSet)

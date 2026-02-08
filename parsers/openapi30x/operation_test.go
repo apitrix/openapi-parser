@@ -262,7 +262,7 @@ paths:
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	op := doc.Paths.Items["/pets"].Get
-	assert.Greater(t, op.NodeSource.Start.Line, 0)
+	assert.Greater(t, op.Trix.Source.Start.Line, 0)
 }
 
 // --- Multiple Paths ---

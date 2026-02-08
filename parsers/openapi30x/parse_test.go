@@ -193,13 +193,13 @@ paths:
 	// Assert
 	require.NoError(t, err)
 
-	assert.NotZero(t, doc.NodeSource.Start.Line, "root line")
-	assert.NotZero(t, doc.NodeSource.Start.Column, "root column")
-	assert.NotZero(t, doc.Info.NodeSource.Start.Line, "info line")
-	assert.NotZero(t, doc.Paths.NodeSource.Start.Line, "paths line")
+	assert.NotZero(t, doc.Trix.Source.Start.Line, "root line")
+	assert.NotZero(t, doc.Trix.Source.Start.Column, "root column")
+	assert.NotZero(t, doc.Info.Trix.Source.Start.Line, "info line")
+	assert.NotZero(t, doc.Paths.Trix.Source.Start.Line, "paths line")
 
 	petsPath := doc.Paths.Items["/pets"]
 	require.NotNil(t, petsPath)
-	assert.NotZero(t, petsPath.NodeSource.Start.Line, "/pets line")
-	assert.NotZero(t, petsPath.Get.NodeSource.Start.Line, "GET operation line")
+	assert.NotZero(t, petsPath.Trix.Source.Start.Line, "/pets line")
+	assert.NotZero(t, petsPath.Get.Trix.Source.Start.Line, "GET operation line")
 }

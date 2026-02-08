@@ -3,7 +3,7 @@ package openapi20
 // Tag adds metadata to a single tag used by the Operation Object.
 // https://swagger.io/specification/v2/#tag-object
 type Tag struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Name         string        `json:"name" yaml:"name"`
 	Description  string        `json:"description,omitempty" yaml:"description,omitempty"`
@@ -13,7 +13,7 @@ type Tag struct {
 // ExternalDocs allows referencing external documentation.
 // https://swagger.io/specification/v2/#external-documentation-object
 type ExternalDocs struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Description string `json:"description,omitempty" yaml:"description,omitempty"`
 	URL         string `json:"url" yaml:"url"`

@@ -45,7 +45,7 @@ func (p *securitySchemeParser) parse(node *yaml.Node, ctx *ParseContext) (*opena
 	}
 
 	scheme.VendorExtensions = parseNodeExtensions(node)
-	scheme.NodeSource = ctx.nodeSource(node)
+	scheme.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
 	ctx.detectUnknown(node, securitySchemeKnownFieldsSet)

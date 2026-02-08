@@ -17,7 +17,7 @@ func parseResponseRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.Resp
 	}
 
 	ref := &openapi30models.ResponseRef{}
-	ref.NodeSource = ctx.nodeSource(node)
+	ref.Trix.Source = ctx.nodeSource(node)
 	ref.VendorExtensions = parseNodeExtensions(node)
 
 	// Check for $ref

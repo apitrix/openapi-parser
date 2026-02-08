@@ -3,7 +3,7 @@ package openapi20
 // Swagger is the root document object of the Swagger 2.0 specification.
 // https://swagger.io/specification/v2/#swagger-object
 type Swagger struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Swagger             string                         `json:"swagger" yaml:"swagger"`
 	Info                *Info                          `json:"info" yaml:"info"`

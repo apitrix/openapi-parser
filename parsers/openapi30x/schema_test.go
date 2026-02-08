@@ -473,8 +473,8 @@ components:
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	schema := doc.Components.Schemas["Pet"].Value
-	assert.Greater(t, schema.NodeSource.Start.Line, 0)
-	assert.Greater(t, schema.NodeSource.Start.Column, 0)
+	assert.Greater(t, schema.Trix.Source.Start.Line, 0)
+	assert.Greater(t, schema.Trix.Source.Start.Column, 0)
 }
 
 // --- Empty/Minimal Schema ---

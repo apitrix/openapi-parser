@@ -21,7 +21,7 @@ func parseResponseRef(node *yaml.Node, ctx *ParseContext) (*openapi20models.Resp
 	// Check if it's a reference
 	if nodeHasRef(node) {
 		ref.Ref = nodeGetRef(node)
-		ref.NodeSource = ctx.nodeSource(node)
+		ref.Trix.Source = ctx.nodeSource(node)
 		return ref, nil
 	}
 
@@ -31,7 +31,7 @@ func parseResponseRef(node *yaml.Node, ctx *ParseContext) (*openapi20models.Resp
 		return nil, err
 	}
 	ref.Value = response
-	ref.NodeSource = ctx.nodeSource(node)
+	ref.Trix.Source = ctx.nodeSource(node)
 
 	return ref, nil
 }

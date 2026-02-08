@@ -39,7 +39,7 @@ func parseResponses(node *yaml.Node, ctx *ParseContext) (*openapi20models.Respon
 	}
 
 	responses.VendorExtensions = parseNodeExtensions(node)
-	responses.NodeSource = ctx.nodeSource(node)
+	responses.Trix.Source = ctx.nodeSource(node)
 
 	return responses, err
 }
@@ -85,7 +85,7 @@ func parseResponse(node *yaml.Node, ctx *ParseContext) (*openapi20models.Respons
 	}
 
 	resp.VendorExtensions = parseNodeExtensions(node)
-	resp.NodeSource = ctx.nodeSource(node)
+	resp.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
 	ctx.detectUnknown(node, responseKnownFieldsSet)

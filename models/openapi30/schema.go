@@ -3,7 +3,7 @@ package openapi30
 // Schema represents the OpenAPI 3.0 Schema Object.
 // https://spec.openapis.org/oas/v3.0.3#schema-object
 type Schema struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	// JSON Schema fields
 	Title            string                `json:"title,omitempty" yaml:"title,omitempty"`
@@ -53,7 +53,7 @@ type Schema struct {
 // Discriminator is used for polymorphism support.
 // https://spec.openapis.org/oas/v3.0.3#discriminator-object
 type Discriminator struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	PropertyName string            `json:"propertyName" yaml:"propertyName"`
 	Mapping      map[string]string `json:"mapping,omitempty" yaml:"mapping,omitempty"`
@@ -62,7 +62,7 @@ type Discriminator struct {
 // XML provides additional metadata for XML serialization.
 // https://spec.openapis.org/oas/v3.0.3#xml-object
 type XML struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Name      string `json:"name,omitempty" yaml:"name,omitempty"`
 	Namespace string `json:"namespace,omitempty" yaml:"namespace,omitempty"`

@@ -210,11 +210,11 @@ paths:
 	require.NotNil(t, doc)
 
 	// Root starts at line 1
-	assert.Equal(t, 1, doc.NodeSource.Start.Line)
+	assert.Equal(t, 1, doc.Trix.Source.Start.Line)
 
 	// Info starts at line 3 (first content line of the mapping)
 	require.NotNil(t, doc.Info)
-	assert.Equal(t, 3, doc.Info.NodeSource.Start.Line)
+	assert.Equal(t, 3, doc.Info.Trix.Source.Start.Line)
 
 	// First path item
 	require.NotNil(t, doc.Paths)

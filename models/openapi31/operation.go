@@ -3,7 +3,7 @@ package openapi31
 // Operation describes a single API operation on a path.
 // https://spec.openapis.org/oas/v3.1.0#operation-object
 type Operation struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Tags         []string                `json:"tags,omitempty" yaml:"tags,omitempty"`
 	Summary      string                  `json:"summary,omitempty" yaml:"summary,omitempty"`

@@ -35,7 +35,7 @@ func (p *oauthFlowParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30m
 	flow.Scopes = p.ParseScopes(node)
 
 	flow.VendorExtensions = parseNodeExtensions(node)
-	flow.NodeSource = ctx.nodeSource(node)
+	flow.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
 	ctx.detectUnknown(node, oauthFlowKnownFieldsSet)

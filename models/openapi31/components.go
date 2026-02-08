@@ -3,7 +3,7 @@ package openapi31
 // Components holds reusable objects for the specification.
 // https://spec.openapis.org/oas/v3.1.0#components-object
 type Components struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Schemas         map[string]*SchemaRef         `json:"schemas,omitempty" yaml:"schemas,omitempty"`
 	Responses       map[string]*ResponseRef       `json:"responses,omitempty" yaml:"responses,omitempty"`

@@ -35,7 +35,7 @@ func (p *exampleParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mod
 	example.ExternalValue = p.ParseExternalValue(node)
 
 	example.VendorExtensions = parseNodeExtensions(node)
-	example.NodeSource = ctx.nodeSource(node)
+	example.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
 	ctx.detectUnknown(node, exampleKnownFieldsSet)

@@ -34,7 +34,7 @@ func (p *serverVariableParser) parse(node *yaml.Node, ctx *ParseContext) (*opena
 	sv.Description = p.ParseDescription(node)
 
 	sv.VendorExtensions = parseNodeExtensions(node)
-	sv.NodeSource = ctx.nodeSource(node)
+	sv.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
 	ctx.detectUnknown(node, serverVariableKnownFieldsSet)

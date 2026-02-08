@@ -3,7 +3,7 @@ package openapi20
 // Responses is a container for expected responses of an operation.
 // https://swagger.io/specification/v2/#responses-object
 type Responses struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Default *ResponseRef            `json:"default,omitempty" yaml:"default,omitempty"`
 	Codes   map[string]*ResponseRef `json:"-" yaml:"-"` // HTTP status codes (e.g., "200", "404")
@@ -12,7 +12,7 @@ type Responses struct {
 // Response describes a single response from an API operation.
 // https://swagger.io/specification/v2/#response-object
 type Response struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Description string                 `json:"description" yaml:"description"`
 	Schema      *SchemaRef             `json:"schema,omitempty" yaml:"schema,omitempty"`
@@ -23,7 +23,7 @@ type Response struct {
 // Header represents a Header Object in a response.
 // https://swagger.io/specification/v2/#header-object
 type Header struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Description      string        `json:"description,omitempty" yaml:"description,omitempty"`
 	Type             string        `json:"type" yaml:"type"`

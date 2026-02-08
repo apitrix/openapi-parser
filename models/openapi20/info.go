@@ -3,7 +3,7 @@ package openapi20
 // Info provides metadata about the API.
 // https://swagger.io/specification/v2/#info-object
 type Info struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Title          string   `json:"title" yaml:"title"`
 	Description    string   `json:"description,omitempty" yaml:"description,omitempty"`
@@ -16,7 +16,7 @@ type Info struct {
 // Contact provides contact information for the API.
 // https://swagger.io/specification/v2/#contact-object
 type Contact struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Name  string `json:"name,omitempty" yaml:"name,omitempty"`
 	URL   string `json:"url,omitempty" yaml:"url,omitempty"`
@@ -26,7 +26,7 @@ type Contact struct {
 // License provides license information for the API.
 // https://swagger.io/specification/v2/#license-object
 type License struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Name string `json:"name" yaml:"name"`
 	URL  string `json:"url,omitempty" yaml:"url,omitempty"`

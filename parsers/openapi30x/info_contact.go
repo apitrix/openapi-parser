@@ -26,7 +26,7 @@ func parseInfoContact(parent *yaml.Node, ctx *ParseContext) (*openapi30models.Co
 	contact.Email = nodeGetString(node, "email")
 
 	contact.VendorExtensions = parseNodeExtensions(node)
-	contact.NodeSource = cctx.nodeSource(node)
+	contact.Trix.Source = cctx.nodeSource(node)
 
 	// Detect unknown fields
 	cctx.detectUnknown(node, contactKnownFieldsSet)

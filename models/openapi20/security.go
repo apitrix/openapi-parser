@@ -3,7 +3,7 @@ package openapi20
 // SecurityScheme defines a security scheme for the API.
 // https://swagger.io/specification/v2/#security-scheme-object
 type SecurityScheme struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Type             string            `json:"type" yaml:"type"`
 	Description      string            `json:"description,omitempty" yaml:"description,omitempty"`

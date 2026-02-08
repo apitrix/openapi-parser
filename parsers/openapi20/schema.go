@@ -120,7 +120,7 @@ func parseSchema(node *yaml.Node, ctx *ParseContext) (*openapi20models.Schema, e
 	}
 
 	schema.VendorExtensions = parseNodeExtensions(node)
-	schema.NodeSource = ctx.nodeSource(node)
+	schema.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
 	ctx.detectUnknown(node, schemaKnownFieldsSet)

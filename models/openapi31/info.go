@@ -3,7 +3,7 @@ package openapi31
 // Info provides metadata about the API.
 // https://spec.openapis.org/oas/v3.1.0#info-object
 type Info struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Title          string   `json:"title" yaml:"title"`
 	Summary        string   `json:"summary,omitempty" yaml:"summary,omitempty"`
@@ -17,7 +17,7 @@ type Info struct {
 // Contact provides contact information for the API.
 // https://spec.openapis.org/oas/v3.1.0#contact-object
 type Contact struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Name  string `json:"name,omitempty" yaml:"name,omitempty"`
 	URL   string `json:"url,omitempty" yaml:"url,omitempty"`
@@ -27,7 +27,7 @@ type Contact struct {
 // License provides license information for the API.
 // https://spec.openapis.org/oas/v3.1.0#license-object
 type License struct {
-	Node // embedded - provides NodeSource and Extensions
+	Node // embedded - provides VendorExtensions and Trix
 
 	Name       string `json:"name" yaml:"name"`
 	Identifier string `json:"identifier,omitempty" yaml:"identifier,omitempty"`

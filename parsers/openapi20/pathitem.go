@@ -81,7 +81,7 @@ func parsePathItem(node *yaml.Node, ctx *ParseContext) (*openapi20models.PathIte
 	}
 
 	pathItem.VendorExtensions = parseNodeExtensions(node)
-	pathItem.NodeSource = ctx.nodeSource(node)
+	pathItem.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
 	ctx.detectUnknown(node, pathItemKnownFieldsSet)

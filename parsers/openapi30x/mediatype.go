@@ -49,7 +49,7 @@ func (p *mediaTypeParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30m
 	}
 
 	mt.VendorExtensions = parseNodeExtensions(node)
-	mt.NodeSource = ctx.nodeSource(node)
+	mt.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
 	ctx.detectUnknown(node, mediaTypeKnownFieldsSet)
