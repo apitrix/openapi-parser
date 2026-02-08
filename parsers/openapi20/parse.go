@@ -3,6 +3,8 @@ package openapi20
 import (
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
 
 	openapi20models "openapi-parser/models/openapi20"
 
@@ -82,4 +84,47 @@ func ParseReaderWithUnknownFields(r io.Reader) (*ParseResult, error) {
 		return nil, fmt.Errorf("failed to read data: %w", err)
 	}
 	return ParseWithUnknownFields(data)
+}
+
+// ParseFile parses a Swagger 2.0 specification from a file path,
+// resolving all external $ref references relative to the file's directory.
+func ParseFile(filePath string) (*openapi20models.Swagger, error) {
+	absPath, err := filepath.Abs(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to resolve absolute path: %w", err)
+	}
+
+	data, err := os.ReadFile(absPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read file: %w", err)
+	}
+
+	var rootNode yaml.Node
+	if err := yaml.Unmarshal(data, &rootNode); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal data: %w", err)
+	}
+
+	var docNode *yaml.Node
+	if rootNode.Kind == yaml.DocumentNode && len(rootNode.Content) > 0 {
+		docNode = rootNode.Content[0]
+	} else {
+		docNode = &rootNode
+	}
+
+	if docNode.Kind != yaml.MappingNode {
+		return nil, fmt.Errorf("Swagger document must be an object")
+	}
+
+	ctx := newParseContext(docNode)
+	doc, err := parseSwagger(docNode, ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	basePath := filepath.Dir(absPath)
+	if err := Resolve(doc, docNode, basePath); err != nil {
+		return nil, fmt.Errorf("failed to resolve references: %w", err)
+	}
+
+	return doc, nil
 }

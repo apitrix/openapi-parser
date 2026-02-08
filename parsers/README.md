@@ -4,72 +4,99 @@ This package contains parsers for OpenAPI specifications:
 
 | Package | Specification | Go Import |
 |---------|---------------|-----------|
-| `openapi30` | OpenAPI 3.0.x | `openapi-parser/parsers/openapi30` |
 | `openapi20` | OpenAPI 2.0 (Swagger) | `openapi-parser/parsers/openapi20` |
+| `openapi30x` | OpenAPI 3.0.x | `openapi-parser/parsers/openapi30x` |
+| `openapi31x` | OpenAPI 3.1.x / 3.2.x | `openapi-parser/parsers/openapi31x` |
 
-Both parsers share identical architecture and design patterns.
+All parsers share identical architecture and a common `internal/shared` package.
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         parse.go                                 │
-│  Parse() → ParseWithUnknownFields() → parseOpenAPI/Swagger()    │
+│                          parse.go                               │
+│  Parse() / ParseFile() / ParseWithUnknownFields()               │
 └─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    openapi.go / swagger.go                       │
-│  Root document parser - delegates to component parsers          │
-└─────────────────────────────────────────────────────────────────┘
-          │           │           │           │
-          ▼           ▼           ▼           ▼
-    ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐
-    │ info.go │ │pathitem │ │component│ │ server  │
-    └─────────┘ └─────────┘ └─────────┘ └─────────┘
+              │                              │
+              ▼                              ▼
+┌──────────────────────────┐   ┌──────────────────────────────┐
+│  openapi.go / swagger.go │   │         resolve.go            │
+│  Root document parser    │   │  $ref resolution & circular   │
+│  (delegates to component │   │  detection (post-parse walk)  │
+│  parsers)                │   └──────────────────────────────────┘
+└──────────────────────────┘               │
+  │     │     │     │                      ▼
+  ▼     ▼     ▼     ▼         ┌──────────────────────────────────┐
+┌────┐┌────┐┌────┐┌────┐     │    internal/shared/resolver.go   │
+│info││path││comp││serv│     │    RefResolver — YAML-level       │
+│ .go││item││onnt││er  │     │    ref lookup, file caching,      │
+│    ││ .go││ .go││.go │     │    cycle detection                │
+└────┘└────┘└────┘└────┘     └──────────────────────────────────┘
 ```
 
-## Core Components
+## Shared Internal Package (`internal/shared`)
+
+Common utilities extracted across all three parsers:
 
 | File | Purpose |
 |------|---------|
-| `parse.go` | Entry points: `Parse()`, `ParseWithUnknownFields()` |
-| `context.go` | `ParseContext` - tracks JSON path, caches components |
-| `node_helpers.go` | yaml.Node utilities for extracting values |
-| `known_fields.go` | Valid field lists for unknown field detection |
-| `errors.go` | `ParseError` with path and location info |
+| `resolver.go` | `RefResolver` — resolves local/external `$ref`, caches files, detects cycles |
+| `node.go` | `yaml.Node` helpers — `NodeGetValue`, `NodeToMap`, `NodeMapPairs`, etc. |
+| `maputil.go` | `map[string]interface{}` value extraction — `GetString`, `GetBoolPtr`, etc. |
+| `errors.go` | `ParseError` with JSON path and source location |
+| `unknown.go` | `DetectUnknownNodeFields` — finds non-spec fields |
+| `set.go` | `ToSet` — converts `[]string` to `map[string]struct{}` |
+
+## Per-Parser Core Files
+
+| File | Purpose |
+|------|---------|
+| `parse.go` | Entry points: `Parse()`, `ParseFile()`, `ParseWithUnknownFields()` |
+| `context.go` | `ParseContext` — tracks JSON path, caches components |
+| `resolve.go` | Post-parse `$ref` resolution walk with circular detection |
+| `known_fields.go` | Precomputed valid field sets for unknown field detection |
 
 ## Usage
 
 ```go
+// OpenAPI 3.1
+import "openapi-parser/parsers/openapi31x"
+doc, err := openapi31x.Parse(data)
+
 // OpenAPI 3.0
-import "openapi-parser/parsers/openapi30"
-doc, err := openapi30.Parse(data)
+import "openapi-parser/parsers/openapi30x"
+doc, err := openapi30x.Parse(data)
 
 // OpenAPI 2.0 (Swagger)
 import "openapi-parser/parsers/openapi20"
 doc, err := openapi20.Parse(data)
 
+// Parse from file with full $ref resolution
+doc, err := openapi30x.ParseFile("openapi.yaml")
+
 // With unknown field detection
-result, err := openapi30.ParseWithUnknownFields(data)
+result, err := openapi30x.ParseWithUnknownFields(data)
 for _, f := range result.UnknownFields {
-    log.Printf("Unknown: %s at %s", f.Name, f.Path)
+    log.Printf("Unknown: %s at %s", f.Key, f.Path)
 }
 ```
 
 ## Testing
 
-Tests follow the **Arrange-Act-Assert (AAA)** pattern.
+Tests follow the **Arrange-Act-Assert (AAA)** pattern and use [testify](https://github.com/stretchr/testify).
 
 ```bash
 # Run all parser tests
 go test -v ./parsers/...
 
 # Run specific parser tests
-go test -v ./parsers/openapi30/...
 go test -v ./parsers/openapi20/...
+go test -v ./parsers/openapi30x/...
+go test -v ./parsers/openapi31x/...
+go test -v ./parsers/internal/shared/...
 ```
 
 ## Implementation Details
 
-See [IMPLEMENTATION_DECISIONS.md](IMPLEMENTATION_DECISIONS.md) for design patterns and technical optimizations.
+- [IMPLEMENTATION_DECISIONS.md](IMPLEMENTATION_DECISIONS.md) — Design patterns and optimizations
+- [RESOLVER.md](RESOLVER.md) — Deep dive into `$ref` resolution and circular detection

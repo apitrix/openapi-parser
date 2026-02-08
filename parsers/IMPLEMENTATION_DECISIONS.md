@@ -5,8 +5,8 @@
 ### 1. Simple Properties Inline
 Simple scalar fields are parsed directly in the parent parser:
 ```go
-info.Title = nodeGetString(node, "title")
-info.Version = nodeGetString(node, "version")
+info.Title = shared.NodeGetString(node, "title")
+info.Version = shared.NodeGetString(node, "version")
 ```
 
 ### 2. Complex Properties Delegated
@@ -19,8 +19,8 @@ Complex nested objects get separate files following naming convention `{parent}_
 `$ref` is handled by ref parsers in `ref_{type}.go` files:
 ```go
 // ref_schema.go
-if nodeHasRef(node) {
-    ref.Ref = nodeGetRef(node)
+if shared.NodeHasRef(node) {
+    ref.Ref = shared.NodeGetRef(node)
     return ref, nil
 }
 ref.Value, err = parseSchema(node, ctx)
@@ -28,8 +28,99 @@ ref.Value, err = parseSchema(node, ctx)
 
 ### 4. Shared Parsers
 Common types used across multiple contexts use `shared_` prefix:
-- `shared_responses.go` - Responses used in operations
-- `shared_securityrequirement.go` - Security requirements
+- `shared_responses.go` — Responses used in operations
+- `shared_securityrequirement.go` — Security requirements
+
+### 5. Shared Internal Package
+All three parsers (`openapi20`, `openapi30x`, `openapi31x`) share an `internal/shared` package that contains:
+- Node helpers (`node.go`) — extract typed values from `yaml.Node`
+- Map utilities (`maputil.go`) — extract typed values from `map[string]interface{}`
+- Error types (`errors.go`) — `ParseError` with path and source location
+- Unknown field detection (`unknown.go`) — `DetectUnknownNodeFields`
+- Field sets (`set.go`) — `ToSet` for O(1) lookup
+- Reference resolver (`resolver.go`) — `RefResolver` for `$ref` resolution
+
+---
+
+## Two-Phase Parsing: Parse then Resolve
+
+**Problem:** `$ref` references point to other parts of the document (or external files). During initial parsing, those targets may not have been parsed yet.
+
+**Decision:** Split parsing into two phases:
+
+1. **Parse phase** (`parse.go → openapi.go`) — Walk the YAML tree and populate model structs. `$ref` values are stored as strings in `Ref` fields; `Value` remains `nil`.
+
+2. **Resolve phase** (`resolve.go`) — Walk the populated model tree. For every `*Ref` type with a non-empty `Ref` and `nil` `Value`, call `RefResolver.Resolve()` to get the target YAML node, parse it, and populate `Value`.
+
+```go
+// ParseFile triggers both phases:
+doc, err := parseOpenAPI(docNode, ctx)   // Phase 1: parse
+err = Resolve(doc, docNode, basePath)     // Phase 2: resolve
+```
+
+**Benefits:**
+- Forward references work naturally
+- External file references are loaded on demand and cached
+- Circular references are detected and flagged instead of causing infinite loops
+
+---
+
+## Two-Level Circular Reference Detection
+
+**Problem:** Naive `$ref` resolution causes infinite recursion on self-referencing schemas like:
+```yaml
+definitions:
+  TreeNode:
+    type: object
+    properties:
+      children:
+        type: array
+        items:
+          $ref: '#/definitions/TreeNode'
+```
+
+**Decision:** Use two complementary layers of cycle detection:
+
+### Level 1: YAML Resolver (`RefResolver.visiting`)
+The `RefResolver` maintains a `visiting` map that tracks which canonical refs are currently being resolved within a single `Resolve()` call. Uses `defer delete` for stack-like cleanup:
+```go
+func (r *RefResolver) Resolve(ref string) (*ResolveResult, error) {
+    canonicalRef := r.canonicalize(ref)
+    if r.visiting[canonicalRef] {
+        return &ResolveResult{Circular: true}, nil
+    }
+    r.visiting[canonicalRef] = true
+    defer func() { delete(r.visiting, canonicalRef) }()
+    // ... resolve ...
+}
+```
+
+### Level 2: Model-Level `resolving` Map
+A `resolving map[string]bool` is threaded through all per-parser resolve functions. Before walking a top-level component definition, its canonical `$ref` path is pre-registered:
+```go
+for name, ref := range c.Schemas {
+    canonicalRef := "#/components/schemas/" + name
+    resolving[canonicalRef] = true        // pre-register
+    resolveSchemaRef(ref, r, resolving)   // walk children
+    delete(resolving, canonicalRef)       // cleanup
+}
+```
+
+Individual ref resolvers check `resolving[ref.Ref]` before recursing:
+```go
+func resolveSchemaRef(ref *SchemaRef, r *RefResolver, resolving map[string]bool) error {
+    if resolving[ref.Ref] {
+        ref.Circular = true
+        return nil                         // stop recursion
+    }
+    // ... resolve normally ...
+}
+```
+
+**Why two levels?**
+- Level 1 catches cycles during YAML-level pointer traversal (e.g., `$ref` chains through external files)
+- Level 2 catches cycles during model-tree walking (e.g., schema A → schema B → schema A)
+- Pre-registration ensures first-encounter self-references are caught immediately
 
 ---
 
@@ -41,35 +132,25 @@ Common types used across multiple contexts use `shared_` prefix:
 // Old pattern - O(keys × scan) complexity
 for _, key := range nodeKeys(node) {
     value := nodeGetValue(node, key)  // Linear scan for each key
-    // process value...
 }
 ```
 
-This approach required:
-1. First pass: scan all node content to extract keys
-2. For each key: re-scan content to find the corresponding value
-
-With *n* keys, this resulted in O(n²) scans of the node content.
-
-**Solution:** Introduced `nodeMapPairs()` using Go 1.23+ range-over-func iterators:
+**Solution:** Introduced `NodeMapPairs()` using Go 1.23+ range-over-func iterators:
 
 ```go
 // New pattern - O(n) single-pass iteration
-for key, value := range nodeMapPairs(node) {
-    // process value directly...
+for key, value := range shared.NodeMapPairs(node) {
+    // process value directly
 }
 ```
 
-**Benefits:**
 | Aspect | Before | After |
 |--------|--------|-------|
 | Time complexity | O(n²) | O(n) |
-| Memory allocations | 1 slice per map | Zero allocations |
+| Memory allocations | 1 slice per map | Zero |
 | Code clarity | 2 lines per loop | 1 line per loop |
 
-**Trade-off:** Requires Go 1.23+ (uses `iter.Seq2` from the `iter` package).
-
-**Files affected:** All parsers that iterate over YAML mappings (37 total). The `nodeMapPairs` function is defined in `node_helpers.go` for each parser package.
+**Trade-off:** Requires Go 1.23+ (uses `iter.Seq2`).
 
 ---
 
@@ -81,34 +162,45 @@ for key, value := range nodeMapPairs(node) {
 // Old pattern - O(n) map construction per node
 func detectUnknownNodeFields(node *yaml.Node, knownFields []string, path string) {
     known := make(map[string]bool, len(knownFields))
-    for _, f := range knownFields {
-        known[f] = true
-    }
-    // check fields...
+    for _, f := range knownFields { known[f] = true }
 }
 ```
-
-With many nodes in a document, this caused repeated allocations and slice iteration.
 
 **Solution:** Precompute `map[string]struct{}` sets at init time in `known_fields.go`:
 
 ```go
 // Precomputed once at init
-var schemaKnownFieldsSet = toSet(schemaKnownFields)
+var schemaKnownFieldsSet = shared.ToSet(schemaKnownFields)
 
 // O(1) lookup, zero allocations per call
-func detectUnknownNodeFields(node *yaml.Node, knownFields map[string]struct{}, path string) {
-    if _, ok := knownFields[key]; !ok {
-        // unknown field
-    }
-}
+shared.DetectUnknownNodeFields(node, schemaKnownFieldsSet, path)
 ```
 
-**Benefits:**
 | Aspect | Before | After |
 |--------|--------|-------|
 | Map construction | Per node | Once at init |
 | Memory per call | 1 map allocation | Zero |
 | Lookup | O(1) after O(n) build | O(1) |
 
-**Files affected:** `known_fields.go`, `unknown_fields.go`, `context.go`, and all parser files calling `ctx.detectUnknown()` in both packages (40 call sites total).
+---
+
+## Filesystem Abstraction with Afero
+
+**Problem:** Testing external `$ref` resolution requires reading files from disk, making tests depend on real filesystem state.
+
+**Decision:** Use [afero](https://github.com/spf13/afero) for filesystem abstraction:
+
+```go
+// Production: real filesystem
+resolver := shared.NewRefResolver(basePath, root)
+
+// Testing: in-memory filesystem
+memFs := afero.NewMemMapFs()
+afero.WriteFile(memFs, "/specs/pet.yaml", petData, 0644)
+resolver := shared.NewRefResolverWithFs(basePath, root, memFs)
+```
+
+**Benefits:**
+- Tests run in-memory with no cleanup needed
+- Tests are deterministic and parallel-safe
+- No temp files or OS-level filesystem operations
