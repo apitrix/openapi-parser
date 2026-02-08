@@ -2,20 +2,46 @@
 
 ## Design Patterns
 
-### 1. Simple Properties Inline
+### 1. Trix Namespace — Separating Spec from Library
+
+**Problem:** Model structs need to carry library-level metadata (source locations, raw data) and vendor extensions alongside spec-defined fields. Mixing them pollutes the struct surface and makes it unclear what's from the OpenAPI spec vs. what's library infrastructure.
+
+**Decision:** Every model embeds `Node`, which contains exactly two non-spec concerns:
+
+```go
+type Node struct {
+    VendorExtensions map[string]interface{} `json:"-" yaml:"-"`
+    Trix             Trix                   `json:"-" yaml:"-"`
+}
+
+type Trix struct {
+    Source NodeSource `json:"-" yaml:"-"` // line/column, raw data
+}
+```
+
+- **`VendorExtensions`** — Holds `x-*` extension fields defined by the user's spec. These are part of the OpenAPI standard but not part of any specific object schema, so they live on `Node` rather than on each struct.
+- **`Trix`** — Named after the library (apitrix). Contains all library-provided metadata and functionality. Currently holds `Source` (line/column numbers and raw parsed data). Future capabilities (validation, conversion, parent traversal) will be added here.
+
+**Benefits:**
+- A developer sees `schema.Title` (spec) vs. `schema.Trix.Source.Start.Line` (library) — instantly clear which is which
+- Adding new library features only expands `Trix`, never the model struct itself
+- All `Trix` fields are `json:"-"`, so serialization stays clean
+- Each OpenAPI version (v2.0, v3.0, v3.1) has its own `Trix` that can diverge as needed
+
+### 2. Simple Properties Inline
 Simple scalar fields are parsed directly in the parent parser:
 ```go
 info.Title = shared.NodeGetString(node, "title")
 info.Version = shared.NodeGetString(node, "version")
 ```
 
-### 2. Complex Properties Delegated
+### 3. Complex Properties Delegated
 Complex nested objects get separate files following naming convention `{parent}_{property}.go`:
 - `info.go` → delegates to `info_contact.go`, `info_license.go`
 - `operation.go` → delegates to `operation_parameters.go`, `operation_requestbody.go`
 - `schema.go` → delegates to `schema_properties.go`, `schema_allof.go`
 
-### 3. Reference Handling
+### 4. Reference Handling
 `$ref` is handled by ref parsers in `ref_{type}.go` files:
 ```go
 // ref_schema.go
@@ -26,12 +52,12 @@ if shared.NodeHasRef(node) {
 ref.Value, err = parseSchema(node, ctx)
 ```
 
-### 4. Shared Parsers
+### 5. Shared Parsers
 Common types used across multiple contexts use `shared_` prefix:
 - `shared_responses.go` — Responses used in operations
 - `shared_securityrequirement.go` — Security requirements
 
-### 5. Shared Internal Package
+### 6. Shared Internal Package
 All three parsers (`openapi20`, `openapi30x`, `openapi31x`) share an `internal/shared` package that contains:
 - Node helpers (`node.go`) — extract typed values from `yaml.Node`
 - Map utilities (`maputil.go`) — extract typed values from `map[string]interface{}`

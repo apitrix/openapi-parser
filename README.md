@@ -8,9 +8,9 @@ A Go library for parsing OpenAPI 2.0, 3.0, and 3.1 specifications with full sour
 - **JSON and YAML** — Parses both formats seamlessly via `yaml.v3`
 - **`$ref` resolution** — Local JSON pointers and external file references with caching
 - **Circular reference detection** — Marks self-referencing schemas with `Circular = true` instead of infinite recursion
-- **Source location metadata** — Line and column numbers preserved for every parsed element
+- **Source location metadata** — Line and column numbers preserved for every parsed element via `Trix.Source`
 - **Unknown field detection** — Identifies typos, misplaced properties, and unsupported fields
-- **Extension support** — Captures `x-*` extension fields
+- **Vendor extension support** — Captures `x-*` vendor extension fields in `VendorExtensions`
 - **Reference types** — Typed `*Ref` wrappers distinguish `$ref` strings from inline objects
 - **Raw data access** — Original parsed structure available for tooling
 
@@ -43,8 +43,8 @@ func main() {
     fmt.Printf("Title: %s\n", doc.Info.Title)
     fmt.Printf("Version: %s\n", doc.Info.Version)
 
-    // Source location is available on every element
-    fmt.Printf("Info defined at line %d\n", doc.Info.NodeSource.Start.Line)
+    // Source location is available on every element via the Trix namespace
+    fmt.Printf("Info defined at line %d\n", doc.Info.Trix.Source.Start.Line)
 }
 ```
 
@@ -121,14 +121,18 @@ openapi-parser/
 └── docs/                   # Documentation
 ```
 
-## Source Location Metadata
+## Model Architecture
 
-Every parsed object includes source location information:
+Every parsed object embeds `Node`, which cleanly separates spec fields from library metadata:
 
 ```go
 type Node struct {
-    NodeSource NodeSource             // Location and raw data
-    Extensions map[string]interface{} // Extension fields (x-*)
+    VendorExtensions map[string]interface{} // x-* vendor extension fields
+    Trix             Trix                   // Library-level metadata (apitrix)
+}
+
+type Trix struct {
+    Source NodeSource // Source location info (line/column)
 }
 
 type NodeSource struct {
@@ -136,6 +140,19 @@ type NodeSource struct {
     End   Location    // End line/column (1-based)
     Raw   interface{} // Original parsed data
 }
+```
+
+**Design principle:** Spec-defined fields live directly on the model struct. Everything provided by the library lives under `Trix`. Vendor extensions (`x-*`) live in `VendorExtensions`.
+
+```go
+// Spec fields — direct access
+fmt.Println(doc.Info.Title)
+
+// Library metadata — under Trix
+fmt.Println(doc.Info.Trix.Source.Start.Line)
+
+// Vendor extensions
+fmt.Println(doc.Info.VendorExtensions["x-custom"])
 ```
 
 This enables IDE integration with go-to-definition, precise error messages, and linting tools.
