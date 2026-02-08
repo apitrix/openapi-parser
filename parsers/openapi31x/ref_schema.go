@@ -1,0 +1,40 @@
+package openapi31x
+
+import (
+	openapi31models "openapi-parser/models/openapi31"
+
+	"gopkg.in/yaml.v3"
+)
+
+// parseSchemaRef parses a SchemaRef from a yaml.Node.
+// In 3.1, $ref can have summary and description alongside it.
+func parseSchemaRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.SchemaRef, error) {
+	if node == nil {
+		return nil, nil
+	}
+
+	if !nodeIsMapping(node) {
+		return nil, ctx.errorAt(node, "schema must be an object")
+	}
+
+	ref := &openapi31models.SchemaRef{}
+	ref.NodeSource = ctx.nodeSource(node)
+	ref.Extensions = parseNodeExtensions(node)
+
+	// Check for $ref
+	if nodeHasRef(node) {
+		ref.Ref = nodeGetRef(node)
+		ref.Summary = nodeGetString(node, "summary")
+		ref.Description = nodeGetString(node, "description")
+		return ref, nil
+	}
+
+	// Parse inline schema
+	schema, err := parseSharedSchema(node, ctx)
+	if err != nil {
+		return nil, err
+	}
+	ref.Value = schema
+
+	return ref, nil
+}

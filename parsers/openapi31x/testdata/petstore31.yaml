@@ -1,0 +1,190 @@
+openapi: "3.1.0"
+info:
+  title: Petstore - OpenAPI 3.1
+  summary: A pet store API demonstrating OpenAPI 3.1 features
+  description: |
+    A sample API that uses a petstore as an example to demonstrate features
+    in the OpenAPI 3.1.0 specification
+  termsOfService: http://example.com/terms/
+  contact:
+    name: API Support
+    url: http://www.example.com/support
+    email: support@example.com
+  license:
+    name: Apache 2.0
+    identifier: Apache-2.0
+  version: "1.0.0"
+jsonSchemaDialect: "https://json-schema.org/draft/2020-12/schema"
+servers:
+  - url: https://petstore.example.com/v1
+    description: Production server
+webhooks:
+  newPet:
+    post:
+      summary: New pet webhook
+      operationId: newPetWebhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+      responses:
+        "200":
+          description: Webhook acknowledged
+paths:
+  /pets:
+    get:
+      summary: List all pets
+      operationId: listPets
+      tags:
+        - pets
+      parameters:
+        - name: limit
+          in: query
+          description: How many items to return
+          required: false
+          schema:
+            type: integer
+            maximum: 100
+      responses:
+        "200":
+          description: A list of pets
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a pet
+      operationId: createPets
+      tags:
+        - pets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        "201":
+          description: Null response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /pets/{petId}:
+    get:
+      summary: Info for a specific pet
+      operationId: showPetById
+      tags:
+        - pets
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          description: The id of the pet to retrieve
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Pet:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        tag:
+          type:
+            - string
+            - "null"
+        status:
+          type: string
+          enum:
+            - available
+            - pending
+            - sold
+          const: available
+        color:
+          type: string
+          if:
+            properties:
+              type:
+                const: fish
+          then:
+            enum:
+              - gold
+              - blue
+          else:
+            enum:
+              - brown
+              - black
+              - white
+        metadata:
+          type: object
+          additionalProperties: true
+          unevaluatedProperties:
+            type: string
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    PetList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Pet'
+      prefixItems:
+        - type: object
+          description: First item must have extra validation
+  pathItems:
+    PetOperations:
+      get:
+        summary: Reusable pet operations
+        operationId: reusablePetOps
+        responses:
+          "200":
+            description: Success
+tags:
+  - name: pets
+    description: Everything about your Pets
+externalDocs:
+  description: Find more info here
+  url: https://example.com

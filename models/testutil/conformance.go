@@ -17,6 +17,8 @@ type SchemaConformanceConfig struct {
 	Types []interface{}
 	// NameMappings maps schema definition names to Go type names where they differ
 	NameMappings map[string]string
+	// PropertyExclusions lists properties to skip per definition (e.g. schema bugs)
+	PropertyExclusions map[string][]string
 }
 
 // RunSchemaConformance validates that Go struct fields match JSON schema properties.
@@ -37,7 +39,11 @@ func RunSchemaConformance(t *testing.T, cfg SchemaConformanceConfig) {
 
 	definitions, ok := schema["definitions"].(map[string]interface{})
 	if !ok {
-		t.Fatal("Schema missing 'definitions'")
+		// JSON Schema 2020-12 uses "$defs" instead of "definitions"
+		definitions, ok = schema["$defs"].(map[string]interface{})
+		if !ok {
+			t.Fatal("Schema missing 'definitions' or '$defs'")
+		}
 	}
 
 	// Build type map using reflection
@@ -63,6 +69,10 @@ func RunSchemaConformance(t *testing.T, cfg SchemaConformanceConfig) {
 		goTypeName := schemaName
 		if cfg.NameMappings != nil {
 			if mapped, ok := cfg.NameMappings[schemaName]; ok {
+				if mapped == "" {
+					// Explicitly skipped definition
+					continue
+				}
 				goTypeName = mapped
 			}
 		}
@@ -79,6 +89,19 @@ func RunSchemaConformance(t *testing.T, cfg SchemaConformanceConfig) {
 
 		// Validate each schema property exists in Go struct
 		for propName := range props {
+			// Check property exclusions
+			if excluded := cfg.PropertyExclusions[schemaName]; len(excluded) > 0 {
+				skip := false
+				for _, ex := range excluded {
+					if ex == propName {
+						skip = true
+						break
+					}
+				}
+				if skip {
+					continue
+				}
+			}
 			if !goFields[propName] {
 				t.Errorf("❌ Schema %q.%s: missing in Go type %s", schemaName, propName, goTypeName)
 			}
