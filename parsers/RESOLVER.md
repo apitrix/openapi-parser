@@ -1,6 +1,6 @@
 # Reference Resolver — Deep Dive
 
-This document describes how `$ref` resolution works end-to-end in the OpenAPI parser, covering the shared `RefResolver`, per-parser resolve walks, circular reference detection, and external file handling.
+This document describes how `$ref` resolution works end-to-end in the OpenAPI parser, covering the shared `RefResolver`, per-parser resolve walks, circular reference detection, external file handling, and remote URL resolution.
 
 ## Overview
 
@@ -58,7 +58,8 @@ Located in `parsers/internal/shared/resolver.go`, the `RefResolver` handles:
 | `BasePath` | `string` | Directory of the root document for relative path resolution |
 | `Root` | `*yaml.Node` | YAML tree of the root document |
 | `Fs` | `afero.Fs` | Filesystem for reading external files |
-| `fileCache` | `map[string]*yaml.Node` | Cached parsed external files |
+| `HTTPClient` | `*http.Client` | HTTP client for fetching remote URLs (default: 30s timeout) |
+| `fileCache` | `map[string]*yaml.Node` | Cached parsed documents (files and URLs) |
 | `visiting` | `map[string]bool` | Currently-resolving refs (YAML-level cycle detection) |
 
 ### `Resolve(ref string) → (*ResolveResult, error)`
@@ -77,7 +78,8 @@ Resolve("#/components/schemas/Pet")
    ├─ SplitRef(ref) → (filePath="", pointer="/components/schemas/Pet")
    │
    ├─ filePath == "" → use Root as target document
-   │  (otherwise: loadFile(filePath) → load, parse, cache external file)
+   │  filePath is http(s):// → loadURL(filePath) → fetch, parse, cache
+   │  otherwise → loadFile(filePath) → read, parse, cache local file
    │
    └─ ResolveJSONPointer(root, "/components/schemas/Pet")
       │
@@ -93,6 +95,8 @@ Breaks a `$ref` into its two components:
 | `#/components/schemas/Pet` | `""` | `/components/schemas/Pet` |
 | `./schemas/pet.yaml` | `./schemas/pet.yaml` | `""` |
 | `./common.yaml#/definitions/Error` | `./common.yaml` | `/definitions/Error` |
+| `https://example.com/pet.yaml` | `https://example.com/pet.yaml` | `""` |
+| `https://example.com/common.yaml#/definitions/Error` | `https://example.com/common.yaml` | `/definitions/Error` |
 
 ### `ResolveJSONPointer(root, pointer)`
 
@@ -111,6 +115,17 @@ Loads and caches external YAML/JSON files:
 3. Read file via `afero.Fs`
 4. Parse YAML, unwrap document node
 5. Store in `fileCache`, return
+
+### `loadURL(rawURL)`
+
+Fetches and caches remote YAML/JSON documents over HTTP/HTTPS:
+
+1. Check `fileCache` (keyed by full URL) — return cached if present
+2. `HTTPClient.Get(rawURL)` — fetch the document
+3. Verify HTTP 200 status — return error on non-200
+4. `io.ReadAll` response body
+5. Parse YAML, unwrap document node
+6. Store in `fileCache`, return
 
 ---
 
@@ -241,27 +256,29 @@ if schemaRef.Circular {
 
 ---
 
-## External File Resolution
+## External File and Remote URL Resolution
 
-External `$ref` values (e.g., `./schemas/pet.yaml` or `./common.yaml#/definitions/Error`) are handled transparently:
+External `$ref` values are handled transparently. The resolver supports both local files and remote URLs:
 
-1. **`SplitRef`** separates the file path from the JSON pointer
-2. **`loadFile`** reads the file via the configured `afero.Fs`, parses it, and caches the result
-3. **`ResolveJSONPointer`** navigates to the target within the loaded file
+| Ref Type | Example | Handler |
+|----------|---------|--------|
+| Local file | `./schemas/pet.yaml` | `loadFile` via `afero.Fs` |
+| Remote URL | `https://example.com/pet.yaml` | `loadURL` via `HTTPClient` |
+| With pointer | `...#/definitions/Error` | `ResolveJSONPointer` after loading |
 
-### File Caching
+### Document Caching
 
-Each unique file path is loaded and parsed only once. Subsequent references to the same file use the cached `*yaml.Node`:
+Both files and URLs are cached in `fileCache` after first load. Files are keyed by absolute path; URLs are keyed by the full URL string:
 
 ```go
 type RefResolver struct {
-    fileCache map[string]*yaml.Node  // keyed by absolute path
+    fileCache map[string]*yaml.Node  // keyed by abs path or full URL
 }
 ```
 
 ### Filesystem Abstraction
 
-The `RefResolver` uses `afero.Fs` for all file I/O:
+Local file I/O uses `afero.Fs`:
 
 ```go
 // Production
@@ -273,7 +290,21 @@ afero.WriteFile(memFs, "/pet.yaml", data, 0644)
 resolver := shared.NewRefResolverWithFs(basePath, root, memFs)
 ```
 
-This makes tests fast, deterministic, and parallel-safe — no temp files or OS cleanup needed.
+### HTTP Client
+
+Remote URL fetching uses the `HTTPClient` field (default: `*http.Client` with 30s timeout). Inject a custom client for auth headers or testing:
+
+```go
+// Custom client with auth
+resolver := shared.NewRefResolver(basePath, root)
+resolver.HTTPClient = &http.Client{
+    Transport: &authTransport{token: "bearer xyz"},
+}
+
+// Testing with httptest
+srv := httptest.NewServer(handler)
+resolver.HTTPClient = srv.Client()
+```
 
 ---
 
@@ -287,10 +318,13 @@ func (r *RefResolver) canonicalize(ref string) string {
     if filePath == "" {
         return "#" + pointer          // local: "#/components/schemas/Pet"
     }
+    if isRemoteURL(filePath) {
+        return filePath + "#" + pointer   // remote: URL is already unique
+    }
     absPath := filepath.Join(r.BasePath, filePath)
     absPath = filepath.Clean(absPath)
-    return absPath + "#" + pointer    // external: "/abs/path/pet.yaml#/Pet"
+    return absPath + "#" + pointer    // file: "/abs/path/pet.yaml#/Pet"
 }
 ```
 
-This ensures that `./pet.yaml` and `../dir/pet.yaml` resolve to the same canonical key when they point to the same file.
+This ensures that `./pet.yaml` and `../dir/pet.yaml` resolve to the same canonical key when they point to the same file. Remote URLs are used as-is since they are already globally unique.
