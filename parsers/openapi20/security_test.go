@@ -287,6 +287,6 @@ securityDefinitions:
 
 	// Assert
 	require.NoError(t, err)
-	ext := doc.SecurityDefinitions["api_key"].Extensions
+	ext := doc.SecurityDefinitions["api_key"].VendorExtensions
 	assert.Equal(t, "value", ext["x-custom"])
 }

@@ -96,7 +96,7 @@ func parseSwagger(node *yaml.Node, ctx *ParseContext) (*openapi20models.Swagger,
 		}
 	}
 
-	swagger.Extensions = parseNodeExtensions(node)
+	swagger.VendorExtensions = parseNodeExtensions(node)
 	swagger.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields at root level
@@ -146,7 +146,7 @@ func parseSwaggerPaths(node *yaml.Node, ctx *ParseContext) (*openapi20models.Pat
 		paths.Items[key] = pathItem
 	}
 
-	paths.Extensions = parseNodeExtensions(node)
+	paths.VendorExtensions = parseNodeExtensions(node)
 	paths.NodeSource = ctx.nodeSource(node)
 
 	return paths, nil

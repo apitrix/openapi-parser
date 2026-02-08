@@ -95,7 +95,7 @@ paths:
 `
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ext := doc.Paths.Items["/pets"].Get.ExternalDocs.Extensions
+	ext := doc.Paths.Items["/pets"].Get.ExternalDocs.VendorExtensions
 	require.NotNil(t, ext)
 	assert.Equal(t, "value", ext["x-custom"])
 }

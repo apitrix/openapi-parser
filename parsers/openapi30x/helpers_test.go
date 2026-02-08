@@ -168,7 +168,7 @@ paths: {}
 `
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ext := doc.Info.Extensions
+	ext := doc.Info.VendorExtensions
 	assert.Equal(t, "value", ext["x-string"])
 	assert.Equal(t, 42, ext["x-number"])
 	assert.Equal(t, true, ext["x-bool"])

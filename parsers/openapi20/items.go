@@ -52,7 +52,7 @@ func parseItems(node *yaml.Node, ctx *ParseContext) (*openapi20models.Items, err
 		}
 	}
 
-	items.Extensions = parseNodeExtensions(node)
+	items.VendorExtensions = parseNodeExtensions(node)
 	items.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields

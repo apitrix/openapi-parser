@@ -184,7 +184,7 @@ paths:
 `
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ext := doc.Paths.Items["/pets"].Get.Extensions
+	ext := doc.Paths.Items["/pets"].Get.VendorExtensions
 	require.NotNil(t, ext)
 	assert.Equal(t, true, ext["x-internal"])
 	assert.Equal(t, 100, ext["x-rate-limit"])

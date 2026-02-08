@@ -93,6 +93,6 @@ components:
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	extDocs := doc.Components.Schemas["Pet"].Value.ExternalDocs
-	require.NotNil(t, extDocs.Extensions)
-	assert.Equal(t, "value", extDocs.Extensions["x-custom"])
+	require.NotNil(t, extDocs.VendorExtensions)
+	assert.Equal(t, "value", extDocs.VendorExtensions["x-custom"])
 }

@@ -32,7 +32,7 @@ func (p *externalDocsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi
 	ed.URL = p.ParseURL(node)
 	ed.Description = p.ParseDescription(node)
 
-	ed.Extensions = parseNodeExtensions(node)
+	ed.VendorExtensions = parseNodeExtensions(node)
 	ed.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields

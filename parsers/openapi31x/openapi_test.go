@@ -121,9 +121,9 @@ paths: {}
 `
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, doc.Extensions)
-	assert.Equal(t, "value", doc.Extensions["x-custom"])
-	assert.Equal(t, true, doc.Extensions["x-internal"])
+	require.NotNil(t, doc.VendorExtensions)
+	assert.Equal(t, "value", doc.VendorExtensions["x-custom"])
+	assert.Equal(t, true, doc.VendorExtensions["x-internal"])
 }
 
 // --- Node Source ---

@@ -56,7 +56,7 @@ func (p *serverParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mode
 		return nil, err
 	}
 
-	server.Extensions = parseNodeExtensions(node)
+	server.VendorExtensions = parseNodeExtensions(node)
 	server.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields

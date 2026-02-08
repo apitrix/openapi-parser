@@ -61,7 +61,7 @@ func parseOperation(node *yaml.Node, ctx *ParseContext) (*openapi20models.Operat
 		}
 	}
 
-	op.Extensions = parseNodeExtensions(node)
+	op.VendorExtensions = parseNodeExtensions(node)
 	op.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields

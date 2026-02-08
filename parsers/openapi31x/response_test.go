@@ -226,8 +226,8 @@ paths:
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	resp := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value
-	require.NotNil(t, resp.Extensions)
-	assert.Equal(t, "value", resp.Extensions["x-custom"])
+	require.NotNil(t, resp.VendorExtensions)
+	assert.Equal(t, "value", resp.VendorExtensions["x-custom"])
 }
 
 // --- Complete Response ---

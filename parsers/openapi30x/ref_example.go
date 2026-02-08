@@ -18,7 +18,7 @@ func parseExampleRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.Examp
 
 	ref := &openapi30models.ExampleRef{}
 	ref.NodeSource = ctx.nodeSource(node)
-	ref.Extensions = parseNodeExtensions(node)
+	ref.VendorExtensions = parseNodeExtensions(node)
 
 	// Check for $ref
 	if nodeHasRef(node) {

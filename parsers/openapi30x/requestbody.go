@@ -39,7 +39,7 @@ func (p *requestBodyParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi3
 		return nil, err
 	}
 
-	rb.Extensions = parseNodeExtensions(node)
+	rb.VendorExtensions = parseNodeExtensions(node)
 	rb.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields

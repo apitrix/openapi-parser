@@ -18,7 +18,7 @@ func parseSecuritySchemeRef(node *yaml.Node, ctx *ParseContext) (*openapi31model
 
 	ref := &openapi31models.SecuritySchemeRef{}
 	ref.NodeSource = ctx.nodeSource(node)
-	ref.Extensions = parseNodeExtensions(node)
+	ref.VendorExtensions = parseNodeExtensions(node)
 
 	if nodeHasRef(node) {
 		ref.Ref = nodeGetRef(node)

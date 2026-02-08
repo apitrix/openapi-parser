@@ -35,7 +35,7 @@ func (p *callbackParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mo
 		return nil, err
 	}
 
-	callback.Extensions = parseNodeExtensions(node)
+	callback.VendorExtensions = parseNodeExtensions(node)
 	callback.NodeSource = ctx.nodeSource(node)
 
 	return callback, nil

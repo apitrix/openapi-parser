@@ -152,6 +152,6 @@ paths:
 `
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, doc.Paths.Extensions)
-	assert.Equal(t, "value", doc.Paths.Extensions["x-custom"])
+	require.NotNil(t, doc.Paths.VendorExtensions)
+	assert.Equal(t, "value", doc.Paths.VendorExtensions["x-custom"])
 }

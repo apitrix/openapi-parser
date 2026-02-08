@@ -239,6 +239,6 @@ components:
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	ex := doc.Components.Examples["PetExample"].Value
-	require.NotNil(t, ex.Extensions)
-	assert.Equal(t, "value", ex.Extensions["x-custom"])
+	require.NotNil(t, ex.VendorExtensions)
+	assert.Equal(t, "value", ex.VendorExtensions["x-custom"])
 }

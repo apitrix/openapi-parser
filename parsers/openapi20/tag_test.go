@@ -133,7 +133,7 @@ tags:
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.Tags[0].Extensions)
-	assert.Equal(t, true, doc.Tags[0].Extensions["x-internal"])
-	assert.Equal(t, "Pet Store", doc.Tags[0].Extensions["x-display-name"])
+	require.NotNil(t, doc.Tags[0].VendorExtensions)
+	assert.Equal(t, true, doc.Tags[0].VendorExtensions["x-internal"])
+	assert.Equal(t, "Pet Store", doc.Tags[0].VendorExtensions["x-display-name"])
 }

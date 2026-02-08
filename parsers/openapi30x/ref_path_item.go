@@ -18,7 +18,7 @@ func parsePathItemRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.Path
 
 	ref := &openapi30models.PathItemRef{}
 	ref.NodeSource = ctx.nodeSource(node)
-	ref.Extensions = parseNodeExtensions(node)
+	ref.VendorExtensions = parseNodeExtensions(node)
 
 	// Check for $ref
 	if nodeHasRef(node) {

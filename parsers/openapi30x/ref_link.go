@@ -18,7 +18,7 @@ func parseLinkRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.LinkRef,
 
 	ref := &openapi30models.LinkRef{}
 	ref.NodeSource = ctx.nodeSource(node)
-	ref.Extensions = parseNodeExtensions(node)
+	ref.VendorExtensions = parseNodeExtensions(node)
 
 	// Check for $ref
 	if nodeHasRef(node) {

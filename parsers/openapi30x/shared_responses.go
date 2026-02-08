@@ -46,7 +46,7 @@ func parseSharedResponses(node *yaml.Node, ctx *ParseContext) (*openapi30models.
 		}
 	}
 
-	responses.Extensions = parseNodeExtensions(node)
+	responses.VendorExtensions = parseNodeExtensions(node)
 	responses.NodeSource = ctx.nodeSource(node)
 
 	return responses, nil

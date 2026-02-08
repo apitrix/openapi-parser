@@ -165,6 +165,6 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.Paths.Items["/pets"].Extensions)
-	assert.Equal(t, true, doc.Paths.Items["/pets"].Extensions["x-internal"])
+	require.NotNil(t, doc.Paths.Items["/pets"].VendorExtensions)
+	assert.Equal(t, true, doc.Paths.Items["/pets"].VendorExtensions["x-internal"])
 }

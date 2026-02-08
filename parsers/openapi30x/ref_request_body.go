@@ -18,7 +18,7 @@ func parseRequestBodyRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.R
 
 	ref := &openapi30models.RequestBodyRef{}
 	ref.NodeSource = ctx.nodeSource(node)
-	ref.Extensions = parseNodeExtensions(node)
+	ref.VendorExtensions = parseNodeExtensions(node)
 
 	// Check for $ref
 	if nodeHasRef(node) {

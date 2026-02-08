@@ -18,7 +18,7 @@ func parseParameterRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.Par
 
 	ref := &openapi31models.ParameterRef{}
 	ref.NodeSource = ctx.nodeSource(node)
-	ref.Extensions = parseNodeExtensions(node)
+	ref.VendorExtensions = parseNodeExtensions(node)
 
 	if nodeHasRef(node) {
 		ref.Ref = nodeGetRef(node)

@@ -67,7 +67,7 @@ func parseOpenAPIPathsPathItemOperation(parent *yaml.Node, method string, ctx *P
 		return nil, err
 	}
 
-	op.Extensions = parseNodeExtensions(node)
+	op.VendorExtensions = parseNodeExtensions(node)
 	op.NodeSource = opCtx.nodeSource(node)
 
 	// Detect unknown fields

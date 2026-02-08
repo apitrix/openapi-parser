@@ -18,7 +18,7 @@ func parseHeaderRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.Header
 
 	ref := &openapi30models.HeaderRef{}
 	ref.NodeSource = ctx.nodeSource(node)
-	ref.Extensions = parseNodeExtensions(node)
+	ref.VendorExtensions = parseNodeExtensions(node)
 
 	// Check for $ref
 	if nodeHasRef(node) {

@@ -37,7 +37,7 @@ func parseOpenAPIInfo(node *yaml.Node, ctx *ParseContext) (*openapi31models.Info
 		return nil, err
 	}
 
-	info.Extensions = parseNodeExtensions(node)
+	info.VendorExtensions = parseNodeExtensions(node)
 	info.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields

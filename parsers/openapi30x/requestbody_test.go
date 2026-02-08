@@ -175,8 +175,8 @@ paths:
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	rb := doc.Paths.Items["/pets"].Post.RequestBody.Value
-	require.NotNil(t, rb.Extensions)
-	assert.Equal(t, "value", rb.Extensions["x-custom"])
+	require.NotNil(t, rb.VendorExtensions)
+	assert.Equal(t, "value", rb.VendorExtensions["x-custom"])
 }
 
 // --- With Schema ---

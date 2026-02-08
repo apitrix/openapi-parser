@@ -192,8 +192,8 @@ paths:
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	enc := doc.Paths.Items["/upload"].Post.RequestBody.Value.Content["multipart/form-data"].Encoding["file"]
-	require.NotNil(t, enc.Extensions)
-	assert.Equal(t, "value", enc.Extensions["x-custom"])
+	require.NotNil(t, enc.VendorExtensions)
+	assert.Equal(t, "value", enc.VendorExtensions["x-custom"])
 }
 
 // --- Empty Encoding ---

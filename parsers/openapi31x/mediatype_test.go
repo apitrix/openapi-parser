@@ -221,8 +221,8 @@ paths:
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	mt := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Content["application/json"]
-	require.NotNil(t, mt.Extensions)
-	assert.Equal(t, "value", mt.Extensions["x-custom"])
+	require.NotNil(t, mt.VendorExtensions)
+	assert.Equal(t, "value", mt.VendorExtensions["x-custom"])
 }
 
 // --- Complex Media Types ---

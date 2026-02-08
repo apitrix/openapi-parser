@@ -142,9 +142,9 @@ paths: {}
 	require.NoError(t, err)
 	require.NotNil(t, doc.Info)
 	require.NotNil(t, doc.Info.Contact)
-	require.NotNil(t, doc.Info.Contact.Extensions)
-	assert.Equal(t, "#api-support", doc.Info.Contact.Extensions["x-slack"])
-	assert.Equal(t, "+1-555-0100", doc.Info.Contact.Extensions["x-phone"])
+	require.NotNil(t, doc.Info.Contact.VendorExtensions)
+	assert.Equal(t, "#api-support", doc.Info.Contact.VendorExtensions["x-slack"])
+	assert.Equal(t, "+1-555-0100", doc.Info.Contact.VendorExtensions["x-phone"])
 }
 
 // --- Empty Fields ---

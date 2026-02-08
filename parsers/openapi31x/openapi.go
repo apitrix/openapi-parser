@@ -82,7 +82,7 @@ func parseOpenAPI(node *yaml.Node, ctx *ParseContext) (*openapi31models.OpenAPI,
 		}
 	}
 
-	openapi.Extensions = parseNodeExtensions(node)
+	openapi.VendorExtensions = parseNodeExtensions(node)
 	openapi.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields at root level
@@ -132,7 +132,7 @@ func parseOpenAPIPaths(node *yaml.Node, ctx *ParseContext) (*openapi31models.Pat
 		paths.Items[key] = pathItem
 	}
 
-	paths.Extensions = parseNodeExtensions(node)
+	paths.VendorExtensions = parseNodeExtensions(node)
 	paths.NodeSource = ctx.nodeSource(node)
 
 	return paths, nil

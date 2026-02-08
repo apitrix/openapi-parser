@@ -175,8 +175,8 @@ paths: {}
 `
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, doc.Info.Extensions)
-	assert.Equal(t, true, doc.Info.Extensions["x-internal"])
+	require.NotNil(t, doc.Info.VendorExtensions)
+	assert.Equal(t, true, doc.Info.VendorExtensions["x-internal"])
 }
 
 // --- Missing Optional Fields ---

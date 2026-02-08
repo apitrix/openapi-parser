@@ -227,6 +227,6 @@ components:
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	flows := doc.Components.SecuritySchemes["oauth2"].Value.Flows
-	require.NotNil(t, flows.Extensions)
-	assert.Equal(t, "value", flows.Extensions["x-custom"])
+	require.NotNil(t, flows.VendorExtensions)
+	assert.Equal(t, "value", flows.VendorExtensions["x-custom"])
 }

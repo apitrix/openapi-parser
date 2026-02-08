@@ -81,7 +81,7 @@ func parseHeader(node *yaml.Node, ctx *ParseContext) (*openapi20models.Header, e
 		}
 	}
 
-	header.Extensions = parseNodeExtensions(node)
+	header.VendorExtensions = parseNodeExtensions(node)
 	header.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields

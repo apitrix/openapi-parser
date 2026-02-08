@@ -67,7 +67,7 @@ func parseParameter(node *yaml.Node, ctx *ParseContext) (*openapi20models.Parame
 		}
 	}
 
-	param.Extensions = parseNodeExtensions(node)
+	param.VendorExtensions = parseNodeExtensions(node)
 	param.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields

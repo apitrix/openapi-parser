@@ -278,8 +278,8 @@ paths: {}
 	require.NoError(t, err)
 	require.NotNil(t, doc)
 
-	assert.Equal(t, "root-value", doc.Extensions["x-root-ext"])
-	assert.Equal(t, "info-value", doc.Info.Extensions["x-info-ext"])
+	assert.Equal(t, "root-value", doc.VendorExtensions["x-root-ext"])
+	assert.Equal(t, "info-value", doc.Info.VendorExtensions["x-info-ext"])
 }
 
 // TestParseSchemaTypeArray tests parsing of type arrays.

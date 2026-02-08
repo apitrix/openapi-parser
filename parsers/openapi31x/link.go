@@ -46,7 +46,7 @@ func (p *linkParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31models
 		return nil, err
 	}
 
-	link.Extensions = parseNodeExtensions(node)
+	link.VendorExtensions = parseNodeExtensions(node)
 	link.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields

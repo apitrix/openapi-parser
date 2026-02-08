@@ -18,7 +18,7 @@ func parseCallbackRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.Call
 
 	ref := &openapi31models.CallbackRef{}
 	ref.NodeSource = ctx.nodeSource(node)
-	ref.Extensions = parseNodeExtensions(node)
+	ref.VendorExtensions = parseNodeExtensions(node)
 
 	if nodeHasRef(node) {
 		ref.Ref = nodeGetRef(node)

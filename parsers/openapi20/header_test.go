@@ -225,5 +225,5 @@ paths:
 	// Assert
 	require.NoError(t, err)
 	header := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Custom"]
-	assert.Equal(t, true, header.Extensions["x-deprecated"])
+	assert.Equal(t, true, header.VendorExtensions["x-deprecated"])
 }

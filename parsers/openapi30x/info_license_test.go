@@ -135,9 +135,9 @@ paths: {}
 	require.NoError(t, err)
 	require.NotNil(t, doc.Info)
 	require.NotNil(t, doc.Info.License)
-	require.NotNil(t, doc.Info.License.Extensions)
-	assert.Equal(t, "MIT", doc.Info.License.Extensions["x-spdx-id"])
-	assert.Equal(t, true, doc.Info.License.Extensions["x-osi-approved"])
+	require.NotNil(t, doc.Info.License.VendorExtensions)
+	assert.Equal(t, "MIT", doc.Info.License.VendorExtensions["x-spdx-id"])
+	assert.Equal(t, true, doc.Info.License.VendorExtensions["x-osi-approved"])
 }
 
 // --- Empty Name (should still parse) ---

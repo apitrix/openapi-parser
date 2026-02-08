@@ -183,6 +183,6 @@ definitions:
 	// Assert
 	require.NoError(t, err)
 	xml := doc.Definitions["Pet"].Value.XML
-	require.NotNil(t, xml.Extensions)
-	assert.Equal(t, "value", xml.Extensions["x-custom"])
+	require.NotNil(t, xml.VendorExtensions)
+	assert.Equal(t, "value", xml.VendorExtensions["x-custom"])
 }

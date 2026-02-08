@@ -139,6 +139,6 @@ components:
 	require.NoError(t, err)
 	disc := doc.Components.Schemas["Pet"].Value.Discriminator
 	require.NotNil(t, disc)
-	require.NotNil(t, disc.Extensions)
-	assert.Equal(t, "value", disc.Extensions["x-custom"])
+	require.NotNil(t, disc.VendorExtensions)
+	assert.Equal(t, "value", disc.VendorExtensions["x-custom"])
 }

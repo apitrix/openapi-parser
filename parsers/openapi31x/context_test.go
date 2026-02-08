@@ -141,8 +141,8 @@ paths:
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 
-	assert.Equal(t, "info", doc.Info.Extensions["x-info-ext"])
-	assert.Equal(t, "path", doc.Paths.Items["/pets"].Extensions["x-path-ext"])
-	assert.Equal(t, "operation", doc.Paths.Items["/pets"].Get.Extensions["x-op-ext"])
-	assert.Equal(t, "response", doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Extensions["x-resp-ext"])
+	assert.Equal(t, "info", doc.Info.VendorExtensions["x-info-ext"])
+	assert.Equal(t, "path", doc.Paths.Items["/pets"].VendorExtensions["x-path-ext"])
+	assert.Equal(t, "operation", doc.Paths.Items["/pets"].Get.VendorExtensions["x-op-ext"])
+	assert.Equal(t, "response", doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.VendorExtensions["x-resp-ext"])
 }

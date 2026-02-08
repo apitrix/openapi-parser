@@ -56,7 +56,7 @@ func (p *tagParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31models.
 		return nil, err
 	}
 
-	tag.Extensions = parseNodeExtensions(node)
+	tag.VendorExtensions = parseNodeExtensions(node)
 	tag.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields

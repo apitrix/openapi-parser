@@ -16,5 +16,5 @@ type NodeSource struct {
 // Node is embedded in all v31 types to provide source info and extensions.
 type Node struct {
 	NodeSource NodeSource             `json:"-" yaml:"-"`
-	Extensions map[string]interface{} `json:"-" yaml:"-"`
+	VendorExtensions map[string]interface{} `json:"-" yaml:"-"`
 }

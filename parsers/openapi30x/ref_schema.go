@@ -18,7 +18,7 @@ func parseSchemaRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.Schema
 
 	ref := &openapi30models.SchemaRef{}
 	ref.NodeSource = ctx.nodeSource(node)
-	ref.Extensions = parseNodeExtensions(node)
+	ref.VendorExtensions = parseNodeExtensions(node)
 
 	// Check for $ref
 	if nodeHasRef(node) {

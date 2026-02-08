@@ -393,6 +393,6 @@ paths:
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	param := doc.Paths.Items["/pets"].Get.Parameters[0].Value
-	require.NotNil(t, param.Extensions)
-	assert.Equal(t, "value", param.Extensions["x-custom"])
+	require.NotNil(t, param.VendorExtensions)
+	assert.Equal(t, "value", param.VendorExtensions["x-custom"])
 }

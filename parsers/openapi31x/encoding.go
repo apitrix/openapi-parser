@@ -41,7 +41,7 @@ func (p *encodingParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mo
 		return nil, err
 	}
 
-	enc.Extensions = parseNodeExtensions(node)
+	enc.VendorExtensions = parseNodeExtensions(node)
 	enc.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields

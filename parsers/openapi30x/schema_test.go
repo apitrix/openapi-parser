@@ -452,9 +452,9 @@ components:
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	schema := doc.Components.Schemas["Pet"].Value
-	require.NotNil(t, schema.Extensions)
-	assert.Equal(t, true, schema.Extensions["x-internal"])
-	assert.Equal(t, "PetModel", schema.Extensions["x-model-name"])
+	require.NotNil(t, schema.VendorExtensions)
+	assert.Equal(t, true, schema.VendorExtensions["x-internal"])
+	assert.Equal(t, "PetModel", schema.VendorExtensions["x-model-name"])
 }
 
 // --- Node Source ---

@@ -236,6 +236,6 @@ paths:
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	link := doc.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links["GetUserPets"].Value
-	require.NotNil(t, link.Extensions)
-	assert.Equal(t, "value", link.Extensions["x-custom"])
+	require.NotNil(t, link.VendorExtensions)
+	assert.Equal(t, "value", link.VendorExtensions["x-custom"])
 }

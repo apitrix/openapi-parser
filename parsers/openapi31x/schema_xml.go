@@ -29,7 +29,7 @@ func (p *schemaParser) ParseXML(parent *yaml.Node, c *ParseContext) (*openapi31m
 	xml.Attribute = nodeGetBool(node, "attribute")
 	xml.Wrapped = nodeGetBool(node, "wrapped")
 
-	xml.Extensions = parseNodeExtensions(node)
+	xml.VendorExtensions = parseNodeExtensions(node)
 	xml.NodeSource = pctx.nodeSource(node)
 
 	// Detect unknown fields

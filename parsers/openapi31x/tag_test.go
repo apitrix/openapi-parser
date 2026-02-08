@@ -104,7 +104,7 @@ paths: {}
 `
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ext := doc.Tags[0].Extensions
+	ext := doc.Tags[0].VendorExtensions
 	require.NotNil(t, ext)
 	assert.Equal(t, "Pet Operations", ext["x-displayName"])
 }
@@ -131,7 +131,7 @@ paths: {}
 	assert.Equal(t, "pets", tag.Name)
 	assert.NotEmpty(t, tag.Description)
 	require.NotNil(t, tag.ExternalDocs)
-	require.NotNil(t, tag.Extensions)
+	require.NotNil(t, tag.VendorExtensions)
 }
 
 // --- Empty Tags ---

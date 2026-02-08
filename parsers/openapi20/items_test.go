@@ -276,5 +276,5 @@ paths:
 	// Assert
 	require.NoError(t, err)
 	items := doc.Paths.Items["/pets"].Get.Parameters[0].Value.Items
-	assert.Equal(t, "value", items.Extensions["x-custom"])
+	assert.Equal(t, "value", items.VendorExtensions["x-custom"])
 }

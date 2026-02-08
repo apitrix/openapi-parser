@@ -22,7 +22,7 @@ func parseExternalDocs(node *yaml.Node, ctx *ParseContext) (*openapi20models.Ext
 	ed.Description = nodeGetString(node, "description")
 	ed.URL = nodeGetString(node, "url")
 
-	ed.Extensions = parseNodeExtensions(node)
+	ed.VendorExtensions = parseNodeExtensions(node)
 	ed.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields

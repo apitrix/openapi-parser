@@ -194,8 +194,8 @@ components:
 `
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, doc.Components.Extensions)
-	assert.Equal(t, "value", doc.Components.Extensions["x-custom"])
+	require.NotNil(t, doc.Components.VendorExtensions)
+	assert.Equal(t, "value", doc.Components.VendorExtensions["x-custom"])
 }
 
 // --- Cross-References ---

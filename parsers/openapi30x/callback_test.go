@@ -219,8 +219,8 @@ paths:
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	callback := doc.Paths.Items["/subscribe"].Post.Callbacks["onEvent"].Value
-	require.NotNil(t, callback.Extensions)
-	assert.Equal(t, "value", callback.Extensions["x-custom"])
+	require.NotNil(t, callback.VendorExtensions)
+	assert.Equal(t, "value", callback.VendorExtensions["x-custom"])
 }
 
 // --- Full Callback Path ---

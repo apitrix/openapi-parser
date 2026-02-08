@@ -28,7 +28,7 @@ func parseSecurityScheme(node *yaml.Node, ctx *ParseContext) (*openapi20models.S
 	scheme.TokenURL = nodeGetString(node, "tokenUrl")
 	scheme.Scopes = nodeGetStringMap(node, "scopes")
 
-	scheme.Extensions = parseNodeExtensions(node)
+	scheme.VendorExtensions = parseNodeExtensions(node)
 	scheme.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields

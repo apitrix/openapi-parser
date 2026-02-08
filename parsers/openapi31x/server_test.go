@@ -184,7 +184,7 @@ paths: {}
 `
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ext := doc.Servers[0].Extensions
+	ext := doc.Servers[0].VendorExtensions
 	require.NotNil(t, ext)
 	assert.Equal(t, true, ext["x-internal"])
 	assert.Equal(t, "us-east-1", ext["x-region"])

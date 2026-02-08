@@ -164,7 +164,7 @@ func (p *schemaParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mode
 	}
 
 	// Parse extensions
-	schema.Extensions = parseNodeExtensions(node)
+	schema.VendorExtensions = parseNodeExtensions(node)
 
 	// Set node source info
 	schema.NodeSource = ctx.nodeSource(node)

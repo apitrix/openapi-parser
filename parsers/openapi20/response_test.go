@@ -197,6 +197,6 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	ext := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Extensions
+	ext := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.VendorExtensions
 	assert.Equal(t, "value", ext["x-custom"])
 }

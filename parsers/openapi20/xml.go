@@ -25,7 +25,7 @@ func parseXML(node *yaml.Node, ctx *ParseContext) (*openapi20models.XML, error) 
 	xml.Attribute = nodeGetBool(node, "attribute")
 	xml.Wrapped = nodeGetBool(node, "wrapped")
 
-	xml.Extensions = parseNodeExtensions(node)
+	xml.VendorExtensions = parseNodeExtensions(node)
 	xml.NodeSource = ctx.nodeSource(node)
 
 	// Detect unknown fields

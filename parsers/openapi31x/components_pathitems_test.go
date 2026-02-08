@@ -102,5 +102,5 @@ components:
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	ops := doc.Components.PathItems["Ops"]
-	assert.Equal(t, "value", ops.Value.Extensions["x-custom"])
+	assert.Equal(t, "value", ops.Value.VendorExtensions["x-custom"])
 }

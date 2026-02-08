@@ -157,6 +157,6 @@ externalDocs:
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.ExternalDocs.Extensions)
-	assert.Equal(t, "2.0", doc.ExternalDocs.Extensions["x-version"])
+	require.NotNil(t, doc.ExternalDocs.VendorExtensions)
+	assert.Equal(t, "2.0", doc.ExternalDocs.VendorExtensions["x-version"])
 }

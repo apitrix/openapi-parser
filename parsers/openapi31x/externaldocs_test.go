@@ -60,7 +60,7 @@ paths: {}
 `
 	doc, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ext := doc.ExternalDocs.Extensions
+	ext := doc.ExternalDocs.VendorExtensions
 	require.NotNil(t, ext)
 	assert.Equal(t, "value", ext["x-custom"])
 }

@@ -217,8 +217,8 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.Info.Extensions)
-	assert.Equal(t, true, doc.Info.Extensions["x-internal"])
+	require.NotNil(t, doc.Info.VendorExtensions)
+	assert.Equal(t, true, doc.Info.VendorExtensions["x-internal"])
 }
 
 // --- Missing Info ---

@@ -22,14 +22,14 @@ func TestParsePetstore(t *testing.T) {
 
 	// Root
 	assert.Equal(t, "3.0.3", doc.OpenAPI)
-	assert.Equal(t, "2024-01", doc.Extensions["x-api-version"])
+	assert.Equal(t, "2024-01", doc.VendorExtensions["x-api-version"])
 
 	// Info
 	require.NotNil(t, doc.Info)
 	assert.Equal(t, "Petstore API", doc.Info.Title)
 	assert.Equal(t, "1.0.0", doc.Info.Version)
 	assert.Equal(t, "A sample API for pets", doc.Info.Description)
-	assert.Equal(t, "custom value", doc.Info.Extensions["x-custom-info"])
+	assert.Equal(t, "custom value", doc.Info.VendorExtensions["x-custom-info"])
 
 	// Contact
 	require.NotNil(t, doc.Info.Contact)
@@ -129,7 +129,7 @@ func TestParsePetstore(t *testing.T) {
 	require.Len(t, petSchema.Properties, 3)
 	assert.Equal(t, "integer", petSchema.Properties["id"].Value.Type)
 	assert.Equal(t, "string", petSchema.Properties["name"].Value.Type)
-	assert.Equal(t, "pet-extra", petSchema.Extensions["x-schema-extension"])
+	assert.Equal(t, "pet-extra", petSchema.VendorExtensions["x-schema-extension"])
 
 	// Components - Security Schemes
 	require.Contains(t, doc.Components.SecuritySchemes, "bearerAuth")
