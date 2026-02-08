@@ -4,10 +4,13 @@ package openapi30x
 import (
 	"fmt"
 	"io"
+	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 
 	openapi30models "openapi-parser/models/openapi30"
+	"openapi-parser/parsers/internal/shared"
 
 	"gopkg.in/yaml.v3"
 )
@@ -128,4 +131,75 @@ func ParseFile(filePath string) (*openapi30models.OpenAPI, error) {
 	}
 
 	return doc, nil
+}
+
+// ParseURL parses an OpenAPI 3.0 specification from an HTTP/HTTPS URL,
+// resolving all $ref references relative to the URL's base path.
+func ParseURL(rawURL string) (*openapi30models.OpenAPI, error) {
+	resp, err := http.Get(rawURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch URL %q: %w", rawURL, err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to fetch URL %q: HTTP %d", rawURL, resp.StatusCode)
+	}
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response body from %q: %w", rawURL, err)
+	}
+
+	var rootNode yaml.Node
+	if err := yaml.Unmarshal(data, &rootNode); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal data from %q: %w", rawURL, err)
+	}
+
+	var docNode *yaml.Node
+	if rootNode.Kind == yaml.DocumentNode && len(rootNode.Content) > 0 {
+		docNode = rootNode.Content[0]
+	} else {
+		docNode = &rootNode
+	}
+
+	if docNode.Kind != yaml.MappingNode {
+		return nil, fmt.Errorf("OpenAPI document must be an object")
+	}
+
+	ctx := newParseContext(docNode)
+	doc, err := parseOpenAPI(docNode, ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// Use the URL's base path for resolving relative $ref references
+	parsedURL, err := url.Parse(rawURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse URL %q: %w", rawURL, err)
+	}
+	basePath := resolveURLBase(parsedURL)
+
+	r := shared.NewRefResolver(basePath, docNode)
+	resolving := make(map[string]bool)
+	if err := resolveDocument(doc, r, resolving); err != nil {
+		return nil, fmt.Errorf("failed to resolve references: %w", err)
+	}
+
+	return doc, nil
+}
+
+// resolveURLBase extracts the base URL (without the filename) for resolving
+// relative $ref references in a remote document.
+func resolveURLBase(u *url.URL) string {
+	// Remove the last path segment (the filename)
+	// e.g. https://example.com/specs/openapi.yaml → https://example.com/specs/
+	base := *u
+	if i := len(base.Path) - 1; i >= 0 {
+		for i > 0 && base.Path[i] != '/' {
+			i--
+		}
+		base.Path = base.Path[:i+1]
+	}
+	return base.String()
 }
