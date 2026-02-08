@@ -64,7 +64,7 @@ func (p *serverParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30mode
 	server.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, serverKnownFieldsSet)
+	server.Trix.Errors = append(server.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, serverKnownFieldsSet))...)
 
 	return server, nil
 }

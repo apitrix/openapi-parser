@@ -50,7 +50,7 @@ func (p *linkParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models
 	link.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, linkKnownFieldsSet)
+	link.Trix.Errors = append(link.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, linkKnownFieldsSet))...)
 
 	return link, nil
 }

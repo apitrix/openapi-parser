@@ -69,7 +69,7 @@ func parseOpenAPIComponents(node *yaml.Node, ctx *ParseContext) (*openapi30model
 	components.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, componentsKnownFieldsSet)
+	components.Trix.Errors = append(components.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, componentsKnownFieldsSet))...)
 
 	return components, nil
 }

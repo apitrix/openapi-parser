@@ -52,7 +52,7 @@ func (p *responseParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mo
 	resp.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, responseKnownFieldsSet)
+	resp.Trix.Errors = append(resp.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, responseKnownFieldsSet))...)
 
 	return resp, nil
 }

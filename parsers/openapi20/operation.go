@@ -65,7 +65,7 @@ func parseOperation(node *yaml.Node, ctx *ParseContext) (*openapi20models.Operat
 	op.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, operationKnownFieldsSet)
+	op.Trix.Errors = append(op.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, operationKnownFieldsSet))...)
 
 	return op, nil
 }

@@ -57,7 +57,7 @@ func parseTag(node *yaml.Node, ctx *ParseContext) (*openapi20models.Tag, error) 
 	tag.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, tagKnownFieldsSet)
+	tag.Trix.Errors = append(tag.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, tagKnownFieldsSet))...)
 
 	return tag, nil
 }

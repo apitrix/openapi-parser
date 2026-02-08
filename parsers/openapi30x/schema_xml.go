@@ -33,7 +33,7 @@ func (p *schemaParser) ParseXML(parent *yaml.Node, c *ParseContext) (*openapi30m
 	xml.Trix.Source = pctx.nodeSource(node)
 
 	// Detect unknown fields
-	pctx.detectUnknown(node, xmlKnownFieldsSet)
+	xml.Trix.Errors = append(xml.Trix.Errors, unknownFieldParseErrors(pctx.detectUnknown(node, xmlKnownFieldsSet))...)
 
 	return xml, nil
 }

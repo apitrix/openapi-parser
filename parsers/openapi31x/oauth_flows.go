@@ -1,7 +1,7 @@
-package openapi30x
+package openapi31x
 
 import (
-	openapi30models "openapi-parser/models/openapi30"
+	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,12 +12,12 @@ type oauthFlowsParser struct{}
 var defaultOAuthFlowsParser = &oauthFlowsParser{}
 
 // parseSharedOAuthFlows parses an OAuthFlows object from a yaml.Node.
-func parseSharedOAuthFlows(node *yaml.Node, ctx *ParseContext) (*openapi30models.OAuthFlows, error) {
+func parseSharedOAuthFlows(node *yaml.Node, ctx *ParseContext) (*openapi31models.OAuthFlows, error) {
 	return defaultOAuthFlowsParser.parse(node, ctx)
 }
 
 // Parse parses an OAuthFlows object.
-func (p *oauthFlowsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.OAuthFlows, error) {
+func (p *oauthFlowsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31models.OAuthFlows, error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -26,7 +26,7 @@ func (p *oauthFlowsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30
 		return nil, ctx.errorAt(node, "oauthFlows must be an object")
 	}
 
-	flows := &openapi30models.OAuthFlows{}
+	flows := &openapi31models.OAuthFlows{}
 	var err error
 
 	// All properties are complex (nested OAuthFlow objects)
@@ -54,12 +54,12 @@ func (p *oauthFlowsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30
 	flows.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, oauthFlowsKnownFieldsSet)
+	flows.Trix.Errors = append(flows.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, oauthFlowsKnownFieldsSet))...)
 
 	return flows, nil
 }
 
-func (p *oauthFlowsParser) ParseImplicit(parent *yaml.Node, c *ParseContext) (*openapi30models.OAuthFlow, error) {
+func (p *oauthFlowsParser) ParseImplicit(parent *yaml.Node, c *ParseContext) (*openapi31models.OAuthFlow, error) {
 	node := nodeGetValue(parent, "implicit")
 	if node == nil {
 		return nil, nil
@@ -67,7 +67,7 @@ func (p *oauthFlowsParser) ParseImplicit(parent *yaml.Node, c *ParseContext) (*o
 	return parseSharedOAuthFlow(node, c.Push("implicit"))
 }
 
-func (p *oauthFlowsParser) ParsePassword(parent *yaml.Node, c *ParseContext) (*openapi30models.OAuthFlow, error) {
+func (p *oauthFlowsParser) ParsePassword(parent *yaml.Node, c *ParseContext) (*openapi31models.OAuthFlow, error) {
 	node := nodeGetValue(parent, "password")
 	if node == nil {
 		return nil, nil
@@ -75,7 +75,7 @@ func (p *oauthFlowsParser) ParsePassword(parent *yaml.Node, c *ParseContext) (*o
 	return parseSharedOAuthFlow(node, c.Push("password"))
 }
 
-func (p *oauthFlowsParser) ParseClientCredentials(parent *yaml.Node, c *ParseContext) (*openapi30models.OAuthFlow, error) {
+func (p *oauthFlowsParser) ParseClientCredentials(parent *yaml.Node, c *ParseContext) (*openapi31models.OAuthFlow, error) {
 	node := nodeGetValue(parent, "clientCredentials")
 	if node == nil {
 		return nil, nil
@@ -83,7 +83,7 @@ func (p *oauthFlowsParser) ParseClientCredentials(parent *yaml.Node, c *ParseCon
 	return parseSharedOAuthFlow(node, c.Push("clientCredentials"))
 }
 
-func (p *oauthFlowsParser) ParseAuthorizationCode(parent *yaml.Node, c *ParseContext) (*openapi30models.OAuthFlow, error) {
+func (p *oauthFlowsParser) ParseAuthorizationCode(parent *yaml.Node, c *ParseContext) (*openapi31models.OAuthFlow, error) {
 	node := nodeGetValue(parent, "authorizationCode")
 	if node == nil {
 		return nil, nil

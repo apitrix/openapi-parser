@@ -33,31 +33,40 @@ type Trix struct {
 
 **Problem:** A "fail-fast" parser returns on the first error, forcing users to fix one issue at a time. For linting, IDE support, and batch validation, it's better to surface all issues at once.
 
-**Decision:** Recoverable errors encountered while parsing a node's children are **collected on that node's `Trix.Errors`** instead of causing the parser to return early:
+**Decision:** All parse-time issues — both recoverable parsing errors and unknown fields — are **collected on the node's `Trix.Errors`** with a `Kind` field for filtering:
 
 ```go
-// Before (fail-fast)
-op.Responses, err = parseResponses(node, ctx)
-if err != nil {
-    return nil, err
+type ParseError struct {
+    Message string   // "responses must be a mapping" or "unknown field 'summery'"
+    Path    []string // JSON path where the issue occurred
+    Kind    string   // "error" or "unknown_field"
 }
+```
 
-// After (error collection)
+Parsing errors use `Kind: "error"`, unknown fields use `Kind: "unknown_field"`:
+
+```go
+// Parsing error collection
 op.Responses, err = parseResponses(node, ctx)
 if err != nil {
     op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 }
+
+// Unknown field detection (happens automatically)
+info.Trix.Errors = append(info.Trix.Errors, unknownFieldParseErrors(
+    ctx.detectUnknown(node, infoKnownFieldsSet))...)
 ```
 
-`Parse()` always returns a (possibly partial) document. Errors are accessible per-node:
+`Parse()` always returns a (possibly partial) document. All issues are accessible per-node:
 
 ```go
 doc, err := openapi30x.Parse(data)
-for _, e := range doc.Trix.Errors {
-    log.Printf("root-level error: %s", e.Message)
-}
 for _, e := range doc.Info.Trix.Errors {
-    log.Printf("info error: %s", e.Message)
+    if e.Kind == "error" {
+        log.Printf("parse error: %s", e.Message)
+    } else if e.Kind == "unknown_field" {
+        log.Printf("unknown field: %s", e.Message)
+    }
 }
 ```
 

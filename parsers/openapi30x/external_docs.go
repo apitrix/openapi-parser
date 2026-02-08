@@ -1,7 +1,7 @@
-package openapi31x
+package openapi30x
 
 import (
-	openapi31models "openapi-parser/models/openapi31"
+	openapi30models "openapi-parser/models/openapi30"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,12 +12,12 @@ type externalDocsParser struct{}
 var defaultExternalDocsParser = &externalDocsParser{}
 
 // parseSharedExternalDocs parses an ExternalDocs object from a yaml.Node.
-func parseSharedExternalDocs(node *yaml.Node, ctx *ParseContext) (*openapi31models.ExternalDocumentation, error) {
+func parseSharedExternalDocs(node *yaml.Node, ctx *ParseContext) (*openapi30models.ExternalDocumentation, error) {
 	return defaultExternalDocsParser.parse(node, ctx)
 }
 
 // Parse parses an ExternalDocs object.
-func (p *externalDocsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31models.ExternalDocumentation, error) {
+func (p *externalDocsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.ExternalDocumentation, error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -26,7 +26,7 @@ func (p *externalDocsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi
 		return nil, ctx.errorAt(node, "externalDocs must be an object")
 	}
 
-	ed := &openapi31models.ExternalDocumentation{}
+	ed := &openapi30models.ExternalDocumentation{}
 
 	// All properties are simple - inline
 	ed.URL = p.ParseURL(node)
@@ -36,7 +36,7 @@ func (p *externalDocsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi
 	ed.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, externalDocsKnownFieldsSet)
+	ed.Trix.Errors = append(ed.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, externalDocsKnownFieldsSet))...)
 
 	return ed, nil
 }

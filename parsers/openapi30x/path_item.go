@@ -1,14 +1,14 @@
-package openapi31x
+package openapi30x
 
 import (
-	openapi31models "openapi-parser/models/openapi31"
+	openapi30models "openapi-parser/models/openapi30"
 
 	"gopkg.in/yaml.v3"
 )
 
 // parseOpenAPIPathsPathItem parses a PathItem object from a yaml.Node.
 // OpenAPI 3.0.3 spec: https://spec.openapis.org/oas/v3.0.3#path-item-object
-func parseOpenAPIPathsPathItem(node *yaml.Node, ctx *ParseContext) (*openapi31models.PathItem, error) {
+func parseOpenAPIPathsPathItem(node *yaml.Node, ctx *ParseContext) (*openapi30models.PathItem, error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -17,7 +17,7 @@ func parseOpenAPIPathsPathItem(node *yaml.Node, ctx *ParseContext) (*openapi31mo
 		return nil, ctx.errorAt(node, "pathItem must be an object")
 	}
 
-	pathItem := &openapi31models.PathItem{}
+	pathItem := &openapi30models.PathItem{}
 	var err error
 
 	// Simple properties - inline
@@ -81,7 +81,7 @@ func parseOpenAPIPathsPathItem(node *yaml.Node, ctx *ParseContext) (*openapi31mo
 	pathItem.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, pathItemKnownFieldsSet)
+	pathItem.Trix.Errors = append(pathItem.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, pathItemKnownFieldsSet))...)
 
 	return pathItem, nil
 }

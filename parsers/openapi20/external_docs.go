@@ -26,7 +26,7 @@ func parseExternalDocs(node *yaml.Node, ctx *ParseContext) (*openapi20models.Ext
 	ed.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, externalDocsKnownFieldsSet)
+	ed.Trix.Errors = append(ed.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, externalDocsKnownFieldsSet))...)
 
 	return ed, nil
 }

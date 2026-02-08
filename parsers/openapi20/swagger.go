@@ -100,7 +100,7 @@ func parseSwagger(node *yaml.Node, ctx *ParseContext) (*openapi20models.Swagger,
 	swagger.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields at root level
-	ctx.detectUnknown(node, swaggerKnownFieldsSet)
+	swagger.Trix.Errors = append(swagger.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, swaggerKnownFieldsSet))...)
 
 	return swagger, nil
 }

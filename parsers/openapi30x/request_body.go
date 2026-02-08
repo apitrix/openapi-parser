@@ -1,7 +1,7 @@
-package openapi31x
+package openapi30x
 
 import (
-	openapi31models "openapi-parser/models/openapi31"
+	openapi30models "openapi-parser/models/openapi30"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,12 +12,12 @@ type requestBodyParser struct{}
 var defaultRequestBodyParser = &requestBodyParser{}
 
 // parseSharedRequestBody parses a RequestBody object from a yaml.Node.
-func parseSharedRequestBody(node *yaml.Node, ctx *ParseContext) (*openapi31models.RequestBody, error) {
+func parseSharedRequestBody(node *yaml.Node, ctx *ParseContext) (*openapi30models.RequestBody, error) {
 	return defaultRequestBodyParser.parse(node, ctx)
 }
 
 // Parse parses a RequestBody object.
-func (p *requestBodyParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31models.RequestBody, error) {
+func (p *requestBodyParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.RequestBody, error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -26,7 +26,7 @@ func (p *requestBodyParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi3
 		return nil, ctx.errorAt(node, "requestBody must be an object")
 	}
 
-	rb := &openapi31models.RequestBody{}
+	rb := &openapi30models.RequestBody{}
 	var err error
 
 	// Simple properties - inline
@@ -43,7 +43,7 @@ func (p *requestBodyParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi3
 	rb.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, requestBodyKnownFieldsSet)
+	rb.Trix.Errors = append(rb.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, requestBodyKnownFieldsSet))...)
 
 	return rb, nil
 }

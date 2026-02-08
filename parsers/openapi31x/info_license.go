@@ -29,7 +29,7 @@ func parseInfoLicense(parent *yaml.Node, ctx *ParseContext) (*openapi31models.Li
 	license.Trix.Source = lctx.nodeSource(node)
 
 	// Detect unknown fields
-	lctx.detectUnknown(node, licenseKnownFieldsSet)
+	license.Trix.Errors = append(license.Trix.Errors, unknownFieldParseErrors(lctx.detectUnknown(node, licenseKnownFieldsSet))...)
 
 	return license, nil
 }

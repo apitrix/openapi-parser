@@ -45,7 +45,7 @@ func (p *encodingParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30mo
 	enc.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, encodingKnownFieldsSet)
+	enc.Trix.Errors = append(enc.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, encodingKnownFieldsSet))...)
 
 	return enc, nil
 }

@@ -123,7 +123,7 @@ func parseSchema(node *yaml.Node, ctx *ParseContext) (*openapi20models.Schema, e
 	schema.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, schemaKnownFieldsSet)
+	schema.Trix.Errors = append(schema.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, schemaKnownFieldsSet))...)
 
 	return schema, nil
 }

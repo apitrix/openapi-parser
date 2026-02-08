@@ -75,7 +75,7 @@ func parseOpenAPI(node *yaml.Node, ctx *ParseContext) (*openapi30models.OpenAPI,
 	openapi.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields at root level
-	ctx.detectUnknown(node, openAPIKnownFieldsSet)
+	openapi.Trix.Errors = append(openapi.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, openAPIKnownFieldsSet))...)
 
 	return openapi, nil
 }

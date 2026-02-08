@@ -115,14 +115,13 @@ func (ctx *ParseContext) nodeSource(node *yaml.Node) openapi20models.NodeSource 
 
 // detectUnknown checks a node for unknown fields and records them.
 // knownFields is the precomputed set of valid field names for this object type.
-func (ctx *ParseContext) detectUnknown(node *yaml.Node, knownFields map[string]struct{}) {
-	if ctx.unknownFields == nil {
-		return
-	}
+// Returns the unknown fields found so callers can also attach them to Trix.Errors.
+func (ctx *ParseContext) detectUnknown(node *yaml.Node, knownFields map[string]struct{}) []UnknownField {
 	unknown := detectUnknownNodeFields(node, knownFields, ctx.CurrentPath())
-	if len(unknown) > 0 {
+	if len(unknown) > 0 && ctx.unknownFields != nil {
 		*ctx.unknownFields = append(*ctx.unknownFields, unknown...)
 	}
+	return unknown
 }
 
 // UnknownFieldsResult returns all unknown fields accumulated during parsing.

@@ -38,7 +38,7 @@ func (p *exampleParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30mod
 	example.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, exampleKnownFieldsSet)
+	example.Trix.Errors = append(example.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, exampleKnownFieldsSet))...)
 
 	return example, nil
 }

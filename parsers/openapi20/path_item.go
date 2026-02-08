@@ -84,7 +84,7 @@ func parsePathItem(node *yaml.Node, ctx *ParseContext) (*openapi20models.PathIte
 	pathItem.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, pathItemKnownFieldsSet)
+	pathItem.Trix.Errors = append(pathItem.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, pathItemKnownFieldsSet))...)
 
 	return pathItem, nil
 }

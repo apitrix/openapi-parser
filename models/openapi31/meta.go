@@ -17,6 +17,7 @@ type NodeSource struct {
 type ParseError struct {
 	Message string   `json:"-" yaml:"-"` // Human-readable error message
 	Path    []string `json:"-" yaml:"-"` // JSON path where the error occurred
+	Kind    string   `json:"-" yaml:"-"` // Error kind: "error" or "unknown_field"
 }
 
 // Trix contains all library-level metadata and functionality.

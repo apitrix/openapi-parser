@@ -59,7 +59,7 @@ func (p *headerParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mode
 	header.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, headerKnownFieldsSet)
+	header.Trix.Errors = append(header.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, headerKnownFieldsSet))...)
 
 	return header, nil
 }

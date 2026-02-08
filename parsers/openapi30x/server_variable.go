@@ -1,7 +1,7 @@
-package openapi31x
+package openapi30x
 
 import (
-	openapi31models "openapi-parser/models/openapi31"
+	openapi30models "openapi-parser/models/openapi30"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,12 +12,12 @@ type serverVariableParser struct{}
 var defaultServerVariableParser = &serverVariableParser{}
 
 // parseSharedServerVariable parses a ServerVariable object from a yaml.Node.
-func parseSharedServerVariable(node *yaml.Node, ctx *ParseContext) (*openapi31models.ServerVariable, error) {
+func parseSharedServerVariable(node *yaml.Node, ctx *ParseContext) (*openapi30models.ServerVariable, error) {
 	return defaultServerVariableParser.parse(node, ctx)
 }
 
 // Parse parses a ServerVariable object.
-func (p *serverVariableParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31models.ServerVariable, error) {
+func (p *serverVariableParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.ServerVariable, error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -26,7 +26,7 @@ func (p *serverVariableParser) parse(node *yaml.Node, ctx *ParseContext) (*opena
 		return nil, ctx.errorAt(node, "serverVariable must be an object")
 	}
 
-	sv := &openapi31models.ServerVariable{}
+	sv := &openapi30models.ServerVariable{}
 
 	// All properties are simple - inline
 	sv.Enum = p.ParseEnum(node)
@@ -37,7 +37,7 @@ func (p *serverVariableParser) parse(node *yaml.Node, ctx *ParseContext) (*opena
 	sv.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, serverVariableKnownFieldsSet)
+	sv.Trix.Errors = append(sv.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, serverVariableKnownFieldsSet))...)
 
 	return sv, nil
 }

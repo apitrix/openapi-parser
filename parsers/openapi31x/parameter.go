@@ -62,7 +62,7 @@ func (p *parameterParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31m
 	param.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, parameterKnownFieldsSet)
+	param.Trix.Errors = append(param.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, parameterKnownFieldsSet))...)
 
 	return param, nil
 }

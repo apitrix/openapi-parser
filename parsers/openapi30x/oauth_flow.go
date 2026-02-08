@@ -1,7 +1,7 @@
-package openapi31x
+package openapi30x
 
 import (
-	openapi31models "openapi-parser/models/openapi31"
+	openapi30models "openapi-parser/models/openapi30"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,12 +12,12 @@ type oauthFlowParser struct{}
 var defaultOAuthFlowParser = &oauthFlowParser{}
 
 // parseSharedOAuthFlow parses an OAuthFlow object from a yaml.Node.
-func parseSharedOAuthFlow(node *yaml.Node, ctx *ParseContext) (*openapi31models.OAuthFlow, error) {
+func parseSharedOAuthFlow(node *yaml.Node, ctx *ParseContext) (*openapi30models.OAuthFlow, error) {
 	return defaultOAuthFlowParser.parse(node, ctx)
 }
 
 // Parse parses an OAuthFlow object.
-func (p *oauthFlowParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31models.OAuthFlow, error) {
+func (p *oauthFlowParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.OAuthFlow, error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -26,7 +26,7 @@ func (p *oauthFlowParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31m
 		return nil, ctx.errorAt(node, "oauthFlow must be an object")
 	}
 
-	flow := &openapi31models.OAuthFlow{}
+	flow := &openapi30models.OAuthFlow{}
 
 	// All properties are simple - inline
 	flow.AuthorizationURL = p.ParseAuthorizationURL(node)
@@ -38,7 +38,7 @@ func (p *oauthFlowParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31m
 	flow.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, oauthFlowKnownFieldsSet)
+	flow.Trix.Errors = append(flow.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, oauthFlowKnownFieldsSet))...)
 
 	return flow, nil
 }

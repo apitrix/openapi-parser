@@ -1,7 +1,7 @@
-package openapi30x
+package openapi31x
 
 import (
-	openapi30models "openapi-parser/models/openapi30"
+	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,12 +12,12 @@ type mediaTypeParser struct{}
 var defaultMediaTypeParser = &mediaTypeParser{}
 
 // parseSharedMediaType parses a MediaType object from a yaml.Node.
-func parseSharedMediaType(node *yaml.Node, ctx *ParseContext) (*openapi30models.MediaType, error) {
+func parseSharedMediaType(node *yaml.Node, ctx *ParseContext) (*openapi31models.MediaType, error) {
 	return defaultMediaTypeParser.parse(node, ctx)
 }
 
 // Parse parses a MediaType object.
-func (p *mediaTypeParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models.MediaType, error) {
+func (p *mediaTypeParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31models.MediaType, error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -26,7 +26,7 @@ func (p *mediaTypeParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30m
 		return nil, ctx.errorAt(node, "mediaType must be an object")
 	}
 
-	mt := &openapi30models.MediaType{}
+	mt := &openapi31models.MediaType{}
 	var err error
 
 	// Simple properties - inline
@@ -52,7 +52,7 @@ func (p *mediaTypeParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30m
 	mt.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, mediaTypeKnownFieldsSet)
+	mt.Trix.Errors = append(mt.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, mediaTypeKnownFieldsSet))...)
 
 	return mt, nil
 }

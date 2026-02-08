@@ -120,7 +120,7 @@ func (p *schemaParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30mode
 	schema.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, schemaKnownFieldsSet)
+	schema.Trix.Errors = append(schema.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, schemaKnownFieldsSet))...)
 
 	return schema, nil
 }

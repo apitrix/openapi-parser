@@ -48,7 +48,7 @@ func (p *securitySchemeParser) parse(node *yaml.Node, ctx *ParseContext) (*opena
 	scheme.Trix.Source = ctx.nodeSource(node)
 
 	// Detect unknown fields
-	ctx.detectUnknown(node, securitySchemeKnownFieldsSet)
+	scheme.Trix.Errors = append(scheme.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, securitySchemeKnownFieldsSet))...)
 
 	return scheme, nil
 }
