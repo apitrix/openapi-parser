@@ -26,9 +26,9 @@ components:
       in: header
       name: X-API-Key
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := doc.Components.SecuritySchemes["apiKey"].Value
+	scheme := result.Document.Components.SecuritySchemes["apiKey"].Value
 	assert.Equal(t, "apiKey", scheme.Type)
 	assert.Equal(t, "header", scheme.In)
 	assert.Equal(t, "X-API-Key", scheme.Name)
@@ -48,9 +48,9 @@ components:
       type: http
       scheme: basic
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := doc.Components.SecuritySchemes["basic"].Value
+	scheme := result.Document.Components.SecuritySchemes["basic"].Value
 	assert.Equal(t, "http", scheme.Type)
 	assert.Equal(t, "basic", scheme.Scheme)
 }
@@ -70,9 +70,9 @@ components:
       scheme: bearer
       bearerFormat: JWT
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := doc.Components.SecuritySchemes["bearer"].Value
+	scheme := result.Document.Components.SecuritySchemes["bearer"].Value
 	assert.Equal(t, "http", scheme.Type)
 	assert.Equal(t, "bearer", scheme.Scheme)
 	assert.Equal(t, "JWT", scheme.BearerFormat)
@@ -95,9 +95,9 @@ components:
           tokenUrl: https://example.com/token
           scopes: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := doc.Components.SecuritySchemes["oauth2"].Value
+	scheme := result.Document.Components.SecuritySchemes["oauth2"].Value
 	assert.Equal(t, "oauth2", scheme.Type)
 	assert.NotNil(t, scheme.Flows)
 }
@@ -116,9 +116,9 @@ components:
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := doc.Components.SecuritySchemes["oidc"].Value
+	scheme := result.Document.Components.SecuritySchemes["oidc"].Value
 	assert.Equal(t, "openIdConnect", scheme.Type)
 	assert.Equal(t, "https://example.com/.well-known/openid", scheme.OpenIDConnectURL)
 }
@@ -147,9 +147,9 @@ components:
           tokenUrl: https://example.com/token
           scopes: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Components.SecuritySchemes, 3)
+	assert.Len(t, result.Document.Components.SecuritySchemes, 3)
 }
 
 // --- Empty ---
@@ -163,9 +163,9 @@ paths: {}
 components:
   securitySchemes: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, doc.Components.SecuritySchemes)
+	assert.Empty(t, result.Document.Components.SecuritySchemes)
 }
 
 // --- With Description ---
@@ -184,8 +184,8 @@ components:
       name: X-API-Key
       description: "API key for authentication"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := doc.Components.SecuritySchemes["apiKey"].Value
+	scheme := result.Document.Components.SecuritySchemes["apiKey"].Value
 	assert.Equal(t, "API key for authentication", scheme.Description)
 }

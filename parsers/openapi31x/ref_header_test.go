@@ -33,9 +33,9 @@ components:
       schema:
         type: integer
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ref := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Rate-Limit"]
+	ref := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Rate-Limit"]
 	assert.Equal(t, "#/components/headers/RateLimit", ref.Ref)
 }
 
@@ -66,9 +66,9 @@ components:
       schema:
         type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	headers := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers
+	headers := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers
 	assert.Equal(t, "#/components/headers/RateLimit", headers["X-Rate-Limit"].Ref)
 	assert.Equal(t, "#/components/headers/RequestId", headers["X-Request-Id"].Ref)
 }
@@ -99,9 +99,9 @@ components:
       schema:
         type: integer
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	headers := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers
+	headers := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers
 	assert.Equal(t, "#/components/headers/RateLimit", headers["X-Rate-Limit"].Ref)
 	assert.Equal(t, "Custom header", headers["X-Custom"].Value.Description)
 }

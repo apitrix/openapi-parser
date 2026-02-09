@@ -28,10 +28,10 @@ components:
       in: header
       name: X-API-Key
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.Len(t, doc.Security, 1)
-	assert.Contains(t, doc.Security[0], "apiKey")
+	require.Len(t, result.Document.Security, 1)
+	assert.Contains(t, result.Document.Security[0], "apiKey")
 }
 
 // --- Multiple Schemes (AND) ---
@@ -60,12 +60,12 @@ components:
           scopes:
             read: Read access
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.Len(t, doc.Security, 1)
+	require.Len(t, result.Document.Security, 1)
 	// Both schemes required (AND)
-	assert.Contains(t, doc.Security[0], "apiKey")
-	assert.Contains(t, doc.Security[0], "oauth2")
+	assert.Contains(t, result.Document.Security[0], "apiKey")
+	assert.Contains(t, result.Document.Security[0], "oauth2")
 }
 
 // --- Alternative Schemes (OR) ---
@@ -98,10 +98,10 @@ components:
       type: http
       scheme: bearer
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	// Three alternatives (OR)
-	assert.Len(t, doc.Security, 3)
+	assert.Len(t, result.Document.Security, 3)
 }
 
 // --- Scopes ---
@@ -129,9 +129,9 @@ components:
             write: Write
             admin: Admin
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scopes := doc.Security[0]["oauth2"]
+	scopes := result.Document.Security[0]["oauth2"]
 	assert.Len(t, scopes, 3)
 	assert.Contains(t, scopes, "read")
 	assert.Contains(t, scopes, "write")
@@ -148,9 +148,9 @@ info:
 security: []
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, doc.Security)
+	assert.Empty(t, result.Document.Security)
 }
 
 // --- Optional Security ---
@@ -171,12 +171,12 @@ components:
       in: header
       name: X-API-Key
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	// First is empty (no auth required), second requires apiKey
-	assert.Len(t, doc.Security, 2)
-	assert.Empty(t, doc.Security[0])
-	assert.Contains(t, doc.Security[1], "apiKey")
+	assert.Len(t, result.Document.Security, 2)
+	assert.Empty(t, result.Document.Security[0])
+	assert.Contains(t, result.Document.Security[1], "apiKey")
 }
 
 // --- Operation-Level Security ---
@@ -212,14 +212,14 @@ components:
       type: http
       scheme: bearer
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	// Global security
-	assert.Len(t, doc.Security, 1)
+	assert.Len(t, result.Document.Security, 1)
 	// Public endpoint overrides to empty
-	assert.Empty(t, doc.Paths.Items["/public"].Get.Security)
+	assert.Empty(t, result.Document.Paths.Items["/public"].Get.Security)
 	// Private endpoint has its own security
-	assert.Len(t, doc.Paths.Items["/private"].Get.Security, 1)
+	assert.Len(t, result.Document.Paths.Items["/private"].Get.Security, 1)
 }
 
 // --- Missing Security ---
@@ -231,7 +231,7 @@ info:
   version: "1.0"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Nil(t, doc.Security)
+	assert.Nil(t, result.Document.Security)
 }

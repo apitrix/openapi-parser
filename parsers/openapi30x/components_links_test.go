@@ -24,10 +24,10 @@ components:
     GetUser:
       operationId: getUser
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Components.Links, 1)
-	assert.Contains(t, doc.Components.Links, "GetUser")
+	assert.Len(t, result.Document.Components.Links, 1)
+	assert.Contains(t, result.Document.Components.Links, "GetUser")
 }
 
 // --- Multiple Links ---
@@ -47,9 +47,9 @@ components:
     GetOrders:
       operationId: getOrders
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Components.Links, 3)
+	assert.Len(t, result.Document.Components.Links, 3)
 }
 
 // --- Empty ---
@@ -63,9 +63,9 @@ paths: {}
 components:
   links: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, doc.Components.Links)
+	assert.Empty(t, result.Document.Components.Links)
 }
 
 // --- With Parameters ---
@@ -83,8 +83,8 @@ components:
       parameters:
         userId: '$response.body#/id'
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	link := doc.Components.Links["GetUserPets"].Value
+	link := result.Document.Components.Links["GetUserPets"].Value
 	assert.Contains(t, link.Parameters, "userId")
 }

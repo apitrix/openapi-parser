@@ -32,9 +32,9 @@ paths:
         "201":
           description: "Created"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	callbacks := doc.Paths.Items["/subscribe"].Post.Callbacks
+	callbacks := result.Document.Paths.Items["/subscribe"].Post.Callbacks
 	assert.Len(t, callbacks, 1)
 	assert.Contains(t, callbacks, "onEvent")
 }
@@ -72,9 +72,9 @@ paths:
         "201":
           description: "Created"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Paths.Items["/subscribe"].Post.Callbacks, 3)
+	assert.Len(t, result.Document.Paths.Items["/subscribe"].Post.Callbacks, 3)
 }
 
 // --- No Callbacks ---
@@ -91,7 +91,7 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Nil(t, doc.Paths.Items["/pets"].Get.Callbacks)
+	assert.Nil(t, result.Document.Paths.Items["/pets"].Get.Callbacks)
 }

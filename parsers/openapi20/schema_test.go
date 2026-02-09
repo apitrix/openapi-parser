@@ -29,11 +29,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	schema := doc.Definitions["Name"].Value
+	schema := result.Document.Definitions["Name"].Value
 	assert.Equal(t, "string", schema.Type)
 	require.NotNil(t, schema.MinLength)
 	require.NotNil(t, schema.MaxLength)
@@ -58,11 +58,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	schema := doc.Definitions["Age"].Value
+	schema := result.Document.Definitions["Age"].Value
 	assert.Equal(t, "integer", schema.Type)
 	assert.Equal(t, "int32", schema.Format)
 	require.NotNil(t, schema.Minimum)
@@ -91,11 +91,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	schema := doc.Definitions["Pet"].Value
+	schema := result.Document.Definitions["Pet"].Value
 	assert.Equal(t, "object", schema.Type)
 	assert.Equal(t, []string{"name"}, schema.Required)
 	require.Contains(t, schema.Properties, "id")
@@ -121,11 +121,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	schema := doc.Definitions["PetList"].Value
+	schema := result.Document.Definitions["PetList"].Value
 	assert.Equal(t, "array", schema.Type)
 	require.NotNil(t, schema.Items)
 	assert.Equal(t, "#/definitions/Pet", schema.Items.Ref)
@@ -151,11 +151,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	schema := doc.Definitions["Dog"].Value
+	schema := result.Document.Definitions["Dog"].Value
 	require.Len(t, schema.AllOf, 2)
 	assert.Equal(t, "#/definitions/Pet", schema.AllOf[0].Ref)
 	assert.Equal(t, "object", schema.AllOf[1].Value.Type)
@@ -178,11 +178,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	schema := doc.Definitions["StringMap"].Value
+	schema := result.Document.Definitions["StringMap"].Value
 	require.NotNil(t, schema.AdditionalProperties)
 	assert.Equal(t, "string", schema.AdditionalProperties.Value.Type)
 }
@@ -201,11 +201,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	schema := doc.Definitions["Closed"].Value
+	schema := result.Document.Definitions["Closed"].Value
 	require.NotNil(t, schema.AdditionalPropertiesAllowed)
 	assert.False(t, *schema.AdditionalPropertiesAllowed)
 }
@@ -229,11 +229,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	schema := doc.Definitions["Pet"].Value
+	schema := result.Document.Definitions["Pet"].Value
 	assert.Equal(t, "petType", schema.Discriminator)
 }
 
@@ -256,11 +256,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	schema := doc.Definitions["Status"].Value
+	schema := result.Document.Definitions["Status"].Value
 	require.Len(t, schema.Enum, 3)
 	assert.Equal(t, "active", schema.Enum[0])
 }
@@ -285,11 +285,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	schema := doc.Definitions["Pet"].Value
+	schema := result.Document.Definitions["Pet"].Value
 	require.NotNil(t, schema.XML)
 	assert.Equal(t, "pet", schema.XML.Name)
 	assert.Equal(t, "http://example.com", schema.XML.Namespace)
@@ -315,11 +315,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	schema := doc.Definitions["Pet"].Value.Properties["id"].Value
+	schema := result.Document.Definitions["Pet"].Value.Properties["id"].Value
 	assert.True(t, schema.ReadOnly)
 }
 
@@ -339,11 +339,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	schema := doc.Definitions["Name"].Value
+	schema := result.Document.Definitions["Name"].Value
 	assert.Equal(t, "John Doe", schema.Example)
 }
 
@@ -369,10 +369,10 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	schemaRef := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Schema
+	schemaRef := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Schema
 	assert.Equal(t, "#/definitions/Pet", schemaRef.Ref)
 }

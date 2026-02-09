@@ -24,11 +24,11 @@ paths: {}
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, "api.example.com", doc.Host)
+	assert.Equal(t, "api.example.com", result.Document.Host)
 }
 
 func TestParseSwagger_BasePath(t *testing.T) {
@@ -42,11 +42,11 @@ paths: {}
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, "/api/v1", doc.BasePath)
+	assert.Equal(t, "/api/v1", result.Document.BasePath)
 }
 
 func TestParseSwagger_Schemes(t *testing.T) {
@@ -62,11 +62,11 @@ paths: {}
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, []string{"https", "http"}, doc.Schemes)
+	assert.Equal(t, []string{"https", "http"}, result.Document.Schemes)
 }
 
 func TestParseSwagger_ConsumesProduces(t *testing.T) {
@@ -84,12 +84,12 @@ paths: {}
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, []string{"application/json"}, doc.Consumes)
-	assert.Equal(t, []string{"application/json", "application/xml"}, doc.Produces)
+	assert.Equal(t, []string{"application/json"}, result.Document.Consumes)
+	assert.Equal(t, []string{"application/json", "application/xml"}, result.Document.Produces)
 }
 
 // --- Definitions ---
@@ -110,13 +110,13 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.Definitions)
-	require.Contains(t, doc.Definitions, "Pet")
-	assert.Equal(t, "object", doc.Definitions["Pet"].Value.Type)
+	require.NotNil(t, result.Document.Definitions)
+	require.Contains(t, result.Document.Definitions, "Pet")
+	assert.Equal(t, "object", result.Document.Definitions["Pet"].Value.Type)
 }
 
 func TestParseSwagger_DefinitionsWithRef(t *testing.T) {
@@ -136,12 +136,12 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.Definitions["PetList"].Value.Items)
-	assert.Equal(t, "#/definitions/Pet", doc.Definitions["PetList"].Value.Items.Ref)
+	require.NotNil(t, result.Document.Definitions["PetList"].Value.Items)
+	assert.Equal(t, "#/definitions/Pet", result.Document.Definitions["PetList"].Value.Items.Ref)
 }
 
 // --- Global Parameters ---
@@ -161,14 +161,14 @@ parameters:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.Parameters)
-	require.Contains(t, doc.Parameters, "limitParam")
-	assert.Equal(t, "limit", doc.Parameters["limitParam"].Value.Name)
-	assert.Equal(t, "query", doc.Parameters["limitParam"].Value.In)
+	require.NotNil(t, result.Document.Parameters)
+	require.Contains(t, result.Document.Parameters, "limitParam")
+	assert.Equal(t, "limit", result.Document.Parameters["limitParam"].Value.Name)
+	assert.Equal(t, "query", result.Document.Parameters["limitParam"].Value.In)
 }
 
 // --- Global Responses ---
@@ -186,13 +186,13 @@ responses:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.Responses)
-	require.Contains(t, doc.Responses, "NotFound")
-	assert.Equal(t, "Resource not found", doc.Responses["NotFound"].Value.Description)
+	require.NotNil(t, result.Document.Responses)
+	require.Contains(t, result.Document.Responses, "NotFound")
+	assert.Equal(t, "Resource not found", result.Document.Responses["NotFound"].Value.Description)
 }
 
 // --- SecurityDefinitions ---
@@ -212,14 +212,14 @@ securityDefinitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.SecurityDefinitions)
-	require.Contains(t, doc.SecurityDefinitions, "api_key")
-	assert.Equal(t, "apiKey", doc.SecurityDefinitions["api_key"].Type)
-	assert.Equal(t, "X-API-Key", doc.SecurityDefinitions["api_key"].Name)
+	require.NotNil(t, result.Document.SecurityDefinitions)
+	require.Contains(t, result.Document.SecurityDefinitions, "api_key")
+	assert.Equal(t, "apiKey", result.Document.SecurityDefinitions["api_key"].Type)
+	assert.Equal(t, "X-API-Key", result.Document.SecurityDefinitions["api_key"].Name)
 }
 
 // --- Security ---
@@ -239,13 +239,13 @@ security:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.Len(t, doc.Security, 2)
-	assert.Contains(t, doc.Security[0], "api_key")
-	assert.Equal(t, []string{"read", "write"}, doc.Security[1]["oauth2"])
+	require.Len(t, result.Document.Security, 2)
+	assert.Contains(t, result.Document.Security[0], "api_key")
+	assert.Equal(t, []string{"read", "write"}, result.Document.Security[1]["oauth2"])
 }
 
 // --- Tags ---
@@ -263,13 +263,13 @@ tags:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.Len(t, doc.Tags, 1)
-	assert.Equal(t, "pets", doc.Tags[0].Name)
-	assert.Equal(t, "Pet operations", doc.Tags[0].Description)
+	require.Len(t, result.Document.Tags, 1)
+	assert.Equal(t, "pets", result.Document.Tags[0].Name)
+	assert.Equal(t, "Pet operations", result.Document.Tags[0].Description)
 }
 
 // --- ExternalDocs ---
@@ -287,12 +287,12 @@ externalDocs:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.ExternalDocs)
-	assert.Equal(t, "https://example.com/docs", doc.ExternalDocs.URL)
+	require.NotNil(t, result.Document.ExternalDocs)
+	assert.Equal(t, "https://example.com/docs", result.Document.ExternalDocs.URL)
 }
 
 // --- Extensions ---
@@ -309,11 +309,11 @@ x-internal: true
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.VendorExtensions)
-	assert.Equal(t, "custom value", doc.VendorExtensions["x-custom-field"])
-	assert.Equal(t, true, doc.VendorExtensions["x-internal"])
+	require.NotNil(t, result.Document.VendorExtensions)
+	assert.Equal(t, "custom value", result.Document.VendorExtensions["x-custom-field"])
+	assert.Equal(t, true, result.Document.VendorExtensions["x-internal"])
 }

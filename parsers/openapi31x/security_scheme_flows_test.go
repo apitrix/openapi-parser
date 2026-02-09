@@ -28,9 +28,9 @@ components:
           scopes:
             write: Write
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	flows := doc.Components.SecuritySchemes["oauth2"].Value.Flows
+	flows := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows
 	require.NotNil(t, flows)
 	assert.NotNil(t, flows.Implicit)
 	assert.NotNil(t, flows.AuthorizationCode)

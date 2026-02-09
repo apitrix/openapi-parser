@@ -25,9 +25,9 @@ servers:
         description: "Port number"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	portVar := doc.Servers[0].Variables["port"]
+	portVar := result.Document.Servers[0].Variables["port"]
 	require.NotNil(t, portVar)
 	assert.Equal(t, "443", portVar.Default)
 	assert.Len(t, portVar.Enum, 2)

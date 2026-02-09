@@ -21,9 +21,9 @@ components:
         url: https://api.example.com
         description: "API server"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	link := doc.Components.Links["GetUser"].Value
+	link := result.Document.Components.Links["GetUser"].Value
 	require.NotNil(t, link.Server)
 	assert.Equal(t, "https://api.example.com", link.Server.URL)
 }

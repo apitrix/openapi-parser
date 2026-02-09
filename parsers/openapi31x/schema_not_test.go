@@ -23,9 +23,9 @@ components:
       not:
         type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	not := doc.Components.Schemas["NotString"].Value.Not
+	not := result.Document.Components.Schemas["NotString"].Value.Not
 	require.NotNil(t, not)
 	assert.Equal(t, "string", not.Value.Type.Single)
 }
@@ -44,9 +44,9 @@ components:
     Pet:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	not := doc.Components.Schemas["NotPet"].Value.Not
+	not := result.Document.Components.Schemas["NotPet"].Value.Not
 	require.NotNil(t, not)
 	assert.Equal(t, "#/components/schemas/Pet", not.Ref)
 }
@@ -62,9 +62,9 @@ components:
     Simple:
       type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	not := doc.Components.Schemas["Simple"].Value.Not
+	not := result.Document.Components.Schemas["Simple"].Value.Not
 	assert.Nil(t, not)
 }
 
@@ -85,9 +85,9 @@ components:
         required:
           - forbidden
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	not := doc.Components.Schemas["NotComplex"].Value.Not
+	not := result.Document.Components.Schemas["NotComplex"].Value.Not
 	require.NotNil(t, not)
 	assert.Equal(t, "object", not.Value.Type.Single)
 	assert.NotEmpty(t, not.Value.Properties)

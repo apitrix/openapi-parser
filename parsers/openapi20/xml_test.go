@@ -28,11 +28,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	xml := doc.Definitions["Pet"].Value.XML
+	xml := result.Document.Definitions["Pet"].Value.XML
 	require.NotNil(t, xml)
 	assert.Equal(t, "pet", xml.Name)
 }
@@ -56,11 +56,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	xml := doc.Definitions["Pet"].Value.XML
+	xml := result.Document.Definitions["Pet"].Value.XML
 	assert.Equal(t, "http://example.com/schema", xml.Namespace)
 	assert.Equal(t, "ex", xml.Prefix)
 }
@@ -85,11 +85,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	xml := doc.Definitions["Pet"].Value.Properties["id"].Value.XML
+	xml := result.Document.Definitions["Pet"].Value.Properties["id"].Value.XML
 	require.NotNil(t, xml)
 	assert.True(t, xml.Attribute)
 }
@@ -117,11 +117,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	xml := doc.Definitions["Pet"].Value.Properties["tags"].Value.XML
+	xml := result.Document.Definitions["Pet"].Value.Properties["tags"].Value.XML
 	require.NotNil(t, xml)
 	assert.True(t, xml.Wrapped)
 	assert.Equal(t, "tag", xml.Name)
@@ -148,11 +148,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	xml := doc.Definitions["Pet"].Value.XML
+	xml := result.Document.Definitions["Pet"].Value.XML
 	assert.Equal(t, "pet", xml.Name)
 	assert.Equal(t, "http://example.com", xml.Namespace)
 	assert.Equal(t, "ex", xml.Prefix)
@@ -178,11 +178,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	xml := doc.Definitions["Pet"].Value.XML
+	xml := result.Document.Definitions["Pet"].Value.XML
 	require.NotNil(t, xml.VendorExtensions)
 	assert.Equal(t, "value", xml.VendorExtensions["x-custom"])
 }

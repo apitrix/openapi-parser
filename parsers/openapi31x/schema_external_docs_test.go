@@ -26,9 +26,9 @@ components:
       externalDocs:
         url: "https://example.com/pet-docs"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	extDocs := doc.Components.Schemas["Pet"].Value.ExternalDocs
+	extDocs := result.Document.Components.Schemas["Pet"].Value.ExternalDocs
 	require.NotNil(t, extDocs)
 	assert.Equal(t, "https://example.com/pet-docs", extDocs.URL)
 }
@@ -49,9 +49,9 @@ components:
         description: "Find more info about pets here"
         url: "https://example.com/pet-docs"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	extDocs := doc.Components.Schemas["Pet"].Value.ExternalDocs
+	extDocs := result.Document.Components.Schemas["Pet"].Value.ExternalDocs
 	assert.Equal(t, "Find more info about pets here", extDocs.Description)
 }
 
@@ -68,9 +68,9 @@ components:
     Pet:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	extDocs := doc.Components.Schemas["Pet"].Value.ExternalDocs
+	extDocs := result.Document.Components.Schemas["Pet"].Value.ExternalDocs
 	assert.Nil(t, extDocs)
 }
 
@@ -90,9 +90,9 @@ components:
         url: "https://example.com/docs"
         x-custom: "value"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	extDocs := doc.Components.Schemas["Pet"].Value.ExternalDocs
+	extDocs := result.Document.Components.Schemas["Pet"].Value.ExternalDocs
 	require.NotNil(t, extDocs.VendorExtensions)
 	assert.Equal(t, "value", extDocs.VendorExtensions["x-custom"])
 }

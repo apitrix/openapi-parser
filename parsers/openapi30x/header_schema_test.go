@@ -24,9 +24,9 @@ paths:
                 type: integer
                 minimum: 0
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	header := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Rate-Limit"].Value
+	header := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Rate-Limit"].Value
 	require.NotNil(t, header.Schema)
 	assert.Equal(t, "integer", header.Schema.Value.Type)
 }

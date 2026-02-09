@@ -15,7 +15,7 @@ All parsers share identical architecture and a common `internal/shared` package.
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                          parse.go                               │
-│  Parse() / ParseFile() / ParseWithUnknownFields()               │
+│  Parse() / ParseFile() / ParseReader()                          │
 └─────────────────────────────────────────────────────────────────┘
               │                              │
               ▼                              ▼
@@ -51,7 +51,7 @@ Common utilities extracted across all three parsers:
 
 | File | Purpose |
 |------|---------|
-| `parse.go` | Entry points: `Parse()`, `ParseFile()`, `ParseWithUnknownFields()` |
+| `parse.go` | Entry points: `Parse()`, `ParseReader()`, `ParseFile()` — all return `*ParseResult` |
 | `context.go` | `ParseContext` — tracks JSON path, caches components |
 | `resolve.go` | Post-parse `$ref` resolution walk with circular detection |
 | `known_fields.go` | Precomputed valid field sets for unknown field detection |
@@ -61,31 +61,32 @@ Common utilities extracted across all three parsers:
 ```go
 // OpenAPI 3.1
 import "openapi-parser/parsers/openapi31x"
-doc, err := openapi31x.Parse(data)
+result, err := openapi31x.Parse(data)
+fmt.Println(result.Document.Info.Title)
 
 // OpenAPI 3.0
 import "openapi-parser/parsers/openapi30x"
-doc, err := openapi30x.Parse(data)
+result, err := openapi30x.Parse(data)
 
 // OpenAPI 2.0 (Swagger)
 import "openapi-parser/parsers/openapi20"
-doc, err := openapi20.Parse(data)
+result, err := openapi20.Parse(data)
 
 // Parse from file with full $ref resolution
-doc, err := openapi30x.ParseFile("openapi.yaml")
+result, err := openapi30x.ParseFile("openapi.yaml")
 
-// With unknown field detection
-result, err := openapi30x.ParseWithUnknownFields(data)
+// Unknown fields are always available in the result
+result, err := openapi30x.Parse(data)
 for _, f := range result.UnknownFields {
     log.Printf("Unknown: %s at %s", f.Key, f.Path)
 }
 
 // Check for parse-time issues on nodes (errors + unknown fields)
-doc, err := openapi30x.Parse(data)
+result, err := openapi30x.Parse(data)
 if err != nil {
     log.Fatal(err) // fatal: bad YAML or unsupported version
 }
-for _, e := range doc.Info.Trix.Errors {
+for _, e := range result.Document.Info.Trix.Errors {
     switch e.Kind {
     case "error":
         log.Printf("parse error: %s", e.Message)

@@ -23,9 +23,9 @@ components:
       type: object
       additionalProperties: true
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["Open"].Value
+	schema := result.Document.Components.Schemas["Open"].Value
 	require.NotNil(t, schema.AdditionalPropertiesAllowed)
 	assert.True(t, *schema.AdditionalPropertiesAllowed)
 }
@@ -42,9 +42,9 @@ components:
       type: object
       additionalProperties: false
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["Closed"].Value
+	schema := result.Document.Components.Schemas["Closed"].Value
 	require.NotNil(t, schema.AdditionalPropertiesAllowed)
 	assert.False(t, *schema.AdditionalPropertiesAllowed)
 }
@@ -62,9 +62,9 @@ components:
       additionalProperties:
         type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["StringMap"].Value
+	schema := result.Document.Components.Schemas["StringMap"].Value
 	require.NotNil(t, schema.AdditionalProperties)
 	assert.Equal(t, "string", schema.AdditionalProperties.Value.Type.Single)
 }
@@ -87,9 +87,9 @@ components:
           name:
             type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["ObjectMap"].Value
+	schema := result.Document.Components.Schemas["ObjectMap"].Value
 	require.NotNil(t, schema.AdditionalProperties)
 	addProps := schema.AdditionalProperties.Value
 	assert.Equal(t, "object", addProps.Type.Single)
@@ -111,9 +111,9 @@ components:
     Pet:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["PetMap"].Value
+	schema := result.Document.Components.Schemas["PetMap"].Value
 	require.NotNil(t, schema.AdditionalProperties)
 	assert.Equal(t, "#/components/schemas/Pet", schema.AdditionalProperties.Ref)
 }
@@ -129,9 +129,9 @@ components:
     NoAddProps:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["NoAddProps"].Value
+	schema := result.Document.Components.Schemas["NoAddProps"].Value
 	assert.Nil(t, schema.AdditionalProperties)
 	assert.Nil(t, schema.AdditionalPropertiesAllowed)
 }
@@ -152,9 +152,9 @@ components:
       additionalProperties:
         type: integer
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["Mixed"].Value
+	schema := result.Document.Components.Schemas["Mixed"].Value
 	// Has named properties
 	assert.Len(t, schema.Properties, 1)
 	// And additional properties schema

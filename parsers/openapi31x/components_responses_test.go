@@ -24,10 +24,10 @@ components:
     NotFound:
       description: "Resource not found"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Components.Responses, 1)
-	assert.Contains(t, doc.Components.Responses, "NotFound")
+	assert.Len(t, result.Document.Components.Responses, 1)
+	assert.Contains(t, result.Document.Components.Responses, "NotFound")
 }
 
 // --- Multiple Responses ---
@@ -49,9 +49,9 @@ components:
     InternalError:
       description: "Internal server error"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Components.Responses, 4)
+	assert.Len(t, result.Document.Components.Responses, 4)
 }
 
 // --- Empty ---
@@ -65,9 +65,9 @@ paths: {}
 components:
   responses: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, doc.Components.Responses)
+	assert.Empty(t, result.Document.Components.Responses)
 }
 
 // --- With Content ---
@@ -87,9 +87,9 @@ components:
           schema:
             type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := doc.Components.Responses["Success"].Value
+	resp := result.Document.Components.Responses["Success"].Value
 	assert.NotNil(t, resp.Content["application/json"])
 }
 
@@ -110,8 +110,8 @@ components:
           schema:
             type: integer
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := doc.Components.Responses["RateLimited"].Value
+	resp := result.Document.Components.Responses["RateLimited"].Value
 	assert.Contains(t, resp.Headers, "X-Rate-Limit-Remaining")
 }

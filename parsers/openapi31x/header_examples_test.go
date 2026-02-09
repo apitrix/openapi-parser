@@ -26,9 +26,9 @@ paths:
                 ex1:
                   value: "example"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	header := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Custom"].Value
+	header := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Custom"].Value
 	require.NotNil(t, header.Examples)
 	assert.Contains(t, header.Examples, "ex1")
 }

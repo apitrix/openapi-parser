@@ -53,9 +53,9 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	path := doc.Paths.Items["/resource"]
+	path := result.Document.Paths.Items["/resource"]
 	assert.NotNil(t, path.Get)
 	assert.NotNil(t, path.Put)
 	assert.NotNil(t, path.Post)
@@ -82,9 +82,9 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	path := doc.Paths.Items["/pets"]
+	path := result.Document.Paths.Items["/pets"]
 	assert.Equal(t, "Pet operations", path.Summary)
 	assert.Equal(t, "Operations for managing pets", path.Description)
 }
@@ -117,9 +117,9 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	params := doc.Paths.Items["/pets/{petId}"].Parameters
+	params := result.Document.Paths.Items["/pets/{petId}"].Parameters
 	assert.Len(t, params, 2)
 }
 
@@ -140,9 +140,9 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	servers := doc.Paths.Items["/pets"].Servers
+	servers := result.Document.Paths.Items["/pets"].Servers
 	assert.Len(t, servers, 2)
 }
 
@@ -164,9 +164,9 @@ components:
           "200":
             description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	path := doc.Paths.Items["/pets"]
+	path := result.Document.Paths.Items["/pets"]
 	assert.Equal(t, "#/components/pathItems/Pets", path.Ref)
 }
 
@@ -186,9 +186,9 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ext := doc.Paths.Items["/pets"].VendorExtensions
+	ext := result.Document.Paths.Items["/pets"].VendorExtensions
 	require.NotNil(t, ext)
 	assert.Equal(t, true, ext["x-internal"])
 }
@@ -222,9 +222,9 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Paths.Items, 4)
+	assert.Len(t, result.Document.Paths.Items, 4)
 }
 
 // --- Path with Template ---
@@ -241,9 +241,9 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Contains(t, doc.Paths.Items, "/users/{userId}/pets/{petId}/medical-records/{recordId}")
+	assert.Contains(t, result.Document.Paths.Items, "/users/{userId}/pets/{petId}/medical-records/{recordId}")
 }
 
 // --- Empty Path ---
@@ -255,7 +255,7 @@ info:
   version: "1.0"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, doc.Paths.Items)
+	assert.Empty(t, result.Document.Paths.Items)
 }

@@ -26,13 +26,13 @@ externalDocs:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.ExternalDocs)
-	assert.Equal(t, "https://example.com/docs", doc.ExternalDocs.URL)
-	assert.Equal(t, "Find more information", doc.ExternalDocs.Description)
+	require.NotNil(t, result.Document.ExternalDocs)
+	assert.Equal(t, "https://example.com/docs", result.Document.ExternalDocs.URL)
+	assert.Equal(t, "Find more information", result.Document.ExternalDocs.Description)
 }
 
 // --- ExternalDocs URL Only ---
@@ -49,13 +49,13 @@ externalDocs:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.ExternalDocs)
-	assert.Equal(t, "https://example.com/docs", doc.ExternalDocs.URL)
-	assert.Empty(t, doc.ExternalDocs.Description)
+	require.NotNil(t, result.Document.ExternalDocs)
+	assert.Equal(t, "https://example.com/docs", result.Document.ExternalDocs.URL)
+	assert.Empty(t, result.Document.ExternalDocs.Description)
 }
 
 // --- ExternalDocs on Operation ---
@@ -78,11 +78,11 @@ paths:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	ed := doc.Paths.Items["/pets"].Get.ExternalDocs
+	ed := result.Document.Paths.Items["/pets"].Get.ExternalDocs
 	require.NotNil(t, ed)
 	assert.Equal(t, "https://example.com/pets", ed.URL)
 }
@@ -103,11 +103,11 @@ tags:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	ed := doc.Tags[0].ExternalDocs
+	ed := result.Document.Tags[0].ExternalDocs
 	require.NotNil(t, ed)
 	assert.Equal(t, "https://example.com/pets", ed.URL)
 }
@@ -129,11 +129,11 @@ definitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	ed := doc.Definitions["Pet"].Value.ExternalDocs
+	ed := result.Document.Definitions["Pet"].Value.ExternalDocs
 	require.NotNil(t, ed)
 	assert.Equal(t, "https://example.com/pet-schema", ed.URL)
 }
@@ -153,10 +153,10 @@ externalDocs:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.ExternalDocs.VendorExtensions)
-	assert.Equal(t, "2.0", doc.ExternalDocs.VendorExtensions["x-version"])
+	require.NotNil(t, result.Document.ExternalDocs.VendorExtensions)
+	assert.Equal(t, "2.0", result.Document.ExternalDocs.VendorExtensions["x-version"])
 }

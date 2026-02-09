@@ -11,7 +11,7 @@ import (
 
 func parseForResolve(t *testing.T, data string) (*ParseResult, *yaml.Node) {
 	t.Helper()
-	result, err := ParseWithUnknownFields([]byte(data))
+	result, err := Parse([]byte(data))
 	if err != nil {
 		t.Fatalf("parse error: %v", err)
 	}

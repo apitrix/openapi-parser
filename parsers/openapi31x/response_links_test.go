@@ -24,8 +24,8 @@ paths:
             GetOrders:
               operationId: getUserOrders
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := doc.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value
+	resp := result.Document.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value
 	assert.Len(t, resp.Links, 2)
 }

@@ -27,10 +27,10 @@ components:
       schema:
         type: integer
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Components.Parameters, 1)
-	assert.Contains(t, doc.Components.Parameters, "LimitParam")
+	assert.Len(t, result.Document.Components.Parameters, 1)
+	assert.Contains(t, result.Document.Components.Parameters, "LimitParam")
 }
 
 // --- Multiple Parameters ---
@@ -59,9 +59,9 @@ components:
       schema:
         type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Components.Parameters, 3)
+	assert.Len(t, result.Document.Components.Parameters, 3)
 }
 
 // --- Empty ---
@@ -75,9 +75,9 @@ paths: {}
 components:
   parameters: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, doc.Components.Parameters)
+	assert.Empty(t, result.Document.Components.Parameters)
 }
 
 // --- All Locations ---
@@ -112,11 +112,11 @@ components:
       schema:
         type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Components.Parameters, 4)
-	assert.Equal(t, "path", doc.Components.Parameters["PathParam"].Value.In)
-	assert.Equal(t, "query", doc.Components.Parameters["QueryParam"].Value.In)
-	assert.Equal(t, "header", doc.Components.Parameters["HeaderParam"].Value.In)
-	assert.Equal(t, "cookie", doc.Components.Parameters["CookieParam"].Value.In)
+	assert.Len(t, result.Document.Components.Parameters, 4)
+	assert.Equal(t, "path", result.Document.Components.Parameters["PathParam"].Value.In)
+	assert.Equal(t, "query", result.Document.Components.Parameters["QueryParam"].Value.In)
+	assert.Equal(t, "header", result.Document.Components.Parameters["HeaderParam"].Value.In)
+	assert.Equal(t, "cookie", result.Document.Components.Parameters["CookieParam"].Value.In)
 }

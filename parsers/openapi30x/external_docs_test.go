@@ -22,10 +22,10 @@ externalDocs:
   url: "https://example.com/docs"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, doc.ExternalDocs)
-	assert.Equal(t, "https://example.com/docs", doc.ExternalDocs.URL)
+	require.NotNil(t, result.Document.ExternalDocs)
+	assert.Equal(t, "https://example.com/docs", result.Document.ExternalDocs.URL)
 }
 
 // --- With Description ---
@@ -40,9 +40,9 @@ externalDocs:
   url: "https://example.com/docs"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "Find more documentation here", doc.ExternalDocs.Description)
+	assert.Equal(t, "Find more documentation here", result.Document.ExternalDocs.Description)
 }
 
 // --- Extensions ---
@@ -58,9 +58,9 @@ externalDocs:
   x-internal: true
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ext := doc.ExternalDocs.VendorExtensions
+	ext := result.Document.ExternalDocs.VendorExtensions
 	require.NotNil(t, ext)
 	assert.Equal(t, "value", ext["x-custom"])
 }
@@ -82,9 +82,9 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	extDocs := doc.Paths.Items["/pets"].Get.ExternalDocs
+	extDocs := result.Document.Paths.Items["/pets"].Get.ExternalDocs
 	require.NotNil(t, extDocs)
 	assert.Equal(t, "Pet documentation", extDocs.Description)
 }
@@ -102,10 +102,10 @@ tags:
       url: "https://example.com/pet-docs"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, doc.Tags[0].ExternalDocs)
-	assert.Equal(t, "https://example.com/pet-docs", doc.Tags[0].ExternalDocs.URL)
+	require.NotNil(t, result.Document.Tags[0].ExternalDocs)
+	assert.Equal(t, "https://example.com/pet-docs", result.Document.Tags[0].ExternalDocs.URL)
 }
 
 // --- Missing ExternalDocs ---
@@ -117,7 +117,7 @@ info:
   version: "1.0"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Nil(t, doc.ExternalDocs)
+	assert.Nil(t, result.Document.ExternalDocs)
 }

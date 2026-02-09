@@ -13,51 +13,51 @@ func TestParsePetstore31(t *testing.T) {
 	data, err := os.ReadFile("testdata/petstore31.yaml")
 	require.NoError(t, err)
 
-	doc, err := Parse(data)
+	result, err := Parse(data)
 	require.NoError(t, err)
-	require.NotNil(t, doc)
+	require.NotNil(t, result.Document)
 
 	// Verify version
-	assert.Equal(t, "3.1.0", doc.OpenAPI)
+	assert.Equal(t, "3.1.0", result.Document.OpenAPI)
 
 	// Verify info (with 3.1 additions)
-	require.NotNil(t, doc.Info)
-	assert.Equal(t, "Petstore - OpenAPI 3.1", doc.Info.Title)
-	assert.Equal(t, "A pet store API demonstrating OpenAPI 3.1 features", doc.Info.Summary)
-	assert.Equal(t, "1.0.0", doc.Info.Version)
+	require.NotNil(t, result.Document.Info)
+	assert.Equal(t, "Petstore - OpenAPI 3.1", result.Document.Info.Title)
+	assert.Equal(t, "A pet store API demonstrating OpenAPI 3.1 features", result.Document.Info.Summary)
+	assert.Equal(t, "1.0.0", result.Document.Info.Version)
 
 	// Verify contact
-	require.NotNil(t, doc.Info.Contact)
-	assert.Equal(t, "API Support", doc.Info.Contact.Name)
-	assert.Equal(t, "support@example.com", doc.Info.Contact.Email)
+	require.NotNil(t, result.Document.Info.Contact)
+	assert.Equal(t, "API Support", result.Document.Info.Contact.Name)
+	assert.Equal(t, "support@example.com", result.Document.Info.Contact.Email)
 
 	// Verify license (with 3.1 additions)
-	require.NotNil(t, doc.Info.License)
-	assert.Equal(t, "Apache 2.0", doc.Info.License.Name)
-	assert.Equal(t, "Apache-2.0", doc.Info.License.Identifier)
+	require.NotNil(t, result.Document.Info.License)
+	assert.Equal(t, "Apache 2.0", result.Document.Info.License.Name)
+	assert.Equal(t, "Apache-2.0", result.Document.Info.License.Identifier)
 
 	// Verify jsonSchemaDialect
-	assert.Equal(t, "https://json-schema.org/draft/2020-12/schema", doc.JsonSchemaDialect)
+	assert.Equal(t, "https://json-schema.org/draft/2020-12/schema", result.Document.JsonSchemaDialect)
 
 	// Verify servers
-	require.Len(t, doc.Servers, 1)
-	assert.Equal(t, "https://petstore.example.com/v1", doc.Servers[0].URL)
+	require.Len(t, result.Document.Servers, 1)
+	assert.Equal(t, "https://petstore.example.com/v1", result.Document.Servers[0].URL)
 
 	// Verify webhooks
-	require.NotNil(t, doc.Webhooks)
-	require.Contains(t, doc.Webhooks, "newPet")
-	webhook := doc.Webhooks["newPet"]
+	require.NotNil(t, result.Document.Webhooks)
+	require.Contains(t, result.Document.Webhooks, "newPet")
+	webhook := result.Document.Webhooks["newPet"]
 	require.NotNil(t, webhook.Value)
 	require.NotNil(t, webhook.Value.Post)
 	assert.Equal(t, "newPetWebhook", webhook.Value.Post.OperationID)
 
 	// Verify paths
-	require.NotNil(t, doc.Paths)
-	require.Contains(t, doc.Paths.Items, "/pets")
-	require.Contains(t, doc.Paths.Items, "/pets/{petId}")
+	require.NotNil(t, result.Document.Paths)
+	require.Contains(t, result.Document.Paths.Items, "/pets")
+	require.Contains(t, result.Document.Paths.Items, "/pets/{petId}")
 
 	// Verify GET /pets
-	getPets := doc.Paths.Items["/pets"].Get
+	getPets := result.Document.Paths.Items["/pets"].Get
 	require.NotNil(t, getPets)
 	assert.Equal(t, "listPets", getPets.OperationID)
 	require.Len(t, getPets.Parameters, 1)
@@ -66,18 +66,18 @@ func TestParsePetstore31(t *testing.T) {
 	assert.Equal(t, "query", getPets.Parameters[0].Value.In)
 
 	// Verify POST /pets
-	postPets := doc.Paths.Items["/pets"].Post
+	postPets := result.Document.Paths.Items["/pets"].Post
 	require.NotNil(t, postPets)
 	assert.Equal(t, "createPets", postPets.OperationID)
 
 	// Verify schemas in components
-	require.NotNil(t, doc.Components)
-	require.Contains(t, doc.Components.Schemas, "Pet")
-	require.Contains(t, doc.Components.Schemas, "Error")
-	require.Contains(t, doc.Components.Schemas, "PetList")
+	require.NotNil(t, result.Document.Components)
+	require.Contains(t, result.Document.Components.Schemas, "Pet")
+	require.Contains(t, result.Document.Components.Schemas, "Error")
+	require.Contains(t, result.Document.Components.Schemas, "PetList")
 
 	// Verify Pet schema
-	petSchema := doc.Components.Schemas["Pet"].Value
+	petSchema := result.Document.Components.Schemas["Pet"].Value
 	require.NotNil(t, petSchema)
 	assert.Equal(t, "object", petSchema.Type.Single)
 	require.Contains(t, petSchema.Properties, "id")
@@ -114,21 +114,21 @@ func TestParsePetstore31(t *testing.T) {
 	assert.True(t, *metadataSchema.AdditionalPropertiesAllowed)
 
 	// Verify prefixItems (PetList schema)
-	petListSchema := doc.Components.Schemas["PetList"].Value
+	petListSchema := result.Document.Components.Schemas["PetList"].Value
 	require.NotNil(t, petListSchema)
 	require.Len(t, petListSchema.PrefixItems, 1)
 
 	// Verify pathItems in components
-	require.NotNil(t, doc.Components.PathItems)
-	require.Contains(t, doc.Components.PathItems, "PetOperations")
+	require.NotNil(t, result.Document.Components.PathItems)
+	require.Contains(t, result.Document.Components.PathItems, "PetOperations")
 
 	// Verify tags
-	require.Len(t, doc.Tags, 1)
-	assert.Equal(t, "pets", doc.Tags[0].Name)
+	require.Len(t, result.Document.Tags, 1)
+	assert.Equal(t, "pets", result.Document.Tags[0].Name)
 
 	// Verify externalDocs
-	require.NotNil(t, doc.ExternalDocs)
-	assert.Equal(t, "https://example.com", doc.ExternalDocs.URL)
+	require.NotNil(t, result.Document.ExternalDocs)
+	assert.Equal(t, "https://example.com", result.Document.ExternalDocs.URL)
 }
 
 // TestParseVersion31x tests that versions 3.1.x are accepted.
@@ -185,12 +185,12 @@ func TestParseMissingInfo(t *testing.T) {
 	data := []byte(`openapi: "3.1.0"
 paths: {}
 `)
-	doc, err := Parse(data)
-	// Info errors are now collected on doc.Trix.Errors, not returned
+	result, err := Parse(data)
+	// Info errors are now collected on result.Document.Trix.Errors, not returned
 	require.NoError(t, err)
-	require.NotNil(t, doc)
-	require.NotEmpty(t, doc.Trix.Errors, "missing info should produce a Trix error")
-	assert.Contains(t, doc.Trix.Errors[0].Message, "info is required")
+	require.NotNil(t, result.Document)
+	require.NotEmpty(t, result.Document.Trix.Errors, "missing info should produce a Trix error")
+	assert.Contains(t, result.Document.Trix.Errors[0].Message, "info is required")
 }
 
 // TestParseLineColumnNumbers tests that line/column numbers are preserved.
@@ -208,20 +208,20 @@ paths:
         "200":
           description: OK
 `)
-	doc, err := Parse(data)
+	result, err := Parse(data)
 	require.NoError(t, err)
-	require.NotNil(t, doc)
+	require.NotNil(t, result.Document)
 
 	// Root starts at line 1
-	assert.Equal(t, 1, doc.Trix.Source.Start.Line)
+	assert.Equal(t, 1, result.Document.Trix.Source.Start.Line)
 
 	// Info starts at line 3 (first content line of the mapping)
-	require.NotNil(t, doc.Info)
-	assert.Equal(t, 3, doc.Info.Trix.Source.Start.Line)
+	require.NotNil(t, result.Document.Info)
+	assert.Equal(t, 3, result.Document.Info.Trix.Source.Start.Line)
 
 	// First path item
-	require.NotNil(t, doc.Paths)
-	pathItem := doc.Paths.Items["/test"]
+	require.NotNil(t, result.Document.Paths)
+	pathItem := result.Document.Paths.Items["/test"]
 	require.NotNil(t, pathItem)
 
 	// GET operation
@@ -240,7 +240,7 @@ info:
 paths: {}
 unknownRootField: something
 `)
-	result, err := ParseWithUnknownFields(data)
+	result, err := Parse(data)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	require.NotNil(t, result.Document)
@@ -277,12 +277,12 @@ info:
 x-root-ext: root-value
 paths: {}
 `)
-	doc, err := Parse(data)
+	result, err := Parse(data)
 	require.NoError(t, err)
-	require.NotNil(t, doc)
+	require.NotNil(t, result.Document)
 
-	assert.Equal(t, "root-value", doc.VendorExtensions["x-root-ext"])
-	assert.Equal(t, "info-value", doc.Info.VendorExtensions["x-info-ext"])
+	assert.Equal(t, "root-value", result.Document.VendorExtensions["x-root-ext"])
+	assert.Equal(t, "info-value", result.Document.Info.VendorExtensions["x-info-ext"])
 }
 
 // TestParseSchemaTypeArray tests parsing of type arrays.
@@ -302,26 +302,26 @@ components:
       type: string
     NoType: {}
 `)
-	doc, err := Parse(data)
+	result, err := Parse(data)
 	require.NoError(t, err)
-	require.NotNil(t, doc)
+	require.NotNil(t, result.Document)
 
 	// Type array
-	nullableStr := doc.Components.Schemas["NullableString"].Value
+	nullableStr := result.Document.Components.Schemas["NullableString"].Value
 	require.NotNil(t, nullableStr)
 	assert.Empty(t, nullableStr.Type.Single)
 	assert.Equal(t, []string{"string", "null"}, nullableStr.Type.Array)
 	assert.Equal(t, []string{"string", "null"}, nullableStr.Type.Values())
 
 	// Single type
-	singleType := doc.Components.Schemas["SingleType"].Value
+	singleType := result.Document.Components.Schemas["SingleType"].Value
 	require.NotNil(t, singleType)
 	assert.Equal(t, "string", singleType.Type.Single)
 	assert.Empty(t, singleType.Type.Array)
 	assert.Equal(t, []string{"string"}, singleType.Type.Values())
 
 	// No type
-	noType := doc.Components.Schemas["NoType"].Value
+	noType := result.Document.Components.Schemas["NoType"].Value
 	require.NotNil(t, noType)
 	assert.True(t, noType.Type.IsEmpty())
 	assert.Nil(t, noType.Type.Values())
@@ -358,19 +358,19 @@ components:
     Success:
       description: Success
 `)
-	doc, err := Parse(data)
+	result, err := Parse(data)
 	require.NoError(t, err)
-	require.NotNil(t, doc)
+	require.NotNil(t, result.Document)
 
 	// Parameter $ref with summary/description
-	params := doc.Paths.Items["/test"].Get.Parameters
+	params := result.Document.Paths.Items["/test"].Get.Parameters
 	require.Len(t, params, 1)
 	assert.Equal(t, "#/components/parameters/Limit", params[0].Ref)
 	assert.Equal(t, "The limit parameter", params[0].Summary)
 	assert.Equal(t, "Override description", params[0].Description)
 
 	// Response $ref with summary/description
-	resp := doc.Paths.Items["/test"].Get.Responses.Codes["200"]
+	resp := result.Document.Paths.Items["/test"].Get.Responses.Codes["200"]
 	require.NotNil(t, resp)
 	assert.Equal(t, "#/components/responses/Success", resp.Ref)
 	assert.Equal(t, "Overridden success", resp.Summary)
@@ -404,20 +404,20 @@ components:
           "200":
             description: OK
 `)
-	doc, err := Parse(data)
+	result, err := Parse(data)
 	require.NoError(t, err)
-	require.NotNil(t, doc)
+	require.NotNil(t, result.Document)
 
-	require.Len(t, doc.Webhooks, 2)
+	require.Len(t, result.Document.Webhooks, 2)
 
 	// Inline webhook
-	orderCreated := doc.Webhooks["orderCreated"]
+	orderCreated := result.Document.Webhooks["orderCreated"]
 	require.NotNil(t, orderCreated.Value)
 	require.NotNil(t, orderCreated.Value.Post)
 	assert.Equal(t, "orderCreated", orderCreated.Value.Post.OperationID)
 
 	// $ref webhook
-	orderDeleted := doc.Webhooks["orderDeleted"]
+	orderDeleted := result.Document.Webhooks["orderDeleted"]
 	assert.Equal(t, "#/components/pathItems/DeleteWebhook", orderDeleted.Ref)
 	assert.Equal(t, "Webhook for deletion", orderDeleted.Summary)
 }
@@ -439,12 +439,12 @@ components:
           "200":
             description: OK
 `)
-	doc, err := Parse(data)
+	result, err := Parse(data)
 	require.NoError(t, err)
-	require.NotNil(t, doc)
+	require.NotNil(t, result.Document)
 
-	require.Contains(t, doc.Components.PathItems, "SharedOps")
-	sharedOps := doc.Components.PathItems["SharedOps"]
+	require.Contains(t, result.Document.Components.PathItems, "SharedOps")
+	sharedOps := result.Document.Components.PathItems["SharedOps"]
 	require.NotNil(t, sharedOps.Value)
 	require.NotNil(t, sharedOps.Value.Get)
 	assert.Equal(t, "sharedGet", sharedOps.Value.Get.OperationID)

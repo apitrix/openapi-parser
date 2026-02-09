@@ -24,13 +24,13 @@ paths: {}
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, "2.0", doc.Swagger)
-	assert.Equal(t, "Test API", doc.Info.Title)
-	assert.Equal(t, "1.0.0", doc.Info.Version)
+	assert.Equal(t, "2.0", result.Document.Swagger)
+	assert.Equal(t, "Test API", result.Document.Info.Title)
+	assert.Equal(t, "1.0.0", result.Document.Info.Version)
 }
 
 func TestParse_JSON(t *testing.T) {
@@ -38,11 +38,11 @@ func TestParse_JSON(t *testing.T) {
 	json := `{"swagger": "2.0", "info": {"title": "Test API", "version": "1.0"}, "paths": {}}`
 
 	// Act
-	doc, err := Parse([]byte(json))
+	result, err := Parse([]byte(json))
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, "2.0", doc.Swagger)
+	assert.Equal(t, "2.0", result.Document.Swagger)
 }
 
 func TestParse_InvalidYAML(t *testing.T) {
@@ -89,9 +89,9 @@ paths: {}
 	assert.Contains(t, err.Error(), "swagger field is required")
 }
 
-// --- ParseWithUnknownFields ---
+// --- Parse ---
 
-func TestParseWithUnknownFields_DetectsUnknown(t *testing.T) {
+func TestParse_DetectsUnknown(t *testing.T) {
 	// Arrange
 	yaml := `swagger: "2.0"
 info:
@@ -102,7 +102,7 @@ paths: {}
 `
 
 	// Act
-	result, err := ParseWithUnknownFields([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
@@ -110,7 +110,7 @@ paths: {}
 	assert.Equal(t, "unknownField", result.UnknownFields[0].Name)
 }
 
-func TestParseWithUnknownFields_IgnoresExtensions(t *testing.T) {
+func TestParse_IgnoresExtensions(t *testing.T) {
 	// Arrange
 	yaml := `swagger: "2.0"
 info:
@@ -121,7 +121,7 @@ paths: {}
 `
 
 	// Act
-	result, err := ParseWithUnknownFields([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
@@ -141,9 +141,9 @@ paths: {}
 	reader := strings.NewReader(yaml)
 
 	// Act
-	doc, err := ParseReader(reader)
+	result, err := ParseReader(reader)
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, "2.0", doc.Swagger)
+	assert.Equal(t, "2.0", result.Document.Swagger)
 }

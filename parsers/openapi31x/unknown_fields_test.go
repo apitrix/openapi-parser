@@ -107,9 +107,9 @@ components:
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := ParseWithUnknownFields([]byte(tt.data))
+			result, err := Parse([]byte(tt.data))
 			if err != nil {
-				t.Fatalf("ParseWithUnknownFields failed: %v", err)
+				t.Fatalf("Parse failed: %v", err)
 			}
 
 			if len(result.UnknownFields) != tt.wantUnknown {
@@ -141,8 +141,8 @@ components:
 	}
 }
 
-func TestParseWithUnknownFieldsBasic(t *testing.T) {
-	// Test that ParseWithUnknownFields returns the document correctly
+func TestParseBasic(t *testing.T) {
+	// Test that Parse returns the document correctly
 	data := []byte(`
 openapi: "3.1.0"
 info:
@@ -150,9 +150,9 @@ info:
   version: "1.0.0"
 paths: {}
 `)
-	result, err := ParseWithUnknownFields(data)
+	result, err := Parse(data)
 	if err != nil {
-		t.Fatalf("ParseWithUnknownFields failed: %v", err)
+		t.Fatalf("Parse failed: %v", err)
 	}
 
 	if result.Document == nil {

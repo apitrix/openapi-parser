@@ -26,8 +26,8 @@ paths:
               schema:
                 type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value
+	resp := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value
 	assert.Len(t, resp.Headers, 2)
 }

@@ -22,8 +22,8 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	pathItem := doc.Paths.Items["/pets"]
+	pathItem := result.Document.Paths.Items["/pets"]
 	assert.Len(t, pathItem.Servers, 2)
 }

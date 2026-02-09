@@ -25,9 +25,9 @@ components:
         name:
           type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	props := doc.Components.Schemas["Pet"].Value.Properties
+	props := result.Document.Components.Schemas["Pet"].Value.Properties
 	assert.Len(t, props, 1)
 	assert.Contains(t, props, "name")
 }
@@ -52,9 +52,9 @@ components:
         status:
           type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	props := doc.Components.Schemas["Pet"].Value.Properties
+	props := result.Document.Components.Schemas["Pet"].Value.Properties
 	assert.Len(t, props, 4)
 }
 
@@ -70,9 +70,9 @@ components:
       type: object
       properties: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	props := doc.Components.Schemas["Empty"].Value.Properties
+	props := result.Document.Components.Schemas["Empty"].Value.Properties
 	assert.Empty(t, props)
 }
 
@@ -87,9 +87,9 @@ components:
     NoProps:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	props := doc.Components.Schemas["NoProps"].Value.Properties
+	props := result.Document.Components.Schemas["NoProps"].Value.Properties
 	assert.Nil(t, props)
 }
 
@@ -114,9 +114,9 @@ components:
             zipCode:
               type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	userProps := doc.Components.Schemas["User"].Value.Properties
+	userProps := result.Document.Components.Schemas["User"].Value.Properties
 	address := userProps["address"].Value
 	require.NotNil(t, address)
 	assert.Len(t, address.Properties, 3)
@@ -142,9 +142,9 @@ components:
     Category:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	props := doc.Components.Schemas["Pet"].Value.Properties
+	props := result.Document.Components.Schemas["Pet"].Value.Properties
 	assert.Equal(t, "#/components/schemas/Owner", props["owner"].Ref)
 	assert.Equal(t, "#/components/schemas/Category", props["category"].Ref)
 }
@@ -169,9 +169,9 @@ components:
         "_underscore":
           type: boolean
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	props := doc.Components.Schemas["Config"].Value.Properties
+	props := result.Document.Components.Schemas["Config"].Value.Properties
 	assert.Len(t, props, 4)
 	assert.Contains(t, props, "property-with-dashes")
 	assert.Contains(t, props, "property.with.dots")
@@ -205,9 +205,9 @@ components:
         objectProp:
           type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	props := doc.Components.Schemas["Mixed"].Value.Properties
+	props := result.Document.Components.Schemas["Mixed"].Value.Properties
 	assert.Equal(t, "string", props["stringProp"].Value.Type)
 	assert.Equal(t, "integer", props["intProp"].Value.Type)
 	assert.Equal(t, "number", props["numProp"].Value.Type)

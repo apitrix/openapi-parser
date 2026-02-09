@@ -31,11 +31,11 @@ paths:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	op := doc.Paths.Items["/pets"].Get
+	op := result.Document.Paths.Items["/pets"].Get
 	assert.Equal(t, "List pets", op.Summary)
 	assert.Equal(t, "Returns all pets", op.Description)
 	assert.Equal(t, "listPets", op.OperationID)
@@ -61,11 +61,11 @@ paths:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, []string{"pets", "animals"}, doc.Paths.Items["/pets"].Get.Tags)
+	assert.Equal(t, []string{"pets", "animals"}, result.Document.Paths.Items["/pets"].Get.Tags)
 }
 
 // --- Consumes/Produces ---
@@ -89,11 +89,11 @@ paths:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	op := doc.Paths.Items["/pets"].Post
+	op := result.Document.Paths.Items["/pets"].Post
 	assert.Equal(t, []string{"application/json"}, op.Consumes)
 	assert.Equal(t, []string{"application/json"}, op.Produces)
 }
@@ -122,11 +122,11 @@ paths:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	params := doc.Paths.Items["/pets"].Get.Parameters
+	params := result.Document.Paths.Items["/pets"].Get.Parameters
 	require.Len(t, params, 2)
 	assert.Equal(t, "limit", params[0].Value.Name)
 	assert.Equal(t, "offset", params[1].Value.Name)
@@ -153,11 +153,11 @@ paths:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	responses := doc.Paths.Items["/pets"].Get.Responses
+	responses := result.Document.Paths.Items["/pets"].Get.Responses
 	require.NotNil(t, responses.Default)
 	assert.Equal(t, "Error", responses.Default.Value.Description)
 	assert.Equal(t, "Success", responses.Codes["200"].Value.Description)
@@ -182,11 +182,11 @@ paths:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	assert.True(t, doc.Paths.Items["/pets"].Get.Deprecated)
+	assert.True(t, result.Document.Paths.Items["/pets"].Get.Deprecated)
 }
 
 // --- Security ---
@@ -208,12 +208,12 @@ paths:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.Len(t, doc.Paths.Items["/pets"].Get.Security, 1)
-	assert.Contains(t, doc.Paths.Items["/pets"].Get.Security[0], "api_key")
+	require.Len(t, result.Document.Paths.Items["/pets"].Get.Security, 1)
+	assert.Contains(t, result.Document.Paths.Items["/pets"].Get.Security[0], "api_key")
 }
 
 // --- External Docs ---
@@ -236,12 +236,12 @@ paths:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.Paths.Items["/pets"].Get.ExternalDocs)
-	assert.Equal(t, "https://example.com", doc.Paths.Items["/pets"].Get.ExternalDocs.URL)
+	require.NotNil(t, result.Document.Paths.Items["/pets"].Get.ExternalDocs)
+	assert.Equal(t, "https://example.com", result.Document.Paths.Items["/pets"].Get.ExternalDocs.URL)
 }
 
 // --- Extensions ---
@@ -262,10 +262,10 @@ paths:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.Paths.Items["/pets"].Get.VendorExtensions)
-	assert.Equal(t, "value", doc.Paths.Items["/pets"].Get.VendorExtensions["x-custom"])
+	require.NotNil(t, result.Document.Paths.Items["/pets"].Get.VendorExtensions)
+	assert.Equal(t, "value", result.Document.Paths.Items["/pets"].Get.VendorExtensions["x-custom"])
 }

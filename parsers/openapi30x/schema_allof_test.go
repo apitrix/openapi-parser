@@ -30,9 +30,9 @@ components:
             name:
               type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	allOf := doc.Components.Schemas["PetWithId"].Value.AllOf
+	allOf := result.Document.Components.Schemas["PetWithId"].Value.AllOf
 	assert.Len(t, allOf, 2)
 }
 
@@ -57,9 +57,9 @@ components:
         name:
           type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	allOf := doc.Components.Schemas["Cat"].Value.AllOf
+	allOf := result.Document.Components.Schemas["Cat"].Value.AllOf
 	assert.Len(t, allOf, 2)
 	assert.Equal(t, "#/components/schemas/Pet", allOf[0].Ref)
 }
@@ -75,9 +75,9 @@ components:
     NoAllOf:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	allOf := doc.Components.Schemas["NoAllOf"].Value.AllOf
+	allOf := result.Document.Components.Schemas["NoAllOf"].Value.AllOf
 	assert.Nil(t, allOf)
 }
 
@@ -101,9 +101,9 @@ components:
     Audited:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	allOf := doc.Components.Schemas["Combined"].Value.AllOf
+	allOf := result.Document.Components.Schemas["Combined"].Value.AllOf
 	assert.Len(t, allOf, 3)
 }
 
@@ -131,9 +131,9 @@ components:
     Pet:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	allOf := doc.Components.Schemas["ExtendedPet"].Value.AllOf
+	allOf := result.Document.Components.Schemas["ExtendedPet"].Value.AllOf
 	assert.Len(t, allOf, 3)
 	// First is reference
 	assert.Equal(t, "#/components/schemas/Pet", allOf[0].Ref)

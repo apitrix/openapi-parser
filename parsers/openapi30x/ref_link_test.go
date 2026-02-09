@@ -32,9 +32,9 @@ components:
     GetUserPets:
       operationId: getUserPets
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ref := doc.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links["GetUserPets"]
+	ref := result.Document.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links["GetUserPets"]
 	assert.Equal(t, "#/components/links/GetUserPets", ref.Ref)
 }
 
@@ -63,9 +63,9 @@ components:
     GetUserOrders:
       operationId: getUserOrders
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	links := doc.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links
+	links := result.Document.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links
 	assert.Equal(t, "#/components/links/GetUserPets", links["GetUserPets"].Ref)
 	assert.Equal(t, "#/components/links/GetUserOrders", links["GetUserOrders"].Ref)
 }
@@ -93,9 +93,9 @@ components:
     GetUserPets:
       operationId: getUserPets
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	links := doc.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links
+	links := result.Document.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links
 	assert.Equal(t, "#/components/links/GetUserPets", links["GetUserPets"].Ref)
 	assert.Equal(t, "inlineOp", links["InlineLink"].Value.OperationID)
 }

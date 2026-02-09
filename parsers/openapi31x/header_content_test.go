@@ -25,9 +25,9 @@ paths:
                   schema:
                     type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	header := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Custom"].Value
+	header := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Custom"].Value
 	require.NotNil(t, header.Content)
 	assert.Contains(t, header.Content, "application/json")
 }

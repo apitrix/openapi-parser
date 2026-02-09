@@ -21,9 +21,9 @@ components:
         userId: '$response.body#/id'
         format: json
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	link := doc.Components.Links["GetUser"].Value
+	link := result.Document.Components.Links["GetUser"].Value
 	require.NotNil(t, link.Parameters)
 	assert.Contains(t, link.Parameters, "userId")
 	assert.Contains(t, link.Parameters, "format")

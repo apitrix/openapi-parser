@@ -30,9 +30,9 @@ components:
             meow:
               type: boolean
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	oneOf := doc.Components.Schemas["Pet"].Value.OneOf
+	oneOf := result.Document.Components.Schemas["Pet"].Value.OneOf
 	assert.Len(t, oneOf, 2)
 }
 
@@ -53,9 +53,9 @@ components:
     Dog:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	oneOf := doc.Components.Schemas["Pet"].Value.OneOf
+	oneOf := result.Document.Components.Schemas["Pet"].Value.OneOf
 	assert.Len(t, oneOf, 2)
 	assert.Equal(t, "#/components/schemas/Cat", oneOf[0].Ref)
 	assert.Equal(t, "#/components/schemas/Dog", oneOf[1].Ref)
@@ -72,9 +72,9 @@ components:
     Simple:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	oneOf := doc.Components.Schemas["Simple"].Value.OneOf
+	oneOf := result.Document.Components.Schemas["Simple"].Value.OneOf
 	assert.Nil(t, oneOf)
 }
 
@@ -97,9 +97,9 @@ components:
     Dog:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["Pet"].Value
+	schema := result.Document.Components.Schemas["Pet"].Value
 	assert.Len(t, schema.OneOf, 2)
 	require.NotNil(t, schema.Discriminator)
 	assert.Equal(t, "petType", schema.Discriminator.PropertyName)
@@ -123,8 +123,8 @@ components:
           items:
             type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	oneOf := doc.Components.Schemas["Value"].Value.OneOf
+	oneOf := result.Document.Components.Schemas["Value"].Value.OneOf
 	assert.Len(t, oneOf, 5)
 }

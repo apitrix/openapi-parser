@@ -23,10 +23,10 @@ info:
   version: "1.0.0"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "Test Title", doc.Info.Title)
-	assert.Equal(t, "Test Description", doc.Info.Description)
+	assert.Equal(t, "Test Title", result.Document.Info.Title)
+	assert.Equal(t, "Test Description", result.Document.Info.Description)
 }
 
 func TestHelpers_BoolParsing(t *testing.T) {
@@ -43,9 +43,9 @@ components:
       readOnly: false
       writeOnly: false
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["Test"].Value
+	schema := result.Document.Components.Schemas["Test"].Value
 	assert.True(t, schema.Deprecated)
 	assert.False(t, schema.ReadOnly)
 	assert.False(t, schema.WriteOnly)
@@ -64,9 +64,9 @@ components:
       minLength: 5
       maxLength: 100
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["Test"].Value
+	schema := result.Document.Components.Schemas["Test"].Value
 	require.NotNil(t, schema.MinLength)
 	require.NotNil(t, schema.MaxLength)
 	assert.Equal(t, uint64(5), *schema.MinLength)
@@ -87,9 +87,9 @@ components:
       maximum: 99.9
       multipleOf: 0.1
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["Test"].Value
+	schema := result.Document.Components.Schemas["Test"].Value
 	require.NotNil(t, schema.Minimum)
 	require.NotNil(t, schema.Maximum)
 	require.NotNil(t, schema.MultipleOf)
@@ -113,9 +113,9 @@ components:
         - name
         - status
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["Test"].Value
+	schema := result.Document.Components.Schemas["Test"].Value
 	assert.Len(t, schema.Required, 3)
 	assert.Contains(t, schema.Required, "id")
 	assert.Contains(t, schema.Required, "name")
@@ -140,9 +140,9 @@ components:
         c:
           type: boolean
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	props := doc.Components.Schemas["Test"].Value.Properties
+	props := result.Document.Components.Schemas["Test"].Value.Properties
 	assert.Len(t, props, 3)
 	assert.Contains(t, props, "a")
 	assert.Contains(t, props, "b")
@@ -164,9 +164,9 @@ info:
     key: value
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ext := doc.Info.VendorExtensions
+	ext := result.Document.Info.VendorExtensions
 	assert.Equal(t, "value", ext["x-string"])
 	assert.Equal(t, 42, ext["x-number"])
 	assert.Equal(t, true, ext["x-bool"])
@@ -188,9 +188,9 @@ components:
         - inactive
         - deleted
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	enum := doc.Components.Schemas["Status"].Value.Enum
+	enum := result.Document.Components.Schemas["Status"].Value.Enum
 	assert.Len(t, enum, 4)
 }
 
@@ -212,9 +212,9 @@ components:
       type: boolean
       default: true
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "hello", doc.Components.Schemas["StringDefault"].Value.Default)
-	assert.Equal(t, 42, doc.Components.Schemas["IntDefault"].Value.Default)
-	assert.Equal(t, true, doc.Components.Schemas["BoolDefault"].Value.Default)
+	assert.Equal(t, "hello", result.Document.Components.Schemas["StringDefault"].Value.Default)
+	assert.Equal(t, 42, result.Document.Components.Schemas["IntDefault"].Value.Default)
+	assert.Equal(t, true, result.Document.Components.Schemas["BoolDefault"].Value.Default)
 }

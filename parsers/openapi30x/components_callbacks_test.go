@@ -28,10 +28,10 @@ components:
             "200":
               description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Components.Callbacks, 1)
-	assert.Contains(t, doc.Components.Callbacks, "Webhook")
+	assert.Len(t, result.Document.Components.Callbacks, 1)
+	assert.Contains(t, result.Document.Components.Callbacks, "Webhook")
 }
 
 // --- Multiple Callbacks ---
@@ -63,9 +63,9 @@ components:
             "200":
               description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Components.Callbacks, 3)
+	assert.Len(t, result.Document.Components.Callbacks, 3)
 }
 
 // --- Empty ---
@@ -79,9 +79,9 @@ paths: {}
 components:
   callbacks: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, doc.Components.Callbacks)
+	assert.Empty(t, result.Document.Components.Callbacks)
 }
 
 // --- Missing ---
@@ -94,7 +94,7 @@ info:
 paths: {}
 components: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Nil(t, doc.Components.Callbacks)
+	assert.Nil(t, result.Document.Components.Callbacks)
 }

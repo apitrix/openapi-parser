@@ -20,11 +20,11 @@ info:
   version: "1.0.0"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, doc)
-	assert.Equal(t, "3.1.0", doc.OpenAPI)
-	assert.Equal(t, "Test API", doc.Info.Title)
+	require.NotNil(t, result.Document)
+	assert.Equal(t, "3.1.0", result.Document.OpenAPI)
+	assert.Equal(t, "Test API", result.Document.Info.Title)
 }
 
 // --- Different OpenAPI Versions ---
@@ -36,9 +36,9 @@ info:
   version: "1.0"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "3.1.0", doc.OpenAPI)
+	assert.Equal(t, "3.1.0", result.Document.OpenAPI)
 }
 
 func TestParseOpenAPI_Version300(t *testing.T) {
@@ -48,9 +48,9 @@ info:
   version: "1.0"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "3.1.0", doc.OpenAPI)
+	assert.Equal(t, "3.1.0", result.Document.OpenAPI)
 }
 
 // --- Complete Document ---
@@ -94,15 +94,15 @@ security:
 externalDocs:
   url: https://docs.example.com
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.NotNil(t, doc.Info)
-	assert.Len(t, doc.Servers, 1)
-	assert.Len(t, doc.Tags, 1)
-	assert.NotEmpty(t, doc.Paths.Items)
-	assert.NotNil(t, doc.Components)
-	assert.Len(t, doc.Security, 1)
-	assert.NotNil(t, doc.ExternalDocs)
+	assert.NotNil(t, result.Document.Info)
+	assert.Len(t, result.Document.Servers, 1)
+	assert.Len(t, result.Document.Tags, 1)
+	assert.NotEmpty(t, result.Document.Paths.Items)
+	assert.NotNil(t, result.Document.Components)
+	assert.Len(t, result.Document.Security, 1)
+	assert.NotNil(t, result.Document.ExternalDocs)
 }
 
 // --- Extensions ---
@@ -119,11 +119,11 @@ x-tags:
   - beta
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, doc.VendorExtensions)
-	assert.Equal(t, "value", doc.VendorExtensions["x-custom"])
-	assert.Equal(t, true, doc.VendorExtensions["x-internal"])
+	require.NotNil(t, result.Document.VendorExtensions)
+	assert.Equal(t, "value", result.Document.VendorExtensions["x-custom"])
+	assert.Equal(t, true, result.Document.VendorExtensions["x-internal"])
 }
 
 // --- Node Source ---
@@ -135,9 +135,9 @@ info:
   version: "1.0"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Greater(t, doc.Trix.Source.Start.Line, 0)
+	assert.Greater(t, result.Document.Trix.Source.Start.Line, 0)
 }
 
 // --- JSON Bytes ---
@@ -151,10 +151,10 @@ func TestParseOpenAPI_JSON(t *testing.T) {
   },
   "paths": {}
 }`
-	doc, err := Parse([]byte(json))
+	result, err := Parse([]byte(json))
 	require.NoError(t, err)
-	assert.Equal(t, "3.1.0", doc.OpenAPI)
-	assert.Equal(t, "Test API", doc.Info.Title)
+	assert.Equal(t, "3.1.0", result.Document.OpenAPI)
+	assert.Equal(t, "Test API", result.Document.Info.Title)
 }
 
 // --- Empty Paths ---
@@ -166,9 +166,9 @@ info:
   version: "1.0"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, doc.Paths.Items)
+	assert.Empty(t, result.Document.Paths.Items)
 }
 
 // --- Error Cases ---
@@ -198,8 +198,8 @@ info:
   version: "1"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "a", doc.Info.Title)
-	assert.Equal(t, "1", doc.Info.Version)
+	assert.Equal(t, "a", result.Document.Info.Title)
+	assert.Equal(t, "1", result.Document.Info.Version)
 }

@@ -27,8 +27,8 @@ paths:
         "201":
           description: "Created"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	rb := doc.Paths.Items["/pets"].Post.RequestBody.Value
+	rb := result.Document.Paths.Items["/pets"].Post.RequestBody.Value
 	assert.Len(t, rb.Content, 2)
 }

@@ -27,19 +27,7 @@ type ParseResult struct {
 
 // Parse parses OpenAPI 3.1/3.2 specification from bytes (JSON or YAML).
 // Uses yaml.Node for lossless parsing with line/column preservation.
-// This function does not detect unknown fields; use ParseWithUnknownFields for that.
-func Parse(data []byte) (*openapi31models.OpenAPI, error) {
-	result, err := ParseWithUnknownFields(data)
-	if err != nil {
-		return nil, err
-	}
-	return result.Document, nil
-}
-
-// ParseWithUnknownFields parses OpenAPI 3.1/3.2 specification from bytes (JSON or YAML)
-// and detects any unknown fields in the document. Unknown fields are fields that
-// are not part of the OpenAPI 3.1 specification and are not extensions (x-*).
-func ParseWithUnknownFields(data []byte) (*ParseResult, error) {
+func Parse(data []byte) (*ParseResult, error) {
 	var rootNode yaml.Node
 	if err := yaml.Unmarshal(data, &rootNode); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal data: %w", err)
@@ -70,7 +58,7 @@ func ParseWithUnknownFields(data []byte) (*ParseResult, error) {
 }
 
 // ParseReader parses OpenAPI 3.1/3.2 specification from an io.Reader.
-func ParseReader(r io.Reader) (*openapi31models.OpenAPI, error) {
+func ParseReader(r io.Reader) (*ParseResult, error) {
 	data, err := io.ReadAll(r)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read data: %w", err)
@@ -78,20 +66,10 @@ func ParseReader(r io.Reader) (*openapi31models.OpenAPI, error) {
 	return Parse(data)
 }
 
-// ParseReaderWithUnknownFields parses OpenAPI 3.1/3.2 specification from an io.Reader
-// and detects any unknown fields in the document.
-func ParseReaderWithUnknownFields(r io.Reader) (*ParseResult, error) {
-	data, err := io.ReadAll(r)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read data: %w", err)
-	}
-	return ParseWithUnknownFields(data)
-}
-
 // ParseFile parses an OpenAPI 3.1/3.2 specification from a file path or HTTP/HTTPS URL,
 // resolving all $ref references relative to the source location.
 // It auto-detects whether the input is a URL or a local file path.
-func ParseFile(pathOrURL string) (*openapi31models.OpenAPI, error) {
+func ParseFile(pathOrURL string) (*ParseResult, error) {
 	var data []byte
 	var basePath string
 
@@ -119,7 +97,7 @@ func ParseFile(pathOrURL string) (*openapi31models.OpenAPI, error) {
 }
 
 // parseAndResolve unmarshals YAML data, parses the OpenAPI document, and resolves all $ref references.
-func parseAndResolve(data []byte, basePath string) (*openapi31models.OpenAPI, error) {
+func parseAndResolve(data []byte, basePath string) (*ParseResult, error) {
 	var rootNode yaml.Node
 	if err := yaml.Unmarshal(data, &rootNode); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal data: %w", err)
@@ -146,5 +124,8 @@ func parseAndResolve(data []byte, basePath string) (*openapi31models.OpenAPI, er
 		return nil, fmt.Errorf("failed to resolve references: %w", err)
 	}
 
-	return doc, nil
+	return &ParseResult{
+		Document:      doc,
+		UnknownFields: ctx.UnknownFieldsResult(),
+	}, nil
 }

@@ -25,9 +25,9 @@ paths:
         "200":
           description: "Successful response"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value
+	resp := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value
 	assert.Equal(t, "Successful response", resp.Description)
 }
 
@@ -57,9 +57,9 @@ paths:
         "500":
           description: "Internal Server Error"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	codes := doc.Paths.Items["/pets"].Get.Responses.Codes
+	codes := result.Document.Paths.Items["/pets"].Get.Responses.Codes
 	assert.Len(t, codes, 7)
 }
 
@@ -79,9 +79,9 @@ paths:
         default:
           description: "Unexpected error"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	defaultResp := doc.Paths.Items["/pets"].Get.Responses.Default
+	defaultResp := result.Document.Paths.Items["/pets"].Get.Responses.Default
 	require.NotNil(t, defaultResp)
 	assert.Equal(t, "Unexpected error", defaultResp.Value.Description)
 }
@@ -113,9 +113,9 @@ paths:
               schema:
                 type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	content := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Content
+	content := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Content
 	assert.Len(t, content, 4)
 }
 
@@ -146,9 +146,9 @@ paths:
               schema:
                 type: integer
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	headers := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers
+	headers := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers
 	assert.Len(t, headers, 3)
 }
 
@@ -173,9 +173,9 @@ paths:
             GetUserOrders:
               operationId: getUserOrders
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	links := doc.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links
+	links := result.Document.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links
 	assert.Len(t, links, 2)
 }
 
@@ -201,9 +201,9 @@ components:
     InternalError:
       description: "Internal error"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp404 := doc.Paths.Items["/pets"].Get.Responses.Codes["404"]
+	resp404 := result.Document.Paths.Items["/pets"].Get.Responses.Codes["404"]
 	assert.Equal(t, "#/components/responses/NotFound", resp404.Ref)
 }
 
@@ -223,9 +223,9 @@ paths:
           x-custom: "value"
           x-internal: true
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value
+	resp := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value
 	require.NotNil(t, resp.VendorExtensions)
 	assert.Equal(t, "value", resp.VendorExtensions["x-custom"])
 }
@@ -257,9 +257,9 @@ paths:
             GetPetById:
               operationId: getPetById
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value
+	resp := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value
 	assert.NotEmpty(t, resp.Description)
 	assert.NotEmpty(t, resp.Headers)
 	assert.NotEmpty(t, resp.Content)
@@ -284,9 +284,9 @@ paths:
         "5XX":
           description: "Server error"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	codes := doc.Paths.Items["/pets"].Get.Responses.Codes
+	codes := result.Document.Paths.Items["/pets"].Get.Responses.Codes
 	assert.Contains(t, codes, "2XX")
 	assert.Contains(t, codes, "4XX")
 	assert.Contains(t, codes, "5XX")

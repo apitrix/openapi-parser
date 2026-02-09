@@ -20,9 +20,9 @@ info:
   version: "1.0"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, doc.Paths.Items)
+	assert.Empty(t, result.Document.Paths.Items)
 }
 
 // --- Single Path ---
@@ -39,10 +39,10 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Paths.Items, 1)
-	assert.Contains(t, doc.Paths.Items, "/pets")
+	assert.Len(t, result.Document.Paths.Items, 1)
+	assert.Contains(t, result.Document.Paths.Items, "/pets")
 }
 
 // --- Multiple Paths ---
@@ -74,9 +74,9 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Paths.Items, 4)
+	assert.Len(t, result.Document.Paths.Items, 4)
 }
 
 // --- Path Templates ---
@@ -103,11 +103,11 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Paths.Items, 3)
-	assert.Contains(t, doc.Paths.Items, "/users/{userId}")
-	assert.Contains(t, doc.Paths.Items, "/users/{userId}/pets/{petId}")
+	assert.Len(t, result.Document.Paths.Items, 3)
+	assert.Contains(t, result.Document.Paths.Items, "/users/{userId}")
+	assert.Contains(t, result.Document.Paths.Items, "/users/{userId}/pets/{petId}")
 }
 
 // --- Special Characters ---
@@ -129,10 +129,10 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Contains(t, doc.Paths.Items, "/api/v1/pets")
-	assert.Contains(t, doc.Paths.Items, "/api/v2.0/pets")
+	assert.Contains(t, result.Document.Paths.Items, "/api/v1/pets")
+	assert.Contains(t, result.Document.Paths.Items, "/api/v2.0/pets")
 }
 
 // --- Extensions ---
@@ -150,8 +150,8 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, doc.Paths.VendorExtensions)
-	assert.Equal(t, "value", doc.Paths.VendorExtensions["x-custom"])
+	require.NotNil(t, result.Document.Paths.VendorExtensions)
+	assert.Equal(t, "value", result.Document.Paths.VendorExtensions["x-custom"])
 }

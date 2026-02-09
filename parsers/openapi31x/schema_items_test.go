@@ -24,9 +24,9 @@ components:
       items:
         type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	items := doc.Components.Schemas["Tags"].Value.Items
+	items := result.Document.Components.Schemas["Tags"].Value.Items
 	require.NotNil(t, items)
 	assert.Equal(t, "string", items.Value.Type.Single)
 }
@@ -47,9 +47,9 @@ components:
           name:
             type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	items := doc.Components.Schemas["Pets"].Value.Items
+	items := result.Document.Components.Schemas["Pets"].Value.Items
 	require.NotNil(t, items)
 	assert.Equal(t, "object", items.Value.Type.Single)
 	assert.NotEmpty(t, items.Value.Properties)
@@ -70,9 +70,9 @@ components:
     Pet:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	items := doc.Components.Schemas["PetList"].Value.Items
+	items := result.Document.Components.Schemas["PetList"].Value.Items
 	require.NotNil(t, items)
 	assert.Equal(t, "#/components/schemas/Pet", items.Ref)
 }
@@ -92,9 +92,9 @@ components:
         items:
           type: integer
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	items := doc.Components.Schemas["Matrix"].Value.Items
+	items := result.Document.Components.Schemas["Matrix"].Value.Items
 	require.NotNil(t, items)
 	assert.Equal(t, "array", items.Value.Type.Single)
 	require.NotNil(t, items.Value.Items)
@@ -112,9 +112,9 @@ components:
     NotArray:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	items := doc.Components.Schemas["NotArray"].Value.Items
+	items := result.Document.Components.Schemas["NotArray"].Value.Items
 	assert.Nil(t, items)
 }
 
@@ -135,9 +135,9 @@ components:
           - active
           - inactive
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	items := doc.Components.Schemas["Statuses"].Value.Items
+	items := result.Document.Components.Schemas["Statuses"].Value.Items
 	require.NotNil(t, items)
 	assert.Len(t, items.Value.Enum, 3)
 }

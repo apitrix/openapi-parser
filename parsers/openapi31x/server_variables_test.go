@@ -23,9 +23,9 @@ servers:
         description: "Environment"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	vars := doc.Servers[0].Variables
+	vars := result.Document.Servers[0].Variables
 	require.NotNil(t, vars)
 	assert.Contains(t, vars, "env")
 	assert.Equal(t, "prod", vars["env"].Default)

@@ -34,9 +34,9 @@ components:
           purr:
             type: boolean
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["Conditional"].Value
+	schema := result.Document.Components.Schemas["Conditional"].Value
 	require.NotNil(t, schema.If)
 	require.NotNil(t, schema.Then)
 	require.NotNil(t, schema.Else)
@@ -60,9 +60,9 @@ components:
           status:
             const: active
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["Test"].Value
+	schema := result.Document.Components.Schemas["Test"].Value
 	require.NotNil(t, schema.If)
 	assert.Nil(t, schema.Then)
 	assert.Nil(t, schema.Else)
@@ -79,9 +79,9 @@ components:
     Simple:
       type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["Simple"].Value
+	schema := result.Document.Components.Schemas["Simple"].Value
 	assert.Nil(t, schema.If)
 	assert.Nil(t, schema.Then)
 	assert.Nil(t, schema.Else)

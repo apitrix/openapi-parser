@@ -8,15 +8,15 @@
 //
 // Basic parsing:
 //
-//	doc, err := openapi20.Parse(yamlData)
+//	result, err := openapi20.Parse(yamlData)
 //	if err != nil {
 //	    log.Fatal(err)
 //	}
-//	fmt.Println(doc.Info.Title)
+//	fmt.Println(result.Document.Info.Title)
 //
-// Parsing with unknown field detection:
+// Unknown fields are always included in the result:
 //
-//	result, err := openapi20.ParseWithUnknownFields(yamlData)
+//	result, err := openapi20.Parse(yamlData)
 //	if err != nil {
 //	    log.Fatal(err)
 //	}

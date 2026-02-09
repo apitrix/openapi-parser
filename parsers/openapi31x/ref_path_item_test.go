@@ -29,9 +29,9 @@ components:
           "200":
             description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ref := doc.Paths.Items["/pets"]
+	ref := result.Document.Paths.Items["/pets"]
 	assert.Equal(t, "#/components/pathItems/Pets", ref.Ref)
 }
 
@@ -60,10 +60,10 @@ components:
           "200":
             description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "#/components/pathItems/Pets", doc.Paths.Items["/pets"].Ref)
-	assert.Equal(t, "#/components/pathItems/Users", doc.Paths.Items["/users"].Ref)
+	assert.Equal(t, "#/components/pathItems/Pets", result.Document.Paths.Items["/pets"].Ref)
+	assert.Equal(t, "#/components/pathItems/Users", result.Document.Paths.Items["/users"].Ref)
 }
 
 // --- Mixed Inline and Reference ---
@@ -89,8 +89,8 @@ components:
           "200":
             description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "#/components/pathItems/Pets", doc.Paths.Items["/pets"].Ref)
-	assert.NotNil(t, doc.Paths.Items["/orders"].Get)
+	assert.Equal(t, "#/components/pathItems/Pets", result.Document.Paths.Items["/pets"].Ref)
+	assert.NotNil(t, result.Document.Paths.Items["/orders"].Get)
 }

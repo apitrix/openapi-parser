@@ -29,11 +29,11 @@ securityDefinitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	scheme := doc.SecurityDefinitions["api_key"]
+	scheme := result.Document.SecurityDefinitions["api_key"]
 	assert.Equal(t, "apiKey", scheme.Type)
 	assert.Equal(t, "X-API-Key", scheme.Name)
 	assert.Equal(t, "header", scheme.In)
@@ -56,11 +56,11 @@ securityDefinitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	scheme := doc.SecurityDefinitions["basic_auth"]
+	scheme := result.Document.SecurityDefinitions["basic_auth"]
 	assert.Equal(t, "basic", scheme.Type)
 }
 
@@ -84,11 +84,11 @@ securityDefinitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	scheme := doc.SecurityDefinitions["oauth2_implicit"]
+	scheme := result.Document.SecurityDefinitions["oauth2_implicit"]
 	assert.Equal(t, "oauth2", scheme.Type)
 	assert.Equal(t, "implicit", scheme.Flow)
 	assert.Equal(t, "https://example.com/oauth/authorize", scheme.AuthorizationURL)
@@ -115,11 +115,11 @@ securityDefinitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	scheme := doc.SecurityDefinitions["oauth2_password"]
+	scheme := result.Document.SecurityDefinitions["oauth2_password"]
 	assert.Equal(t, "password", scheme.Flow)
 	assert.Equal(t, "https://example.com/oauth/token", scheme.TokenURL)
 }
@@ -144,11 +144,11 @@ securityDefinitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	scheme := doc.SecurityDefinitions["oauth2_accesscode"]
+	scheme := result.Document.SecurityDefinitions["oauth2_accesscode"]
 	assert.Equal(t, "accessCode", scheme.Flow)
 	assert.NotEmpty(t, scheme.AuthorizationURL)
 	assert.NotEmpty(t, scheme.TokenURL)
@@ -173,11 +173,11 @@ paths:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	security := doc.Paths.Items["/pets"].Get.Security
+	security := result.Document.Paths.Items["/pets"].Get.Security
 	require.Len(t, security, 1)
 	require.Contains(t, security[0], "api_key")
 	assert.Empty(t, security[0]["api_key"])
@@ -204,11 +204,11 @@ paths:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	security := doc.Paths.Items["/pets"].Get.Security
+	security := result.Document.Paths.Items["/pets"].Get.Security
 	require.Len(t, security, 1)
 	scopes := security[0]["oauth2"]
 	assert.Equal(t, []string{"read", "write"}, scopes)
@@ -235,11 +235,11 @@ paths:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	security := doc.Paths.Items["/pets"].Get.Security
+	security := result.Document.Paths.Items["/pets"].Get.Security
 	require.Len(t, security, 2)
 }
 
@@ -257,12 +257,12 @@ security:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.Len(t, doc.Security, 1)
-	assert.Contains(t, doc.Security[0], "api_key")
+	require.Len(t, result.Document.Security, 1)
+	assert.Contains(t, result.Document.Security[0], "api_key")
 }
 
 // --- Security Scheme Extensions ---
@@ -283,10 +283,10 @@ securityDefinitions:
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	ext := doc.SecurityDefinitions["api_key"].VendorExtensions
+	ext := result.Document.SecurityDefinitions["api_key"].VendorExtensions
 	assert.Equal(t, "value", ext["x-custom"])
 }

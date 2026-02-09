@@ -33,9 +33,9 @@ components:
       in: header
       name: X-API-Key
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	security := doc.Paths.Items["/pets"].Get.Security
+	security := result.Document.Paths.Items["/pets"].Get.Security
 	assert.Len(t, security, 1)
 }
 
@@ -74,9 +74,9 @@ components:
           scopes:
             read: Read
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	security := doc.Paths.Items["/pets"].Get.Security
+	security := result.Document.Paths.Items["/pets"].Get.Security
 	assert.Len(t, security, 3)
 }
 
@@ -103,9 +103,9 @@ components:
       in: header
       name: X-API-Key
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	security := doc.Paths.Items["/public"].Get.Security
+	security := result.Document.Paths.Items["/public"].Get.Security
 	assert.Empty(t, security)
 }
 
@@ -123,10 +123,10 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	// Uses global security (nil means inherit)
-	assert.Nil(t, doc.Paths.Items["/pets"].Get.Security)
+	assert.Nil(t, result.Document.Paths.Items["/pets"].Get.Security)
 }
 
 // --- With Scopes ---
@@ -157,8 +157,8 @@ components:
             read: Read
             write: Write
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scopes := doc.Paths.Items["/pets"].Get.Security[0]["oauth2"]
+	scopes := result.Document.Paths.Items["/pets"].Get.Security[0]["oauth2"]
 	assert.Len(t, scopes, 2)
 }

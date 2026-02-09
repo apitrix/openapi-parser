@@ -14,7 +14,7 @@ info:
   version: "1.0"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, doc)
+	require.NotNil(t, result.Document)
 }

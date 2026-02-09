@@ -30,9 +30,9 @@ components:
             error:
               type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	anyOf := doc.Components.Schemas["PetOrError"].Value.AnyOf
+	anyOf := result.Document.Components.Schemas["PetOrError"].Value.AnyOf
 	assert.Len(t, anyOf, 2)
 }
 
@@ -53,9 +53,9 @@ components:
     Error:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	anyOf := doc.Components.Schemas["Result"].Value.AnyOf
+	anyOf := result.Document.Components.Schemas["Result"].Value.AnyOf
 	assert.Len(t, anyOf, 2)
 	assert.Equal(t, "#/components/schemas/Success", anyOf[0].Ref)
 	assert.Equal(t, "#/components/schemas/Error", anyOf[1].Ref)
@@ -72,9 +72,9 @@ components:
     Simple:
       type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	anyOf := doc.Components.Schemas["Simple"].Value.AnyOf
+	anyOf := result.Document.Components.Schemas["Simple"].Value.AnyOf
 	assert.Nil(t, anyOf)
 }
 
@@ -91,9 +91,9 @@ components:
         - type: string
         - type: integer
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	anyOf := doc.Components.Schemas["FlexibleId"].Value.AnyOf
+	anyOf := result.Document.Components.Schemas["FlexibleId"].Value.AnyOf
 	assert.Len(t, anyOf, 2)
 	assert.Equal(t, "string", anyOf[0].Value.Type)
 	assert.Equal(t, "integer", anyOf[1].Value.Type)
@@ -124,9 +124,9 @@ components:
             bark:
               type: boolean
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	anyOf := doc.Components.Schemas["Flexible"].Value.AnyOf
+	anyOf := result.Document.Components.Schemas["Flexible"].Value.AnyOf
 	assert.Len(t, anyOf, 2)
 	// Both have properties
 	assert.NotEmpty(t, anyOf[0].Value.Properties)

@@ -23,12 +23,12 @@ paths: {}
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, "My API", doc.Info.Title)
-	assert.Equal(t, "1.0.0", doc.Info.Version)
+	assert.Equal(t, "My API", result.Document.Info.Title)
+	assert.Equal(t, "1.0.0", result.Document.Info.Version)
 }
 
 // --- Description ---
@@ -46,11 +46,11 @@ paths: {}
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	assert.Contains(t, doc.Info.Description, "multi-line")
+	assert.Contains(t, result.Document.Info.Description, "multi-line")
 }
 
 // --- Terms of Service ---
@@ -66,11 +66,11 @@ paths: {}
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, "https://example.com/terms", doc.Info.TermsOfService)
+	assert.Equal(t, "https://example.com/terms", result.Document.Info.TermsOfService)
 }
 
 // --- Contact ---
@@ -89,14 +89,14 @@ paths: {}
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.Info.Contact)
-	assert.Equal(t, "API Support", doc.Info.Contact.Name)
-	assert.Equal(t, "https://example.com/support", doc.Info.Contact.URL)
-	assert.Equal(t, "support@example.com", doc.Info.Contact.Email)
+	require.NotNil(t, result.Document.Info.Contact)
+	assert.Equal(t, "API Support", result.Document.Info.Contact.Name)
+	assert.Equal(t, "https://example.com/support", result.Document.Info.Contact.URL)
+	assert.Equal(t, "support@example.com", result.Document.Info.Contact.Email)
 }
 
 func TestParseInfo_ContactPartial(t *testing.T) {
@@ -111,13 +111,13 @@ paths: {}
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.Info.Contact)
-	assert.Equal(t, "support@example.com", doc.Info.Contact.Email)
-	assert.Empty(t, doc.Info.Contact.Name)
+	require.NotNil(t, result.Document.Info.Contact)
+	assert.Equal(t, "support@example.com", result.Document.Info.Contact.Email)
+	assert.Empty(t, result.Document.Info.Contact.Name)
 }
 
 // --- License ---
@@ -135,13 +135,13 @@ paths: {}
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.Info.License)
-	assert.Equal(t, "Apache 2.0", doc.Info.License.Name)
-	assert.Equal(t, "https://www.apache.org/licenses/LICENSE-2.0", doc.Info.License.URL)
+	require.NotNil(t, result.Document.Info.License)
+	assert.Equal(t, "Apache 2.0", result.Document.Info.License.Name)
+	assert.Equal(t, "https://www.apache.org/licenses/LICENSE-2.0", result.Document.Info.License.URL)
 }
 
 func TestParseInfo_LicenseNameOnly(t *testing.T) {
@@ -156,13 +156,13 @@ paths: {}
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.Info.License)
-	assert.Equal(t, "MIT", doc.Info.License.Name)
-	assert.Empty(t, doc.Info.License.URL)
+	require.NotNil(t, result.Document.Info.License)
+	assert.Equal(t, "MIT", result.Document.Info.License.Name)
+	assert.Empty(t, result.Document.Info.License.URL)
 }
 
 // --- Complete Info ---
@@ -186,16 +186,16 @@ paths: {}
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, "Pet Store API", doc.Info.Title)
-	assert.Equal(t, "1.2.3", doc.Info.Version)
-	assert.NotEmpty(t, doc.Info.Description)
-	assert.NotEmpty(t, doc.Info.TermsOfService)
-	require.NotNil(t, doc.Info.Contact)
-	require.NotNil(t, doc.Info.License)
+	assert.Equal(t, "Pet Store API", result.Document.Info.Title)
+	assert.Equal(t, "1.2.3", result.Document.Info.Version)
+	assert.NotEmpty(t, result.Document.Info.Description)
+	assert.NotEmpty(t, result.Document.Info.TermsOfService)
+	require.NotNil(t, result.Document.Info.Contact)
+	require.NotNil(t, result.Document.Info.License)
 }
 
 // --- Extensions ---
@@ -213,12 +213,12 @@ paths: {}
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc.Info.VendorExtensions)
-	assert.Equal(t, true, doc.Info.VendorExtensions["x-internal"])
+	require.NotNil(t, result.Document.Info.VendorExtensions)
+	assert.Equal(t, true, result.Document.Info.VendorExtensions["x-internal"])
 }
 
 // --- Missing Info ---
@@ -230,11 +230,11 @@ paths: {}
 `
 
 	// Act
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
-	// Assert — info errors are now collected on doc.Trix.Errors, not returned
+	// Assert — info errors are now collected on result.Document.Trix.Errors, not returned
 	require.NoError(t, err)
-	require.NotNil(t, doc)
-	require.NotEmpty(t, doc.Trix.Errors, "missing info should produce a Trix error")
-	assert.Contains(t, doc.Trix.Errors[0].Message, "info is required")
+	require.NotNil(t, result.Document)
+	require.NotEmpty(t, result.Document.Trix.Errors, "missing info should produce a Trix error")
+	assert.Contains(t, result.Document.Trix.Errors[0].Message, "info is required")
 }

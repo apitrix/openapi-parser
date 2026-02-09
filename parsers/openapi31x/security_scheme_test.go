@@ -33,9 +33,9 @@ components:
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schemes := doc.Components.SecuritySchemes
+	schemes := result.Document.Components.SecuritySchemes
 	assert.Len(t, schemes, 4)
 	assert.Equal(t, "apiKey", schemes["apiKey"].Value.Type)
 	assert.Equal(t, "http", schemes["http"].Value.Type)

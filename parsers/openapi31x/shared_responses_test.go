@@ -29,10 +29,10 @@ components:
     InternalError:
       description: "Internal error"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	// Shared responses in components
-	assert.Len(t, doc.Components.Responses, 2)
+	assert.Len(t, result.Document.Components.Responses, 2)
 	// References in operation
-	assert.Equal(t, "#/components/responses/BadRequest", doc.Paths.Items["/pets"].Get.Responses.Codes["400"].Ref)
+	assert.Equal(t, "#/components/responses/BadRequest", result.Document.Paths.Items["/pets"].Get.Responses.Codes["400"].Ref)
 }

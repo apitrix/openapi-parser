@@ -26,9 +26,9 @@ components:
       xml:
         name: pet
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	xml := doc.Components.Schemas["Pet"].Value.XML
+	xml := result.Document.Components.Schemas["Pet"].Value.XML
 	require.NotNil(t, xml)
 	assert.Equal(t, "pet", xml.Name)
 }
@@ -50,9 +50,9 @@ components:
         namespace: "http://example.com/pets"
         prefix: "pet"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	xml := doc.Components.Schemas["Pet"].Value.XML
+	xml := result.Document.Components.Schemas["Pet"].Value.XML
 	assert.Equal(t, "http://example.com/pets", xml.Namespace)
 	assert.Equal(t, "pet", xml.Prefix)
 }
@@ -75,9 +75,9 @@ components:
           xml:
             attribute: true
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	xml := doc.Components.Schemas["Pet"].Value.Properties["id"].Value.XML
+	xml := result.Document.Components.Schemas["Pet"].Value.Properties["id"].Value.XML
 	require.NotNil(t, xml)
 	assert.True(t, xml.Attribute)
 }
@@ -105,9 +105,9 @@ components:
             xml:
               name: tag
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	xml := doc.Components.Schemas["Pet"].Value.Properties["tags"].Value.XML
+	xml := result.Document.Components.Schemas["Pet"].Value.Properties["tags"].Value.XML
 	require.NotNil(t, xml)
 	assert.True(t, xml.Wrapped)
 }
@@ -131,9 +131,9 @@ components:
         attribute: false
         wrapped: false
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	xml := doc.Components.Schemas["Pet"].Value.XML
+	xml := result.Document.Components.Schemas["Pet"].Value.XML
 	assert.Equal(t, "pet", xml.Name)
 	assert.Equal(t, "http://example.com", xml.Namespace)
 	assert.Equal(t, "p", xml.Prefix)
@@ -152,9 +152,9 @@ components:
     Pet:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	xml := doc.Components.Schemas["Pet"].Value.XML
+	xml := result.Document.Components.Schemas["Pet"].Value.XML
 	assert.Nil(t, xml)
 }
 
@@ -174,9 +174,9 @@ components:
         name: pet
         x-custom: "value"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	xml := doc.Components.Schemas["Pet"].Value.XML
+	xml := result.Document.Components.Schemas["Pet"].Value.XML
 	require.NotNil(t, xml.VendorExtensions)
 	assert.Equal(t, "value", xml.VendorExtensions["x-custom"])
 }

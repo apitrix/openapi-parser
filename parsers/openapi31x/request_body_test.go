@@ -31,9 +31,9 @@ paths:
         "201":
           description: "Created"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	rb := doc.Paths.Items["/pets"].Post.RequestBody.Value
+	rb := result.Document.Paths.Items["/pets"].Post.RequestBody.Value
 	assert.Equal(t, "Pet to add", rb.Description)
 }
 
@@ -57,9 +57,9 @@ paths:
         "201":
           description: "Created"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	rb := doc.Paths.Items["/pets"].Post.RequestBody.Value
+	rb := result.Document.Paths.Items["/pets"].Post.RequestBody.Value
 	assert.True(t, rb.Required)
 }
 
@@ -81,9 +81,9 @@ paths:
         "201":
           description: "Created"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	rb := doc.Paths.Items["/pets"].Post.RequestBody.Value
+	rb := result.Document.Paths.Items["/pets"].Post.RequestBody.Value
 	assert.False(t, rb.Required)
 }
 
@@ -115,9 +115,9 @@ paths:
         "201":
           description: "Created"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	content := doc.Paths.Items["/pets"].Post.RequestBody.Value.Content
+	content := result.Document.Paths.Items["/pets"].Post.RequestBody.Value.Content
 	assert.Len(t, content, 4)
 }
 
@@ -145,9 +145,9 @@ components:
           schema:
             type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	rbRef := doc.Paths.Items["/pets"].Post.RequestBody
+	rbRef := result.Document.Paths.Items["/pets"].Post.RequestBody
 	assert.Equal(t, "#/components/requestBodies/PetBody", rbRef.Ref)
 }
 
@@ -172,9 +172,9 @@ paths:
         "201":
           description: "Created"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	rb := doc.Paths.Items["/pets"].Post.RequestBody.Value
+	rb := result.Document.Paths.Items["/pets"].Post.RequestBody.Value
 	require.NotNil(t, rb.VendorExtensions)
 	assert.Equal(t, "value", rb.VendorExtensions["x-custom"])
 }
@@ -207,9 +207,9 @@ paths:
         "201":
           description: "Created"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Paths.Items["/pets"].Post.RequestBody.Value.Content["application/json"].Schema.Value
+	schema := result.Document.Paths.Items["/pets"].Post.RequestBody.Value.Content["application/json"].Schema.Value
 	assert.Equal(t, "object", schema.Type.Single)
 	assert.Len(t, schema.Required, 1)
 	assert.Len(t, schema.Properties, 2)
@@ -229,7 +229,7 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Nil(t, doc.Paths.Items["/pets"].Get.RequestBody)
+	assert.Nil(t, result.Document.Paths.Items["/pets"].Get.RequestBody)
 }

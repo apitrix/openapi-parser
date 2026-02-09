@@ -26,9 +26,9 @@ components:
         name: "Fluffy"
         status: "available"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ex := doc.Components.Examples["PetExample"].Value
+	ex := result.Document.Components.Examples["PetExample"].Value
 	require.NotNil(t, ex)
 	assert.NotNil(t, ex.Value)
 }
@@ -49,9 +49,9 @@ components:
       value:
         name: "Fluffy"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ex := doc.Components.Examples["PetExample"].Value
+	ex := result.Document.Components.Examples["PetExample"].Value
 	assert.Equal(t, "A sample pet", ex.Summary)
 	assert.Equal(t, "This is a detailed description of the example pet", ex.Description)
 }
@@ -70,9 +70,9 @@ components:
       summary: "A large example"
       externalValue: "https://example.com/examples/large.json"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ex := doc.Components.Examples["LargeExample"].Value
+	ex := result.Document.Components.Examples["LargeExample"].Value
 	assert.Equal(t, "https://example.com/examples/large.json", ex.ExternalValue)
 }
 
@@ -96,9 +96,9 @@ components:
       value:
         type: "bird"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Components.Examples, 3)
+	assert.Len(t, result.Document.Components.Examples, 3)
 }
 
 // --- Complex Value ---
@@ -122,9 +122,9 @@ components:
           name: "John"
           email: "john@example.com"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ex := doc.Components.Examples["ComplexExample"].Value
+	ex := result.Document.Components.Examples["ComplexExample"].Value
 	require.NotNil(t, ex.Value)
 }
 
@@ -154,9 +154,9 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	examples := doc.Paths.Items["/pets"].Get.Parameters[0].Value.Examples
+	examples := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value.Examples
 	assert.Len(t, examples, 2)
 }
 
@@ -185,9 +185,9 @@ paths:
                   value:
                     name: "Buddy"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	examples := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Content["application/json"].Examples
+	examples := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Content["application/json"].Examples
 	assert.Len(t, examples, 2)
 }
 
@@ -215,9 +215,9 @@ components:
       value:
         name: "Fluffy"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	exRef := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Content["application/json"].Examples["pet"]
+	exRef := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Content["application/json"].Examples["pet"]
 	assert.Equal(t, "#/components/examples/PetExample", exRef.Ref)
 }
 
@@ -236,9 +236,9 @@ components:
         name: "Fluffy"
       x-custom: "value"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ex := doc.Components.Examples["PetExample"].Value
+	ex := result.Document.Components.Examples["PetExample"].Value
 	require.NotNil(t, ex.VendorExtensions)
 	assert.Equal(t, "value", ex.VendorExtensions["x-custom"])
 }

@@ -34,12 +34,12 @@ components:
           "201":
             description: Created
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, doc.Components)
-	require.Len(t, doc.Components.PathItems, 2)
-	assert.NotNil(t, doc.Components.PathItems["SharedOps"].Value.Get)
-	assert.NotNil(t, doc.Components.PathItems["AnotherOp"].Value.Post)
+	require.NotNil(t, result.Document.Components)
+	require.Len(t, result.Document.Components.PathItems, 2)
+	assert.NotNil(t, result.Document.Components.PathItems["SharedOps"].Value.Get)
+	assert.NotNil(t, result.Document.Components.PathItems["AnotherOp"].Value.Post)
 }
 
 func TestParseComponentsPathItems_WithRef(t *testing.T) {
@@ -60,9 +60,9 @@ components:
           "200":
             description: OK
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ref := doc.Components.PathItems["Shared"]
+	ref := result.Document.Components.PathItems["Shared"]
 	assert.Equal(t, "#/components/pathItems/Inline", ref.Ref)
 	assert.Equal(t, "ref summary", ref.Summary)
 }
@@ -78,9 +78,9 @@ components:
     Test:
       type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Nil(t, doc.Components.PathItems)
+	assert.Nil(t, result.Document.Components.PathItems)
 }
 
 func TestParseComponentsPathItems_Extensions(t *testing.T) {
@@ -99,8 +99,8 @@ components:
           "200":
             description: OK
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ops := doc.Components.PathItems["Ops"]
+	ops := result.Document.Components.PathItems["Ops"]
 	assert.Equal(t, "value", ops.Value.VendorExtensions["x-custom"])
 }

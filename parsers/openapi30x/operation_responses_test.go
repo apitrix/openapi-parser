@@ -25,9 +25,9 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	codes := doc.Paths.Items["/pets"].Get.Responses.Codes
+	codes := result.Document.Paths.Items["/pets"].Get.Responses.Codes
 	assert.Len(t, codes, 1)
 }
 
@@ -51,9 +51,9 @@ paths:
         "500":
           description: "Internal Error"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	codes := doc.Paths.Items["/pets"].Get.Responses.Codes
+	codes := result.Document.Paths.Items["/pets"].Get.Responses.Codes
 	assert.Len(t, codes, 4)
 }
 
@@ -73,9 +73,9 @@ paths:
         default:
           description: "Unexpected error"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	defaultResp := doc.Paths.Items["/pets"].Get.Responses.Default
+	defaultResp := result.Document.Paths.Items["/pets"].Get.Responses.Default
 	require.NotNil(t, defaultResp)
 	assert.Equal(t, "Unexpected error", defaultResp.Value.Description)
 }
@@ -100,9 +100,9 @@ paths:
                 items:
                   type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	content := doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Content
+	content := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Content
 	assert.Contains(t, content, "application/json")
 }
 
@@ -124,7 +124,7 @@ components:
     NotFound:
       description: "Not found"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "#/components/responses/NotFound", doc.Paths.Items["/pets"].Get.Responses.Codes["404"].Ref)
+	assert.Equal(t, "#/components/responses/NotFound", result.Document.Paths.Items["/pets"].Get.Responses.Codes["404"].Ref)
 }

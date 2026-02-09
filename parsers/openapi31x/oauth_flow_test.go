@@ -25,9 +25,9 @@ components:
             read: "Read access"
             write: "Write access"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	flow := doc.Components.SecuritySchemes["oauth2"].Value.Flows.ClientCredentials
+	flow := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows.ClientCredentials
 	require.NotNil(t, flow)
 	assert.Equal(t, "https://example.com/oauth/token", flow.TokenURL)
 	assert.Equal(t, "https://example.com/oauth/refresh", flow.RefreshURL)

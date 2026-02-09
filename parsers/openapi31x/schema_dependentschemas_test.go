@@ -31,9 +31,9 @@ components:
             zipCode:
               type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["Address"].Value
+	schema := result.Document.Components.Schemas["Address"].Value
 	require.NotNil(t, schema.DependentSchemas)
 	require.Contains(t, schema.DependentSchemas, "street")
 	require.Contains(t, schema.DependentSchemas, "country")
@@ -51,8 +51,8 @@ components:
     Simple:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["Simple"].Value
+	schema := result.Document.Components.Schemas["Simple"].Value
 	assert.Nil(t, schema.DependentSchemas)
 }

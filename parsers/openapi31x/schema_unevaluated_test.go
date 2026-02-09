@@ -27,9 +27,9 @@ components:
       unevaluatedProperties:
         type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["Strict"].Value
+	schema := result.Document.Components.Schemas["Strict"].Value
 	require.NotNil(t, schema.UnevaluatedProperties)
 	assert.Equal(t, "string", schema.UnevaluatedProperties.Value.Type.Single)
 }
@@ -49,9 +49,9 @@ components:
       unevaluatedItems:
         type: integer
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["StrictArray"].Value
+	schema := result.Document.Components.Schemas["StrictArray"].Value
 	require.NotNil(t, schema.UnevaluatedItems)
 	assert.Equal(t, "integer", schema.UnevaluatedItems.Value.Type.Single)
 }
@@ -67,9 +67,9 @@ components:
     Normal:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["Normal"].Value
+	schema := result.Document.Components.Schemas["Normal"].Value
 	assert.Nil(t, schema.UnevaluatedProperties)
 	assert.Nil(t, schema.UnevaluatedItems)
 }

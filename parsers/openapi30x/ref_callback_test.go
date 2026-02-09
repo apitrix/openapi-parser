@@ -36,9 +36,9 @@ components:
             "200":
               description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ref := doc.Paths.Items["/subscribe"].Post.Callbacks["onEvent"]
+	ref := result.Document.Paths.Items["/subscribe"].Post.Callbacks["onEvent"]
 	assert.Equal(t, "#/components/callbacks/WebhookCallback", ref.Ref)
 }
 
@@ -75,9 +75,9 @@ components:
             "200":
               description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	callbacks := doc.Paths.Items["/subscribe"].Post.Callbacks
+	callbacks := result.Document.Paths.Items["/subscribe"].Post.Callbacks
 	assert.Equal(t, "#/components/callbacks/SuccessCallback", callbacks["onSuccess"].Ref)
 	assert.Equal(t, "#/components/callbacks/FailureCallback", callbacks["onFailure"].Ref)
 }
@@ -113,9 +113,9 @@ components:
             "200":
               description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	callbacks := doc.Paths.Items["/subscribe"].Post.Callbacks
+	callbacks := result.Document.Paths.Items["/subscribe"].Post.Callbacks
 	assert.Equal(t, "#/components/callbacks/WebhookCallback", callbacks["onEvent"].Ref)
 	assert.NotNil(t, callbacks["onProgress"].Value)
 }

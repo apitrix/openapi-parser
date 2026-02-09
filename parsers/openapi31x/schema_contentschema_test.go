@@ -29,9 +29,9 @@ components:
           name:
             type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["EncodedPayload"].Value
+	schema := result.Document.Components.Schemas["EncodedPayload"].Value
 	assert.Equal(t, "base64", schema.ContentEncoding)
 	assert.Equal(t, "application/json", schema.ContentMediaType)
 	require.NotNil(t, schema.ContentSchema)
@@ -50,9 +50,9 @@ components:
       type: string
       contentEncoding: base64
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["BinaryData"].Value
+	schema := result.Document.Components.Schemas["BinaryData"].Value
 	assert.Equal(t, "base64", schema.ContentEncoding)
 	assert.Empty(t, schema.ContentMediaType)
 	assert.Nil(t, schema.ContentSchema)
@@ -69,9 +69,9 @@ components:
     Plain:
       type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["Plain"].Value
+	schema := result.Document.Components.Schemas["Plain"].Value
 	assert.Empty(t, schema.ContentEncoding)
 	assert.Empty(t, schema.ContentMediaType)
 	assert.Nil(t, schema.ContentSchema)

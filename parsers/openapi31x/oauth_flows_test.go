@@ -30,9 +30,9 @@ components:
             read: "Read access"
             write: "Write access"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	flows := doc.Components.SecuritySchemes["oauth2"].Value.Flows
+	flows := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows
 	require.NotNil(t, flows.Implicit)
 	assert.Equal(t, "https://example.com/oauth/authorize", flows.Implicit.AuthorizationURL)
 	assert.Len(t, flows.Implicit.Scopes, 2)
@@ -56,9 +56,9 @@ components:
           scopes:
             read: "Read access"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	flows := doc.Components.SecuritySchemes["oauth2"].Value.Flows
+	flows := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows
 	require.NotNil(t, flows.Password)
 	assert.Equal(t, "https://example.com/oauth/token", flows.Password.TokenURL)
 }
@@ -81,9 +81,9 @@ components:
           scopes:
             admin: "Admin access"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	flows := doc.Components.SecuritySchemes["oauth2"].Value.Flows
+	flows := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows
 	require.NotNil(t, flows.ClientCredentials)
 	assert.Equal(t, "https://example.com/oauth/token", flows.ClientCredentials.TokenURL)
 }
@@ -109,9 +109,9 @@ components:
             read: "Read"
             write: "Write"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	flows := doc.Components.SecuritySchemes["oauth2"].Value.Flows
+	flows := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows
 	require.NotNil(t, flows.AuthorizationCode)
 	assert.Equal(t, "https://example.com/oauth/authorize", flows.AuthorizationCode.AuthorizationURL)
 	assert.Equal(t, "https://example.com/oauth/token", flows.AuthorizationCode.TokenURL)
@@ -145,9 +145,9 @@ components:
           tokenUrl: https://example.com/token
           scopes: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	flows := doc.Components.SecuritySchemes["oauth2"].Value.Flows
+	flows := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows
 	assert.NotNil(t, flows.Implicit)
 	assert.NotNil(t, flows.Password)
 	assert.NotNil(t, flows.ClientCredentials)
@@ -175,9 +175,9 @@ components:
             delete: "Delete access"
             admin: "Admin access"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scopes := doc.Components.SecuritySchemes["oauth2"].Value.Flows.ClientCredentials.Scopes
+	scopes := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows.ClientCredentials.Scopes
 	assert.Len(t, scopes, 4)
 	assert.Equal(t, "Read access to resources", scopes["read"])
 }
@@ -199,9 +199,9 @@ components:
           tokenUrl: https://example.com/token
           scopes: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scopes := doc.Components.SecuritySchemes["oauth2"].Value.Flows.ClientCredentials.Scopes
+	scopes := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows.ClientCredentials.Scopes
 	assert.Empty(t, scopes)
 }
 
@@ -224,9 +224,9 @@ components:
           scopes: {}
           x-flow-custom: "flow-value"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	flows := doc.Components.SecuritySchemes["oauth2"].Value.Flows
+	flows := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows
 	require.NotNil(t, flows.VendorExtensions)
 	assert.Equal(t, "value", flows.VendorExtensions["x-custom"])
 }

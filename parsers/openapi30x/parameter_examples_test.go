@@ -29,9 +29,9 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := doc.Paths.Items["/pets"].Get.Parameters[0].Value
+	param := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value
 	require.NotNil(t, param.Examples)
 	assert.Len(t, param.Examples, 2)
 }

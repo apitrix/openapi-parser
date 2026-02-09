@@ -25,10 +25,10 @@ components:
       schema:
         type: integer
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Components.Headers, 1)
-	assert.Contains(t, doc.Components.Headers, "X-Rate-Limit")
+	assert.Len(t, result.Document.Components.Headers, 1)
+	assert.Contains(t, result.Document.Components.Headers, "X-Rate-Limit")
 }
 
 // --- Multiple Headers ---
@@ -51,9 +51,9 @@ components:
       schema:
         type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Components.Headers, 3)
+	assert.Len(t, result.Document.Components.Headers, 3)
 }
 
 // --- Empty ---
@@ -67,9 +67,9 @@ paths: {}
 components:
   headers: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, doc.Components.Headers)
+	assert.Empty(t, result.Document.Components.Headers)
 }
 
 // --- With Description ---
@@ -87,8 +87,8 @@ components:
       schema:
         type: integer
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	header := doc.Components.Headers["X-Rate-Limit"].Value
+	header := result.Document.Components.Headers["X-Rate-Limit"].Value
 	assert.Equal(t, "The number of allowed requests per hour", header.Description)
 }

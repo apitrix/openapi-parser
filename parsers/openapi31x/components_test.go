@@ -62,9 +62,9 @@ components:
             "200":
               description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	c := doc.Components
+	c := result.Document.Components
 	require.NotNil(t, c)
 	assert.Len(t, c.Schemas, 1)
 	assert.Len(t, c.Responses, 1)
@@ -87,9 +87,9 @@ info:
 paths: {}
 components: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, doc.Components)
+	require.NotNil(t, result.Document.Components)
 }
 
 // --- Missing Components ---
@@ -101,11 +101,11 @@ info:
   version: "1.0"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	// Components can be nil or empty
-	if doc.Components != nil {
-		assert.Empty(t, doc.Components.Schemas)
+	if result.Document.Components != nil {
+		assert.Empty(t, result.Document.Components.Schemas)
 	}
 }
 
@@ -130,9 +130,9 @@ components:
     Order:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Components.Schemas, 5)
+	assert.Len(t, result.Document.Components.Schemas, 5)
 }
 
 // --- Security Schemes Types ---
@@ -166,9 +166,9 @@ components:
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schemes := doc.Components.SecuritySchemes
+	schemes := result.Document.Components.SecuritySchemes
 	assert.Len(t, schemes, 5)
 	assert.Equal(t, "apiKey", schemes["apiKey"].Value.Type)
 	assert.Equal(t, "http", schemes["basicAuth"].Value.Type)
@@ -192,10 +192,10 @@ components:
     Pet:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, doc.Components.VendorExtensions)
-	assert.Equal(t, "value", doc.Components.VendorExtensions["x-custom"])
+	require.NotNil(t, result.Document.Components.VendorExtensions)
+	assert.Equal(t, "value", result.Document.Components.VendorExtensions["x-custom"])
 }
 
 // --- Cross-References ---
@@ -228,9 +228,9 @@ components:
         name:
           type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	pet := doc.Components.Schemas["Pet"].Value
+	pet := result.Document.Components.Schemas["Pet"].Value
 	assert.Equal(t, "#/components/schemas/Owner", pet.Properties["owner"].Ref)
 	assert.Equal(t, "#/components/schemas/Tag", pet.Properties["tags"].Value.Items.Ref)
 }

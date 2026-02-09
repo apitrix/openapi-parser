@@ -24,10 +24,10 @@ components:
     Pet:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Components.Schemas, 1)
-	assert.Contains(t, doc.Components.Schemas, "Pet")
+	assert.Len(t, result.Document.Components.Schemas, 1)
+	assert.Contains(t, result.Document.Components.Schemas, "Pet")
 }
 
 // --- Multiple Schemas ---
@@ -51,9 +51,9 @@ components:
     Tag:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Components.Schemas, 5)
+	assert.Len(t, result.Document.Components.Schemas, 5)
 }
 
 // --- Empty ---
@@ -67,9 +67,9 @@ paths: {}
 components:
   schemas: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, doc.Components.Schemas)
+	assert.Empty(t, result.Document.Components.Schemas)
 }
 
 // --- Schema Types ---
@@ -97,14 +97,14 @@ components:
     ObjectSchema:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "string", doc.Components.Schemas["StringSchema"].Value.Type.Single)
-	assert.Equal(t, "integer", doc.Components.Schemas["IntSchema"].Value.Type.Single)
-	assert.Equal(t, "number", doc.Components.Schemas["NumberSchema"].Value.Type.Single)
-	assert.Equal(t, "boolean", doc.Components.Schemas["BoolSchema"].Value.Type.Single)
-	assert.Equal(t, "array", doc.Components.Schemas["ArraySchema"].Value.Type.Single)
-	assert.Equal(t, "object", doc.Components.Schemas["ObjectSchema"].Value.Type.Single)
+	assert.Equal(t, "string", result.Document.Components.Schemas["StringSchema"].Value.Type.Single)
+	assert.Equal(t, "integer", result.Document.Components.Schemas["IntSchema"].Value.Type.Single)
+	assert.Equal(t, "number", result.Document.Components.Schemas["NumberSchema"].Value.Type.Single)
+	assert.Equal(t, "boolean", result.Document.Components.Schemas["BoolSchema"].Value.Type.Single)
+	assert.Equal(t, "array", result.Document.Components.Schemas["ArraySchema"].Value.Type.Single)
+	assert.Equal(t, "object", result.Document.Components.Schemas["ObjectSchema"].Value.Type.Single)
 }
 
 // --- Reference Between Schemas ---
@@ -131,9 +131,9 @@ components:
     Tag:
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	pet := doc.Components.Schemas["Pet"].Value
+	pet := result.Document.Components.Schemas["Pet"].Value
 	assert.Equal(t, "#/components/schemas/User", pet.Properties["owner"].Ref)
 	assert.Equal(t, "#/components/schemas/Tag", pet.Properties["tags"].Value.Items.Ref)
 }
@@ -157,9 +157,9 @@ components:
     "123Schema":
       type: object
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Components.Schemas, 4)
+	assert.Len(t, result.Document.Components.Schemas, 4)
 }
 
 // --- Complex Schema ---
@@ -191,9 +191,9 @@ components:
             - pending
             - sold
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := doc.Components.Schemas["Pet"].Value
+	schema := result.Document.Components.Schemas["Pet"].Value
 	assert.Len(t, schema.Required, 2)
 	assert.Len(t, schema.Properties, 3)
 	assert.Len(t, schema.Properties["status"].Value.Enum, 3)

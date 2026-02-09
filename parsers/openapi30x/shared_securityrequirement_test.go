@@ -43,10 +43,10 @@ components:
       type: http
       scheme: bearer
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	// Global security
-	assert.Len(t, doc.Security, 2)
+	assert.Len(t, result.Document.Security, 2)
 	// Operation-level security
-	assert.Len(t, doc.Paths.Items["/pets"].Get.Security, 1)
+	assert.Len(t, result.Document.Paths.Items["/pets"].Get.Security, 1)
 }

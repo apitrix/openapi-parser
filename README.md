@@ -35,16 +35,16 @@ import (
 func main() {
     data, _ := os.ReadFile("openapi.yaml")
 
-    doc, err := openapi30x.Parse(data)
+    result, err := openapi30x.Parse(data)
     if err != nil {
         panic(err)
     }
 
-    fmt.Printf("Title: %s\n", doc.Info.Title)
-    fmt.Printf("Version: %s\n", doc.Info.Version)
+    fmt.Printf("Title: %s\n", result.Document.Info.Title)
+    fmt.Printf("Version: %s\n", result.Document.Info.Version)
 
     // Source location is available on every element via the Trix namespace
-    fmt.Printf("Info defined at line %d\n", doc.Info.Trix.Source.Start.Line)
+    fmt.Printf("Info defined at line %d\n", result.Document.Info.Trix.Source.Start.Line)
 }
 ```
 
@@ -53,7 +53,7 @@ func main() {
 `ParseFile` reads the file, parses it, and resolves all `$ref` references (local and external) relative to the file's directory:
 
 ```go
-doc, err := openapi30x.ParseFile("./specs/openapi.yaml")
+result, err := openapi30x.ParseFile("./specs/openapi.yaml")
 ```
 
 This works identically across all three parser versions.
@@ -66,16 +66,16 @@ Each parser package (`openapi20`, `openapi30x`, `openapi31x`) exposes the same s
 
 | Function | Description |
 |----------|-------------|
-| `Parse(data []byte)` | Parse from bytes |
-| `ParseReader(r io.Reader)` | Parse from an io.Reader |
-| `ParseWithUnknownFields(data []byte)` | Parse and detect unknown fields |
-| `ParseReaderWithUnknownFields(r io.Reader)` | Parse from reader with unknown field detection |
-| `ParseFile(pathOrURL string)` | Parse from file path or URL with full `$ref` resolution |
+| `Parse(data []byte)` | Parse from bytes, returns `*ParseResult` |
+| `ParseReader(r io.Reader)` | Parse from an io.Reader, returns `*ParseResult` |
+| `ParseFile(pathOrURL string)` | Parse from file path or URL with full `$ref` resolution, returns `*ParseResult` |
 
 ### Detecting Unknown Fields
 
+All parse functions always return unknown fields in the result:
+
 ```go
-result, err := openapi30x.ParseWithUnknownFields(data)
+result, err := openapi30x.Parse(data)
 if err != nil {
     log.Fatal(err)
 }

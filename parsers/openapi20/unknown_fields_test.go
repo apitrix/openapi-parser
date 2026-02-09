@@ -126,7 +126,7 @@ func TestUnknownField_Struct(t *testing.T) {
 	assert.Equal(t, 5, uf.Column)
 }
 
-// --- Integration with ParseWithUnknownFields ---
+// --- Integration with Parse ---
 
 func TestUnknownFields_Integration(t *testing.T) {
 	// Arrange
@@ -146,7 +146,7 @@ paths:
 `
 
 	// Act
-	result, err := ParseWithUnknownFields([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 
 	// Assert
 	require.NoError(t, err)

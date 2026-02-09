@@ -13,9 +13,9 @@ info:
   version: "1.0"
 paths: {}
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	// Node helpers are internal, just verify parsing works
-	require.NotNil(t, doc)
-	require.NotNil(t, doc.Info)
+	require.NotNil(t, result.Document)
+	require.NotNil(t, result.Document.Info)
 }

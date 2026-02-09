@@ -23,10 +23,10 @@ paths:
     get:
       responses: "invalid"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	// Error should be collected on the operation's Trix.Errors
-	op := doc.Paths.Items["/pets"].Get
+	op := result.Document.Paths.Items["/pets"].Get
 	require.NotEmpty(t, op.Trix.Errors, "invalid responses should produce a Trix error")
 	assert.Contains(t, op.Trix.Errors[0].Message, "responses")
 }
@@ -61,10 +61,10 @@ paths:
                       deep:
                         type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	// Verify deep schema is accessible
-	resp := doc.Paths.Items["/pets/{id}"].Get.Responses.Codes["200"].Value
+	resp := result.Document.Paths.Items["/pets/{id}"].Get.Responses.Codes["200"].Value
 	schema := resp.Content["application/json"].Schema.Value
 	assert.NotNil(t, schema.Properties["nested"])
 }
@@ -93,9 +93,9 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, doc.Paths.Items, 3)
+	assert.Len(t, result.Document.Paths.Items, 3)
 }
 
 // --- Node Source Line/Column ---
@@ -113,11 +113,11 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 
 	// Check that node sources are recorded
-	op := doc.Paths.Items["/pets"].Get
+	op := result.Document.Paths.Items["/pets"].Get
 	assert.Greater(t, op.Trix.Source.Start.Line, 0)
 	assert.Greater(t, op.Trix.Source.Start.Column, 0)
 }
@@ -140,11 +140,11 @@ paths:
           description: "OK"
           x-resp-ext: "response"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 
-	assert.Equal(t, "info", doc.Info.VendorExtensions["x-info-ext"])
-	assert.Equal(t, "path", doc.Paths.Items["/pets"].VendorExtensions["x-path-ext"])
-	assert.Equal(t, "operation", doc.Paths.Items["/pets"].Get.VendorExtensions["x-op-ext"])
-	assert.Equal(t, "response", doc.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.VendorExtensions["x-resp-ext"])
+	assert.Equal(t, "info", result.Document.Info.VendorExtensions["x-info-ext"])
+	assert.Equal(t, "path", result.Document.Paths.Items["/pets"].VendorExtensions["x-path-ext"])
+	assert.Equal(t, "operation", result.Document.Paths.Items["/pets"].Get.VendorExtensions["x-op-ext"])
+	assert.Equal(t, "response", result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.VendorExtensions["x-resp-ext"])
 }

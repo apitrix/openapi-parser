@@ -14,48 +14,48 @@ func TestParsePetstore(t *testing.T) {
 	require.NoError(t, err)
 
 	// Act
-	doc, err := Parse(data)
+	result, err := Parse(data)
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, doc)
+	require.NotNil(t, result.Document)
 
 	// Root
-	assert.Equal(t, "3.0.3", doc.OpenAPI)
-	assert.Equal(t, "2024-01", doc.VendorExtensions["x-api-version"])
+	assert.Equal(t, "3.0.3", result.Document.OpenAPI)
+	assert.Equal(t, "2024-01", result.Document.VendorExtensions["x-api-version"])
 
 	// Info
-	require.NotNil(t, doc.Info)
-	assert.Equal(t, "Petstore API", doc.Info.Title)
-	assert.Equal(t, "1.0.0", doc.Info.Version)
-	assert.Equal(t, "A sample API for pets", doc.Info.Description)
-	assert.Equal(t, "custom value", doc.Info.VendorExtensions["x-custom-info"])
+	require.NotNil(t, result.Document.Info)
+	assert.Equal(t, "Petstore API", result.Document.Info.Title)
+	assert.Equal(t, "1.0.0", result.Document.Info.Version)
+	assert.Equal(t, "A sample API for pets", result.Document.Info.Description)
+	assert.Equal(t, "custom value", result.Document.Info.VendorExtensions["x-custom-info"])
 
 	// Contact
-	require.NotNil(t, doc.Info.Contact)
-	assert.Equal(t, "API Support", doc.Info.Contact.Name)
-	assert.Equal(t, "support@example.com", doc.Info.Contact.Email)
+	require.NotNil(t, result.Document.Info.Contact)
+	assert.Equal(t, "API Support", result.Document.Info.Contact.Name)
+	assert.Equal(t, "support@example.com", result.Document.Info.Contact.Email)
 
 	// License
-	require.NotNil(t, doc.Info.License)
-	assert.Equal(t, "MIT", doc.Info.License.Name)
-	assert.Equal(t, "https://opensource.org/licenses/MIT", doc.Info.License.URL)
+	require.NotNil(t, result.Document.Info.License)
+	assert.Equal(t, "MIT", result.Document.Info.License.Name)
+	assert.Equal(t, "https://opensource.org/licenses/MIT", result.Document.Info.License.URL)
 
 	// Servers
-	require.Len(t, doc.Servers, 2)
-	assert.Equal(t, "https://api.petstore.com/v1", doc.Servers[0].URL)
-	assert.Equal(t, "Production server", doc.Servers[0].Description)
-	assert.Equal(t, "https://staging-api.petstore.com/v1", doc.Servers[1].URL)
-	assert.Equal(t, "Staging server", doc.Servers[1].Description)
+	require.Len(t, result.Document.Servers, 2)
+	assert.Equal(t, "https://api.petstore.com/v1", result.Document.Servers[0].URL)
+	assert.Equal(t, "Production server", result.Document.Servers[0].Description)
+	assert.Equal(t, "https://staging-api.petstore.com/v1", result.Document.Servers[1].URL)
+	assert.Equal(t, "Staging server", result.Document.Servers[1].Description)
 
 	// Paths
-	require.NotNil(t, doc.Paths)
-	require.Len(t, doc.Paths.Items, 2)
-	require.Contains(t, doc.Paths.Items, "/pets")
-	require.Contains(t, doc.Paths.Items, "/pets/{petId}")
+	require.NotNil(t, result.Document.Paths)
+	require.Len(t, result.Document.Paths.Items, 2)
+	require.Contains(t, result.Document.Paths.Items, "/pets")
+	require.Contains(t, result.Document.Paths.Items, "/pets/{petId}")
 
 	// /pets - GET
-	petsPath := doc.Paths.Items["/pets"]
+	petsPath := result.Document.Paths.Items["/pets"]
 	require.NotNil(t, petsPath.Get)
 	assert.Equal(t, "List all pets", petsPath.Get.Summary)
 	assert.Equal(t, "listPets", petsPath.Get.OperationID)
@@ -93,7 +93,7 @@ func TestParsePetstore(t *testing.T) {
 	assert.Equal(t, "#/components/schemas/NewPet", petsPath.Post.RequestBody.Value.Content["application/json"].Schema.Ref)
 
 	// /pets/{petId} - GET
-	petByIdPath := doc.Paths.Items["/pets/{petId}"]
+	petByIdPath := result.Document.Paths.Items["/pets/{petId}"]
 	require.NotNil(t, petByIdPath.Get)
 	assert.Equal(t, "Get a pet by ID", petByIdPath.Get.Summary)
 	assert.Equal(t, "getPetById", petByIdPath.Get.OperationID)
@@ -117,13 +117,13 @@ func TestParsePetstore(t *testing.T) {
 	assert.Equal(t, "Pet deleted", petByIdPath.Delete.Responses.Codes["204"].Value.Description)
 
 	// Components - Schemas
-	require.NotNil(t, doc.Components)
-	require.Len(t, doc.Components.Schemas, 3)
-	require.Contains(t, doc.Components.Schemas, "Pet")
-	require.Contains(t, doc.Components.Schemas, "NewPet")
-	require.Contains(t, doc.Components.Schemas, "Error")
+	require.NotNil(t, result.Document.Components)
+	require.Len(t, result.Document.Components.Schemas, 3)
+	require.Contains(t, result.Document.Components.Schemas, "Pet")
+	require.Contains(t, result.Document.Components.Schemas, "NewPet")
+	require.Contains(t, result.Document.Components.Schemas, "Error")
 
-	petSchema := doc.Components.Schemas["Pet"].Value
+	petSchema := result.Document.Components.Schemas["Pet"].Value
 	assert.Equal(t, "object", petSchema.Type)
 	assert.Equal(t, []string{"id", "name"}, petSchema.Required)
 	require.Len(t, petSchema.Properties, 3)
@@ -132,22 +132,22 @@ func TestParsePetstore(t *testing.T) {
 	assert.Equal(t, "pet-extra", petSchema.VendorExtensions["x-schema-extension"])
 
 	// Components - Security Schemes
-	require.Contains(t, doc.Components.SecuritySchemes, "bearerAuth")
-	bearerScheme := doc.Components.SecuritySchemes["bearerAuth"].Value
+	require.Contains(t, result.Document.Components.SecuritySchemes, "bearerAuth")
+	bearerScheme := result.Document.Components.SecuritySchemes["bearerAuth"].Value
 	assert.Equal(t, "http", bearerScheme.Type)
 	assert.Equal(t, "bearer", bearerScheme.Scheme)
 	assert.Equal(t, "JWT", bearerScheme.BearerFormat)
 
 	// Security
-	require.Len(t, doc.Security, 1)
-	require.Contains(t, doc.Security[0], "bearerAuth")
+	require.Len(t, result.Document.Security, 1)
+	require.Contains(t, result.Document.Security[0], "bearerAuth")
 
 	// Tags
-	require.Len(t, doc.Tags, 1)
-	assert.Equal(t, "pets", doc.Tags[0].Name)
-	assert.Equal(t, "Pet operations", doc.Tags[0].Description)
-	require.NotNil(t, doc.Tags[0].ExternalDocs)
-	assert.Equal(t, "https://example.com/docs/pets", doc.Tags[0].ExternalDocs.URL)
+	require.Len(t, result.Document.Tags, 1)
+	assert.Equal(t, "pets", result.Document.Tags[0].Name)
+	assert.Equal(t, "Pet operations", result.Document.Tags[0].Description)
+	require.NotNil(t, result.Document.Tags[0].ExternalDocs)
+	assert.Equal(t, "https://example.com/docs/pets", result.Document.Tags[0].ExternalDocs.URL)
 }
 
 func TestParseInvalidVersion(t *testing.T) {
@@ -166,12 +166,12 @@ func TestParseMissingInfo(t *testing.T) {
 	data := []byte(`{"openapi": "3.0.0"}`)
 
 	// Act
-	doc, err := Parse(data)
+	result, err := Parse(data)
 
-	// Assert — info errors are now collected on doc.Trix.Errors, not returned
+	// Assert — info errors are now collected on result.Document.Trix.Errors, not returned
 	require.NoError(t, err)
-	require.NotNil(t, doc)
-	assert.NotEmpty(t, doc.Trix.Errors, "missing info should produce a Trix error")
+	require.NotNil(t, result.Document)
+	assert.NotEmpty(t, result.Document.Trix.Errors, "missing info should produce a Trix error")
 }
 
 func TestParseLineColumnNumbers(t *testing.T) {
@@ -190,17 +190,17 @@ paths:
 `)
 
 	// Act
-	doc, err := Parse(data)
+	result, err := Parse(data)
 
 	// Assert
 	require.NoError(t, err)
 
-	assert.NotZero(t, doc.Trix.Source.Start.Line, "root line")
-	assert.NotZero(t, doc.Trix.Source.Start.Column, "root column")
-	assert.NotZero(t, doc.Info.Trix.Source.Start.Line, "info line")
-	assert.NotZero(t, doc.Paths.Trix.Source.Start.Line, "paths line")
+	assert.NotZero(t, result.Document.Trix.Source.Start.Line, "root line")
+	assert.NotZero(t, result.Document.Trix.Source.Start.Column, "root column")
+	assert.NotZero(t, result.Document.Info.Trix.Source.Start.Line, "info line")
+	assert.NotZero(t, result.Document.Paths.Trix.Source.Start.Line, "paths line")
 
-	petsPath := doc.Paths.Items["/pets"]
+	petsPath := result.Document.Paths.Items["/pets"]
 	require.NotNil(t, petsPath)
 	assert.NotZero(t, petsPath.Trix.Source.Start.Line, "/pets line")
 	assert.NotZero(t, petsPath.Get.Trix.Source.Start.Line, "GET operation line")

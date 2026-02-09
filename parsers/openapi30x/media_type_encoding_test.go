@@ -27,9 +27,9 @@ paths:
         "200":
           description: "OK"
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	mt := doc.Paths.Items["/upload"].Post.RequestBody.Value.Content["multipart/form-data"]
+	mt := result.Document.Paths.Items["/upload"].Post.RequestBody.Value.Content["multipart/form-data"]
 	require.NotNil(t, mt.Encoding)
 	assert.Contains(t, mt.Encoding, "file")
 }

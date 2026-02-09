@@ -34,9 +34,9 @@ components:
       schema:
         type: integer
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ref := doc.Paths.Items["/pets"].Get.Parameters[0]
+	ref := result.Document.Paths.Items["/pets"].Get.Parameters[0]
 	assert.Equal(t, "#/components/parameters/LimitParam", ref.Ref)
 }
 
@@ -64,9 +64,9 @@ components:
       schema:
         type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ref := doc.Paths.Items["/pets/{petId}"].Parameters[0]
+	ref := result.Document.Paths.Items["/pets/{petId}"].Parameters[0]
 	assert.Equal(t, "#/components/parameters/PetIdParam", ref.Ref)
 }
 
@@ -105,9 +105,9 @@ components:
       schema:
         type: string
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	params := doc.Paths.Items["/pets"].Get.Parameters
+	params := result.Document.Paths.Items["/pets"].Get.Parameters
 	assert.Len(t, params, 3)
 	assert.Equal(t, "#/components/parameters/LimitParam", params[0].Ref)
 	assert.Equal(t, "#/components/parameters/OffsetParam", params[1].Ref)
@@ -141,9 +141,9 @@ components:
       schema:
         type: integer
 `
-	doc, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	params := doc.Paths.Items["/pets"].Get.Parameters
+	params := result.Document.Paths.Items["/pets"].Get.Parameters
 	assert.Len(t, params, 2)
 	assert.Equal(t, "#/components/parameters/LimitParam", params[0].Ref)
 	assert.Equal(t, "filter", params[1].Value.Name)
