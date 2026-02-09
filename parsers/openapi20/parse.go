@@ -12,21 +12,26 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// ParseResult contains the parsed Swagger document along with any unknown
-// fields that were detected during parsing.
+// ParseResult contains the parsed Swagger document along with any
+// errors and unknown fields detected during parsing.
 type ParseResult struct {
 	// Document is the parsed Swagger specification.
 	Document *openapi20models.Swagger
 
-	// UnknownFields contains all fields that were not recognized as valid
-	// Swagger fields during parsing. Extensions (x-*) are NOT included here
-	// as they are valid per the Swagger specification.
-	UnknownFields []UnknownField
+	// Errors contains all flattened errors (parse errors + unknown field errors)
+	// collected from across the entire document tree.
+	Errors []*shared.ParseError
+
+	// Config is the ParseConfig that was used for this parse.
+	Config *shared.ParseConfig
 }
 
 // Parse parses Swagger 2.0 specification from bytes (JSON or YAML).
 // Uses yaml.Node for lossless parsing with line/column preservation.
-func Parse(data []byte) (*ParseResult, error) {
+// An optional ParseConfig controls which features are enabled (nil = All).
+func Parse(data []byte, cfgs ...*shared.ParseConfig) (*ParseResult, error) {
+	cfg := shared.FirstConfig(cfgs)
+
 	var rootNode yaml.Node
 	if err := yaml.Unmarshal(data, &rootNode); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal data: %w", err)
@@ -44,31 +49,36 @@ func Parse(data []byte) (*ParseResult, error) {
 		return nil, fmt.Errorf("Swagger document must be an object")
 	}
 
-	ctx := newParseContext(docNode)
+	ctx := newParseContext(docNode, cfg)
 	doc, err := parseSwagger(docNode, ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	return &ParseResult{
-		Document:      doc,
-		UnknownFields: ctx.UnknownFieldsResult(),
+		Document: doc,
+		Errors:   flattenErrors(doc),
+		Config:   cfg,
 	}, nil
 }
 
 // ParseReader parses Swagger 2.0 specification from an io.Reader.
-func ParseReader(r io.Reader) (*ParseResult, error) {
+// An optional ParseConfig controls which features are enabled (nil = All).
+func ParseReader(r io.Reader, cfgs ...*shared.ParseConfig) (*ParseResult, error) {
 	data, err := io.ReadAll(r)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read data: %w", err)
 	}
-	return Parse(data)
+	return Parse(data, cfgs...)
 }
 
 // ParseFile parses a Swagger 2.0 specification from a file path or HTTP/HTTPS URL,
 // resolving all $ref references relative to the source location.
 // It auto-detects whether the input is a URL or a local file path.
-func ParseFile(pathOrURL string) (*ParseResult, error) {
+// An optional ParseConfig controls which features are enabled (nil = All).
+func ParseFile(pathOrURL string, cfgs ...*shared.ParseConfig) (*ParseResult, error) {
+	cfg := shared.FirstConfig(cfgs)
+
 	var data []byte
 	var basePath string
 
@@ -92,11 +102,12 @@ func ParseFile(pathOrURL string) (*ParseResult, error) {
 		basePath = filepath.Dir(absPath)
 	}
 
-	return parseAndResolve(data, basePath)
+	return parseAndResolve(data, basePath, cfg)
 }
 
-// parseAndResolve unmarshals YAML data, parses the Swagger document, and resolves all $ref references.
-func parseAndResolve(data []byte, basePath string) (*ParseResult, error) {
+// parseAndResolve unmarshals YAML data, parses the Swagger document, and optionally
+// resolves all $ref references based on the config.
+func parseAndResolve(data []byte, basePath string, cfg *shared.ParseConfig) (*ParseResult, error) {
 	var rootNode yaml.Node
 	if err := yaml.Unmarshal(data, &rootNode); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal data: %w", err)
@@ -113,18 +124,22 @@ func parseAndResolve(data []byte, basePath string) (*ParseResult, error) {
 		return nil, fmt.Errorf("Swagger document must be an object")
 	}
 
-	ctx := newParseContext(docNode)
+	ctx := newParseContext(docNode, cfg)
 	doc, err := parseSwagger(docNode, ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := Resolve(doc, docNode, basePath); err != nil {
-		return nil, fmt.Errorf("failed to resolve references: %w", err)
+	// Resolve $ref references if enabled
+	if cfg.ResolveInternalRefs || cfg.ResolveExternalRefs {
+		if err := Resolve(doc, docNode, basePath); err != nil {
+			return nil, fmt.Errorf("failed to resolve references: %w", err)
+		}
 	}
 
 	return &ParseResult{
-		Document:      doc,
-		UnknownFields: ctx.UnknownFieldsResult(),
+		Document: doc,
+		Errors:   flattenErrors(doc),
+		Config:   cfg,
 	}, nil
 }

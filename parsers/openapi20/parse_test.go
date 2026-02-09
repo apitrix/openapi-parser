@@ -106,8 +106,9 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	assert.NotEmpty(t, result.UnknownFields)
-	assert.Equal(t, "unknownField", result.UnknownFields[0].Name)
+	unknownErrors := filterTestUnknownFieldErrors(result)
+	assert.NotEmpty(t, unknownErrors)
+	assert.True(t, strings.Contains(unknownErrors[0].Message, "unknownField"))
 }
 
 func TestParse_IgnoresExtensions(t *testing.T) {
@@ -125,7 +126,19 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	assert.Empty(t, result.UnknownFields)
+	unknownErrors := filterTestUnknownFieldErrors(result)
+	assert.Empty(t, unknownErrors)
+}
+
+// filterTestUnknownFieldErrors returns only errors with Kind "unknown_field" from a ParseResult.
+func filterTestUnknownFieldErrors(result *ParseResult) []*ParseError {
+	var filtered []*ParseError
+	for _, e := range result.Errors {
+		if e.Kind == "unknown_field" {
+			filtered = append(filtered, e)
+		}
+	}
+	return filtered
 }
 
 // --- ParseReader ---

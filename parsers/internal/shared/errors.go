@@ -10,6 +10,7 @@ import (
 type ParseError struct {
 	Path    []string // JSON path where error occurred
 	Message string   // Error message
+	Kind    string   // Error kind: "error" or "unknown_field"
 	Cause   error    // Wrapped error if any
 	Line    int      // Line number (1-based, 0 if unknown)
 	Column  int      // Column number (1-based, 0 if unknown)
@@ -24,6 +25,7 @@ func NewParseError(path []string, format string, args ...interface{}) *ParseErro
 	return &ParseError{
 		Path:    pathCopy,
 		Message: fmt.Sprintf(format, args...),
+		Kind:    "error",
 	}
 }
 

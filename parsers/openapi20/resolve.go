@@ -137,7 +137,7 @@ func resolveSchemaRef(ref *openapi20models.SchemaRef, r *shared.RefResolver, res
 			ref.Circular = true
 			return nil
 		}
-		ctx := newParseContext(result.Node)
+		ctx := newParseContext(result.Node, shared.All())
 		schema, err := parseSchema(result.Node, ctx)
 		if err != nil {
 			return fmt.Errorf("parsing resolved schema ref %q: %w", ref.Ref, err)
@@ -187,7 +187,7 @@ func resolveResponseRef(ref *openapi20models.ResponseRef, r *shared.RefResolver,
 			ref.Circular = true
 			return nil
 		}
-		ctx := newParseContext(result.Node)
+		ctx := newParseContext(result.Node, shared.All())
 		val, err := parseResponse(result.Node, ctx)
 		if err != nil {
 			return fmt.Errorf("parsing resolved response ref %q: %w", ref.Ref, err)
@@ -216,7 +216,7 @@ func resolveParameterRef(ref *openapi20models.ParameterRef, r *shared.RefResolve
 			ref.Circular = true
 			return nil
 		}
-		ctx := newParseContext(result.Node)
+		ctx := newParseContext(result.Node, shared.All())
 		val, err := parseParameter(result.Node, ctx)
 		if err != nil {
 			return fmt.Errorf("parsing resolved parameter ref %q: %w", ref.Ref, err)

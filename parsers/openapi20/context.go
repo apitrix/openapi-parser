@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	openapi20models "openapi-parser/models/openapi20"
+	"openapi-parser/parsers/internal/shared"
 
 	"gopkg.in/yaml.v3"
 )
@@ -11,17 +12,18 @@ import (
 // ParseContext holds parsing state and provides utilities for error reporting
 // and reference resolution. Uses a stack-based path to avoid allocations.
 type ParseContext struct {
-	Root          *yaml.Node      // Document root for $ref resolution
-	pathStack     *[]string       // Shared backing slice for path segments
-	depth         int             // Current depth in the path stack
-	Definitions   *yaml.Node      // Cached definitions section
-	Parameters    *yaml.Node      // Cached parameters section
-	Responses     *yaml.Node      // Cached responses section
-	unknownFields *[]UnknownField // Pointer to shared slice for accumulating unknown fields
+	Root          *yaml.Node          // Document root for $ref resolution
+	pathStack     *[]string           // Shared backing slice for path segments
+	depth         int                 // Current depth in the path stack
+	Definitions   *yaml.Node          // Cached definitions section
+	Parameters    *yaml.Node          // Cached parameters section
+	Responses     *yaml.Node          // Cached responses section
+	unknownFields *[]UnknownField     // Pointer to shared slice for accumulating unknown fields
+	config        *shared.ParseConfig // Feature flags controlling parsing behavior
 }
 
 // newParseContext creates a new ParseContext from the document root.
-func newParseContext(root *yaml.Node) *ParseContext {
+func newParseContext(root *yaml.Node, cfg *shared.ParseConfig) *ParseContext {
 	unknown := make([]UnknownField, 0)
 	pathStack := make([]string, 0, 16) // Pre-allocate for typical depth
 	ctx := &ParseContext{
@@ -29,6 +31,7 @@ func newParseContext(root *yaml.Node) *ParseContext {
 		pathStack:     &pathStack,
 		depth:         0,
 		unknownFields: &unknown,
+		config:        cfg,
 	}
 
 	// Cache definitions, parameters, and responses sections if present
@@ -61,6 +64,7 @@ func (ctx *ParseContext) Push(segment string) *ParseContext {
 		Parameters:    ctx.Parameters,
 		Responses:     ctx.Responses,
 		unknownFields: ctx.unknownFields, // Share the same slice
+		config:        ctx.config,
 	}
 }
 
@@ -114,9 +118,13 @@ func (ctx *ParseContext) nodeSource(node *yaml.Node) openapi20models.NodeSource 
 }
 
 // detectUnknown checks a node for unknown fields and records them.
+// Returns nil immediately if unknown field detection is disabled in config.
 // knownFields is the precomputed set of valid field names for this object type.
 // Returns the unknown fields found so callers can also attach them to Trix.Errors.
 func (ctx *ParseContext) detectUnknown(node *yaml.Node, knownFields map[string]struct{}) []UnknownField {
+	if !ctx.config.DetectUnknownFields {
+		return nil
+	}
 	unknown := detectUnknownNodeFields(node, knownFields, ctx.CurrentPath())
 	if len(unknown) > 0 && ctx.unknownFields != nil {
 		*ctx.unknownFields = append(*ctx.unknownFields, unknown...)

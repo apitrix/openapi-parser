@@ -3,6 +3,8 @@ package openapi20
 import (
 	"testing"
 
+	"openapi-parser/parsers/internal/shared"
+
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v3"
 )
@@ -18,7 +20,7 @@ func TestNewParseContext(t *testing.T) {
 	node := &yaml.Node{}
 
 	// Act
-	ctx := newParseContext(node)
+	ctx := newParseContext(node, shared.All())
 
 	// Assert
 	assert.NotNil(t, ctx)
@@ -31,7 +33,7 @@ func TestNewParseContext(t *testing.T) {
 func TestParseContext_Push(t *testing.T) {
 	// Arrange
 	node := &yaml.Node{}
-	ctx := newParseContext(node)
+	ctx := newParseContext(node, shared.All())
 
 	// Act
 	child := ctx.push("paths")
@@ -47,7 +49,7 @@ func TestParseContext_Push(t *testing.T) {
 func TestParseContext_CurrentPath(t *testing.T) {
 	// Arrange
 	node := &yaml.Node{}
-	ctx := newParseContext(node)
+	ctx := newParseContext(node, shared.All())
 	ctx = ctx.push("paths")
 	ctx = ctx.push("/pets")
 	ctx = ctx.push("get")
@@ -64,7 +66,7 @@ func TestParseContext_CurrentPath(t *testing.T) {
 func TestParseContext_Errorf(t *testing.T) {
 	// Arrange
 	node := &yaml.Node{}
-	ctx := newParseContext(node)
+	ctx := newParseContext(node, shared.All())
 	ctx = ctx.push("info")
 
 	// Act
@@ -81,7 +83,7 @@ func TestParseContext_Errorf(t *testing.T) {
 func TestParseContext_ErrorAt(t *testing.T) {
 	// Arrange
 	node := &yaml.Node{Line: 5, Column: 10}
-	ctx := newParseContext(node)
+	ctx := newParseContext(node, shared.All())
 	ctx = ctx.push("info")
 
 	// Act
@@ -107,8 +109,7 @@ x-extension: value
 	_ = yaml.Unmarshal([]byte(yamlContent), &node)
 	docNode := node.Content[0]
 
-	ctx := newParseContext(docNode)
-	ctx.unknownFields = &[]UnknownField{}
+	ctx := newParseContext(docNode, shared.All())
 
 	// Act
 	ctx.detectUnknown(docNode, map[string]struct{}{"known": {}})
@@ -118,12 +119,34 @@ x-extension: value
 	assert.Equal(t, "unknown", (*ctx.unknownFields)[0].Name)
 }
 
+func TestParseContext_DetectUnknown_Disabled(t *testing.T) {
+	// Arrange
+	yamlContent := `known: value
+unknown: value
+`
+	var node yaml.Node
+	_ = yaml.Unmarshal([]byte(yamlContent), &node)
+	docNode := node.Content[0]
+
+	ctx := newParseContext(docNode, shared.None())
+
+	// Act
+	result := ctx.detectUnknown(docNode, map[string]struct{}{"known": {}})
+
+	// Assert - no unknown fields detected when disabled
+	assert.Nil(t, result)
+	assert.Empty(t, *ctx.unknownFields)
+}
+
 // --- UnknownFieldsResult ---
 
 func TestParseContext_UnknownFieldsResult(t *testing.T) {
 	// Arrange
 	fields := []UnknownField{{Name: "test", Path: "root"}}
-	ctx := &ParseContext{unknownFields: &fields}
+	ctx := &ParseContext{
+		unknownFields: &fields,
+		config:        shared.All(),
+	}
 
 	// Act
 	result := ctx.UnknownFieldsResult()
@@ -141,7 +164,7 @@ func TestParseContext_NodeSource(t *testing.T) {
 		Line:   10,
 		Column: 5,
 	}
-	ctx := newParseContext(node)
+	ctx := newParseContext(node, shared.All())
 
 	// Act
 	source := ctx.nodeSource(node)

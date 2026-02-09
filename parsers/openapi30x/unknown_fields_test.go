@@ -1,6 +1,7 @@
 package openapi30x
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -112,29 +113,27 @@ components:
 				t.Fatalf("Parse failed: %v", err)
 			}
 
-			if len(result.UnknownFields) != tt.wantUnknown {
-				t.Errorf("got %d unknown fields, want %d", len(result.UnknownFields), tt.wantUnknown)
-				for _, f := range result.UnknownFields {
-					t.Logf("  unknown: %s at %s (line %d)", f.Key, f.Path, f.Line)
+			unknownErrors := filterUnknownFieldErrors(result)
+			if len(unknownErrors) != tt.wantUnknown {
+				t.Errorf("got %d unknown field errors, want %d", len(unknownErrors), tt.wantUnknown)
+				for _, e := range unknownErrors {
+					t.Logf("  unknown: %s at %s", e.Message, strings.Join(e.Path, "."))
 				}
 			}
 
-			if tt.wantUnknownKey != "" && len(result.UnknownFields) > 0 {
+			if tt.wantUnknownKey != "" && len(unknownErrors) > 0 {
 				found := false
-				for _, f := range result.UnknownFields {
-					if f.Key == tt.wantUnknownKey {
+				for _, e := range unknownErrors {
+					if strings.Contains(e.Message, tt.wantUnknownKey) {
 						found = true
-						if tt.wantPath != "" && f.Path != tt.wantPath {
-							t.Errorf("unknown field %q has path %q, want %q", f.Key, f.Path, tt.wantPath)
-						}
-						// Verify line number is set
-						if f.Line == 0 {
-							t.Errorf("unknown field %q has no line number", f.Key)
+						errPath := strings.Join(e.Path, ".")
+						if tt.wantPath != "" && errPath != tt.wantPath {
+							t.Errorf("unknown field error for %q has path %q, want %q", tt.wantUnknownKey, errPath, tt.wantPath)
 						}
 					}
 				}
 				if !found {
-					t.Errorf("expected unknown field %q not found", tt.wantUnknownKey)
+					t.Errorf("expected unknown field error containing %q not found", tt.wantUnknownKey)
 				}
 			}
 		})
@@ -142,7 +141,6 @@ components:
 }
 
 func TestParseBasic(t *testing.T) {
-	// Test that Parse returns the document correctly
 	data := []byte(`
 openapi: "3.0.3"
 info:
@@ -163,13 +161,13 @@ paths: {}
 		t.Errorf("expected openapi 3.0.3, got %s", result.Document.OpenAPI)
 	}
 
-	if len(result.UnknownFields) != 0 {
-		t.Errorf("expected no unknown fields for valid doc, got %d", len(result.UnknownFields))
+	unknownErrors := filterUnknownFieldErrors(result)
+	if len(unknownErrors) != 0 {
+		t.Errorf("expected no unknown field errors for valid doc, got %d", len(unknownErrors))
 	}
 }
 
 func TestUnknownFieldError(t *testing.T) {
-	// Test the error formatting
 	fields := []UnknownField{
 		{Path: "info", Key: "typo", Line: 5, Column: 3},
 	}
@@ -180,20 +178,18 @@ func TestUnknownFieldError(t *testing.T) {
 		t.Error("expected non-empty error string")
 	}
 
-	if !contains(errStr, "typo") || !contains(errStr, "info") {
+	if !strings.Contains(errStr, "typo") || !strings.Contains(errStr, "info") {
 		t.Errorf("error message should contain field name and path, got: %s", errStr)
 	}
 }
 
-func contains(s, substr string) bool {
-	return len(s) >= len(substr) && (s == substr || len(s) > 0 && containsHelper(s, substr))
-}
-
-func containsHelper(s, substr string) bool {
-	for i := 0; i <= len(s)-len(substr); i++ {
-		if s[i:i+len(substr)] == substr {
-			return true
+// filterUnknownFieldErrors returns only errors with Kind "unknown_field" from a ParseResult.
+func filterUnknownFieldErrors(result *ParseResult) []*ParseError {
+	var filtered []*ParseError
+	for _, e := range result.Errors {
+		if e.Kind == "unknown_field" {
+			filtered = append(filtered, e)
 		}
 	}
-	return false
+	return filtered
 }

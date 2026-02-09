@@ -2,6 +2,7 @@ package openapi31x
 
 import (
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -245,25 +246,28 @@ unknownRootField: something
 	require.NotNil(t, result)
 	require.NotNil(t, result.Document)
 
+	// Filter for unknown field errors
+	unknownErrors := filterUnknownFieldErrors(result)
+
 	// Should detect unknown fields but NOT extensions
-	assert.GreaterOrEqual(t, len(result.UnknownFields), 2)
+	assert.GreaterOrEqual(t, len(unknownErrors), 2)
 
 	foundInfoUnknown := false
 	foundRootUnknown := false
-	for _, f := range result.UnknownFields {
-		if f.Key == "unknownInfoField" {
+	for _, e := range unknownErrors {
+		if strings.Contains(e.Message, "unknownInfoField") {
 			foundInfoUnknown = true
 		}
-		if f.Key == "unknownRootField" {
+		if strings.Contains(e.Message, "unknownRootField") {
 			foundRootUnknown = true
 		}
 	}
 	assert.True(t, foundInfoUnknown, "should detect unknownInfoField")
 	assert.True(t, foundRootUnknown, "should detect unknownRootField")
 
-	// x-custom should NOT be in unknown fields
-	for _, f := range result.UnknownFields {
-		assert.NotEqual(t, "x-custom", f.Key, "extensions should not be reported as unknown")
+	// x-custom should NOT be in unknown field errors
+	for _, e := range unknownErrors {
+		assert.False(t, strings.Contains(e.Message, "x-custom"), "extensions should not be reported as unknown")
 	}
 }
 

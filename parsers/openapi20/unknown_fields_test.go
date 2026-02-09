@@ -1,6 +1,7 @@
 package openapi20
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -150,14 +151,28 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	assert.NotEmpty(t, result.UnknownFields)
+
+	unknownErrors := filterUnknownFieldErrors(result)
+	assert.NotEmpty(t, unknownErrors)
 
 	// Check that we detected all unknown fields
-	names := make([]string, len(result.UnknownFields))
-	for i, f := range result.UnknownFields {
-		names[i] = f.Name
+	var messages []string
+	for _, e := range unknownErrors {
+		messages = append(messages, e.Message)
 	}
-	assert.Contains(t, names, "unknownInfo")
-	assert.Contains(t, names, "unknownPath")
-	assert.Contains(t, names, "unknownOp")
+	messagesStr := strings.Join(messages, " ")
+	assert.Contains(t, messagesStr, "unknownInfo")
+	assert.Contains(t, messagesStr, "unknownPath")
+	assert.Contains(t, messagesStr, "unknownOp")
+}
+
+// filterUnknownFieldErrors returns only errors with Kind "unknown_field" from a ParseResult.
+func filterUnknownFieldErrors(result *ParseResult) []*ParseError {
+	var filtered []*ParseError
+	for _, e := range result.Errors {
+		if e.Kind == "unknown_field" {
+			filtered = append(filtered, e)
+		}
+	}
+	return filtered
 }
