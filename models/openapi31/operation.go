@@ -18,3 +18,8 @@ type Operation struct {
 	Security     []SecurityRequirement   `json:"security,omitempty" yaml:"security,omitempty"`
 	Servers      []*Server               `json:"servers,omitempty" yaml:"servers,omitempty"`
 }
+
+// NewOperation creates a new Operation instance.
+func NewOperation() *Operation {
+	return &Operation{}
+}

@@ -12,3 +12,8 @@ type Link struct {
 	Description  string                 `json:"description,omitempty" yaml:"description,omitempty"`
 	Server       *Server                `json:"server,omitempty" yaml:"server,omitempty"`
 }
+
+// NewLink creates a new Link instance.
+func NewLink() *Link {
+	return &Link{}
+}

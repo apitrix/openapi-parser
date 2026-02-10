@@ -10,11 +10,12 @@ type SecurityScheme struct {
 	Name             string            `json:"name,omitempty" yaml:"name,omitempty"`
 	In               string            `json:"in,omitempty" yaml:"in,omitempty"`
 	Flow             string            `json:"flow,omitempty" yaml:"flow,omitempty"`
-	AuthorizationURL  string            `json:"authorizationUrl,omitempty" yaml:"authorizationUrl,omitempty"`
+	AuthorizationURL string            `json:"authorizationUrl,omitempty" yaml:"authorizationUrl,omitempty"`
 	TokenURL         string            `json:"tokenUrl,omitempty" yaml:"tokenUrl,omitempty"`
 	Scopes           map[string]string `json:"scopes,omitempty" yaml:"scopes,omitempty"`
 }
 
-// SecurityRequirement lists required security schemes to execute an operation.
-// https://swagger.io/specification/v2/#security-requirement-object
-type SecurityRequirement map[string][]string
+// NewSecurityScheme creates a new SecurityScheme instance.
+func NewSecurityScheme(securityType string) *SecurityScheme {
+	return &SecurityScheme{Type: securityType}
+}

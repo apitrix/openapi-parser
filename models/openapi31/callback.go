@@ -9,3 +9,8 @@ type Callback struct {
 	// The key is a runtime expression that identifies the URL to use for the callback request.
 	Paths map[string]*PathItem `json:"-" yaml:"-"`
 }
+
+// NewCallback creates a new Callback instance.
+func NewCallback(paths map[string]*PathItem) *Callback {
+	return &Callback{Paths: paths}
+}

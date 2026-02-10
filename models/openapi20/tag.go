@@ -10,11 +10,7 @@ type Tag struct {
 	ExternalDocs *ExternalDocs `json:"externalDocs,omitempty" yaml:"externalDocs,omitempty"`
 }
 
-// ExternalDocs allows referencing external documentation.
-// https://swagger.io/specification/v2/#external-documentation-object
-type ExternalDocs struct {
-	Node // embedded - provides VendorExtensions and Trix
-
-	Description string `json:"description,omitempty" yaml:"description,omitempty"`
-	URL         string `json:"url" yaml:"url"`
+// NewTag creates a new Tag instance.
+func NewTag(name string) *Tag {
+	return &Tag{Name: name}
 }

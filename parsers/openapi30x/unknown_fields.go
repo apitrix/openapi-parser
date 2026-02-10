@@ -1,7 +1,7 @@
 package openapi30x
 
 import (
-	"openapi-parser/parsers/internal/shared"
+	"openapi-parser/parsers/shared"
 
 	"gopkg.in/yaml.v3"
 )

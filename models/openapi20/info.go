@@ -13,21 +13,7 @@ type Info struct {
 	Version        string   `json:"version" yaml:"version"`
 }
 
-// Contact provides contact information for the API.
-// https://swagger.io/specification/v2/#contact-object
-type Contact struct {
-	Node // embedded - provides VendorExtensions and Trix
-
-	Name  string `json:"name,omitempty" yaml:"name,omitempty"`
-	URL   string `json:"url,omitempty" yaml:"url,omitempty"`
-	Email string `json:"email,omitempty" yaml:"email,omitempty"`
-}
-
-// License provides license information for the API.
-// https://swagger.io/specification/v2/#license-object
-type License struct {
-	Node // embedded - provides VendorExtensions and Trix
-
-	Name string `json:"name" yaml:"name"`
-	URL  string `json:"url,omitempty" yaml:"url,omitempty"`
+// NewInfo creates a new Info instance.
+func NewInfo(title, version string) *Info {
+	return &Info{Title: title, Version: version}
 }

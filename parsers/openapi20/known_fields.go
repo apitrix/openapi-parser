@@ -1,6 +1,6 @@
 package openapi20
 
-import "openapi-parser/parsers/internal/shared"
+import "openapi-parser/parsers/shared"
 
 // Known fields for each Swagger 2.0 object type.
 // These are used for detecting unknown/unrecognized fields during parsing.

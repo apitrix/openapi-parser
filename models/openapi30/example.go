@@ -10,3 +10,8 @@ type Example struct {
 	Value         interface{} `json:"value,omitempty" yaml:"value,omitempty"`
 	ExternalValue string      `json:"externalValue,omitempty" yaml:"externalValue,omitempty"`
 }
+
+// NewExample creates a new Example instance.
+func NewExample() *Example {
+	return &Example{}
+}

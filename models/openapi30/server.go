@@ -10,12 +10,7 @@ type Server struct {
 	Variables   map[string]*ServerVariable `json:"variables,omitempty" yaml:"variables,omitempty"`
 }
 
-// ServerVariable represents a server variable for URL template substitution.
-// https://spec.openapis.org/oas/v3.0.3#server-variable-object
-type ServerVariable struct {
-	Node // embedded - provides VendorExtensions and Trix
-
-	Enum        []string `json:"enum,omitempty" yaml:"enum,omitempty"`
-	Default     string   `json:"default" yaml:"default"`
-	Description string   `json:"description,omitempty" yaml:"description,omitempty"`
+// NewServer creates a new Server instance.
+func NewServer(url string) *Server {
+	return &Server{URL: url}
 }

@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 
 	openapi20models "openapi-parser/models/openapi20"
-	"openapi-parser/parsers/internal/shared"
+	"openapi-parser/parsers/shared"
 
 	"gopkg.in/yaml.v3"
 )

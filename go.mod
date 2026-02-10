@@ -2,8 +2,6 @@ module openapi-parser
 
 go 1.25.7
 
-toolchain go1.24.2
-
 require gopkg.in/yaml.v3 v3.0.1
 
 require (

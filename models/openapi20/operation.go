@@ -18,3 +18,8 @@ type Operation struct {
 	Deprecated   bool                  `json:"deprecated,omitempty" yaml:"deprecated,omitempty"`
 	Security     []SecurityRequirement `json:"security,omitempty" yaml:"security,omitempty"`
 }
+
+// NewOperation creates a new Operation instance.
+func NewOperation() *Operation {
+	return &Operation{}
+}

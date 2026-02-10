@@ -3,7 +3,7 @@ package openapi30x
 import (
 	"testing"
 
-	"openapi-parser/parsers/internal/shared"
+	"openapi-parser/parsers/shared"
 
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"

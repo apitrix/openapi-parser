@@ -3,7 +3,7 @@ package openapi20
 import (
 	"iter"
 
-	"openapi-parser/parsers/internal/shared"
+	"openapi-parser/parsers/shared"
 
 	"gopkg.in/yaml.v3"
 )

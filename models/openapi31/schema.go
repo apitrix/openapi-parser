@@ -1,30 +1,5 @@
 package openapi31
 
-// SchemaType represents a JSON Schema type field that can be either a single
-// string or an array of strings (JSON Schema Draft 2020-12).
-type SchemaType struct {
-	// Single is set when the type is a single string value (e.g. "string").
-	Single string
-	// Array is set when the type is an array of strings (e.g. ["string", "null"]).
-	Array []string
-}
-
-// IsEmpty returns true if no type was specified.
-func (t SchemaType) IsEmpty() bool {
-	return t.Single == "" && len(t.Array) == 0
-}
-
-// Values returns all type values as a slice, whether specified as single or array.
-func (t SchemaType) Values() []string {
-	if len(t.Array) > 0 {
-		return t.Array
-	}
-	if t.Single != "" {
-		return []string{t.Single}
-	}
-	return nil
-}
-
 // Schema represents the OpenAPI 3.1 Schema Object.
 // Based on JSON Schema Draft 2020-12.
 // https://spec.openapis.org/oas/v3.1.0#schema-object
@@ -92,23 +67,7 @@ type Schema struct {
 	Deprecated    bool                   `json:"deprecated,omitempty" yaml:"deprecated,omitempty"`
 }
 
-// Discriminator is used for polymorphism support.
-// https://spec.openapis.org/oas/v3.1.0#discriminator-object
-type Discriminator struct {
-	Node // embedded - provides VendorExtensions and Trix
-
-	PropertyName string            `json:"propertyName" yaml:"propertyName"`
-	Mapping      map[string]string `json:"mapping,omitempty" yaml:"mapping,omitempty"`
-}
-
-// XML provides additional metadata for XML serialization.
-// https://spec.openapis.org/oas/v3.1.0#xml-object
-type XML struct {
-	Node // embedded - provides VendorExtensions and Trix
-
-	Name      string `json:"name,omitempty" yaml:"name,omitempty"`
-	Namespace string `json:"namespace,omitempty" yaml:"namespace,omitempty"`
-	Prefix    string `json:"prefix,omitempty" yaml:"prefix,omitempty"`
-	Attribute bool   `json:"attribute,omitempty" yaml:"attribute,omitempty"`
-	Wrapped   bool   `json:"wrapped,omitempty" yaml:"wrapped,omitempty"`
+// NewSchema creates a new Schema instance.
+func NewSchema() *Schema {
+	return &Schema{}
 }

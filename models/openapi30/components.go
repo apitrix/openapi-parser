@@ -15,3 +15,8 @@ type Components struct {
 	Links           map[string]*LinkRef           `json:"links,omitempty" yaml:"links,omitempty"`
 	Callbacks       map[string]*CallbackRef       `json:"callbacks,omitempty" yaml:"callbacks,omitempty"`
 }
+
+// NewComponents creates a new Components instance.
+func NewComponents() *Components {
+	return &Components{}
+}

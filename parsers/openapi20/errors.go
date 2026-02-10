@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	openapi20models "openapi-parser/models/openapi20"
-	"openapi-parser/parsers/internal/shared"
+	"openapi-parser/parsers/shared"
 )
 
 // ParseError represents an error that occurred during parsing,

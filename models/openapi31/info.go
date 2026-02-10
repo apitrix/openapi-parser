@@ -14,22 +14,7 @@ type Info struct {
 	Version        string   `json:"version" yaml:"version"`
 }
 
-// Contact provides contact information for the API.
-// https://spec.openapis.org/oas/v3.1.0#contact-object
-type Contact struct {
-	Node // embedded - provides VendorExtensions and Trix
-
-	Name  string `json:"name,omitempty" yaml:"name,omitempty"`
-	URL   string `json:"url,omitempty" yaml:"url,omitempty"`
-	Email string `json:"email,omitempty" yaml:"email,omitempty"`
-}
-
-// License provides license information for the API.
-// https://spec.openapis.org/oas/v3.1.0#license-object
-type License struct {
-	Node // embedded - provides VendorExtensions and Trix
-
-	Name       string `json:"name" yaml:"name"`
-	Identifier string `json:"identifier,omitempty" yaml:"identifier,omitempty"`
-	URL        string `json:"url,omitempty" yaml:"url,omitempty"`
+// NewInfo creates a new Info instance.
+func NewInfo(title, version string) *Info {
+	return &Info{Title: title, Version: version}
 }

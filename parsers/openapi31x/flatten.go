@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	openapi31models "openapi-parser/models/openapi31"
-	"openapi-parser/parsers/internal/shared"
+	"openapi-parser/parsers/shared"
 )
 
 // flattenErrors recursively walks the parsed document tree and collects

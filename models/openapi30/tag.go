@@ -10,11 +10,7 @@ type Tag struct {
 	ExternalDocs *ExternalDocumentation `json:"externalDocs,omitempty" yaml:"externalDocs,omitempty"`
 }
 
-// ExternalDocumentation allows referencing external documentation.
-// https://spec.openapis.org/oas/v3.0.3#external-documentation-object
-type ExternalDocumentation struct {
-	Node // embedded - provides VendorExtensions and Trix
-
-	Description string `json:"description,omitempty" yaml:"description,omitempty"`
-	URL         string `json:"url" yaml:"url"`
+// NewTag creates a new Tag instance.
+func NewTag(name string) *Tag {
+	return &Tag{Name: name}
 }

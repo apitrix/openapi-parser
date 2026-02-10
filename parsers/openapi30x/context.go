@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	openapi30models "openapi-parser/models/openapi30"
-	"openapi-parser/parsers/internal/shared"
+	"openapi-parser/parsers/shared"
 
 	"gopkg.in/yaml.v3"
 )

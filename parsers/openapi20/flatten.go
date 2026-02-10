@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	openapi20models "openapi-parser/models/openapi20"
-	"openapi-parser/parsers/internal/shared"
+	"openapi-parser/parsers/shared"
 )
 
 // flattenErrors recursively walks the parsed document tree and collects

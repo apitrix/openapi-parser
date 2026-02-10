@@ -1,6 +1,6 @@
 package openapi31x
 
-import "openapi-parser/parsers/internal/shared"
+import "openapi-parser/parsers/shared"
 
 // ============================================================================
 // Known field lists for OpenAPI 3.1 objects.

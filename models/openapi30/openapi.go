@@ -14,3 +14,8 @@ type OpenAPI struct {
 	Tags         []*Tag                 `json:"tags,omitempty" yaml:"tags,omitempty"`
 	ExternalDocs *ExternalDocumentation `json:"externalDocs,omitempty" yaml:"externalDocs,omitempty"`
 }
+
+// NewOpenAPI creates a new OpenAPI root document instance.
+func NewOpenAPI(version string, info *Info) *OpenAPI {
+	return &OpenAPI{OpenAPI: version, Info: info}
+}

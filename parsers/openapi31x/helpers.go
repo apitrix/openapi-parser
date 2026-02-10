@@ -1,6 +1,6 @@
 package openapi31x
 
-import "openapi-parser/parsers/internal/shared"
+import "openapi-parser/parsers/shared"
 
 // Thin wrappers delegating to shared.Get* / shared.Has* / shared.Parse* functions.
 // This preserves the unexported API so all callers within the package work unchanged.

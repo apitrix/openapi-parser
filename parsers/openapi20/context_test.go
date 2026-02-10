@@ -3,7 +3,7 @@ package openapi20
 import (
 	"testing"
 
-	"openapi-parser/parsers/internal/shared"
+	"openapi-parser/parsers/shared"
 
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v3"

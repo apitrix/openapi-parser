@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	openapi31models "openapi-parser/models/openapi31"
-	"openapi-parser/parsers/internal/shared"
+	"openapi-parser/parsers/shared"
 
 	"gopkg.in/yaml.v3"
 )
