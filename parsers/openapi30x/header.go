@@ -26,37 +26,40 @@ func (p *headerParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30mode
 		return nil, ctx.errorAt(node, "header must be an object")
 	}
 
-	header := &openapi30models.Header{}
-	var err error
+	var errors []openapi30models.ParseError
 
-	// Simple properties - inline
-	header.Description = p.ParseDescription(node)
-	header.Required = p.ParseRequired(node)
-	header.Deprecated = p.ParseDeprecated(node)
-	header.AllowEmptyValue = p.ParseAllowEmptyValue(node)
-	header.Style = p.ParseStyle(node)
-	header.Explode = p.ParseExplode(node)
-	header.AllowReserved = p.ParseAllowReserved(node)
-	header.Example = p.ParseExample(node)
+	// Simple properties
+	description := p.ParseDescription(node)
+	required := p.ParseRequired(node)
+	deprecated := p.ParseDeprecated(node)
+	allowEmptyValue := p.ParseAllowEmptyValue(node)
+	style := p.ParseStyle(node)
+	explode := p.ParseExplode(node)
+	allowReserved := p.ParseAllowReserved(node)
+	example := p.ParseExample(node)
 
 	// Complex properties - delegated to dedicated files
-	header.Schema, err = p.ParseSchema(node, ctx)
+	schema, err := p.ParseSchema(node, ctx)
 	if err != nil {
-		header.Trix.Errors = append(header.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
 
-	header.Examples, err = p.ParseExamples(node, ctx)
+	examples, err := p.ParseExamples(node, ctx)
 	if err != nil {
-		header.Trix.Errors = append(header.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
 
-	header.Content, err = p.ParseContent(node, ctx)
+	content, err := p.ParseContent(node, ctx)
 	if err != nil {
-		header.Trix.Errors = append(header.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
+
+	// Create via constructor
+	header := openapi30models.NewHeader(description, required, deprecated, allowEmptyValue, style, explode, allowReserved, schema, example, examples, content)
 
 	header.VendorExtensions = parseNodeExtensions(node)
 	header.Trix.Source = ctx.nodeSource(node)
+	header.Trix.Errors = append(header.Trix.Errors, errors...)
 
 	// Detect unknown fields
 	header.Trix.Errors = append(header.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, headerKnownFieldsSet))...)

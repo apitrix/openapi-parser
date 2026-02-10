@@ -28,9 +28,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	xml := result.Document.Components.Schemas["Pet"].Value.XML
+	xml := result.Document.Components().Schemas()["Pet"].Value.XML()
 	require.NotNil(t, xml)
-	assert.Equal(t, "pet", xml.Name)
+	assert.Equal(t, "pet", xml.Name())
 }
 
 // --- Namespace ---
@@ -52,9 +52,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	xml := result.Document.Components.Schemas["Pet"].Value.XML
-	assert.Equal(t, "http://example.com/pets", xml.Namespace)
-	assert.Equal(t, "pet", xml.Prefix)
+	xml := result.Document.Components().Schemas()["Pet"].Value.XML()
+	assert.Equal(t, "http://example.com/pets", xml.Namespace())
+	assert.Equal(t, "pet", xml.Prefix())
 }
 
 // --- Attribute ---
@@ -77,9 +77,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	xml := result.Document.Components.Schemas["Pet"].Value.Properties["id"].Value.XML
+	xml := result.Document.Components().Schemas()["Pet"].Value.Properties()["id"].Value.XML()
 	require.NotNil(t, xml)
-	assert.True(t, xml.Attribute)
+	assert.True(t, xml.Attribute())
 }
 
 // --- Wrapped ---
@@ -107,9 +107,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	xml := result.Document.Components.Schemas["Pet"].Value.Properties["tags"].Value.XML
+	xml := result.Document.Components().Schemas()["Pet"].Value.Properties()["tags"].Value.XML()
 	require.NotNil(t, xml)
-	assert.True(t, xml.Wrapped)
+	assert.True(t, xml.Wrapped())
 }
 
 // --- Complete XML ---
@@ -133,10 +133,10 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	xml := result.Document.Components.Schemas["Pet"].Value.XML
-	assert.Equal(t, "pet", xml.Name)
-	assert.Equal(t, "http://example.com", xml.Namespace)
-	assert.Equal(t, "p", xml.Prefix)
+	xml := result.Document.Components().Schemas()["Pet"].Value.XML()
+	assert.Equal(t, "pet", xml.Name())
+	assert.Equal(t, "http://example.com", xml.Namespace())
+	assert.Equal(t, "p", xml.Prefix())
 }
 
 // --- Missing XML ---
@@ -154,7 +154,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	xml := result.Document.Components.Schemas["Pet"].Value.XML
+	xml := result.Document.Components().Schemas()["Pet"].Value.XML()
 	assert.Nil(t, xml)
 }
 
@@ -176,7 +176,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	xml := result.Document.Components.Schemas["Pet"].Value.XML
+	xml := result.Document.Components().Schemas()["Pet"].Value.XML()
 	require.NotNil(t, xml.VendorExtensions)
 	assert.Equal(t, "value", xml.VendorExtensions["x-custom"])
 }

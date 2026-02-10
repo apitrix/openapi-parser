@@ -47,15 +47,15 @@ func (p *serverParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30mode
 		return nil, ctx.errorAt(node, "server must be an object")
 	}
 
-	server := &openapi30models.Server{}
-	var err error
+	// Collect values
+	url := p.ParseURL(node)
+	description := p.ParseDescription(node)
 
-	// Simple properties - inline
-	server.URL = p.ParseURL(node)
-	server.Description = p.ParseDescription(node)
+	variables, err := p.ParseVariables(node, ctx)
 
-	// Complex properties - delegated to dedicated files
-	server.Variables, err = p.ParseVariables(node, ctx)
+	// Create via constructor
+	server := openapi30models.NewServer(url, description, variables)
+
 	if err != nil {
 		server.Trix.Errors = append(server.Trix.Errors, toParseError(err))
 	}

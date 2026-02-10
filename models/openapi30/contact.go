@@ -5,12 +5,21 @@ package openapi30
 type Contact struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Name  string `json:"name,omitempty" yaml:"name,omitempty"`
-	URL   string `json:"url,omitempty" yaml:"url,omitempty"`
-	Email string `json:"email,omitempty" yaml:"email,omitempty"`
+	name  string
+	url   string
+	email string
 }
+
+// Name returns the identifying name of the contact person/organization.
+func (c *Contact) Name() string { return c.name }
+
+// URL returns the URL pointing to the contact information.
+func (c *Contact) URL() string { return c.url }
+
+// Email returns the email address of the contact person/organization.
+func (c *Contact) Email() string { return c.email }
 
 // NewContact creates a new Contact instance.
 func NewContact(name, url, email string) *Contact {
-	return &Contact{Name: name, URL: url, Email: email}
+	return &Contact{name: name, url: url, email: email}
 }

@@ -15,60 +15,75 @@ func parseOpenAPI(node *yaml.Node, ctx *ParseContext) (*openapi30models.OpenAPI,
 		return nil, ctx.errorAt(node, "OpenAPI document must be an object")
 	}
 
-	openapi := &openapi30models.OpenAPI{}
 	var err error
 
 	// Simple property - version (inline)
-	openapi.OpenAPI, err = parseOpenAPIVersion(node, ctx)
+	version, err := parseOpenAPIVersion(node, ctx)
 	if err != nil {
 		return nil, err // version is fatal — can't proceed without it
 	}
 
 	// Complex properties - delegated (errors collected on node)
 	infoNode := nodeGetValue(node, "info")
-	openapi.Info, err = parseOpenAPIInfo(infoNode, ctx.push("info"))
-	if err != nil {
-		openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
-	}
+	info, infoErr := parseOpenAPIInfo(infoNode, ctx.push("info"))
 
+	var servers []*openapi30models.Server
 	if serversNode := nodeGetValue(node, "servers"); serversNode != nil {
-		openapi.Servers, err = parseSharedServers(serversNode, ctx.push("servers"))
+		servers, err = parseSharedServers(serversNode, ctx.push("servers"))
 		if err != nil {
-			openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
+			infoErr = err // will collect below
 		}
 	}
 
 	pathsNode := nodeGetValue(node, "paths")
-	openapi.Paths, err = parseOpenAPIPaths(pathsNode, ctx.push("paths"))
-	if err != nil {
-		openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
-	}
+	paths, pathsErr := parseOpenAPIPaths(pathsNode, ctx.push("paths"))
 
 	componentsNode := nodeGetValue(node, "components")
-	openapi.Components, err = parseOpenAPIComponents(componentsNode, ctx.push("components"))
-	if err != nil {
-		openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
-	}
+	components, componentsErr := parseOpenAPIComponents(componentsNode, ctx.push("components"))
 
+	var security []openapi30models.SecurityRequirement
 	if securityNode := nodeGetValue(node, "security"); securityNode != nil {
-		openapi.Security, err = parseSharedSecurityRequirements(securityNode, ctx.push("security"))
+		security, err = parseSharedSecurityRequirements(securityNode, ctx.push("security"))
 		if err != nil {
-			openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
+			// collect below
+			_ = err
 		}
 	}
 
+	var tags []*openapi30models.Tag
 	if tagsNode := nodeGetValue(node, "tags"); tagsNode != nil {
-		openapi.Tags, err = parseSharedTags(tagsNode, ctx.push("tags"))
+		tags, err = parseSharedTags(tagsNode, ctx.push("tags"))
 		if err != nil {
-			openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
+			_ = err
 		}
 	}
 
+	var externalDocs *openapi30models.ExternalDocumentation
 	if edNode := nodeGetValue(node, "externalDocs"); edNode != nil {
-		openapi.ExternalDocs, err = parseSharedExternalDocs(edNode, ctx.push("externalDocs"))
+		externalDocs, err = parseSharedExternalDocs(edNode, ctx.push("externalDocs"))
 		if err != nil {
-			openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
+			_ = err
 		}
+	}
+
+	// Create the OpenAPI document using constructor + SetProperty for incremental fields
+	openapi := openapi30models.NewOpenAPI(version, info)
+	openapi.SetProperty("servers", servers)
+	openapi.SetProperty("paths", paths)
+	openapi.SetProperty("components", components)
+	openapi.SetProperty("security", security)
+	openapi.SetProperty("tags", tags)
+	openapi.SetProperty("externalDocs", externalDocs)
+
+	// Collect errors
+	if infoErr != nil {
+		openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(infoErr))
+	}
+	if pathsErr != nil {
+		openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(pathsErr))
+	}
+	if componentsErr != nil {
+		openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(componentsErr))
 	}
 
 	openapi.VendorExtensions = parseNodeExtensions(node)
@@ -105,8 +120,7 @@ func parseOpenAPIPaths(node *yaml.Node, ctx *ParseContext) (*openapi30models.Pat
 		return nil, ctx.errorAt(node, "paths must be an object")
 	}
 
-	paths := &openapi30models.Paths{}
-	paths.Items = make(map[string]*openapi30models.PathItem)
+	items := make(map[string]*openapi30models.PathItem)
 
 	for key, pathItemNode := range nodeMapPairs(node) {
 		// Skip extensions
@@ -118,9 +132,10 @@ func parseOpenAPIPaths(node *yaml.Node, ctx *ParseContext) (*openapi30models.Pat
 		if err != nil {
 			return nil, err
 		}
-		paths.Items[key] = pathItem
+		items[key] = pathItem
 	}
 
+	paths := openapi30models.NewPaths(items)
 	paths.VendorExtensions = parseNodeExtensions(node)
 	paths.Trix.Source = ctx.nodeSource(node)
 

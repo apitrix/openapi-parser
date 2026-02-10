@@ -24,8 +24,8 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.Len(t, result.Document.Tags, 1)
-	assert.Equal(t, "pets", result.Document.Tags[0].Name)
+	require.Len(t, result.Document.Tags(), 1)
+	assert.Equal(t, "pets", result.Document.Tags()[0].Name())
 }
 
 // --- With Description ---
@@ -42,7 +42,7 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "Everything about your Pets", result.Document.Tags[0].Description)
+	assert.Equal(t, "Everything about your Pets", result.Document.Tags()[0].Description())
 }
 
 // --- Multiple Tags ---
@@ -65,7 +65,7 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Tags, 4)
+	assert.Len(t, result.Document.Tags(), 4)
 }
 
 // --- External Docs ---
@@ -84,9 +84,9 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Tags[0].ExternalDocs)
-	assert.Equal(t, "Find out more", result.Document.Tags[0].ExternalDocs.Description)
-	assert.Equal(t, "https://example.com/pets", result.Document.Tags[0].ExternalDocs.URL)
+	require.NotNil(t, result.Document.Tags()[0].ExternalDocs())
+	assert.Equal(t, "Find out more", result.Document.Tags()[0].ExternalDocs().Description())
+	assert.Equal(t, "https://example.com/pets", result.Document.Tags()[0].ExternalDocs().URL())
 }
 
 // --- Extensions ---
@@ -104,7 +104,7 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ext := result.Document.Tags[0].VendorExtensions
+	ext := result.Document.Tags()[0].VendorExtensions
 	require.NotNil(t, ext)
 	assert.Equal(t, "Pet Operations", ext["x-displayName"])
 }
@@ -127,10 +127,10 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	tag := result.Document.Tags[0]
-	assert.Equal(t, "pets", tag.Name)
-	assert.NotEmpty(t, tag.Description)
-	require.NotNil(t, tag.ExternalDocs)
+	tag := result.Document.Tags()[0]
+	assert.Equal(t, "pets", tag.Name())
+	assert.NotEmpty(t, tag.Description())
+	require.NotNil(t, tag.ExternalDocs())
 	require.NotNil(t, tag.VendorExtensions)
 }
 
@@ -146,7 +146,7 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, result.Document.Tags)
+	assert.Empty(t, result.Document.Tags())
 }
 
 // --- Missing Tags ---
@@ -160,5 +160,5 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, result.Document.Tags)
+	assert.Empty(t, result.Document.Tags())
 }

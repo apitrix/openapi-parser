@@ -5,12 +5,16 @@ package openapi30
 type Tag struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Name         string                 `json:"name" yaml:"name"`
-	Description  string                 `json:"description,omitempty" yaml:"description,omitempty"`
-	ExternalDocs *ExternalDocumentation `json:"externalDocs,omitempty" yaml:"externalDocs,omitempty"`
+	name         string
+	description  string
+	externalDocs *ExternalDocumentation
 }
 
+func (t *Tag) Name() string                         { return t.name }
+func (t *Tag) Description() string                  { return t.description }
+func (t *Tag) ExternalDocs() *ExternalDocumentation { return t.externalDocs }
+
 // NewTag creates a new Tag instance.
-func NewTag(name string) *Tag {
-	return &Tag{Name: name}
+func NewTag(name, description string, externalDocs *ExternalDocumentation) *Tag {
+	return &Tag{name: name, description: description, externalDocs: externalDocs}
 }

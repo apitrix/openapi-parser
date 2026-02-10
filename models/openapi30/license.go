@@ -5,11 +5,17 @@ package openapi30
 type License struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Name string `json:"name" yaml:"name"`
-	URL  string `json:"url,omitempty" yaml:"url,omitempty"`
+	name string
+	url  string
 }
+
+// Name returns the license name used for the API.
+func (l *License) Name() string { return l.name }
+
+// URL returns the URL to the license used for the API.
+func (l *License) URL() string { return l.url }
 
 // NewLicense creates a new License instance.
 func NewLicense(name, url string) *License {
-	return &License{Name: name, URL: url}
+	return &License{name: name, url: url}
 }

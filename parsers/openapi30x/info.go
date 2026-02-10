@@ -16,28 +16,33 @@ func parseOpenAPIInfo(node *yaml.Node, ctx *ParseContext) (*openapi30models.Info
 		return nil, ctx.errorAt(node, "info must be an object")
 	}
 
-	info := &openapi30models.Info{}
-	var err error
+	// Parse sub-objects first
+	var errs []openapi30models.ParseError
 
-	// Simple properties - inline
-	info.Title = nodeGetString(node, "title")
-	info.Description = nodeGetString(node, "description")
-	info.TermsOfService = nodeGetString(node, "termsOfService")
-	info.Version = nodeGetString(node, "version")
-
-	// Complex properties - delegated to dedicated files
-	info.Contact, err = parseInfoContact(node, ctx)
+	contact, err := parseInfoContact(node, ctx)
 	if err != nil {
-		info.Trix.Errors = append(info.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	info.License, err = parseInfoLicense(node, ctx)
+	license, err := parseInfoLicense(node, ctx)
 	if err != nil {
-		info.Trix.Errors = append(info.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
+	// Create via constructor
+	info := openapi30models.NewInfo(
+		nodeGetString(node, "title"),
+		nodeGetString(node, "description"),
+		nodeGetString(node, "termsOfService"),
+		nodeGetString(node, "version"),
+		contact,
+		license,
+	)
+
+	// Node-level fields (VendorExtensions + Trix) are still public via embedding
 	info.VendorExtensions = parseNodeExtensions(node)
 	info.Trix.Source = ctx.nodeSource(node)
+	info.Trix.Errors = append(info.Trix.Errors, errs...)
 
 	// Detect unknown fields
 	info.Trix.Errors = append(info.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, infoKnownFieldsSet))...)

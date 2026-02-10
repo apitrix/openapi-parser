@@ -5,13 +5,18 @@ package openapi30
 type Example struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Summary       string      `json:"summary,omitempty" yaml:"summary,omitempty"`
-	Description   string      `json:"description,omitempty" yaml:"description,omitempty"`
-	Value         interface{} `json:"value,omitempty" yaml:"value,omitempty"`
-	ExternalValue string      `json:"externalValue,omitempty" yaml:"externalValue,omitempty"`
+	summary       string
+	description   string
+	value         interface{}
+	externalValue string
 }
 
+func (e *Example) Summary() string       { return e.summary }
+func (e *Example) Description() string   { return e.description }
+func (e *Example) Value() interface{}    { return e.value }
+func (e *Example) ExternalValue() string { return e.externalValue }
+
 // NewExample creates a new Example instance.
-func NewExample() *Example {
-	return &Example{}
+func NewExample(summary, description string, value interface{}, externalValue string) *Example {
+	return &Example{summary: summary, description: description, value: value, externalValue: externalValue}
 }

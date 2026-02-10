@@ -5,13 +5,18 @@ package openapi30
 type MediaType struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Schema   *SchemaRef             `json:"schema,omitempty" yaml:"schema,omitempty"`
-	Example  interface{}            `json:"example,omitempty" yaml:"example,omitempty"`
-	Examples map[string]*ExampleRef `json:"examples,omitempty" yaml:"examples,omitempty"`
-	Encoding map[string]*Encoding   `json:"encoding,omitempty" yaml:"encoding,omitempty"`
+	schema   *SchemaRef
+	example  interface{}
+	examples map[string]*ExampleRef
+	encoding map[string]*Encoding
 }
 
+func (mt *MediaType) Schema() *SchemaRef               { return mt.schema }
+func (mt *MediaType) Example() interface{}             { return mt.example }
+func (mt *MediaType) Examples() map[string]*ExampleRef { return mt.examples }
+func (mt *MediaType) Encoding() map[string]*Encoding   { return mt.encoding }
+
 // NewMediaType creates a new MediaType instance.
-func NewMediaType() *MediaType {
-	return &MediaType{}
+func NewMediaType(schema *SchemaRef, example interface{}, examples map[string]*ExampleRef, encoding map[string]*Encoding) *MediaType {
+	return &MediaType{schema: schema, example: example, examples: examples, encoding: encoding}
 }

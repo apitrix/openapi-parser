@@ -157,8 +157,8 @@ paths: {}
 		t.Fatal("expected Document to be non-nil")
 	}
 
-	if result.Document.OpenAPI != "3.0.3" {
-		t.Errorf("expected openapi 3.0.3, got %s", result.Document.OpenAPI)
+	if result.Document.OpenAPIVersion() != "3.0.3" {
+		t.Errorf("expected openapi 3.0.3, got %s", result.Document.OpenAPIVersion())
 	}
 
 	unknownErrors := filterUnknownFieldErrors(result)

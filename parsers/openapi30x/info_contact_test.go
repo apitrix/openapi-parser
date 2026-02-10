@@ -26,11 +26,11 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
-	require.NotNil(t, result.Document.Info.Contact)
-	assert.Equal(t, "Support Team", result.Document.Info.Contact.Name)
-	assert.Equal(t, "https://example.com/support", result.Document.Info.Contact.URL)
-	assert.Equal(t, "support@example.com", result.Document.Info.Contact.Email)
+	require.NotNil(t, result.Document.Info())
+	require.NotNil(t, result.Document.Info().Contact())
+	assert.Equal(t, "Support Team", result.Document.Info().Contact().Name())
+	assert.Equal(t, "https://example.com/support", result.Document.Info().Contact().URL())
+	assert.Equal(t, "support@example.com", result.Document.Info().Contact().Email())
 }
 
 // --- Missing Contact ---
@@ -44,9 +44,9 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
+	require.NotNil(t, result.Document.Info())
 	// Contact is nil when not provided
-	assert.Nil(t, result.Document.Info.Contact)
+	assert.Nil(t, result.Document.Info().Contact())
 }
 
 // --- Partial Fields ---
@@ -62,11 +62,11 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
-	require.NotNil(t, result.Document.Info.Contact)
-	assert.Equal(t, "John Doe", result.Document.Info.Contact.Name)
-	assert.Empty(t, result.Document.Info.Contact.URL)
-	assert.Empty(t, result.Document.Info.Contact.Email)
+	require.NotNil(t, result.Document.Info())
+	require.NotNil(t, result.Document.Info().Contact())
+	assert.Equal(t, "John Doe", result.Document.Info().Contact().Name())
+	assert.Empty(t, result.Document.Info().Contact().URL())
+	assert.Empty(t, result.Document.Info().Contact().Email())
 }
 
 func TestParseInfoContact_EmailOnly(t *testing.T) {
@@ -80,11 +80,11 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
-	require.NotNil(t, result.Document.Info.Contact)
-	assert.Empty(t, result.Document.Info.Contact.Name)
-	assert.Empty(t, result.Document.Info.Contact.URL)
-	assert.Equal(t, "api@example.com", result.Document.Info.Contact.Email)
+	require.NotNil(t, result.Document.Info())
+	require.NotNil(t, result.Document.Info().Contact())
+	assert.Empty(t, result.Document.Info().Contact().Name())
+	assert.Empty(t, result.Document.Info().Contact().URL())
+	assert.Equal(t, "api@example.com", result.Document.Info().Contact().Email())
 }
 
 func TestParseInfoContact_URLOnly(t *testing.T) {
@@ -98,11 +98,11 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
-	require.NotNil(t, result.Document.Info.Contact)
-	assert.Empty(t, result.Document.Info.Contact.Name)
-	assert.Equal(t, "https://example.com/contact", result.Document.Info.Contact.URL)
-	assert.Empty(t, result.Document.Info.Contact.Email)
+	require.NotNil(t, result.Document.Info())
+	require.NotNil(t, result.Document.Info().Contact())
+	assert.Empty(t, result.Document.Info().Contact().Name())
+	assert.Equal(t, "https://example.com/contact", result.Document.Info().Contact().URL())
+	assert.Empty(t, result.Document.Info().Contact().Email())
 }
 
 func TestParseInfoContact_NameAndEmail(t *testing.T) {
@@ -117,11 +117,11 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
-	require.NotNil(t, result.Document.Info.Contact)
-	assert.Equal(t, "API Support", result.Document.Info.Contact.Name)
-	assert.Empty(t, result.Document.Info.Contact.URL)
-	assert.Equal(t, "support@example.com", result.Document.Info.Contact.Email)
+	require.NotNil(t, result.Document.Info())
+	require.NotNil(t, result.Document.Info().Contact())
+	assert.Equal(t, "API Support", result.Document.Info().Contact().Name())
+	assert.Empty(t, result.Document.Info().Contact().URL())
+	assert.Equal(t, "support@example.com", result.Document.Info().Contact().Email())
 }
 
 // --- Extensions ---
@@ -140,11 +140,11 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
-	require.NotNil(t, result.Document.Info.Contact)
-	require.NotNil(t, result.Document.Info.Contact.VendorExtensions)
-	assert.Equal(t, "#api-support", result.Document.Info.Contact.VendorExtensions["x-slack"])
-	assert.Equal(t, "+1-555-0100", result.Document.Info.Contact.VendorExtensions["x-phone"])
+	require.NotNil(t, result.Document.Info())
+	require.NotNil(t, result.Document.Info().Contact())
+	require.NotNil(t, result.Document.Info().Contact().VendorExtensions)
+	assert.Equal(t, "#api-support", result.Document.Info().Contact().VendorExtensions["x-slack"])
+	assert.Equal(t, "+1-555-0100", result.Document.Info().Contact().VendorExtensions["x-phone"])
 }
 
 // --- Empty Fields ---
@@ -162,11 +162,11 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
-	require.NotNil(t, result.Document.Info.Contact)
-	assert.Empty(t, result.Document.Info.Contact.Name)
-	assert.Empty(t, result.Document.Info.Contact.URL)
-	assert.Empty(t, result.Document.Info.Contact.Email)
+	require.NotNil(t, result.Document.Info())
+	require.NotNil(t, result.Document.Info().Contact())
+	assert.Empty(t, result.Document.Info().Contact().Name())
+	assert.Empty(t, result.Document.Info().Contact().URL())
+	assert.Empty(t, result.Document.Info().Contact().Email())
 }
 
 // --- Special Characters ---
@@ -183,8 +183,8 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
-	require.NotNil(t, result.Document.Info.Contact)
-	assert.Equal(t, "José García (API Team)", result.Document.Info.Contact.Name)
-	assert.Equal(t, "jose+api@example.com", result.Document.Info.Contact.Email)
+	require.NotNil(t, result.Document.Info())
+	require.NotNil(t, result.Document.Info().Contact())
+	assert.Equal(t, "José García (API Team)", result.Document.Info().Contact().Name())
+	assert.Equal(t, "jose+api@example.com", result.Document.Info().Contact().Email())
 }

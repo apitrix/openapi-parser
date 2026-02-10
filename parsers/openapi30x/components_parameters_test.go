@@ -29,8 +29,8 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.Parameters, 1)
-	assert.Contains(t, result.Document.Components.Parameters, "LimitParam")
+	assert.Len(t, result.Document.Components().Parameters(), 1)
+	assert.Contains(t, result.Document.Components().Parameters(), "LimitParam")
 }
 
 // --- Multiple Parameters ---
@@ -61,7 +61,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.Parameters, 3)
+	assert.Len(t, result.Document.Components().Parameters(), 3)
 }
 
 // --- Empty ---
@@ -77,7 +77,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, result.Document.Components.Parameters)
+	assert.Empty(t, result.Document.Components().Parameters())
 }
 
 // --- All Locations ---
@@ -114,9 +114,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.Parameters, 4)
-	assert.Equal(t, "path", result.Document.Components.Parameters["PathParam"].Value.In)
-	assert.Equal(t, "query", result.Document.Components.Parameters["QueryParam"].Value.In)
-	assert.Equal(t, "header", result.Document.Components.Parameters["HeaderParam"].Value.In)
-	assert.Equal(t, "cookie", result.Document.Components.Parameters["CookieParam"].Value.In)
+	assert.Len(t, result.Document.Components().Parameters(), 4)
+	assert.Equal(t, "path", result.Document.Components().Parameters()["PathParam"].Value.In())
+	assert.Equal(t, "query", result.Document.Components().Parameters()["QueryParam"].Value.In())
+	assert.Equal(t, "header", result.Document.Components().Parameters()["HeaderParam"].Value.In())
+	assert.Equal(t, "cookie", result.Document.Components().Parameters()["CookieParam"].Value.In())
 }

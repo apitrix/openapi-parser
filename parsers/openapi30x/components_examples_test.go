@@ -27,8 +27,8 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.Examples, 1)
-	assert.Contains(t, result.Document.Components.Examples, "PetExample")
+	assert.Len(t, result.Document.Components().Examples(), 1)
+	assert.Contains(t, result.Document.Components().Examples(), "PetExample")
 }
 
 // --- Multiple Examples ---
@@ -53,7 +53,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.Examples, 3)
+	assert.Len(t, result.Document.Components().Examples(), 3)
 }
 
 // --- Empty ---
@@ -69,7 +69,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, result.Document.Components.Examples)
+	assert.Empty(t, result.Document.Components().Examples())
 }
 
 // --- With All Fields ---
@@ -91,7 +91,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ex := result.Document.Components.Examples["Complete"].Value
-	assert.Equal(t, "A complete example", ex.Summary)
-	assert.Equal(t, "This is a detailed description", ex.Description)
+	ex := result.Document.Components().Examples()["Complete"].Value
+	assert.Equal(t, "A complete example", ex.Summary())
+	assert.Equal(t, "This is a detailed description", ex.Description())
 }

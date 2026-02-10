@@ -33,6 +33,4 @@ This is a Go-based OpenAPI parser library that handles parsing and validation of
 ## Guidelines
 - When modifying models, ensure they conform to the official OpenAPI JSON schemas
 - Use reflection-based tests to validate struct field mappings
-- Handle JSON tags correctly (`json:"fieldName,omitempty"`)
-- Extensions (x-*) should use `map[string]any` types
-
+- Clean temporary files that you create!

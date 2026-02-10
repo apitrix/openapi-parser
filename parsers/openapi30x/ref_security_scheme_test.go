@@ -30,7 +30,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ref := result.Document.Components.SecuritySchemes["apiKey"]
+	ref := result.Document.Components().SecuritySchemes()["apiKey"]
 	assert.Equal(t, "#/components/securitySchemes/SharedApiKey", ref.Ref)
 }
 
@@ -60,10 +60,10 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.SecuritySchemes, 3)
-	assert.Equal(t, "apiKey", result.Document.Components.SecuritySchemes["apiKey"].Value.Type)
-	assert.Equal(t, "http", result.Document.Components.SecuritySchemes["bearer"].Value.Type)
-	assert.Equal(t, "oauth2", result.Document.Components.SecuritySchemes["oauth2"].Value.Type)
+	assert.Len(t, result.Document.Components().SecuritySchemes(), 3)
+	assert.Equal(t, "apiKey", result.Document.Components().SecuritySchemes()["apiKey"].Value.Type())
+	assert.Equal(t, "http", result.Document.Components().SecuritySchemes()["bearer"].Value.Type())
+	assert.Equal(t, "oauth2", result.Document.Components().SecuritySchemes()["oauth2"].Value.Type())
 }
 
 // --- Mixed Inline and Reference ---
@@ -83,8 +83,8 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := result.Document.Components.SecuritySchemes["inlineScheme"].Value
-	assert.Equal(t, "apiKey", scheme.Type)
-	assert.Equal(t, "header", scheme.In)
-	assert.Equal(t, "X-API-Key", scheme.Name)
+	scheme := result.Document.Components().SecuritySchemes()["inlineScheme"].Value
+	assert.Equal(t, "apiKey", scheme.Type())
+	assert.Equal(t, "header", scheme.In())
+	assert.Equal(t, "X-API-Key", scheme.Name())
 }

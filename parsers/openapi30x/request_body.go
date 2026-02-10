@@ -26,15 +26,15 @@ func (p *requestBodyParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi3
 		return nil, ctx.errorAt(node, "requestBody must be an object")
 	}
 
-	rb := &openapi30models.RequestBody{}
-	var err error
+	// Collect values
+	description := p.ParseDescription(node)
+	required := p.ParseRequired(node)
 
-	// Simple properties - inline
-	rb.Description = p.ParseDescription(node)
-	rb.Required = p.ParseRequired(node)
+	content, err := p.ParseContent(node, ctx)
 
-	// Complex properties - delegated to dedicated files
-	rb.Content, err = p.ParseContent(node, ctx)
+	// Create via constructor
+	rb := openapi30models.NewRequestBody(description, content, required)
+
 	if err != nil {
 		rb.Trix.Errors = append(rb.Trix.Errors, toParseError(err))
 	}

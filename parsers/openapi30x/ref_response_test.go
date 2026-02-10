@@ -31,7 +31,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ref := result.Document.Paths.Items["/pets"].Get.Responses.Codes["404"]
+	ref := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["404"]
 	assert.Equal(t, "#/components/responses/NotFound", ref.Ref)
 }
 
@@ -69,7 +69,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	codes := result.Document.Paths.Items["/pets"].Get.Responses.Codes
+	codes := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()
 	assert.Equal(t, "#/components/responses/BadRequest", codes["400"].Ref)
 	assert.Equal(t, "#/components/responses/Unauthorized", codes["401"].Ref)
 	assert.Equal(t, "#/components/responses/NotFound", codes["404"].Ref)
@@ -98,6 +98,6 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ref := result.Document.Paths.Items["/pets"].Get.Responses.Default
+	ref := result.Document.Paths().Items()["/pets"].Get().Responses().Default()
 	assert.Equal(t, "#/components/responses/Error", ref.Ref)
 }

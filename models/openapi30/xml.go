@@ -5,14 +5,20 @@ package openapi30
 type XML struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Name      string `json:"name,omitempty" yaml:"name,omitempty"`
-	Namespace string `json:"namespace,omitempty" yaml:"namespace,omitempty"`
-	Prefix    string `json:"prefix,omitempty" yaml:"prefix,omitempty"`
-	Attribute bool   `json:"attribute,omitempty" yaml:"attribute,omitempty"`
-	Wrapped   bool   `json:"wrapped,omitempty" yaml:"wrapped,omitempty"`
+	name      string
+	namespace string
+	prefix    string
+	attribute bool
+	wrapped   bool
 }
 
+func (x *XML) Name() string      { return x.name }
+func (x *XML) Namespace() string { return x.namespace }
+func (x *XML) Prefix() string    { return x.prefix }
+func (x *XML) Attribute() bool   { return x.attribute }
+func (x *XML) Wrapped() bool     { return x.wrapped }
+
 // NewXML creates a new XML instance.
-func NewXML() *XML {
-	return &XML{}
+func NewXML(name, namespace, prefix string, attribute, wrapped bool) *XML {
+	return &XML{name: name, namespace: namespace, prefix: prefix, attribute: attribute, wrapped: wrapped}
 }

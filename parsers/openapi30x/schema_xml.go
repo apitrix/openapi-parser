@@ -20,14 +20,14 @@ func (p *schemaParser) ParseXML(parent *yaml.Node, c *ParseContext) (*openapi30m
 		return nil, pctx.errorAt(node, "xml must be an object")
 	}
 
-	xml := &openapi30models.XML{}
+	// Collect values and create via constructor
+	name := nodeGetString(node, "name")
+	namespace := nodeGetString(node, "namespace")
+	prefix := nodeGetString(node, "prefix")
+	attribute := nodeGetBool(node, "attribute")
+	wrapped := nodeGetBool(node, "wrapped")
 
-	// All XML properties are simple
-	xml.Name = nodeGetString(node, "name")
-	xml.Namespace = nodeGetString(node, "namespace")
-	xml.Prefix = nodeGetString(node, "prefix")
-	xml.Attribute = nodeGetBool(node, "attribute")
-	xml.Wrapped = nodeGetBool(node, "wrapped")
+	xml := openapi30models.NewXML(name, namespace, prefix, attribute, wrapped)
 
 	xml.VendorExtensions = parseNodeExtensions(node)
 	xml.Trix.Source = pctx.nodeSource(node)

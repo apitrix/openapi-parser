@@ -32,10 +32,10 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	flows := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows
-	require.NotNil(t, flows.Implicit)
-	assert.Equal(t, "https://example.com/oauth/authorize", flows.Implicit.AuthorizationURL)
-	assert.Len(t, flows.Implicit.Scopes, 2)
+	flows := result.Document.Components().SecuritySchemes()["oauth2"].Value.Flows()
+	require.NotNil(t, flows.Implicit())
+	assert.Equal(t, "https://example.com/oauth/authorize", flows.Implicit().AuthorizationURL())
+	assert.Len(t, flows.Implicit().Scopes(), 2)
 }
 
 // --- Password Flow ---
@@ -58,9 +58,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	flows := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows
-	require.NotNil(t, flows.Password)
-	assert.Equal(t, "https://example.com/oauth/token", flows.Password.TokenURL)
+	flows := result.Document.Components().SecuritySchemes()["oauth2"].Value.Flows()
+	require.NotNil(t, flows.Password())
+	assert.Equal(t, "https://example.com/oauth/token", flows.Password().TokenURL())
 }
 
 // --- Client Credentials Flow ---
@@ -83,9 +83,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	flows := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows
-	require.NotNil(t, flows.ClientCredentials)
-	assert.Equal(t, "https://example.com/oauth/token", flows.ClientCredentials.TokenURL)
+	flows := result.Document.Components().SecuritySchemes()["oauth2"].Value.Flows()
+	require.NotNil(t, flows.ClientCredentials())
+	assert.Equal(t, "https://example.com/oauth/token", flows.ClientCredentials().TokenURL())
 }
 
 // --- Authorization Code Flow ---
@@ -111,11 +111,11 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	flows := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows
-	require.NotNil(t, flows.AuthorizationCode)
-	assert.Equal(t, "https://example.com/oauth/authorize", flows.AuthorizationCode.AuthorizationURL)
-	assert.Equal(t, "https://example.com/oauth/token", flows.AuthorizationCode.TokenURL)
-	assert.Equal(t, "https://example.com/oauth/refresh", flows.AuthorizationCode.RefreshURL)
+	flows := result.Document.Components().SecuritySchemes()["oauth2"].Value.Flows()
+	require.NotNil(t, flows.AuthorizationCode())
+	assert.Equal(t, "https://example.com/oauth/authorize", flows.AuthorizationCode().AuthorizationURL())
+	assert.Equal(t, "https://example.com/oauth/token", flows.AuthorizationCode().TokenURL())
+	assert.Equal(t, "https://example.com/oauth/refresh", flows.AuthorizationCode().RefreshURL())
 }
 
 // --- Multiple Flows ---
@@ -147,11 +147,11 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	flows := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows
-	assert.NotNil(t, flows.Implicit)
-	assert.NotNil(t, flows.Password)
-	assert.NotNil(t, flows.ClientCredentials)
-	assert.NotNil(t, flows.AuthorizationCode)
+	flows := result.Document.Components().SecuritySchemes()["oauth2"].Value.Flows()
+	assert.NotNil(t, flows.Implicit())
+	assert.NotNil(t, flows.Password())
+	assert.NotNil(t, flows.ClientCredentials())
+	assert.NotNil(t, flows.AuthorizationCode())
 }
 
 // --- Scopes ---
@@ -177,7 +177,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scopes := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows.ClientCredentials.Scopes
+	scopes := result.Document.Components().SecuritySchemes()["oauth2"].Value.Flows().ClientCredentials().Scopes()
 	assert.Len(t, scopes, 4)
 	assert.Equal(t, "Read access to resources", scopes["read"])
 }
@@ -201,7 +201,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scopes := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows.ClientCredentials.Scopes
+	scopes := result.Document.Components().SecuritySchemes()["oauth2"].Value.Flows().ClientCredentials().Scopes()
 	assert.Empty(t, scopes)
 }
 
@@ -226,7 +226,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	flows := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows
+	flows := result.Document.Components().SecuritySchemes()["oauth2"].Value.Flows()
 	require.NotNil(t, flows.VendorExtensions)
 	assert.Equal(t, "value", flows.VendorExtensions["x-custom"])
 }

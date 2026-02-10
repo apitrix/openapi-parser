@@ -26,28 +26,31 @@ func (p *linkParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30models
 		return nil, ctx.errorAt(node, "link must be an object")
 	}
 
-	link := &openapi30models.Link{}
-	var err error
+	var errors []openapi30models.ParseError
 
-	// Simple properties - inline
-	link.OperationRef = p.ParseOperationRef(node)
-	link.OperationID = p.ParseOperationID(node)
-	link.RequestBody = p.ParseRequestBody(node)
-	link.Description = p.ParseDescription(node)
+	// Simple properties
+	operationRef := p.ParseOperationRef(node)
+	operationID := p.ParseOperationID(node)
+	requestBody := p.ParseRequestBody(node)
+	description := p.ParseDescription(node)
 
 	// Complex properties - delegated to dedicated files
-	link.Parameters, err = p.ParseParameters(node, ctx)
+	parameters, err := p.ParseParameters(node, ctx)
 	if err != nil {
-		link.Trix.Errors = append(link.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
 
-	link.Server, err = p.ParseServer(node, ctx)
+	server, err := p.ParseServer(node, ctx)
 	if err != nil {
-		link.Trix.Errors = append(link.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
+
+	// Create via constructor
+	link := openapi30models.NewLink(operationRef, operationID, parameters, requestBody, description, server)
 
 	link.VendorExtensions = parseNodeExtensions(node)
 	link.Trix.Source = ctx.nodeSource(node)
+	link.Trix.Errors = append(link.Trix.Errors, errors...)
 
 	// Detect unknown fields
 	link.Trix.Errors = append(link.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, linkKnownFieldsSet))...)

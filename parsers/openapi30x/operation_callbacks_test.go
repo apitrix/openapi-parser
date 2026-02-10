@@ -34,7 +34,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	callbacks := result.Document.Paths.Items["/subscribe"].Post.Callbacks
+	callbacks := result.Document.Paths().Items()["/subscribe"].Post().Callbacks()
 	assert.Len(t, callbacks, 1)
 	assert.Contains(t, callbacks, "onEvent")
 }
@@ -74,7 +74,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Paths.Items["/subscribe"].Post.Callbacks, 3)
+	assert.Len(t, result.Document.Paths().Items()["/subscribe"].Post().Callbacks(), 3)
 }
 
 // --- No Callbacks ---
@@ -93,5 +93,5 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Nil(t, result.Document.Paths.Items["/pets"].Get.Callbacks)
+	assert.Nil(t, result.Document.Paths().Items()["/pets"].Get().Callbacks())
 }

@@ -27,8 +27,8 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.Headers, 1)
-	assert.Contains(t, result.Document.Components.Headers, "X-Rate-Limit")
+	assert.Len(t, result.Document.Components().Headers(), 1)
+	assert.Contains(t, result.Document.Components().Headers(), "X-Rate-Limit")
 }
 
 // --- Multiple Headers ---
@@ -53,7 +53,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.Headers, 3)
+	assert.Len(t, result.Document.Components().Headers(), 3)
 }
 
 // --- Empty ---
@@ -69,7 +69,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, result.Document.Components.Headers)
+	assert.Empty(t, result.Document.Components().Headers())
 }
 
 // --- With Description ---
@@ -89,6 +89,6 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	header := result.Document.Components.Headers["X-Rate-Limit"].Value
-	assert.Equal(t, "The number of allowed requests per hour", header.Description)
+	header := result.Document.Components().Headers()["X-Rate-Limit"].Value
+	assert.Equal(t, "The number of allowed requests per hour", header.Description())
 }

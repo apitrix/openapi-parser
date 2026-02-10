@@ -16,57 +16,60 @@ func parseOpenAPIComponents(node *yaml.Node, ctx *ParseContext) (*openapi30model
 		return nil, ctx.errorAt(node, "components must be an object")
 	}
 
-	components := &openapi30models.Components{}
-	var err error
+	var errors []openapi30models.ParseError
 
 	// All properties are complex (maps of refs) - delegated to dedicated files
-	components.Schemas, err = parseComponentsSchemas(node, ctx)
+	schemas, err := parseComponentsSchemas(node, ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	components.Responses, err = parseComponentsResponses(node, ctx)
+	responses, err := parseComponentsResponses(node, ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	components.Parameters, err = parseComponentsParameters(node, ctx)
+	parameters, err := parseComponentsParameters(node, ctx)
 	if err != nil {
-		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
 
-	components.Examples, err = parseComponentsExamples(node, ctx)
+	examples, err := parseComponentsExamples(node, ctx)
 	if err != nil {
-		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
 
-	components.RequestBodies, err = parseComponentsRequestBodies(node, ctx)
+	requestBodies, err := parseComponentsRequestBodies(node, ctx)
 	if err != nil {
-		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
 
-	components.Headers, err = parseComponentsHeaders(node, ctx)
+	headers, err := parseComponentsHeaders(node, ctx)
 	if err != nil {
-		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
 
-	components.SecuritySchemes, err = parseComponentsSecuritySchemes(node, ctx)
+	securitySchemes, err := parseComponentsSecuritySchemes(node, ctx)
 	if err != nil {
-		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
 
-	components.Links, err = parseComponentsLinks(node, ctx)
+	links, err := parseComponentsLinks(node, ctx)
 	if err != nil {
-		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
 
-	components.Callbacks, err = parseComponentsCallbacks(node, ctx)
+	callbacks, err := parseComponentsCallbacks(node, ctx)
 	if err != nil {
-		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
+
+	// Create via constructor
+	components := openapi30models.NewComponents(schemas, responses, parameters, examples, requestBodies, headers, securitySchemes, links, callbacks)
 
 	components.VendorExtensions = parseNodeExtensions(node)
 	components.Trix.Source = ctx.nodeSource(node)
+	components.Trix.Errors = append(components.Trix.Errors, errors...)
 
 	// Detect unknown fields
 	components.Trix.Errors = append(components.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, componentsKnownFieldsSet))...)

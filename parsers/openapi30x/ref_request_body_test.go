@@ -36,7 +36,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ref := result.Document.Paths.Items["/pets"].Post.RequestBody
+	ref := result.Document.Paths().Items()["/pets"].Post().RequestBody()
 	assert.Equal(t, "#/components/requestBodies/PetBody", ref.Ref)
 }
 
@@ -72,8 +72,8 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "#/components/requestBodies/PetBody", result.Document.Paths.Items["/pets"].Post.RequestBody.Ref)
-	assert.Equal(t, "#/components/requestBodies/PetBody", result.Document.Paths.Items["/pets/{id}"].Put.RequestBody.Ref)
+	assert.Equal(t, "#/components/requestBodies/PetBody", result.Document.Paths().Items()["/pets"].Post().RequestBody().Ref)
+	assert.Equal(t, "#/components/requestBodies/PetBody", result.Document.Paths().Items()["/pets/{id}"].Put().RequestBody().Ref)
 }
 
 // --- Different Request Bodies ---
@@ -113,6 +113,6 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "#/components/requestBodies/PetBody", result.Document.Paths.Items["/pets"].Post.RequestBody.Ref)
-	assert.Equal(t, "#/components/requestBodies/UserBody", result.Document.Paths.Items["/users"].Post.RequestBody.Ref)
+	assert.Equal(t, "#/components/requestBodies/PetBody", result.Document.Paths().Items()["/pets"].Post().RequestBody().Ref)
+	assert.Equal(t, "#/components/requestBodies/UserBody", result.Document.Paths().Items()["/users"].Post().RequestBody().Ref)
 }

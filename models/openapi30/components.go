@@ -5,18 +5,42 @@ package openapi30
 type Components struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Schemas         map[string]*SchemaRef         `json:"schemas,omitempty" yaml:"schemas,omitempty"`
-	Responses       map[string]*ResponseRef       `json:"responses,omitempty" yaml:"responses,omitempty"`
-	Parameters      map[string]*ParameterRef      `json:"parameters,omitempty" yaml:"parameters,omitempty"`
-	Examples        map[string]*ExampleRef        `json:"examples,omitempty" yaml:"examples,omitempty"`
-	RequestBodies   map[string]*RequestBodyRef    `json:"requestBodies,omitempty" yaml:"requestBodies,omitempty"`
-	Headers         map[string]*HeaderRef         `json:"headers,omitempty" yaml:"headers,omitempty"`
-	SecuritySchemes map[string]*SecuritySchemeRef `json:"securitySchemes,omitempty" yaml:"securitySchemes,omitempty"`
-	Links           map[string]*LinkRef           `json:"links,omitempty" yaml:"links,omitempty"`
-	Callbacks       map[string]*CallbackRef       `json:"callbacks,omitempty" yaml:"callbacks,omitempty"`
+	schemas         map[string]*SchemaRef
+	responses       map[string]*ResponseRef
+	parameters      map[string]*ParameterRef
+	examples        map[string]*ExampleRef
+	requestBodies   map[string]*RequestBodyRef
+	headers         map[string]*HeaderRef
+	securitySchemes map[string]*SecuritySchemeRef
+	links           map[string]*LinkRef
+	callbacks       map[string]*CallbackRef
 }
 
+func (c *Components) Schemas() map[string]*SchemaRef                 { return c.schemas }
+func (c *Components) Responses() map[string]*ResponseRef             { return c.responses }
+func (c *Components) Parameters() map[string]*ParameterRef           { return c.parameters }
+func (c *Components) Examples() map[string]*ExampleRef               { return c.examples }
+func (c *Components) RequestBodies() map[string]*RequestBodyRef      { return c.requestBodies }
+func (c *Components) Headers() map[string]*HeaderRef                 { return c.headers }
+func (c *Components) SecuritySchemes() map[string]*SecuritySchemeRef { return c.securitySchemes }
+func (c *Components) Links() map[string]*LinkRef                     { return c.links }
+func (c *Components) Callbacks() map[string]*CallbackRef             { return c.callbacks }
+
 // NewComponents creates a new Components instance.
-func NewComponents() *Components {
-	return &Components{}
+func NewComponents(
+	schemas map[string]*SchemaRef,
+	responses map[string]*ResponseRef,
+	parameters map[string]*ParameterRef,
+	examples map[string]*ExampleRef,
+	requestBodies map[string]*RequestBodyRef,
+	headers map[string]*HeaderRef,
+	securitySchemes map[string]*SecuritySchemeRef,
+	links map[string]*LinkRef,
+	callbacks map[string]*CallbackRef,
+) *Components {
+	return &Components{
+		schemas: schemas, responses: responses, parameters: parameters,
+		examples: examples, requestBodies: requestBodies, headers: headers,
+		securitySchemes: securitySchemes, links: links, callbacks: callbacks,
+	}
 }

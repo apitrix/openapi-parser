@@ -37,7 +37,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ref := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Content["application/json"].Examples["pet"]
+	ref := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Content()["application/json"].Examples()["pet"]
 	assert.Equal(t, "#/components/examples/PetExample", ref.Ref)
 }
 
@@ -69,7 +69,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ref := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value.Examples["available"]
+	ref := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value.Examples()["available"]
 	assert.Equal(t, "#/components/examples/AvailableStatus", ref.Ref)
 }
 
@@ -104,7 +104,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	examples := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Content["application/json"].Examples
+	examples := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Content()["application/json"].Examples()
 	assert.Equal(t, "#/components/examples/CatExample", examples["cat"].Ref)
 	assert.Equal(t, "#/components/examples/DogExample", examples["dog"].Ref)
 }

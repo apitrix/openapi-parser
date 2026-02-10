@@ -29,7 +29,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	mt := result.Document.Paths.Items["/upload"].Post.RequestBody.Value.Content["multipart/form-data"]
-	require.NotNil(t, mt.Encoding)
-	assert.Contains(t, mt.Encoding, "file")
+	mt := result.Document.Paths().Items()["/upload"].Post().RequestBody().Value.Content()["multipart/form-data"]
+	require.NotNil(t, mt.Encoding())
+	assert.Contains(t, mt.Encoding(), "file")
 }

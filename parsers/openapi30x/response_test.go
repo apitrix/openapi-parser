@@ -27,8 +27,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value
-	assert.Equal(t, "Successful response", resp.Description)
+	resp := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value
+	assert.Equal(t, "Successful response", resp.Description())
 }
 
 // --- Multiple Status Codes ---
@@ -59,7 +59,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	codes := result.Document.Paths.Items["/pets"].Get.Responses.Codes
+	codes := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()
 	assert.Len(t, codes, 7)
 }
 
@@ -81,9 +81,9 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	defaultResp := result.Document.Paths.Items["/pets"].Get.Responses.Default
+	defaultResp := result.Document.Paths().Items()["/pets"].Get().Responses().Default()
 	require.NotNil(t, defaultResp)
-	assert.Equal(t, "Unexpected error", defaultResp.Value.Description)
+	assert.Equal(t, "Unexpected error", defaultResp.Value.Description())
 }
 
 // --- Content Types ---
@@ -115,7 +115,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	content := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Content
+	content := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Content()
 	assert.Len(t, content, 4)
 }
 
@@ -148,7 +148,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	headers := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers
+	headers := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()
 	assert.Len(t, headers, 3)
 }
 
@@ -175,7 +175,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	links := result.Document.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links
+	links := result.Document.Paths().Items()["/users/{id}"].Get().Responses().Codes()["200"].Value.Links()
 	assert.Len(t, links, 2)
 }
 
@@ -203,7 +203,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp404 := result.Document.Paths.Items["/pets"].Get.Responses.Codes["404"]
+	resp404 := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["404"]
 	assert.Equal(t, "#/components/responses/NotFound", resp404.Ref)
 }
 
@@ -225,7 +225,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value
+	resp := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value
 	require.NotNil(t, resp.VendorExtensions)
 	assert.Equal(t, "value", resp.VendorExtensions["x-custom"])
 }
@@ -259,11 +259,11 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value
-	assert.NotEmpty(t, resp.Description)
-	assert.NotEmpty(t, resp.Headers)
-	assert.NotEmpty(t, resp.Content)
-	assert.NotEmpty(t, resp.Links)
+	resp := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value
+	assert.NotEmpty(t, resp.Description())
+	assert.NotEmpty(t, resp.Headers())
+	assert.NotEmpty(t, resp.Content())
+	assert.NotEmpty(t, resp.Links())
 }
 
 // --- Wildcard Status Codes ---
@@ -286,7 +286,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	codes := result.Document.Paths.Items["/pets"].Get.Responses.Codes
+	codes := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()
 	assert.Contains(t, codes, "2XX")
 	assert.Contains(t, codes, "4XX")
 	assert.Contains(t, codes, "5XX")

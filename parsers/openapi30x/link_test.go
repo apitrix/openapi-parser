@@ -30,9 +30,9 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	link := result.Document.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links["GetUser"].Value
+	link := result.Document.Paths().Items()["/users/{id}"].Get().Responses().Codes()["200"].Value.Links()["GetUser"].Value
 	require.NotNil(t, link)
-	assert.Equal(t, "getUser", link.OperationID)
+	assert.Equal(t, "getUser", link.OperationID())
 }
 
 // --- OperationRef ---
@@ -54,8 +54,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	link := result.Document.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links["GetUserPets"].Value
-	assert.Equal(t, "#/paths/~1pets~1{petId}/get", link.OperationRef)
+	link := result.Document.Paths().Items()["/users/{id}"].Get().Responses().Codes()["200"].Value.Links()["GetUserPets"].Value
+	assert.Equal(t, "#/paths/~1pets~1{petId}/get", link.OperationRef())
 }
 
 // --- Parameters ---
@@ -80,10 +80,10 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	link := result.Document.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links["GetUserPets"].Value
-	assert.Len(t, link.Parameters, 2)
-	assert.Contains(t, link.Parameters, "userId")
-	assert.Contains(t, link.Parameters, "limit")
+	link := result.Document.Paths().Items()["/users/{id}"].Get().Responses().Codes()["200"].Value.Links()["GetUserPets"].Value
+	assert.Len(t, link.Parameters(), 2)
+	assert.Contains(t, link.Parameters(), "userId")
+	assert.Contains(t, link.Parameters(), "limit")
 }
 
 // --- RequestBody ---
@@ -106,8 +106,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	link := result.Document.Paths.Items["/users"].Post.Responses.Codes["201"].Value.Links["UpdateUser"].Value
-	assert.Equal(t, "$response.body", link.RequestBody)
+	link := result.Document.Paths().Items()["/users"].Post().Responses().Codes()["201"].Value.Links()["UpdateUser"].Value
+	assert.Equal(t, "$response.body", link.RequestBody())
 }
 
 // --- Description ---
@@ -130,8 +130,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	link := result.Document.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links["GetUserPets"].Value
-	assert.Equal(t, "Retrieves the pets owned by this user", link.Description)
+	link := result.Document.Paths().Items()["/users/{id}"].Get().Responses().Codes()["200"].Value.Links()["GetUserPets"].Value
+	assert.Equal(t, "Retrieves the pets owned by this user", link.Description())
 }
 
 // --- Server ---
@@ -156,9 +156,9 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	link := result.Document.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links["GetUserPets"].Value
-	require.NotNil(t, link.Server)
-	assert.Equal(t, "https://pets.example.com", link.Server.URL)
+	link := result.Document.Paths().Items()["/users/{id}"].Get().Responses().Codes()["200"].Value.Links()["GetUserPets"].Value
+	require.NotNil(t, link.Server())
+	assert.Equal(t, "https://pets.example.com", link.Server().URL())
 }
 
 // --- Multiple Links ---
@@ -184,7 +184,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	links := result.Document.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links
+	links := result.Document.Paths().Items()["/users/{id}"].Get().Responses().Codes()["200"].Value.Links()
 	assert.Len(t, links, 3)
 }
 
@@ -211,7 +211,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	linkRef := result.Document.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links["GetUserPets"]
+	linkRef := result.Document.Paths().Items()["/users/{id}"].Get().Responses().Codes()["200"].Value.Links()["GetUserPets"]
 	assert.Equal(t, "#/components/links/GetUserPets", linkRef.Ref)
 }
 
@@ -235,7 +235,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	link := result.Document.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value.Links["GetUserPets"].Value
+	link := result.Document.Paths().Items()["/users/{id}"].Get().Responses().Codes()["200"].Value.Links()["GetUserPets"].Value
 	require.NotNil(t, link.VendorExtensions)
 	assert.Equal(t, "value", link.VendorExtensions["x-custom"])
 }

@@ -5,12 +5,13 @@ package openapi30
 type Callback struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	// Paths maps runtime expressions to PathItem objects.
-	// The key is a runtime expression that identifies the URL to use for the callback request.
-	Paths map[string]*PathItem `json:"-" yaml:"-"`
+	// paths maps runtime expressions to PathItem objects.
+	paths map[string]*PathItem
 }
 
+func (c *Callback) Paths() map[string]*PathItem { return c.paths }
+
 // NewCallback creates a new Callback instance.
-func NewCallback() *Callback {
-	return &Callback{}
+func NewCallback(paths map[string]*PathItem) *Callback {
+	return &Callback{paths: paths}
 }

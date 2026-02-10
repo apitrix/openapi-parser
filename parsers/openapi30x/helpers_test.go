@@ -25,8 +25,8 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "Test Title", result.Document.Info.Title)
-	assert.Equal(t, "Test Description", result.Document.Info.Description)
+	assert.Equal(t, "Test Title", result.Document.Info().Title())
+	assert.Equal(t, "Test Description", result.Document.Info().Description())
 }
 
 func TestHelpers_BoolParsing(t *testing.T) {
@@ -46,11 +46,11 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["Test"].Value
-	assert.True(t, schema.Deprecated)
-	assert.True(t, schema.Nullable)
-	assert.False(t, schema.ReadOnly)
-	assert.False(t, schema.WriteOnly)
+	schema := result.Document.Components().Schemas()["Test"].Value
+	assert.True(t, schema.Deprecated())
+	assert.True(t, schema.Nullable())
+	assert.False(t, schema.ReadOnly())
+	assert.False(t, schema.WriteOnly())
 }
 
 func TestHelpers_IntParsing(t *testing.T) {
@@ -68,11 +68,11 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["Test"].Value
-	require.NotNil(t, schema.MinLength)
-	require.NotNil(t, schema.MaxLength)
-	assert.Equal(t, uint64(5), *schema.MinLength)
-	assert.Equal(t, uint64(100), *schema.MaxLength)
+	schema := result.Document.Components().Schemas()["Test"].Value
+	require.NotNil(t, schema.MinLength())
+	require.NotNil(t, schema.MaxLength())
+	assert.Equal(t, uint64(5), *schema.MinLength())
+	assert.Equal(t, uint64(100), *schema.MaxLength())
 }
 
 func TestHelpers_FloatParsing(t *testing.T) {
@@ -91,13 +91,13 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["Test"].Value
-	require.NotNil(t, schema.Minimum)
-	require.NotNil(t, schema.Maximum)
-	require.NotNil(t, schema.MultipleOf)
-	assert.Equal(t, 0.5, *schema.Minimum)
-	assert.Equal(t, 99.9, *schema.Maximum)
-	assert.Equal(t, 0.1, *schema.MultipleOf)
+	schema := result.Document.Components().Schemas()["Test"].Value
+	require.NotNil(t, schema.Minimum())
+	require.NotNil(t, schema.Maximum())
+	require.NotNil(t, schema.MultipleOf())
+	assert.Equal(t, 0.5, *schema.Minimum())
+	assert.Equal(t, 99.9, *schema.Maximum())
+	assert.Equal(t, 0.1, *schema.MultipleOf())
 }
 
 func TestHelpers_ArrayParsing(t *testing.T) {
@@ -117,11 +117,11 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["Test"].Value
-	assert.Len(t, schema.Required, 3)
-	assert.Contains(t, schema.Required, "id")
-	assert.Contains(t, schema.Required, "name")
-	assert.Contains(t, schema.Required, "status")
+	schema := result.Document.Components().Schemas()["Test"].Value
+	assert.Len(t, schema.Required(), 3)
+	assert.Contains(t, schema.Required(), "id")
+	assert.Contains(t, schema.Required(), "name")
+	assert.Contains(t, schema.Required(), "status")
 }
 
 func TestHelpers_MapParsing(t *testing.T) {
@@ -144,7 +144,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	props := result.Document.Components.Schemas["Test"].Value.Properties
+	props := result.Document.Components().Schemas()["Test"].Value.Properties()
 	assert.Len(t, props, 3)
 	assert.Contains(t, props, "a")
 	assert.Contains(t, props, "b")
@@ -168,7 +168,7 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ext := result.Document.Info.VendorExtensions
+	ext := result.Document.Info().VendorExtensions
 	assert.Equal(t, "value", ext["x-string"])
 	assert.Equal(t, 42, ext["x-number"])
 	assert.Equal(t, true, ext["x-bool"])
@@ -192,7 +192,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	enum := result.Document.Components.Schemas["Status"].Value.Enum
+	enum := result.Document.Components().Schemas()["Status"].Value.Enum()
 	assert.Len(t, enum, 4)
 }
 
@@ -216,7 +216,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "hello", result.Document.Components.Schemas["StringDefault"].Value.Default)
-	assert.Equal(t, 42, result.Document.Components.Schemas["IntDefault"].Value.Default)
-	assert.Equal(t, true, result.Document.Components.Schemas["BoolDefault"].Value.Default)
+	assert.Equal(t, "hello", result.Document.Components().Schemas()["StringDefault"].Value.Default())
+	assert.Equal(t, 42, result.Document.Components().Schemas()["IntDefault"].Value.Default())
+	assert.Equal(t, true, result.Document.Components().Schemas()["BoolDefault"].Value.Default())
 }

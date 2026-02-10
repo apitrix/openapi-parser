@@ -5,13 +5,18 @@ package openapi30
 type OAuthFlow struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	AuthorizationURL string            `json:"authorizationUrl,omitempty" yaml:"authorizationUrl,omitempty"`
-	TokenURL         string            `json:"tokenUrl,omitempty" yaml:"tokenUrl,omitempty"`
-	RefreshURL       string            `json:"refreshUrl,omitempty" yaml:"refreshUrl,omitempty"`
-	Scopes           map[string]string `json:"scopes" yaml:"scopes"`
+	authorizationURL string
+	tokenURL         string
+	refreshURL       string
+	scopes           map[string]string
 }
 
+func (f *OAuthFlow) AuthorizationURL() string  { return f.authorizationURL }
+func (f *OAuthFlow) TokenURL() string          { return f.tokenURL }
+func (f *OAuthFlow) RefreshURL() string        { return f.refreshURL }
+func (f *OAuthFlow) Scopes() map[string]string { return f.scopes }
+
 // NewOAuthFlow creates a new OAuthFlow instance.
-func NewOAuthFlow() *OAuthFlow {
-	return &OAuthFlow{}
+func NewOAuthFlow(authorizationURL, tokenURL, refreshURL string, scopes map[string]string) *OAuthFlow {
+	return &OAuthFlow{authorizationURL: authorizationURL, tokenURL: tokenURL, refreshURL: refreshURL, scopes: scopes}
 }

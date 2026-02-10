@@ -18,12 +18,14 @@ func parseInfoLicense(parent *yaml.Node, ctx *ParseContext) (*openapi30models.Li
 	}
 
 	lctx := ctx.push("license")
-	license := &openapi30models.License{}
 
-	// All properties are simple - inline
-	license.Name = nodeGetString(node, "name")
-	license.URL = nodeGetString(node, "url")
+	// Create via constructor
+	license := openapi30models.NewLicense(
+		nodeGetString(node, "name"),
+		nodeGetString(node, "url"),
+	)
 
+	// Node-level fields
 	license.VendorExtensions = parseNodeExtensions(node)
 	license.Trix.Source = lctx.nodeSource(node)
 

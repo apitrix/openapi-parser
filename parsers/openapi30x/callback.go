@@ -26,17 +26,20 @@ func (p *callbackParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30mo
 		return nil, ctx.errorAt(node, "callback must be an object")
 	}
 
-	callback := &openapi30models.Callback{}
-	var err error
+	var errors []openapi30models.ParseError
 
 	// Callbacks are maps of expression -> PathItem
-	callback.Paths, err = p.ParsePaths(node, ctx)
+	paths, err := p.ParsePaths(node, ctx)
 	if err != nil {
-		callback.Trix.Errors = append(callback.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
+
+	// Create via constructor
+	callback := openapi30models.NewCallback(paths)
 
 	callback.VendorExtensions = parseNodeExtensions(node)
 	callback.Trix.Source = ctx.nodeSource(node)
+	callback.Trix.Errors = append(callback.Trix.Errors, errors...)
 
 	return callback, nil
 }

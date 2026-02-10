@@ -25,8 +25,8 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	vars := result.Document.Servers[0].Variables
+	vars := result.Document.Servers()[0].Variables()
 	require.NotNil(t, vars)
 	assert.Contains(t, vars, "env")
-	assert.Equal(t, "prod", vars["env"].Default)
+	assert.Equal(t, "prod", vars["env"].Default())
 }

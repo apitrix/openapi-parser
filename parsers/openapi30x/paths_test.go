@@ -22,7 +22,7 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, result.Document.Paths.Items)
+	assert.Empty(t, result.Document.Paths().Items())
 }
 
 // --- Single Path ---
@@ -41,8 +41,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Paths.Items, 1)
-	assert.Contains(t, result.Document.Paths.Items, "/pets")
+	assert.Len(t, result.Document.Paths().Items(), 1)
+	assert.Contains(t, result.Document.Paths().Items(), "/pets")
 }
 
 // --- Multiple Paths ---
@@ -76,7 +76,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Paths.Items, 4)
+	assert.Len(t, result.Document.Paths().Items(), 4)
 }
 
 // --- Path Templates ---
@@ -105,9 +105,9 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Paths.Items, 3)
-	assert.Contains(t, result.Document.Paths.Items, "/users/{userId}")
-	assert.Contains(t, result.Document.Paths.Items, "/users/{userId}/pets/{petId}")
+	assert.Len(t, result.Document.Paths().Items(), 3)
+	assert.Contains(t, result.Document.Paths().Items(), "/users/{userId}")
+	assert.Contains(t, result.Document.Paths().Items(), "/users/{userId}/pets/{petId}")
 }
 
 // --- Special Characters ---
@@ -131,8 +131,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Contains(t, result.Document.Paths.Items, "/api/v1/pets")
-	assert.Contains(t, result.Document.Paths.Items, "/api/v2.0/pets")
+	assert.Contains(t, result.Document.Paths().Items(), "/api/v1/pets")
+	assert.Contains(t, result.Document.Paths().Items(), "/api/v2.0/pets")
 }
 
 // --- Extensions ---
@@ -152,6 +152,6 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Paths.VendorExtensions)
-	assert.Equal(t, "value", result.Document.Paths.VendorExtensions["x-custom"])
+	require.NotNil(t, result.Document.Paths().VendorExtensions)
+	assert.Equal(t, "value", result.Document.Paths().VendorExtensions["x-custom"])
 }

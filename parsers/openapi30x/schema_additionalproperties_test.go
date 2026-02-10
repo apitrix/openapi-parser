@@ -25,9 +25,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["Open"].Value
-	require.NotNil(t, schema.AdditionalPropertiesAllowed)
-	assert.True(t, *schema.AdditionalPropertiesAllowed)
+	schema := result.Document.Components().Schemas()["Open"].Value
+	require.NotNil(t, schema.AdditionalPropertiesAllowed())
+	assert.True(t, *schema.AdditionalPropertiesAllowed())
 }
 
 func TestParseSchemaAdditionalProperties_False(t *testing.T) {
@@ -44,9 +44,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["Closed"].Value
-	require.NotNil(t, schema.AdditionalPropertiesAllowed)
-	assert.False(t, *schema.AdditionalPropertiesAllowed)
+	schema := result.Document.Components().Schemas()["Closed"].Value
+	require.NotNil(t, schema.AdditionalPropertiesAllowed())
+	assert.False(t, *schema.AdditionalPropertiesAllowed())
 }
 
 func TestParseSchemaAdditionalProperties_Schema(t *testing.T) {
@@ -64,9 +64,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["StringMap"].Value
-	require.NotNil(t, schema.AdditionalProperties)
-	assert.Equal(t, "string", schema.AdditionalProperties.Value.Type)
+	schema := result.Document.Components().Schemas()["StringMap"].Value
+	require.NotNil(t, schema.AdditionalProperties())
+	assert.Equal(t, "string", schema.AdditionalProperties().Value.Type())
 }
 
 func TestParseSchemaAdditionalProperties_ComplexSchema(t *testing.T) {
@@ -89,11 +89,11 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["ObjectMap"].Value
-	require.NotNil(t, schema.AdditionalProperties)
-	addProps := schema.AdditionalProperties.Value
-	assert.Equal(t, "object", addProps.Type)
-	assert.Len(t, addProps.Properties, 2)
+	schema := result.Document.Components().Schemas()["ObjectMap"].Value
+	require.NotNil(t, schema.AdditionalProperties())
+	addProps := schema.AdditionalProperties().Value
+	assert.Equal(t, "object", addProps.Type())
+	assert.Len(t, addProps.Properties(), 2)
 }
 
 func TestParseSchemaAdditionalProperties_Reference(t *testing.T) {
@@ -113,9 +113,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["PetMap"].Value
-	require.NotNil(t, schema.AdditionalProperties)
-	assert.Equal(t, "#/components/schemas/Pet", schema.AdditionalProperties.Ref)
+	schema := result.Document.Components().Schemas()["PetMap"].Value
+	require.NotNil(t, schema.AdditionalProperties())
+	assert.Equal(t, "#/components/schemas/Pet", schema.AdditionalProperties().Ref)
 }
 
 func TestParseSchemaAdditionalProperties_Missing(t *testing.T) {
@@ -131,9 +131,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["NoAddProps"].Value
-	assert.Nil(t, schema.AdditionalProperties)
-	assert.Nil(t, schema.AdditionalPropertiesAllowed)
+	schema := result.Document.Components().Schemas()["NoAddProps"].Value
+	assert.Nil(t, schema.AdditionalProperties())
+	assert.Nil(t, schema.AdditionalPropertiesAllowed())
 }
 
 func TestParseSchemaAdditionalProperties_WithProperties(t *testing.T) {
@@ -154,10 +154,10 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["Mixed"].Value
+	schema := result.Document.Components().Schemas()["Mixed"].Value
 	// Has named properties
-	assert.Len(t, schema.Properties, 1)
+	assert.Len(t, schema.Properties(), 1)
 	// And additional properties schema
-	require.NotNil(t, schema.AdditionalProperties)
-	assert.Equal(t, "integer", schema.AdditionalProperties.Value.Type)
+	require.NotNil(t, schema.AdditionalProperties())
+	assert.Equal(t, "integer", schema.AdditionalProperties().Value.Type())
 }

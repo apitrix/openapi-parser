@@ -35,9 +35,9 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	enc := result.Document.Paths.Items["/upload"].Post.RequestBody.Value.Content["multipart/form-data"].Encoding["file"]
+	enc := result.Document.Paths().Items()["/upload"].Post().RequestBody().Value.Content()["multipart/form-data"].Encoding()["file"]
 	require.NotNil(t, enc)
-	assert.Equal(t, "application/octet-stream", enc.ContentType)
+	assert.Equal(t, "application/octet-stream", enc.ContentType())
 }
 
 // --- Multiple Encodings ---
@@ -68,7 +68,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	enc := result.Document.Paths.Items["/upload"].Post.RequestBody.Value.Content["multipart/form-data"].Encoding
+	enc := result.Document.Paths().Items()["/upload"].Post().RequestBody().Value.Content()["multipart/form-data"].Encoding()
 	assert.Len(t, enc, 3)
 }
 
@@ -103,8 +103,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	enc := result.Document.Paths.Items["/upload"].Post.RequestBody.Value.Content["multipart/form-data"].Encoding["file"]
-	assert.Len(t, enc.Headers, 2)
+	enc := result.Document.Paths().Items()["/upload"].Post().RequestBody().Value.Content()["multipart/form-data"].Encoding()["file"]
+	assert.Len(t, enc.Headers(), 2)
 }
 
 // --- Style and Explode ---
@@ -132,10 +132,10 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	enc := result.Document.Paths.Items["/upload"].Post.RequestBody.Value.Content["application/x-www-form-urlencoded"].Encoding["tags"]
-	assert.Equal(t, "form", enc.Style)
-	require.NotNil(t, enc.Explode)
-	assert.True(t, *enc.Explode)
+	enc := result.Document.Paths().Items()["/upload"].Post().RequestBody().Value.Content()["application/x-www-form-urlencoded"].Encoding()["tags"]
+	assert.Equal(t, "form", enc.Style())
+	require.NotNil(t, enc.Explode())
+	assert.True(t, *enc.Explode())
 }
 
 // --- AllowReserved ---
@@ -162,8 +162,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	enc := result.Document.Paths.Items["/upload"].Post.RequestBody.Value.Content["application/x-www-form-urlencoded"].Encoding["path"]
-	assert.True(t, enc.AllowReserved)
+	enc := result.Document.Paths().Items()["/upload"].Post().RequestBody().Value.Content()["application/x-www-form-urlencoded"].Encoding()["path"]
+	assert.True(t, enc.AllowReserved())
 }
 
 // --- Extensions ---
@@ -191,7 +191,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	enc := result.Document.Paths.Items["/upload"].Post.RequestBody.Value.Content["multipart/form-data"].Encoding["file"]
+	enc := result.Document.Paths().Items()["/upload"].Post().RequestBody().Value.Content()["multipart/form-data"].Encoding()["file"]
 	require.NotNil(t, enc.VendorExtensions)
 	assert.Equal(t, "value", enc.VendorExtensions["x-custom"])
 }
@@ -217,6 +217,6 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	enc := result.Document.Paths.Items["/pets"].Post.RequestBody.Value.Content["application/json"].Encoding
+	enc := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value.Content()["application/json"].Encoding()
 	assert.Empty(t, enc)
 }

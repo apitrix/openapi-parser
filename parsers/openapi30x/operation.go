@@ -21,54 +21,57 @@ func parseOpenAPIPathsPathItemOperation(parent *yaml.Node, method string, ctx *P
 	}
 
 	opCtx := ctx.push(method)
-	op := &openapi30models.Operation{}
-	var err error
+	var errors []openapi30models.ParseError
 
-	// Simple properties - inline
-	op.Tags = nodeGetStringSlice(node, "tags")
-	op.Summary = nodeGetString(node, "summary")
-	op.Description = nodeGetString(node, "description")
-	op.OperationID = nodeGetString(node, "operationId")
-	op.Deprecated = nodeGetBool(node, "deprecated")
+	// Simple properties
+	tags := nodeGetStringSlice(node, "tags")
+	summary := nodeGetString(node, "summary")
+	description := nodeGetString(node, "description")
+	operationID := nodeGetString(node, "operationId")
+	deprecated := nodeGetBool(node, "deprecated")
 
 	// Complex properties - delegated to dedicated files
-	op.ExternalDocs, err = parseOperationExternalDocs(node, opCtx)
+	externalDocs, err := parseOperationExternalDocs(node, opCtx)
 	if err != nil {
-		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
 
-	op.Parameters, err = parseOperationParameters(node, opCtx)
+	parameters, err := parseOperationParameters(node, opCtx)
 	if err != nil {
-		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
 
-	op.RequestBody, err = parseOperationRequestBody(node, opCtx)
+	requestBody, err := parseOperationRequestBody(node, opCtx)
 	if err != nil {
-		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
 
-	op.Responses, err = parseOperationResponses(node, opCtx)
+	responses, err := parseOperationResponses(node, opCtx)
 	if err != nil {
-		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
 
-	op.Callbacks, err = parseOperationCallbacks(node, opCtx)
+	callbacks, err := parseOperationCallbacks(node, opCtx)
 	if err != nil {
-		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
 
-	op.Security, err = parseOperationSecurity(node, opCtx)
+	security, err := parseOperationSecurity(node, opCtx)
 	if err != nil {
-		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
 
-	op.Servers, err = parseOperationServers(node, opCtx)
+	servers, err := parseOperationServers(node, opCtx)
 	if err != nil {
-		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
+
+	// Create via constructor
+	op := openapi30models.NewOperation(tags, summary, description, externalDocs, operationID, parameters, requestBody, responses, callbacks, deprecated, security, servers)
 
 	op.VendorExtensions = parseNodeExtensions(node)
 	op.Trix.Source = opCtx.nodeSource(node)
+	op.Trix.Errors = append(op.Trix.Errors, errors...)
 
 	// Detect unknown fields
 	op.Trix.Errors = append(op.Trix.Errors, unknownFieldParseErrors(opCtx.detectUnknown(node, operationKnownFieldsSet))...)

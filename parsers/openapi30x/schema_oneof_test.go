@@ -32,7 +32,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	oneOf := result.Document.Components.Schemas["Pet"].Value.OneOf
+	oneOf := result.Document.Components().Schemas()["Pet"].Value.OneOf()
 	assert.Len(t, oneOf, 2)
 }
 
@@ -55,7 +55,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	oneOf := result.Document.Components.Schemas["Pet"].Value.OneOf
+	oneOf := result.Document.Components().Schemas()["Pet"].Value.OneOf()
 	assert.Len(t, oneOf, 2)
 	assert.Equal(t, "#/components/schemas/Cat", oneOf[0].Ref)
 	assert.Equal(t, "#/components/schemas/Dog", oneOf[1].Ref)
@@ -74,7 +74,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	oneOf := result.Document.Components.Schemas["Simple"].Value.OneOf
+	oneOf := result.Document.Components().Schemas()["Simple"].Value.OneOf()
 	assert.Nil(t, oneOf)
 }
 
@@ -99,10 +99,10 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["Pet"].Value
-	assert.Len(t, schema.OneOf, 2)
-	require.NotNil(t, schema.Discriminator)
-	assert.Equal(t, "petType", schema.Discriminator.PropertyName)
+	schema := result.Document.Components().Schemas()["Pet"].Value
+	assert.Len(t, schema.OneOf(), 2)
+	require.NotNil(t, schema.Discriminator())
+	assert.Equal(t, "petType", schema.Discriminator().PropertyName())
 }
 
 func TestParseSchemaOneOf_ManyOptions(t *testing.T) {
@@ -125,6 +125,6 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	oneOf := result.Document.Components.Schemas["Value"].Value.OneOf
+	oneOf := result.Document.Components().Schemas()["Value"].Value.OneOf()
 	assert.Len(t, oneOf, 5)
 }

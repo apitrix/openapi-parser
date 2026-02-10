@@ -22,8 +22,8 @@ func parseSharedResponses(node *yaml.Node, ctx *ParseContext) (*openapi30models.
 		return nil, ctx.errorAt(node, "responses must be an object")
 	}
 
-	responses := &openapi30models.Responses{}
-	responses.Codes = make(map[string]*openapi30models.ResponseRef)
+	var defaultResp *openapi30models.ResponseRef
+	codes := make(map[string]*openapi30models.ResponseRef)
 
 	for key, valueNode := range nodeMapPairs(node) {
 		// Skip extensions
@@ -32,19 +32,22 @@ func parseSharedResponses(node *yaml.Node, ctx *ParseContext) (*openapi30models.
 		}
 
 		if key == "default" {
-			defaultResp, err := parseResponseRef(valueNode, ctx.push("default"))
+			resp, err := parseResponseRef(valueNode, ctx.push("default"))
 			if err != nil {
 				return nil, err
 			}
-			responses.Default = defaultResp
+			defaultResp = resp
 		} else if httpStatusCodePattern.MatchString(key) {
 			resp, err := parseResponseRef(valueNode, ctx.push(key))
 			if err != nil {
 				return nil, err
 			}
-			responses.Codes[key] = resp
+			codes[key] = resp
 		}
 	}
+
+	// Create via constructor
+	responses := openapi30models.NewResponses(defaultResp, codes)
 
 	responses.VendorExtensions = parseNodeExtensions(node)
 	responses.Trix.Source = ctx.nodeSource(node)

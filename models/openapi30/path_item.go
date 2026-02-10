@@ -5,22 +5,45 @@ package openapi30
 type PathItem struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Ref         string          `json:"$ref,omitempty" yaml:"$ref,omitempty"`
-	Summary     string          `json:"summary,omitempty" yaml:"summary,omitempty"`
-	Description string          `json:"description,omitempty" yaml:"description,omitempty"`
-	Get         *Operation      `json:"get,omitempty" yaml:"get,omitempty"`
-	Put         *Operation      `json:"put,omitempty" yaml:"put,omitempty"`
-	Post        *Operation      `json:"post,omitempty" yaml:"post,omitempty"`
-	Delete      *Operation      `json:"delete,omitempty" yaml:"delete,omitempty"`
-	Options     *Operation      `json:"options,omitempty" yaml:"options,omitempty"`
-	Head        *Operation      `json:"head,omitempty" yaml:"head,omitempty"`
-	Patch       *Operation      `json:"patch,omitempty" yaml:"patch,omitempty"`
-	Trace       *Operation      `json:"trace,omitempty" yaml:"trace,omitempty"`
-	Servers     []*Server       `json:"servers,omitempty" yaml:"servers,omitempty"`
-	Parameters  []*ParameterRef `json:"parameters,omitempty" yaml:"parameters,omitempty"`
+	ref         string
+	summary     string
+	description string
+	get         *Operation
+	put         *Operation
+	post        *Operation
+	delete      *Operation
+	options     *Operation
+	head        *Operation
+	patch       *Operation
+	trace       *Operation
+	servers     []*Server
+	parameters  []*ParameterRef
 }
 
+func (pi *PathItem) Ref() string                 { return pi.ref }
+func (pi *PathItem) Summary() string             { return pi.summary }
+func (pi *PathItem) Description() string         { return pi.description }
+func (pi *PathItem) Get() *Operation             { return pi.get }
+func (pi *PathItem) Put() *Operation             { return pi.put }
+func (pi *PathItem) Post() *Operation            { return pi.post }
+func (pi *PathItem) Delete() *Operation          { return pi.delete }
+func (pi *PathItem) Options() *Operation         { return pi.options }
+func (pi *PathItem) Head() *Operation            { return pi.head }
+func (pi *PathItem) Patch() *Operation           { return pi.patch }
+func (pi *PathItem) Trace() *Operation           { return pi.trace }
+func (pi *PathItem) Servers() []*Server          { return pi.servers }
+func (pi *PathItem) Parameters() []*ParameterRef { return pi.parameters }
+
 // NewPathItem creates a new PathItem instance.
-func NewPathItem() *PathItem {
-	return &PathItem{}
+func NewPathItem(
+	ref, summary, description string,
+	get, put, post, del, options, head, patch, trace *Operation,
+	servers []*Server, parameters []*ParameterRef,
+) *PathItem {
+	return &PathItem{
+		ref: ref, summary: summary, description: description,
+		get: get, put: put, post: post, delete: del,
+		options: options, head: head, patch: patch, trace: trace,
+		servers: servers, parameters: parameters,
+	}
 }

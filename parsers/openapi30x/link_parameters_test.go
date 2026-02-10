@@ -23,8 +23,8 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	link := result.Document.Components.Links["GetUser"].Value
-	require.NotNil(t, link.Parameters)
-	assert.Contains(t, link.Parameters, "userId")
-	assert.Contains(t, link.Parameters, "format")
+	link := result.Document.Components().Links()["GetUser"].Value
+	require.NotNil(t, link.Parameters())
+	assert.Contains(t, link.Parameters(), "userId")
+	assert.Contains(t, link.Parameters(), "format")
 }

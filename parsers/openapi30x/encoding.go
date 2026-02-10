@@ -26,17 +26,17 @@ func (p *encodingParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi30mo
 		return nil, ctx.errorAt(node, "encoding must be an object")
 	}
 
-	enc := &openapi30models.Encoding{}
-	var err error
+	// Collect values
+	contentType := p.ParseContentType(node)
+	style := p.ParseStyle(node)
+	explode := p.ParseExplode(node)
+	allowReserved := p.ParseAllowReserved(node)
 
-	// Simple properties - inline
-	enc.ContentType = p.ParseContentType(node)
-	enc.Style = p.ParseStyle(node)
-	enc.Explode = p.ParseExplode(node)
-	enc.AllowReserved = p.ParseAllowReserved(node)
+	headers, err := p.ParseHeaders(node, ctx)
 
-	// Complex properties - delegated to dedicated files
-	enc.Headers, err = p.ParseHeaders(node, ctx)
+	// Create via constructor
+	enc := openapi30models.NewEncoding(contentType, headers, style, explode, allowReserved)
+
 	if err != nil {
 		enc.Trix.Errors = append(enc.Trix.Errors, toParseError(err))
 	}

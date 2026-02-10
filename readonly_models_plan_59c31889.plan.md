@@ -1,21 +1,18 @@
 ---
 name: Readonly Models Plan
-overview: Convert all model struct fields to private with public getter methods, making models readonly after construction. Implement background ref resolution so Parse() returns immediately while refs resolve concurrently.
+overview: Convert all model struct fields to private with public getter methods, making models readonly after construction. Parsers stay in place and use constructors. Implement background ref resolution so Parse() returns immediately while refs resolve concurrently.
 todos:
   - id: pilot-info
-    content: "Pilot: Convert Info model in openapi30 to private fields + getters, move its parser into the model package, update tests"
-    status: pending
-  - id: shared-utils
-    content: Move parsers/internal/shared/ utilities to a location importable by model packages
-    status: pending
+    content: "Pilot: Convert Info/Contact/License in openapi30 to private fields + getters + constructors, update parser to use constructors, update tests"
+    status: in-progress
   - id: convert-openapi30
-    content: Convert all openapi30 models to readonly + move all openapi30x parsers into models/openapi30/
+    content: Convert all remaining openapi30 models to readonly pattern
     status: pending
   - id: convert-openapi31
-    content: Convert all openapi31 models to readonly + move all openapi31x parsers into models/openapi31/
+    content: Convert all openapi31 models to readonly pattern
     status: pending
   - id: convert-openapi20
-    content: Convert all openapi20 models to readonly + move all openapi20 parsers into models/openapi20/
+    content: Convert all openapi20 models to readonly pattern
     status: pending
   - id: conformance-tests
     content: Rewrite conformance tests for the new getter-method-based models
@@ -27,7 +24,7 @@ todos:
     content: Implement background ref resolution — Parse() returns model immediately, refs resolve concurrently, Value() blocks only if not yet resolved
     status: pending
   - id: cleanup
-    content: Remove empty parsers/ directory, update README and IMPLEMENTATION_DECISIONS.md
+    content: Update README and IMPLEMENTATION_DECISIONS.md
     status: pending
 isProject: false
 ---
@@ -52,37 +49,25 @@ type Info struct {
 Parsers (separate package) set fields directly: `info.Title = shared.NodeGetString(node, "title")`
 Tests access fields directly: `assert.Equal(t, "Test API", result.Document.Info.Title)`
 
-## Core Challenge
+## Approach: Constructors + Getters (Parsers Stay In Place)
 
-In Go, if fields are private (lowercase), code in a **different package** cannot read or write them. The models live in `models/openapi30` and the parsers live in `parsers/openapi30x` -- two different packages. Making fields private means parsers can no longer set them.
+Models use **private fields + getter methods + constructors**. Parsers stay in `parsers/` and use constructors to create immutable model objects. No parser files move.
 
-## Recommended Approach: Merge Parsers Into Model Packages
-
-Move parsing code into the same package as models. This is the **only approach that avoids duplication** and gives true readonly without boilerplate.
-
-### Before (current structure)
+### Structure (unchanged)
 
 ```
-models/openapi30/schema.go          <- struct definition
-parsers/openapi30x/schema.go        <- parsing logic (different package)
-parsers/openapi30x/schema_allof.go  <- sub-parsers
+models/openapi30/info.go             <- private fields + getters + constructor
+models/openapi30/contact.go          <- private fields + getters + constructor
+parsers/openapi30x/info.go           <- uses constructor (stays here)
+parsers/openapi30x/info_contact.go   <- uses constructor (stays here)
 ```
 
-### After (merged structure)
-
-```
-models/openapi30/schema.go           <- private fields + getter methods
-models/openapi30/schema_parse.go     <- parsing logic (same package, writes private fields)
-models/openapi30/schema_allof.go     <- sub-parsers (same package)
-models/openapi30/parse_context.go    <- ParseContext, helpers
-```
-
-### What the model files look like after
+### What the model files look like
 
 ```go
-// models/openapi30/info.go — after
+// models/openapi30/info.go
 type Info struct {
-    node           Node     // private embedded
+    Node           // public embedded — VendorExtensions + Trix stay accessible
     title          string
     description    string
     termsOfService string
@@ -91,27 +76,62 @@ type Info struct {
     version        string
 }
 
+// Getters
 func (i *Info) Title() string          { return i.title }
 func (i *Info) Description() string    { return i.description }
 func (i *Info) TermsOfService() string { return i.termsOfService }
 func (i *Info) Contact() *Contact      { return i.contact }
 func (i *Info) License() *License      { return i.license }
 func (i *Info) Version() string        { return i.version }
-func (i *Info) Node() Node             { return i.node }
-```
 
-### What the parser files look like after
-
-```go
-// models/openapi30/info_parse.go — same package, can set private fields
-func parseInfo(node *yaml.Node, ctx *parseContext) *Info {
-    info := &Info{}
-    info.title = nodeGetString(node, "title")
-    info.description = nodeGetString(node, "description")
-    // ...
-    return info
+// Constructor — used by parsers
+func NewInfo(title, description, termsOfService, version string, contact *Contact, license *License) *Info {
+    return &Info{
+        title: title, description: description, termsOfService: termsOfService,
+        version: version, contact: contact, license: license,
+    }
 }
 ```
+
+### What the parser looks like (stays in parsers/openapi30x/)
+
+```go
+// parsers/openapi30x/info.go — no change in location
+func parseOpenAPIInfo(node *yaml.Node, ctx *ParseContext) (*openapi30models.Info, error) {
+    if node == nil {
+        return nil, ctx.errorf("info is required")
+    }
+
+    // Parse sub-objects first
+    contact, err := parseInfoContact(node, ctx)
+    // collect error...
+    license, err := parseInfoLicense(node, ctx)
+    // collect error...
+
+    // Create via constructor
+    info := openapi30models.NewInfo(
+        nodeGetString(node, "title"),
+        nodeGetString(node, "description"),
+        nodeGetString(node, "termsOfService"),
+        nodeGetString(node, "version"),
+        contact,
+        license,
+    )
+
+    // Node-level fields (VendorExtensions + Trix) are still public via embedding
+    info.VendorExtensions = parseNodeExtensions(node)
+    info.Trix.Source = ctx.nodeSource(node)
+    info.Trix.Errors = append(info.Trix.Errors, errors...)
+
+    return info, nil
+}
+```
+
+### Key design decisions
+
+- **`Node` stays embedded and public** — `VendorExtensions` and `Trix` are library metadata, not spec fields. They remain directly accessible.
+- **Constructors accept all spec fields** — parsers pass everything at construction time.
+- **SetProperty() methods** if post-construction mutation is needed — for example, if a parser needs to set a field after the initial construction (rare, but possible for complex types).
 
 ### Impact on public API
 
@@ -120,11 +140,11 @@ Consumer code changes from field access to method calls:
 ```go
 // Before
 doc.Info.Title
-doc.Components.Schemas["Pet"].Value.Properties["name"]
+doc.Info.Contact.Email
 
-// After
-doc.Info().Title()
-doc.Components().Schemas()["Pet"].Value().Properties()["name"]
+// After  
+doc.Info.Title()
+doc.Info.Contact().Email()
 ```
 
 ### Conformance tests need updating
@@ -137,12 +157,7 @@ The current conformance test uses **reflection on JSON struct tags** to validate
 
 ### Impact on JSON serialization
 
-Currently models have `json:"..."` tags for serialization. With private fields, `encoding/json` cannot marshal/unmarshal them. If JSON output is needed in the future:
-
-- Implement `json.Marshaler` on each model, or
-- Use a separate serialization layer
-
-Since all current tags use `json:"-"` for library metadata and the models aren't deserialized via `encoding/json` (the parser uses `yaml.Node` directly), this isn't a breaking change for current usage.
+Currently models have `json:"..."` tags for serialization. With private fields, `encoding/json` cannot marshal/unmarshal them. Since the parser uses `yaml.Node` directly (not `encoding/json`), this isn't a breaking change.
 
 ---
 
@@ -168,23 +183,7 @@ Parse() ──► build model tree ──► return model immediately
 
 ### Implementation
 
-Resolution infrastructure lives in `Trix`, keeping the model surface clean. The `Trix` struct in `models/shared/meta.go` gains a ref resolution field:
-
-```go
-// models/shared/meta.go
-type RefState struct {
-    Done chan struct{} // closed when resolution completes
-    Err  error        // resolution error, if any
-}
-
-type Trix struct {
-    Source NodeSource    // source location info
-    Errors []ParseError // parsing errors
-    Ref    *RefState    // nil for non-ref types; set by parser for $ref nodes
-}
-```
-
-The Ref model types stay clean — only spec-defined fields + Node:
+Resolution state lives directly on each `*Ref` type as **private fields** — not in `Trix`. This keeps `Trix` clean as a public-facing interface with zero internal plumbing.
 
 ```go
 type SchemaRef struct {
@@ -192,31 +191,40 @@ type SchemaRef struct {
     ref      string
     value    *Schema
     circular bool
+    // resolution state — private, set by parser, invisible to consumers
+    done     chan struct{} // closed when resolution completes
+    err      error        // resolution error, if any
 }
 
 func (r *SchemaRef) Ref() string { return r.ref }
 
 func (r *SchemaRef) Value() *Schema {
-    if rs := r.node.Trix.Ref; rs != nil {
-        <-rs.Done // block until this specific ref is resolved
+    if r.done != nil {
+        <-r.done // block until this specific ref is resolved
     }
     return r.value
 }
 
 func (r *SchemaRef) Circular() bool {
-    if rs := r.node.Trix.Ref; rs != nil {
-        <-rs.Done
+    if r.done != nil {
+        <-r.done
     }
     return r.circular
 }
+
+func (r *SchemaRef) ResolveErr() error {
+    if r.done != nil {
+        <-r.done
+    }
+    return r.err
+}
 ```
 
-Resolution errors are accessed through `Trix` consistently with other error patterns:
-
-```go
-ref.Trix().Ref.Err  // per-ref resolution error (after waiting)
-ref.Trix().Errors   // parse errors (already existing pattern)
-```
+Benefits of this approach over an external map or Trix field:
+- No map lookup or mutex on every `.Value()` call
+- State lives where it belongs (on the ref itself)
+- GC-friendly (ref dies → state dies)
+- `Trix` stays 100% clean — only `Source` and `Errors`, nothing internal
 
 The parser kicks off background resolution before returning:
 
@@ -239,16 +247,15 @@ func Parse(data []byte) (*ParseResult, error) {
 - `Parse()` returns immediately — caller can inspect `Info()`, `Paths()`, operation metadata, etc. without waiting for ref resolution
 - Refs resolve concurrently — external files load in parallel
 - `.Value()` blocks only on the specific ref being accessed, not all refs
-- Model structs stay clean — resolution state lives in `Trix.Ref`, consistent with the "library infra in Trix" principle
-- `Trix.Ref` is `nil` for non-ref types — zero overhead for regular models
+- Resolution state is private on each ref — `Trix` stays a clean public-facing interface
+- `done` is `nil` for inline (non-`$ref`) nodes — zero overhead, no blocking
 - Only affects ~10 Ref types, not all ~75 model types
-- Natural fit with the getter-method readonly architecture
 
 ### Considerations
 
 - **Circular detection** still works: the `resolving` map and `RefResolver.visiting` map operate within the background goroutine
-- **Thread safety**: Each ref's `Done` channel provides safe synchronization. The `RefResolver` file cache may need a mutex if multiple goroutines resolve external files in parallel (or resolve sequentially within the background goroutine)
-- **Error model**: Resolution errors are per-ref on `Trix.Ref.Err`. The caller can also call a top-level `result.Wait()` to block until all resolution is done and collect all errors
+- **Thread safety**: Each ref's `done` channel provides safe synchronization. The `RefResolver` file cache may need a mutex if multiple goroutines resolve external files in parallel (or resolve sequentially within the background goroutine)
+- **Error model**: Resolution errors are per-ref via `ref.ResolveErr()`. The caller can also call a top-level `result.Wait()` to block until all resolution is done and collect all errors
 - **Opt-out**: Provide a `ParseSync()` or option flag for callers who want the old blocking behavior
 
 ---
@@ -260,7 +267,7 @@ func Parse(data []byte) (*ParseResult, error) {
 | ---------------------------- | ---------- | ------ |
 | Model structs to convert     | ~75        | High   |
 | Total fields needing getters | ~350+      | High   |
-| Parser files to move/update  | ~300+      | High   |
+| Parser files to update       | ~300+      | Medium |
 | Test files to update         | ~50+       | Medium |
 | Conformance test rewrite     | 3 versions | Low    |
 
@@ -270,13 +277,11 @@ Recommend piloting with **one small model** (`Info` in openapi30) to validate th
 ## Execution Order
 
 1. Pilot: Convert `Info` model (openapi30) -- validate the pattern end-to-end
-2. Move shared parser utilities (`parsers/internal/shared/`) into a shared location accessible from model packages
-3. Convert all openapi30 models + move their parsers into `models/openapi30/`
 4. Implement background ref resolution for openapi30 Ref types (done channels, async resolve goroutine, `Wait()`)
 5. Replicate for openapi31
 6. Replicate for openapi20
 7. Update/rewrite conformance tests
 8. Update all integration/parse tests
-9. Remove empty `parsers/` directory
-10. Document ref resolution behavior in @docs as ref_resolution.md
+9. Document ref resolution behavior in @docs as ref_resolution.md
+
 

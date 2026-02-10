@@ -5,17 +5,26 @@ package openapi30
 type SecurityScheme struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Type             string      `json:"type" yaml:"type"`
-	Description      string      `json:"description,omitempty" yaml:"description,omitempty"`
-	Name             string      `json:"name,omitempty" yaml:"name,omitempty"`
-	In               string      `json:"in,omitempty" yaml:"in,omitempty"`
-	Scheme           string      `json:"scheme,omitempty" yaml:"scheme,omitempty"`
-	BearerFormat     string      `json:"bearerFormat,omitempty" yaml:"bearerFormat,omitempty"`
-	Flows            *OAuthFlows `json:"flows,omitempty" yaml:"flows,omitempty"`
-	OpenIDConnectURL string      `json:"openIdConnectUrl,omitempty" yaml:"openIdConnectUrl,omitempty"`
+	secType          string
+	description      string
+	name             string
+	in               string
+	scheme           string
+	bearerFormat     string
+	flows            *OAuthFlows
+	openIDConnectURL string
 }
 
+func (ss *SecurityScheme) Type() string             { return ss.secType }
+func (ss *SecurityScheme) Description() string      { return ss.description }
+func (ss *SecurityScheme) Name() string             { return ss.name }
+func (ss *SecurityScheme) In() string               { return ss.in }
+func (ss *SecurityScheme) Scheme() string           { return ss.scheme }
+func (ss *SecurityScheme) BearerFormat() string     { return ss.bearerFormat }
+func (ss *SecurityScheme) Flows() *OAuthFlows       { return ss.flows }
+func (ss *SecurityScheme) OpenIDConnectURL() string { return ss.openIDConnectURL }
+
 // NewSecurityScheme creates a new SecurityScheme instance.
-func NewSecurityScheme(securityType string) *SecurityScheme {
-	return &SecurityScheme{Type: securityType}
+func NewSecurityScheme(secType, description, name, in, scheme, bearerFormat string, flows *OAuthFlows, openIDConnectURL string) *SecurityScheme {
+	return &SecurityScheme{secType: secType, description: description, name: name, in: in, scheme: scheme, bearerFormat: bearerFormat, flows: flows, openIDConnectURL: openIDConnectURL}
 }

@@ -17,68 +17,48 @@ func parseOpenAPIPathsPathItem(node *yaml.Node, ctx *ParseContext) (*openapi30mo
 		return nil, ctx.errorAt(node, "pathItem must be an object")
 	}
 
-	pathItem := &openapi30models.PathItem{}
-	var err error
+	var errors []openapi30models.ParseError
 
-	// Simple properties - inline
-	pathItem.Ref = nodeGetString(node, "$ref")
-	pathItem.Summary = nodeGetString(node, "summary")
-	pathItem.Description = nodeGetString(node, "description")
+	// Simple properties
+	ref := nodeGetString(node, "$ref")
+	summary := nodeGetString(node, "summary")
+	description := nodeGetString(node, "description")
 
-	// HTTP method operations - complex but handled inline since same pattern
-	pathItem.Get, err = parseOpenAPIPathsPathItemOperation(node, "get", ctx)
-	if err != nil {
-		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
+	// HTTP method operations
+	parseOp := func(method string) *openapi30models.Operation {
+		op, err := parseOpenAPIPathsPathItemOperation(node, method, ctx)
+		if err != nil {
+			errors = append(errors, toParseError(err))
+		}
+		return op
 	}
 
-	pathItem.Put, err = parseOpenAPIPathsPathItemOperation(node, "put", ctx)
-	if err != nil {
-		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
-	}
-
-	pathItem.Post, err = parseOpenAPIPathsPathItemOperation(node, "post", ctx)
-	if err != nil {
-		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
-	}
-
-	pathItem.Delete, err = parseOpenAPIPathsPathItemOperation(node, "delete", ctx)
-	if err != nil {
-		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
-	}
-
-	pathItem.Options, err = parseOpenAPIPathsPathItemOperation(node, "options", ctx)
-	if err != nil {
-		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
-	}
-
-	pathItem.Head, err = parseOpenAPIPathsPathItemOperation(node, "head", ctx)
-	if err != nil {
-		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
-	}
-
-	pathItem.Patch, err = parseOpenAPIPathsPathItemOperation(node, "patch", ctx)
-	if err != nil {
-		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
-	}
-
-	pathItem.Trace, err = parseOpenAPIPathsPathItemOperation(node, "trace", ctx)
-	if err != nil {
-		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
-	}
+	get := parseOp("get")
+	put := parseOp("put")
+	post := parseOp("post")
+	del := parseOp("delete")
+	options := parseOp("options")
+	head := parseOp("head")
+	patch := parseOp("patch")
+	trace := parseOp("trace")
 
 	// Complex properties - delegated to dedicated files
-	pathItem.Servers, err = parsePathItemServers(node, ctx)
+	servers, err := parsePathItemServers(node, ctx)
 	if err != nil {
-		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
 
-	pathItem.Parameters, err = parsePathItemParameters(node, ctx)
+	parameters, err := parsePathItemParameters(node, ctx)
 	if err != nil {
-		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
+		errors = append(errors, toParseError(err))
 	}
+
+	// Create via constructor
+	pathItem := openapi30models.NewPathItem(ref, summary, description, get, put, post, del, options, head, patch, trace, servers, parameters)
 
 	pathItem.VendorExtensions = parseNodeExtensions(node)
 	pathItem.Trix.Source = ctx.nodeSource(node)
+	pathItem.Trix.Errors = append(pathItem.Trix.Errors, errors...)
 
 	// Detect unknown fields
 	pathItem.Trix.Errors = append(pathItem.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, pathItemKnownFieldsSet))...)

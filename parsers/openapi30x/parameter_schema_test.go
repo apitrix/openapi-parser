@@ -28,7 +28,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value
-	require.NotNil(t, param.Schema)
-	assert.Equal(t, "integer", param.Schema.Value.Type)
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	require.NotNil(t, param.Schema())
+	assert.Equal(t, "integer", param.Schema().Value.Type())
 }
