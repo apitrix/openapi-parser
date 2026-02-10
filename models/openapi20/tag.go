@@ -5,12 +5,16 @@ package openapi20
 type Tag struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Name         string        `json:"name" yaml:"name"`
-	Description  string        `json:"description,omitempty" yaml:"description,omitempty"`
-	ExternalDocs *ExternalDocs `json:"externalDocs,omitempty" yaml:"externalDocs,omitempty"`
+	name         string
+	description  string
+	externalDocs *ExternalDocs
 }
 
+func (t *Tag) Name() string                { return t.name }
+func (t *Tag) Description() string         { return t.description }
+func (t *Tag) ExternalDocs() *ExternalDocs { return t.externalDocs }
+
 // NewTag creates a new Tag instance.
-func NewTag(name string) *Tag {
-	return &Tag{Name: name}
+func NewTag(name, description string, externalDocs *ExternalDocs) *Tag {
+	return &Tag{name: name, description: description, externalDocs: externalDocs}
 }

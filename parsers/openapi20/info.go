@@ -16,24 +16,37 @@ func parseSwaggerInfo(node *yaml.Node, ctx *ParseContext) (*openapi20models.Info
 		return nil, ctx.errorAt(node, "info must be an object")
 	}
 
-	info := &openapi20models.Info{}
 	var err error
 
-	// Simple properties - inline
-	info.Title = nodeGetString(node, "title")
-	info.Description = nodeGetString(node, "description")
-	info.TermsOfService = nodeGetString(node, "termsOfService")
-	info.Version = nodeGetString(node, "version")
-
 	// Complex properties - delegated to dedicated files
-	info.Contact, err = parseInfoContact(node, ctx)
+	var contact *openapi20models.Contact
+	contact, err = parseInfoContact(node, ctx)
+	var contactErr error
 	if err != nil {
-		info.Trix.Errors = append(info.Trix.Errors, toParseError(err))
+		contactErr = err
 	}
 
-	info.License, err = parseInfoLicense(node, ctx)
+	var license *openapi20models.License
+	license, err = parseInfoLicense(node, ctx)
+	var licenseErr error
 	if err != nil {
-		info.Trix.Errors = append(info.Trix.Errors, toParseError(err))
+		licenseErr = err
+	}
+
+	info := openapi20models.NewInfo(
+		nodeGetString(node, "title"),
+		nodeGetString(node, "description"),
+		nodeGetString(node, "termsOfService"),
+		nodeGetString(node, "version"),
+		contact,
+		license,
+	)
+
+	if contactErr != nil {
+		info.Trix.Errors = append(info.Trix.Errors, toParseError(contactErr))
+	}
+	if licenseErr != nil {
+		info.Trix.Errors = append(info.Trix.Errors, toParseError(licenseErr))
 	}
 
 	info.VendorExtensions = parseNodeExtensions(node)

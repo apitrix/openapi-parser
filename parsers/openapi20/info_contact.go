@@ -18,12 +18,12 @@ func parseInfoContact(parent *yaml.Node, ctx *ParseContext) (*openapi20models.Co
 	}
 
 	cctx := ctx.push("contact")
-	contact := &openapi20models.Contact{}
 
-	// All properties are simple - inline
-	contact.Name = nodeGetString(node, "name")
-	contact.URL = nodeGetString(node, "url")
-	contact.Email = nodeGetString(node, "email")
+	contact := openapi20models.NewContact(
+		nodeGetString(node, "name"),
+		nodeGetString(node, "url"),
+		nodeGetString(node, "email"),
+	)
 
 	contact.VendorExtensions = parseNodeExtensions(node)
 	contact.Trix.Source = cctx.nodeSource(node)

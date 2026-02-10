@@ -16,8 +16,8 @@ func parseResponses(node *yaml.Node, ctx *ParseContext) (*openapi20models.Respon
 		return nil, ctx.errorAt(node, "responses must be an object")
 	}
 
-	responses := &openapi20models.Responses{}
-	responses.Codes = make(map[string]*openapi20models.ResponseRef)
+	codes := make(map[string]*openapi20models.ResponseRef)
+	var defaultResp *openapi20models.ResponseRef
 	var err error
 
 	for key, respNode := range nodeMapPairs(node) {
@@ -26,22 +26,28 @@ func parseResponses(node *yaml.Node, ctx *ParseContext) (*openapi20models.Respon
 			continue
 		}
 
-		respRef, err := parseResponseRef(respNode, ctx.push(key))
-		if err != nil {
-			responses.Trix.Errors = append(responses.Trix.Errors, toParseError(err))
+		respRef, parseErr := parseResponseRef(respNode, ctx.push(key))
+		if parseErr != nil {
+			err = parseErr
 		}
 
 		if key == "default" {
-			responses.Default = respRef
+			defaultResp = respRef
 		} else {
-			responses.Codes[key] = respRef
+			codes[key] = respRef
 		}
 	}
+
+	responses := openapi20models.NewResponses(defaultResp, codes)
 
 	responses.VendorExtensions = parseNodeExtensions(node)
 	responses.Trix.Source = ctx.nodeSource(node)
 
-	return responses, err
+	if err != nil {
+		responses.Trix.Errors = append(responses.Trix.Errors, toParseError(err))
+	}
+
+	return responses, nil
 }
 
 // parseResponse parses a Response object from a yaml.Node.
@@ -54,34 +60,49 @@ func parseResponse(node *yaml.Node, ctx *ParseContext) (*openapi20models.Respons
 		return nil, ctx.errorAt(node, "response must be an object")
 	}
 
-	resp := &openapi20models.Response{}
 	var err error
 
-	// Simple properties - inline
-	resp.Description = nodeGetString(node, "description")
-
-	// Complex property - Schema
+	// Complex property - Schema (parsed first for constructor)
+	var schema *openapi20models.SchemaRef
+	var schemaErr error
 	if schemaNode := nodeGetValue(node, "schema"); schemaNode != nil {
-		resp.Schema, err = parseSchemaRef(schemaNode, ctx.push("schema"))
+		schema, err = parseSchemaRef(schemaNode, ctx.push("schema"))
 		if err != nil {
-			resp.Trix.Errors = append(resp.Trix.Errors, toParseError(err))
+			schemaErr = err
 		}
 	}
 
-	// Complex property - Headers
+	// Complex property - Headers (parsed first for constructor)
+	var headers map[string]*openapi20models.Header
+	var headersErr error
 	if headersNode := nodeGetValue(node, "headers"); headersNode != nil {
-		resp.Headers, err = parseHeaders(headersNode, ctx.push("headers"))
+		headers, err = parseHeaders(headersNode, ctx.push("headers"))
 		if err != nil {
-			resp.Trix.Errors = append(resp.Trix.Errors, toParseError(err))
+			headersErr = err
 		}
 	}
 
 	// Examples - map of mime type to example
+	var examples map[string]interface{}
 	if examplesNode := nodeGetValue(node, "examples"); examplesNode != nil && nodeIsMapping(examplesNode) {
-		resp.Examples = make(map[string]interface{})
+		examples = make(map[string]interface{})
 		for key, exampleNode := range nodeMapPairs(examplesNode) {
-			resp.Examples[key] = nodeToInterface(exampleNode)
+			examples[key] = nodeToInterface(exampleNode)
 		}
+	}
+
+	resp := openapi20models.NewResponse(
+		nodeGetString(node, "description"),
+		schema,
+		headers,
+		examples,
+	)
+
+	if schemaErr != nil {
+		resp.Trix.Errors = append(resp.Trix.Errors, toParseError(schemaErr))
+	}
+	if headersErr != nil {
+		resp.Trix.Errors = append(resp.Trix.Errors, toParseError(headersErr))
 	}
 
 	resp.VendorExtensions = parseNodeExtensions(node)

@@ -32,9 +32,9 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Paths)
-	require.Contains(t, result.Document.Paths.Items, "/pets")
-	require.NotNil(t, result.Document.Paths.Items["/pets"].Get)
+	require.NotNil(t, result.Document.Paths())
+	require.Contains(t, result.Document.Paths().Items(), "/pets")
+	require.NotNil(t, result.Document.Paths().Items()["/pets"].Get())
 }
 
 func TestParsePathItem_AllMethods(t *testing.T) {
@@ -80,14 +80,14 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	pathItem := result.Document.Paths.Items["/resource"]
-	assert.NotNil(t, pathItem.Get)
-	assert.NotNil(t, pathItem.Put)
-	assert.NotNil(t, pathItem.Post)
-	assert.NotNil(t, pathItem.Delete)
-	assert.NotNil(t, pathItem.Options)
-	assert.NotNil(t, pathItem.Head)
-	assert.NotNil(t, pathItem.Patch)
+	pathItem := result.Document.Paths().Items()["/resource"]
+	assert.NotNil(t, pathItem.Get())
+	assert.NotNil(t, pathItem.Put())
+	assert.NotNil(t, pathItem.Post())
+	assert.NotNil(t, pathItem.Delete())
+	assert.NotNil(t, pathItem.Options())
+	assert.NotNil(t, pathItem.Head())
+	assert.NotNil(t, pathItem.Patch())
 }
 
 // --- Path Parameters ---
@@ -116,10 +116,10 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	pathItem := result.Document.Paths.Items["/pets/{petId}"]
-	require.Len(t, pathItem.Parameters, 1)
-	assert.Equal(t, "petId", pathItem.Parameters[0].Value.Name)
-	assert.Equal(t, "path", pathItem.Parameters[0].Value.In)
+	pathItem := result.Document.Paths().Items()["/pets/{petId}"]
+	require.Len(t, pathItem.Parameters(), 1)
+	assert.Equal(t, "petId", pathItem.Parameters()[0].Value.Name())
+	assert.Equal(t, "path", pathItem.Parameters()[0].Value.In())
 }
 
 // --- Path with $ref ---
@@ -140,7 +140,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, "#/paths/~1other", result.Document.Paths.Items["/pets"].Ref)
+	assert.Equal(t, "#/paths/~1other", result.Document.Paths().Items()["/pets"].Ref())
 }
 
 // --- Extensions ---
@@ -165,6 +165,6 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Paths.Items["/pets"].VendorExtensions)
-	assert.Equal(t, true, result.Document.Paths.Items["/pets"].VendorExtensions["x-internal"])
+	require.NotNil(t, result.Document.Paths().Items()["/pets"].VendorExtensions)
+	assert.Equal(t, true, result.Document.Paths().Items()["/pets"].VendorExtensions["x-internal"])
 }

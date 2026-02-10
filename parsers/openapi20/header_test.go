@@ -36,9 +36,9 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	header := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Request-ID"]
-	assert.Equal(t, "string", header.Type)
-	assert.Equal(t, "Request ID", header.Description)
+	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()["X-Request-ID"]
+	assert.Equal(t, "string", header.Type())
+	assert.Equal(t, "Request ID", header.Description())
 }
 
 // --- Header with Format ---
@@ -66,9 +66,9 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	header := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Rate-Limit"]
-	assert.Equal(t, "integer", header.Type)
-	assert.Equal(t, "int32", header.Format)
+	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()["X-Rate-Limit"]
+	assert.Equal(t, "integer", header.Type())
+	assert.Equal(t, "int32", header.Format())
 }
 
 // --- Header with Validation ---
@@ -97,11 +97,11 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	header := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Limit"]
-	require.NotNil(t, header.Minimum)
-	require.NotNil(t, header.Maximum)
-	assert.Equal(t, float64(1), *header.Minimum)
-	assert.Equal(t, float64(100), *header.Maximum)
+	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()["X-Limit"]
+	require.NotNil(t, header.Minimum())
+	require.NotNil(t, header.Maximum())
+	assert.Equal(t, float64(1), *header.Minimum())
+	assert.Equal(t, float64(100), *header.Maximum())
 }
 
 // --- Array Header ---
@@ -131,11 +131,11 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	header := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Tags"]
-	assert.Equal(t, "array", header.Type)
-	assert.Equal(t, "csv", header.CollectionFormat)
-	require.NotNil(t, header.Items)
-	assert.Equal(t, "string", header.Items.Type)
+	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()["X-Tags"]
+	assert.Equal(t, "array", header.Type())
+	assert.Equal(t, "csv", header.CollectionFormat())
+	require.NotNil(t, header.Items())
+	assert.Equal(t, "string", header.Items().Type())
 }
 
 // --- Header with Enum ---
@@ -165,9 +165,9 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	header := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Status"]
-	require.Len(t, header.Enum, 2)
-	assert.Equal(t, "active", header.Enum[0])
+	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()["X-Status"]
+	require.Len(t, header.Enum(), 2)
+	assert.Equal(t, "active", header.Enum()[0])
 }
 
 // --- Header with Default ---
@@ -195,8 +195,8 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	header := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Page-Size"]
-	assert.Equal(t, 20, header.Default)
+	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()["X-Page-Size"]
+	assert.Equal(t, 20, header.Default())
 }
 
 // --- Header Extensions ---
@@ -224,6 +224,6 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	header := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Custom"]
+	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()["X-Custom"]
 	assert.Equal(t, true, header.VendorExtensions["x-deprecated"])
 }

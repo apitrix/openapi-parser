@@ -17,82 +17,116 @@ func parseSwagger(node *yaml.Node, ctx *ParseContext) (*openapi20models.Swagger,
 	var err error
 
 	// Simple property - version (inline)
-	swagger.Swagger, err = parseSwaggerVersion(node, ctx)
+	version, err := parseSwaggerVersion(node, ctx)
 	if err != nil {
 		return nil, err // version is fatal — can't proceed without it
 	}
+	swagger.SetProperty("swagger", version)
 
 	// Simple properties - inline
-	swagger.Host = nodeGetString(node, "host")
-	swagger.BasePath = nodeGetString(node, "basePath")
-	swagger.Schemes = nodeGetStringSlice(node, "schemes")
-	swagger.Consumes = nodeGetStringSlice(node, "consumes")
-	swagger.Produces = nodeGetStringSlice(node, "produces")
+	swagger.SetProperty("host", nodeGetString(node, "host"))
+	swagger.SetProperty("basePath", nodeGetString(node, "basePath"))
+	if schemes := nodeGetStringSlice(node, "schemes"); schemes != nil {
+		swagger.SetProperty("schemes", schemes)
+	}
+	if consumes := nodeGetStringSlice(node, "consumes"); consumes != nil {
+		swagger.SetProperty("consumes", consumes)
+	}
+	if produces := nodeGetStringSlice(node, "produces"); produces != nil {
+		swagger.SetProperty("produces", produces)
+	}
 
 	// Complex property - Info (delegated)
 	infoNode := nodeGetValue(node, "info")
-	swagger.Info, err = parseSwaggerInfo(infoNode, ctx.push("info"))
+	info, err := parseSwaggerInfo(infoNode, ctx.push("info"))
 	if err != nil {
 		swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
+	}
+	if info != nil {
+		swagger.SetProperty("info", info)
 	}
 
 	// Complex property - Paths (delegated)
 	pathsNode := nodeGetValue(node, "paths")
-	swagger.Paths, err = parseSwaggerPaths(pathsNode, ctx.push("paths"))
+	paths, err := parseSwaggerPaths(pathsNode, ctx.push("paths"))
 	if err != nil {
 		swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
+	}
+	if paths != nil {
+		swagger.SetProperty("paths", paths)
 	}
 
 	// Complex properties - definitions, parameters, responses, securityDefinitions
 	if defsNode := nodeGetValue(node, "definitions"); defsNode != nil {
-		swagger.Definitions, err = parseSwaggerDefinitions(defsNode, ctx.push("definitions"))
+		defs, err := parseSwaggerDefinitions(defsNode, ctx.push("definitions"))
 		if err != nil {
 			swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
+		}
+		if defs != nil {
+			swagger.SetProperty("definitions", defs)
 		}
 	}
 
 	if paramsNode := nodeGetValue(node, "parameters"); paramsNode != nil {
-		swagger.Parameters, err = parseSwaggerParameters(paramsNode, ctx.push("parameters"))
+		params, err := parseSwaggerParameters(paramsNode, ctx.push("parameters"))
 		if err != nil {
 			swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
+		}
+		if params != nil {
+			swagger.SetProperty("parameters", params)
 		}
 	}
 
 	if respNode := nodeGetValue(node, "responses"); respNode != nil {
-		swagger.Responses, err = parseSwaggerResponses(respNode, ctx.push("responses"))
+		resps, err := parseSwaggerResponses(respNode, ctx.push("responses"))
 		if err != nil {
 			swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
+		}
+		if resps != nil {
+			swagger.SetProperty("responses", resps)
 		}
 	}
 
 	if secDefsNode := nodeGetValue(node, "securityDefinitions"); secDefsNode != nil {
-		swagger.SecurityDefinitions, err = parseSwaggerSecurityDefinitions(secDefsNode, ctx.push("securityDefinitions"))
+		secDefs, err := parseSwaggerSecurityDefinitions(secDefsNode, ctx.push("securityDefinitions"))
 		if err != nil {
 			swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
+		}
+		if secDefs != nil {
+			swagger.SetProperty("securityDefinitions", secDefs)
 		}
 	}
 
 	// Complex property - Security
 	if secNode := nodeGetValue(node, "security"); secNode != nil {
-		swagger.Security, err = parseSecurityRequirements(secNode, ctx.push("security"))
+		sec, err := parseSecurityRequirements(secNode, ctx.push("security"))
 		if err != nil {
 			swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
+		}
+		if sec != nil {
+			swagger.SetProperty("security", sec)
 		}
 	}
 
 	// Complex property - Tags
 	if tagsNode := nodeGetValue(node, "tags"); tagsNode != nil {
-		swagger.Tags, err = parseTags(tagsNode, ctx.push("tags"))
+		tags, err := parseTags(tagsNode, ctx.push("tags"))
 		if err != nil {
 			swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
+		}
+		if tags != nil {
+			swagger.SetProperty("tags", tags)
 		}
 	}
 
 	// Complex property - ExternalDocs
 	if edNode := nodeGetValue(node, "externalDocs"); edNode != nil {
-		swagger.ExternalDocs, err = parseExternalDocs(edNode, ctx.push("externalDocs"))
+		ed, err := parseExternalDocs(edNode, ctx.push("externalDocs"))
 		if err != nil {
 			swagger.Trix.Errors = append(swagger.Trix.Errors, toParseError(err))
+		}
+		if ed != nil {
+			swagger.SetProperty("externalDocs", ed)
 		}
 	}
 
@@ -130,8 +164,7 @@ func parseSwaggerPaths(node *yaml.Node, ctx *ParseContext) (*openapi20models.Pat
 		return nil, ctx.errorAt(node, "paths must be an object")
 	}
 
-	paths := &openapi20models.Paths{}
-	paths.Items = make(map[string]*openapi20models.PathItem)
+	items := make(map[string]*openapi20models.PathItem)
 
 	for key, pathItemNode := range nodeMapPairs(node) {
 		// Skip extensions
@@ -143,8 +176,10 @@ func parseSwaggerPaths(node *yaml.Node, ctx *ParseContext) (*openapi20models.Pat
 		if err != nil {
 			return nil, err
 		}
-		paths.Items[key] = pathItem
+		items[key] = pathItem
 	}
+
+	paths := openapi20models.NewPaths(items)
 
 	paths.VendorExtensions = parseNodeExtensions(node)
 	paths.Trix.Source = ctx.nodeSource(node)

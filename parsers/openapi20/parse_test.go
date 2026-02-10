@@ -28,9 +28,9 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, "2.0", result.Document.Swagger)
-	assert.Equal(t, "Test API", result.Document.Info.Title)
-	assert.Equal(t, "1.0.0", result.Document.Info.Version)
+	assert.Equal(t, "2.0", result.Document.SwaggerVersion())
+	assert.Equal(t, "Test API", result.Document.Info().Title())
+	assert.Equal(t, "1.0.0", result.Document.Info().Version())
 }
 
 func TestParse_JSON(t *testing.T) {
@@ -42,7 +42,7 @@ func TestParse_JSON(t *testing.T) {
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, "2.0", result.Document.Swagger)
+	assert.Equal(t, "2.0", result.Document.SwaggerVersion())
 }
 
 func TestParse_InvalidYAML(t *testing.T) {
@@ -158,5 +158,5 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, "2.0", result.Document.Swagger)
+	assert.Equal(t, "2.0", result.Document.SwaggerVersion())
 }

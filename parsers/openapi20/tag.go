@@ -38,19 +38,26 @@ func parseTag(node *yaml.Node, ctx *ParseContext) (*openapi20models.Tag, error) 
 		return nil, ctx.errorAt(node, "tag must be an object")
 	}
 
-	tag := &openapi20models.Tag{}
 	var err error
 
-	// Simple properties - inline
-	tag.Name = nodeGetString(node, "name")
-	tag.Description = nodeGetString(node, "description")
-
-	// Complex property - ExternalDocs
+	// Complex property - ExternalDocs (parsed first for constructor)
+	var externalDocs *openapi20models.ExternalDocs
+	var edErr error
 	if edNode := nodeGetValue(node, "externalDocs"); edNode != nil {
-		tag.ExternalDocs, err = parseExternalDocs(edNode, ctx.push("externalDocs"))
+		externalDocs, err = parseExternalDocs(edNode, ctx.push("externalDocs"))
 		if err != nil {
-			tag.Trix.Errors = append(tag.Trix.Errors, toParseError(err))
+			edErr = err
 		}
+	}
+
+	tag := openapi20models.NewTag(
+		nodeGetString(node, "name"),
+		nodeGetString(node, "description"),
+		externalDocs,
+	)
+
+	if edErr != nil {
+		tag.Trix.Errors = append(tag.Trix.Errors, toParseError(edErr))
 	}
 
 	tag.VendorExtensions = parseNodeExtensions(node)

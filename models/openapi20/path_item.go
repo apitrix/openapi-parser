@@ -5,18 +5,37 @@ package openapi20
 type PathItem struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Ref        string          `json:"$ref,omitempty" yaml:"$ref,omitempty"`
-	Get        *Operation      `json:"get,omitempty" yaml:"get,omitempty"`
-	Put        *Operation      `json:"put,omitempty" yaml:"put,omitempty"`
-	Post       *Operation      `json:"post,omitempty" yaml:"post,omitempty"`
-	Delete     *Operation      `json:"delete,omitempty" yaml:"delete,omitempty"`
-	Options    *Operation      `json:"options,omitempty" yaml:"options,omitempty"`
-	Head       *Operation      `json:"head,omitempty" yaml:"head,omitempty"`
-	Patch      *Operation      `json:"patch,omitempty" yaml:"patch,omitempty"`
-	Parameters []*ParameterRef `json:"parameters,omitempty" yaml:"parameters,omitempty"`
+	ref        string
+	get        *Operation
+	put        *Operation
+	post       *Operation
+	delete     *Operation
+	options    *Operation
+	head       *Operation
+	patch      *Operation
+	parameters []*ParameterRef
 }
 
+func (pi *PathItem) Ref() string                 { return pi.ref }
+func (pi *PathItem) Get() *Operation             { return pi.get }
+func (pi *PathItem) Put() *Operation             { return pi.put }
+func (pi *PathItem) Post() *Operation            { return pi.post }
+func (pi *PathItem) Delete() *Operation          { return pi.delete }
+func (pi *PathItem) Options() *Operation         { return pi.options }
+func (pi *PathItem) Head() *Operation            { return pi.head }
+func (pi *PathItem) Patch() *Operation           { return pi.patch }
+func (pi *PathItem) Parameters() []*ParameterRef { return pi.parameters }
+
 // NewPathItem creates a new PathItem instance.
-func NewPathItem() *PathItem {
-	return &PathItem{}
+func NewPathItem(
+	ref string,
+	get, put, post, del, options, head, patch *Operation,
+	parameters []*ParameterRef,
+) *PathItem {
+	return &PathItem{
+		ref: ref,
+		get: get, put: put, post: post, delete: del,
+		options: options, head: head, patch: patch,
+		parameters: parameters,
+	}
 }

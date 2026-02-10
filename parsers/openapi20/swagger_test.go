@@ -28,7 +28,7 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, "api.example.com", result.Document.Host)
+	assert.Equal(t, "api.example.com", result.Document.Host())
 }
 
 func TestParseSwagger_BasePath(t *testing.T) {
@@ -46,7 +46,7 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, "/api/v1", result.Document.BasePath)
+	assert.Equal(t, "/api/v1", result.Document.BasePath())
 }
 
 func TestParseSwagger_Schemes(t *testing.T) {
@@ -66,7 +66,7 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, []string{"https", "http"}, result.Document.Schemes)
+	assert.Equal(t, []string{"https", "http"}, result.Document.Schemes())
 }
 
 func TestParseSwagger_ConsumesProduces(t *testing.T) {
@@ -88,8 +88,8 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, []string{"application/json"}, result.Document.Consumes)
-	assert.Equal(t, []string{"application/json", "application/xml"}, result.Document.Produces)
+	assert.Equal(t, []string{"application/json"}, result.Document.Consumes())
+	assert.Equal(t, []string{"application/json", "application/xml"}, result.Document.Produces())
 }
 
 // --- Definitions ---
@@ -114,9 +114,9 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Definitions)
-	require.Contains(t, result.Document.Definitions, "Pet")
-	assert.Equal(t, "object", result.Document.Definitions["Pet"].Value.Type)
+	require.NotNil(t, result.Document.Definitions())
+	require.Contains(t, result.Document.Definitions(), "Pet")
+	assert.Equal(t, "object", result.Document.Definitions()["Pet"].Value.Type())
 }
 
 func TestParseSwagger_DefinitionsWithRef(t *testing.T) {
@@ -140,8 +140,8 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Definitions["PetList"].Value.Items)
-	assert.Equal(t, "#/definitions/Pet", result.Document.Definitions["PetList"].Value.Items.Ref)
+	require.NotNil(t, result.Document.Definitions()["PetList"].Value.Items())
+	assert.Equal(t, "#/definitions/Pet", result.Document.Definitions()["PetList"].Value.Items().Ref)
 }
 
 // --- Global Parameters ---
@@ -165,10 +165,10 @@ parameters:
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Parameters)
-	require.Contains(t, result.Document.Parameters, "limitParam")
-	assert.Equal(t, "limit", result.Document.Parameters["limitParam"].Value.Name)
-	assert.Equal(t, "query", result.Document.Parameters["limitParam"].Value.In)
+	require.NotNil(t, result.Document.Parameters())
+	require.Contains(t, result.Document.Parameters(), "limitParam")
+	assert.Equal(t, "limit", result.Document.Parameters()["limitParam"].Value.Name())
+	assert.Equal(t, "query", result.Document.Parameters()["limitParam"].Value.In())
 }
 
 // --- Global Responses ---
@@ -190,9 +190,9 @@ responses:
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Responses)
-	require.Contains(t, result.Document.Responses, "NotFound")
-	assert.Equal(t, "Resource not found", result.Document.Responses["NotFound"].Value.Description)
+	require.NotNil(t, result.Document.Responses())
+	require.Contains(t, result.Document.Responses(), "NotFound")
+	assert.Equal(t, "Resource not found", result.Document.Responses()["NotFound"].Value.Description())
 }
 
 // --- SecurityDefinitions ---
@@ -216,10 +216,10 @@ securityDefinitions:
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.SecurityDefinitions)
-	require.Contains(t, result.Document.SecurityDefinitions, "api_key")
-	assert.Equal(t, "apiKey", result.Document.SecurityDefinitions["api_key"].Type)
-	assert.Equal(t, "X-API-Key", result.Document.SecurityDefinitions["api_key"].Name)
+	require.NotNil(t, result.Document.SecurityDefinitions())
+	require.Contains(t, result.Document.SecurityDefinitions(), "api_key")
+	assert.Equal(t, "apiKey", result.Document.SecurityDefinitions()["api_key"].Type())
+	assert.Equal(t, "X-API-Key", result.Document.SecurityDefinitions()["api_key"].Name())
 }
 
 // --- Security ---
@@ -243,9 +243,9 @@ security:
 
 	// Assert
 	require.NoError(t, err)
-	require.Len(t, result.Document.Security, 2)
-	assert.Contains(t, result.Document.Security[0], "api_key")
-	assert.Equal(t, []string{"read", "write"}, result.Document.Security[1]["oauth2"])
+	require.Len(t, result.Document.Security(), 2)
+	assert.Contains(t, result.Document.Security()[0], "api_key")
+	assert.Equal(t, []string{"read", "write"}, result.Document.Security()[1]["oauth2"])
 }
 
 // --- Tags ---
@@ -267,9 +267,9 @@ tags:
 
 	// Assert
 	require.NoError(t, err)
-	require.Len(t, result.Document.Tags, 1)
-	assert.Equal(t, "pets", result.Document.Tags[0].Name)
-	assert.Equal(t, "Pet operations", result.Document.Tags[0].Description)
+	require.Len(t, result.Document.Tags(), 1)
+	assert.Equal(t, "pets", result.Document.Tags()[0].Name())
+	assert.Equal(t, "Pet operations", result.Document.Tags()[0].Description())
 }
 
 // --- ExternalDocs ---
@@ -291,8 +291,8 @@ externalDocs:
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.ExternalDocs)
-	assert.Equal(t, "https://example.com/docs", result.Document.ExternalDocs.URL)
+	require.NotNil(t, result.Document.ExternalDocs())
+	assert.Equal(t, "https://example.com/docs", result.Document.ExternalDocs().URL())
 }
 
 // --- Extensions ---

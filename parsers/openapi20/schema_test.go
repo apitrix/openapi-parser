@@ -33,13 +33,13 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	schema := result.Document.Definitions["Name"].Value
-	assert.Equal(t, "string", schema.Type)
-	require.NotNil(t, schema.MinLength)
-	require.NotNil(t, schema.MaxLength)
-	assert.Equal(t, uint64(1), *schema.MinLength)
-	assert.Equal(t, uint64(100), *schema.MaxLength)
-	assert.Equal(t, "^[a-zA-Z]+$", schema.Pattern)
+	schema := result.Document.Definitions()["Name"].Value
+	assert.Equal(t, "string", schema.Type())
+	require.NotNil(t, schema.MinLength())
+	require.NotNil(t, schema.MaxLength())
+	assert.Equal(t, uint64(1), *schema.MinLength())
+	assert.Equal(t, uint64(100), *schema.MaxLength())
+	assert.Equal(t, "^[a-zA-Z]+$", schema.Pattern())
 }
 
 func TestParseSchema_IntegerType(t *testing.T) {
@@ -62,11 +62,11 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	schema := result.Document.Definitions["Age"].Value
-	assert.Equal(t, "integer", schema.Type)
-	assert.Equal(t, "int32", schema.Format)
-	require.NotNil(t, schema.Minimum)
-	require.NotNil(t, schema.Maximum)
+	schema := result.Document.Definitions()["Age"].Value
+	assert.Equal(t, "integer", schema.Type())
+	assert.Equal(t, "int32", schema.Format())
+	require.NotNil(t, schema.Minimum())
+	require.NotNil(t, schema.Maximum())
 }
 
 // --- Object Schema ---
@@ -95,11 +95,11 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	schema := result.Document.Definitions["Pet"].Value
-	assert.Equal(t, "object", schema.Type)
-	assert.Equal(t, []string{"name"}, schema.Required)
-	require.Contains(t, schema.Properties, "id")
-	require.Contains(t, schema.Properties, "name")
+	schema := result.Document.Definitions()["Pet"].Value
+	assert.Equal(t, "object", schema.Type())
+	assert.Equal(t, []string{"name"}, schema.Required())
+	require.Contains(t, schema.Properties(), "id")
+	require.Contains(t, schema.Properties(), "name")
 }
 
 // --- Array Schema ---
@@ -125,10 +125,10 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	schema := result.Document.Definitions["PetList"].Value
-	assert.Equal(t, "array", schema.Type)
-	require.NotNil(t, schema.Items)
-	assert.Equal(t, "#/definitions/Pet", schema.Items.Ref)
+	schema := result.Document.Definitions()["PetList"].Value
+	assert.Equal(t, "array", schema.Type())
+	require.NotNil(t, schema.Items())
+	assert.Equal(t, "#/definitions/Pet", schema.Items().Ref)
 }
 
 // --- AllOf Composition ---
@@ -155,10 +155,10 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	schema := result.Document.Definitions["Dog"].Value
-	require.Len(t, schema.AllOf, 2)
-	assert.Equal(t, "#/definitions/Pet", schema.AllOf[0].Ref)
-	assert.Equal(t, "object", schema.AllOf[1].Value.Type)
+	schema := result.Document.Definitions()["Dog"].Value
+	require.Len(t, schema.AllOf(), 2)
+	assert.Equal(t, "#/definitions/Pet", schema.AllOf()[0].Ref)
+	assert.Equal(t, "object", schema.AllOf()[1].Value.Type())
 }
 
 // --- AdditionalProperties ---
@@ -182,9 +182,9 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	schema := result.Document.Definitions["StringMap"].Value
-	require.NotNil(t, schema.AdditionalProperties)
-	assert.Equal(t, "string", schema.AdditionalProperties.Value.Type)
+	schema := result.Document.Definitions()["StringMap"].Value
+	require.NotNil(t, schema.AdditionalProperties())
+	assert.Equal(t, "string", schema.AdditionalProperties().Value.Type())
 }
 
 func TestParseSchema_AdditionalPropertiesBoolean(t *testing.T) {
@@ -205,9 +205,9 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	schema := result.Document.Definitions["Closed"].Value
-	require.NotNil(t, schema.AdditionalPropertiesAllowed)
-	assert.False(t, *schema.AdditionalPropertiesAllowed)
+	schema := result.Document.Definitions()["Closed"].Value
+	require.NotNil(t, schema.AdditionalPropertiesAllowed())
+	assert.False(t, *schema.AdditionalPropertiesAllowed())
 }
 
 // --- Discriminator ---
@@ -233,8 +233,8 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	schema := result.Document.Definitions["Pet"].Value
-	assert.Equal(t, "petType", schema.Discriminator)
+	schema := result.Document.Definitions()["Pet"].Value
+	assert.Equal(t, "petType", schema.Discriminator())
 }
 
 // --- Enum ---
@@ -260,9 +260,9 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	schema := result.Document.Definitions["Status"].Value
-	require.Len(t, schema.Enum, 3)
-	assert.Equal(t, "active", schema.Enum[0])
+	schema := result.Document.Definitions()["Status"].Value
+	require.Len(t, schema.Enum(), 3)
+	assert.Equal(t, "active", schema.Enum()[0])
 }
 
 // --- XML ---
@@ -289,11 +289,11 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	schema := result.Document.Definitions["Pet"].Value
-	require.NotNil(t, schema.XML)
-	assert.Equal(t, "pet", schema.XML.Name)
-	assert.Equal(t, "http://example.com", schema.XML.Namespace)
-	assert.True(t, schema.XML.Wrapped)
+	schema := result.Document.Definitions()["Pet"].Value
+	require.NotNil(t, schema.XML())
+	assert.Equal(t, "pet", schema.XML().Name())
+	assert.Equal(t, "http://example.com", schema.XML().Namespace())
+	assert.True(t, schema.XML().Wrapped())
 }
 
 // --- ReadOnly ---
@@ -319,8 +319,8 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	schema := result.Document.Definitions["Pet"].Value.Properties["id"].Value
-	assert.True(t, schema.ReadOnly)
+	schema := result.Document.Definitions()["Pet"].Value.Properties()["id"].Value
+	assert.True(t, schema.ReadOnly())
 }
 
 // --- Example ---
@@ -343,8 +343,8 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	schema := result.Document.Definitions["Name"].Value
-	assert.Equal(t, "John Doe", schema.Example)
+	schema := result.Document.Definitions()["Name"].Value
+	assert.Equal(t, "John Doe", schema.Example())
 }
 
 // --- $ref ---
@@ -373,6 +373,6 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	schemaRef := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Schema
+	schemaRef := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Schema()
 	assert.Equal(t, "#/definitions/Pet", schemaRef.Ref)
 }

@@ -192,10 +192,14 @@ func methodToJSONPropertyName(name string) string {
 	switch name {
 	case "OpenAPIVersion":
 		return "openapi"
+	case "SwaggerVersion":
+		return "swagger"
 	case "OperationID":
 		return "operationId"
 	case "Ref":
 		return "$ref"
+	case "Default":
+		return "default"
 	case "DefaultVal":
 		return "" // internal helper, not a JSON property
 	case "AuthorizationURL":

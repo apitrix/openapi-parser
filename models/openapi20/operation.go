@@ -5,21 +5,45 @@ package openapi20
 type Operation struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Tags         []string              `json:"tags,omitempty" yaml:"tags,omitempty"`
-	Summary      string                `json:"summary,omitempty" yaml:"summary,omitempty"`
-	Description  string                `json:"description,omitempty" yaml:"description,omitempty"`
-	ExternalDocs *ExternalDocs         `json:"externalDocs,omitempty" yaml:"externalDocs,omitempty"`
-	OperationID  string                `json:"operationId,omitempty" yaml:"operationId,omitempty"`
-	Consumes     []string              `json:"consumes,omitempty" yaml:"consumes,omitempty"`
-	Produces     []string              `json:"produces,omitempty" yaml:"produces,omitempty"`
-	Parameters   []*ParameterRef       `json:"parameters,omitempty" yaml:"parameters,omitempty"`
-	Responses    *Responses            `json:"responses" yaml:"responses"`
-	Schemes      []string              `json:"schemes,omitempty" yaml:"schemes,omitempty"`
-	Deprecated   bool                  `json:"deprecated,omitempty" yaml:"deprecated,omitempty"`
-	Security     []SecurityRequirement `json:"security,omitempty" yaml:"security,omitempty"`
+	tags         []string
+	summary      string
+	description  string
+	externalDocs *ExternalDocs
+	operationID  string
+	consumes     []string
+	produces     []string
+	parameters   []*ParameterRef
+	responses    *Responses
+	schemes      []string
+	deprecated   bool
+	security     []SecurityRequirement
 }
 
+func (o *Operation) Tags() []string                  { return o.tags }
+func (o *Operation) Summary() string                 { return o.summary }
+func (o *Operation) Description() string             { return o.description }
+func (o *Operation) ExternalDocs() *ExternalDocs     { return o.externalDocs }
+func (o *Operation) OperationID() string             { return o.operationID }
+func (o *Operation) Consumes() []string              { return o.consumes }
+func (o *Operation) Produces() []string              { return o.produces }
+func (o *Operation) Parameters() []*ParameterRef     { return o.parameters }
+func (o *Operation) Responses() *Responses           { return o.responses }
+func (o *Operation) Schemes() []string               { return o.schemes }
+func (o *Operation) Deprecated() bool                { return o.deprecated }
+func (o *Operation) Security() []SecurityRequirement { return o.security }
+
 // NewOperation creates a new Operation instance.
-func NewOperation() *Operation {
-	return &Operation{}
+func NewOperation(
+	tags []string, summary, description string, externalDocs *ExternalDocs,
+	operationID string, consumes, produces []string,
+	parameters []*ParameterRef, responses *Responses,
+	schemes []string, deprecated bool, security []SecurityRequirement,
+) *Operation {
+	return &Operation{
+		tags: tags, summary: summary, description: description,
+		externalDocs: externalDocs, operationID: operationID,
+		consumes: consumes, produces: produces,
+		parameters: parameters, responses: responses,
+		schemes: schemes, deprecated: deprecated, security: security,
+	}
 }

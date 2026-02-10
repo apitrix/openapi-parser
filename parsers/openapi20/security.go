@@ -16,17 +16,16 @@ func parseSecurityScheme(node *yaml.Node, ctx *ParseContext) (*openapi20models.S
 		return nil, ctx.errorAt(node, "securityScheme must be an object")
 	}
 
-	scheme := &openapi20models.SecurityScheme{}
-
-	// Simple properties - inline
-	scheme.Type = nodeGetString(node, "type")
-	scheme.Description = nodeGetString(node, "description")
-	scheme.Name = nodeGetString(node, "name")
-	scheme.In = nodeGetString(node, "in")
-	scheme.Flow = nodeGetString(node, "flow")
-	scheme.AuthorizationURL = nodeGetString(node, "authorizationUrl")
-	scheme.TokenURL = nodeGetString(node, "tokenUrl")
-	scheme.Scopes = nodeGetStringMap(node, "scopes")
+	scheme := openapi20models.NewSecurityScheme(
+		nodeGetString(node, "type"),
+		nodeGetString(node, "description"),
+		nodeGetString(node, "name"),
+		nodeGetString(node, "in"),
+		nodeGetString(node, "flow"),
+		nodeGetString(node, "authorizationUrl"),
+		nodeGetString(node, "tokenUrl"),
+		nodeGetStringMap(node, "scopes"),
+	)
 
 	scheme.VendorExtensions = parseNodeExtensions(node)
 	scheme.Trix.Source = ctx.nodeSource(node)

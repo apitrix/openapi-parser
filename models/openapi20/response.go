@@ -5,13 +5,21 @@ package openapi20
 type Response struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Description string                 `json:"description" yaml:"description"`
-	Schema      *SchemaRef             `json:"schema,omitempty" yaml:"schema,omitempty"`
-	Headers     map[string]*Header     `json:"headers,omitempty" yaml:"headers,omitempty"`
-	Examples    map[string]interface{} `json:"examples,omitempty" yaml:"examples,omitempty"`
+	description string
+	schema      *SchemaRef
+	headers     map[string]*Header
+	examples    map[string]interface{}
 }
 
+func (r *Response) Description() string              { return r.description }
+func (r *Response) Schema() *SchemaRef               { return r.schema }
+func (r *Response) Headers() map[string]*Header      { return r.headers }
+func (r *Response) Examples() map[string]interface{} { return r.examples }
+
 // NewResponse creates a new Response instance.
-func NewResponse(description string) *Response {
-	return &Response{Description: description}
+func NewResponse(description string, schema *SchemaRef, headers map[string]*Header, examples map[string]interface{}) *Response {
+	return &Response{
+		description: description, schema: schema,
+		headers: headers, examples: examples,
+	}
 }

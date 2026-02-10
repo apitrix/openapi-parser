@@ -27,8 +27,8 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, "My API", result.Document.Info.Title)
-	assert.Equal(t, "1.0.0", result.Document.Info.Version)
+	assert.Equal(t, "My API", result.Document.Info().Title())
+	assert.Equal(t, "1.0.0", result.Document.Info().Version())
 }
 
 // --- Description ---
@@ -50,7 +50,7 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	assert.Contains(t, result.Document.Info.Description, "multi-line")
+	assert.Contains(t, result.Document.Info().Description(), "multi-line")
 }
 
 // --- Terms of Service ---
@@ -70,7 +70,7 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, "https://example.com/terms", result.Document.Info.TermsOfService)
+	assert.Equal(t, "https://example.com/terms", result.Document.Info().TermsOfService())
 }
 
 // --- Contact ---
@@ -93,10 +93,10 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info.Contact)
-	assert.Equal(t, "API Support", result.Document.Info.Contact.Name)
-	assert.Equal(t, "https://example.com/support", result.Document.Info.Contact.URL)
-	assert.Equal(t, "support@example.com", result.Document.Info.Contact.Email)
+	require.NotNil(t, result.Document.Info().Contact())
+	assert.Equal(t, "API Support", result.Document.Info().Contact().Name())
+	assert.Equal(t, "https://example.com/support", result.Document.Info().Contact().URL())
+	assert.Equal(t, "support@example.com", result.Document.Info().Contact().Email())
 }
 
 func TestParseInfo_ContactPartial(t *testing.T) {
@@ -115,9 +115,9 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info.Contact)
-	assert.Equal(t, "support@example.com", result.Document.Info.Contact.Email)
-	assert.Empty(t, result.Document.Info.Contact.Name)
+	require.NotNil(t, result.Document.Info().Contact())
+	assert.Equal(t, "support@example.com", result.Document.Info().Contact().Email())
+	assert.Empty(t, result.Document.Info().Contact().Name())
 }
 
 // --- License ---
@@ -139,9 +139,9 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info.License)
-	assert.Equal(t, "Apache 2.0", result.Document.Info.License.Name)
-	assert.Equal(t, "https://www.apache.org/licenses/LICENSE-2.0", result.Document.Info.License.URL)
+	require.NotNil(t, result.Document.Info().License())
+	assert.Equal(t, "Apache 2.0", result.Document.Info().License().Name())
+	assert.Equal(t, "https://www.apache.org/licenses/LICENSE-2.0", result.Document.Info().License().URL())
 }
 
 func TestParseInfo_LicenseNameOnly(t *testing.T) {
@@ -160,9 +160,9 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info.License)
-	assert.Equal(t, "MIT", result.Document.Info.License.Name)
-	assert.Empty(t, result.Document.Info.License.URL)
+	require.NotNil(t, result.Document.Info().License())
+	assert.Equal(t, "MIT", result.Document.Info().License().Name())
+	assert.Empty(t, result.Document.Info().License().URL())
 }
 
 // --- Complete Info ---
@@ -190,12 +190,12 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, "Pet Store API", result.Document.Info.Title)
-	assert.Equal(t, "1.2.3", result.Document.Info.Version)
-	assert.NotEmpty(t, result.Document.Info.Description)
-	assert.NotEmpty(t, result.Document.Info.TermsOfService)
-	require.NotNil(t, result.Document.Info.Contact)
-	require.NotNil(t, result.Document.Info.License)
+	assert.Equal(t, "Pet Store API", result.Document.Info().Title())
+	assert.Equal(t, "1.2.3", result.Document.Info().Version())
+	assert.NotEmpty(t, result.Document.Info().Description())
+	assert.NotEmpty(t, result.Document.Info().TermsOfService())
+	require.NotNil(t, result.Document.Info().Contact())
+	require.NotNil(t, result.Document.Info().License())
 }
 
 // --- Extensions ---
@@ -217,8 +217,8 @@ paths: {}
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info.VendorExtensions)
-	assert.Equal(t, true, result.Document.Info.VendorExtensions["x-internal"])
+	require.NotNil(t, result.Document.Info().VendorExtensions)
+	assert.Equal(t, true, result.Document.Info().VendorExtensions["x-internal"])
 }
 
 // --- Missing Info ---

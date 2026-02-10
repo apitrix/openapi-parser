@@ -16,41 +16,45 @@ func parseItems(node *yaml.Node, ctx *ParseContext) (*openapi20models.Items, err
 		return nil, ctx.errorAt(node, "items must be an object")
 	}
 
-	items := &openapi20models.Items{}
 	var err error
 
-	// Simple properties - inline
-	items.Type = nodeGetString(node, "type")
-	items.Format = nodeGetString(node, "format")
-	items.CollectionFormat = nodeGetString(node, "collectionFormat")
-	items.Default = nodeGetAny(node, "default")
-	items.Maximum = nodeGetFloat64Ptr(node, "maximum")
-	items.ExclusiveMaximum = nodeGetBool(node, "exclusiveMaximum")
-	items.Minimum = nodeGetFloat64Ptr(node, "minimum")
-	items.ExclusiveMinimum = nodeGetBool(node, "exclusiveMinimum")
-	items.MaxLength = nodeGetUint64Ptr(node, "maxLength")
-	items.MinLength = nodeGetUint64Ptr(node, "minLength")
-	items.Pattern = nodeGetString(node, "pattern")
-	items.MaxItems = nodeGetUint64Ptr(node, "maxItems")
-	items.MinItems = nodeGetUint64Ptr(node, "minItems")
-	items.UniqueItems = nodeGetBool(node, "uniqueItems")
-	items.MultipleOf = nodeGetFloat64Ptr(node, "multipleOf")
-
 	// Enum - array of any values
+	var enum []interface{}
 	if enumNode := nodeGetValue(node, "enum"); enumNode != nil && nodeIsSequence(enumNode) {
-		items.Enum = make([]interface{}, len(enumNode.Content))
+		enum = make([]interface{}, len(enumNode.Content))
 		for i, item := range enumNode.Content {
-			items.Enum[i] = nodeToInterface(item)
+			enum[i] = nodeToInterface(item)
 		}
 	}
 
-	// Nested items - for nested arrays
+	// Nested items - for nested arrays (parsed first for constructor)
+	var nestedItems *openapi20models.Items
 	if nestedItemsNode := nodeGetValue(node, "items"); nestedItemsNode != nil {
-		items.Items, err = parseItems(nestedItemsNode, ctx.push("items"))
+		nestedItems, err = parseItems(nestedItemsNode, ctx.push("items"))
 		if err != nil {
 			return nil, err
 		}
 	}
+
+	items := openapi20models.NewItems(openapi20models.ItemsFields{
+		Type:             nodeGetString(node, "type"),
+		Format:           nodeGetString(node, "format"),
+		Items:            nestedItems,
+		CollectionFormat: nodeGetString(node, "collectionFormat"),
+		Default:          nodeGetAny(node, "default"),
+		Maximum:          nodeGetFloat64Ptr(node, "maximum"),
+		ExclusiveMaximum: nodeGetBool(node, "exclusiveMaximum"),
+		Minimum:          nodeGetFloat64Ptr(node, "minimum"),
+		ExclusiveMinimum: nodeGetBool(node, "exclusiveMinimum"),
+		MaxLength:        nodeGetUint64Ptr(node, "maxLength"),
+		MinLength:        nodeGetUint64Ptr(node, "minLength"),
+		Pattern:          nodeGetString(node, "pattern"),
+		MaxItems:         nodeGetUint64Ptr(node, "maxItems"),
+		MinItems:         nodeGetUint64Ptr(node, "minItems"),
+		UniqueItems:      nodeGetBool(node, "uniqueItems"),
+		Enum:             enum,
+		MultipleOf:       nodeGetFloat64Ptr(node, "multipleOf"),
+	})
 
 	items.VendorExtensions = parseNodeExtensions(node)
 	items.Trix.Source = ctx.nodeSource(node)

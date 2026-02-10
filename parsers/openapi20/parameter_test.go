@@ -38,11 +38,11 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value
-	assert.Equal(t, "limit", param.Name)
-	assert.Equal(t, "query", param.In)
-	assert.Equal(t, "integer", param.Type)
-	assert.Equal(t, "Maximum results", param.Description)
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	assert.Equal(t, "limit", param.Name())
+	assert.Equal(t, "query", param.In())
+	assert.Equal(t, "integer", param.Type())
+	assert.Equal(t, "Maximum results", param.Description())
 }
 
 // --- Path Parameters ---
@@ -71,10 +71,10 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets/{petId}"].Get.Parameters[0].Value
-	assert.Equal(t, "petId", param.Name)
-	assert.Equal(t, "path", param.In)
-	assert.True(t, param.Required)
+	param := result.Document.Paths().Items()["/pets/{petId}"].Get().Parameters()[0].Value
+	assert.Equal(t, "petId", param.Name())
+	assert.Equal(t, "path", param.In())
+	assert.True(t, param.Required())
 }
 
 // --- Body Parameters ---
@@ -107,10 +107,10 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets"].Post.Parameters[0].Value
-	assert.Equal(t, "body", param.In)
-	require.NotNil(t, param.Schema)
-	assert.Equal(t, "object", param.Schema.Value.Type)
+	param := result.Document.Paths().Items()["/pets"].Post().Parameters()[0].Value
+	assert.Equal(t, "body", param.In())
+	require.NotNil(t, param.Schema())
+	assert.Equal(t, "object", param.Schema().Value.Type())
 }
 
 // --- Array Parameters ---
@@ -141,11 +141,11 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value
-	assert.Equal(t, "array", param.Type)
-	assert.Equal(t, "csv", param.CollectionFormat)
-	require.NotNil(t, param.Items)
-	assert.Equal(t, "string", param.Items.Type)
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	assert.Equal(t, "array", param.Type())
+	assert.Equal(t, "csv", param.CollectionFormat())
+	require.NotNil(t, param.Items())
+	assert.Equal(t, "string", param.Items().Type())
 }
 
 // --- Parameter Validation ---
@@ -176,12 +176,12 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value
-	require.NotNil(t, param.Minimum)
-	require.NotNil(t, param.Maximum)
-	assert.Equal(t, float64(1), *param.Minimum)
-	assert.Equal(t, float64(100), *param.Maximum)
-	assert.Equal(t, 10, param.Default)
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	require.NotNil(t, param.Minimum())
+	require.NotNil(t, param.Maximum())
+	assert.Equal(t, float64(1), *param.Minimum())
+	assert.Equal(t, float64(100), *param.Maximum())
+	assert.Equal(t, 10, param.Default())
 }
 
 // --- Parameter with Enum ---
@@ -213,9 +213,9 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value
-	require.Len(t, param.Enum, 3)
-	assert.Equal(t, "available", param.Enum[0])
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	require.Len(t, param.Enum(), 3)
+	assert.Equal(t, "available", param.Enum()[0])
 }
 
 // --- Parameter $ref ---
@@ -246,7 +246,7 @@ parameters:
 
 	// Assert
 	require.NoError(t, err)
-	paramRef := result.Document.Paths.Items["/pets"].Get.Parameters[0]
+	paramRef := result.Document.Paths().Items()["/pets"].Get().Parameters()[0]
 	assert.Equal(t, "#/parameters/limitParam", paramRef.Ref)
 }
 
@@ -276,7 +276,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value
-	assert.Equal(t, "X-Request-ID", param.Name)
-	assert.Equal(t, "header", param.In)
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	assert.Equal(t, "X-Request-ID", param.Name())
+	assert.Equal(t, "header", param.In())
 }

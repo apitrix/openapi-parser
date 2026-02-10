@@ -16,107 +16,116 @@ func parseSchema(node *yaml.Node, ctx *ParseContext) (*openapi20models.Schema, e
 		return nil, ctx.errorAt(node, "schema must be an object")
 	}
 
-	schema := &openapi20models.Schema{}
 	var err error
-
-	// Basic metadata
-	schema.Title = nodeGetString(node, "title")
-	schema.Description = nodeGetString(node, "description")
-	schema.Default = nodeGetAny(node, "default")
-	schema.Example = nodeGetAny(node, "example")
-
-	// Type constraints
-	schema.Type = nodeGetString(node, "type")
-	schema.Format = nodeGetString(node, "format")
-
-	// Numeric validation
-	schema.MultipleOf = nodeGetFloat64Ptr(node, "multipleOf")
-	schema.Maximum = nodeGetFloat64Ptr(node, "maximum")
-	schema.ExclusiveMaximum = nodeGetBool(node, "exclusiveMaximum")
-	schema.Minimum = nodeGetFloat64Ptr(node, "minimum")
-	schema.ExclusiveMinimum = nodeGetBool(node, "exclusiveMinimum")
-
-	// String validation
-	schema.MaxLength = nodeGetUint64Ptr(node, "maxLength")
-	schema.MinLength = nodeGetUint64Ptr(node, "minLength")
-	schema.Pattern = nodeGetString(node, "pattern")
-
-	// Array validation
-	schema.MaxItems = nodeGetUint64Ptr(node, "maxItems")
-	schema.MinItems = nodeGetUint64Ptr(node, "minItems")
-	schema.UniqueItems = nodeGetBool(node, "uniqueItems")
-
-	// Object validation
-	schema.MaxProperties = nodeGetUint64Ptr(node, "maxProperties")
-	schema.MinProperties = nodeGetUint64Ptr(node, "minProperties")
-	schema.Required = nodeGetStringSlice(node, "required")
-
-	// Swagger 2.0 specific
-	schema.Discriminator = nodeGetString(node, "discriminator")
-	schema.ReadOnly = nodeGetBool(node, "readOnly")
+	var errors []error
 
 	// Enum - array of any values
+	var enum []interface{}
 	if enumNode := nodeGetValue(node, "enum"); enumNode != nil && nodeIsSequence(enumNode) {
-		schema.Enum = make([]interface{}, len(enumNode.Content))
+		enum = make([]interface{}, len(enumNode.Content))
 		for i, item := range enumNode.Content {
-			schema.Enum[i] = nodeToInterface(item)
+			enum[i] = nodeToInterface(item)
 		}
 	}
 
 	// Complex property - Items
+	var items *openapi20models.SchemaRef
 	if itemsNode := nodeGetValue(node, "items"); itemsNode != nil {
-		schema.Items, err = parseSchemaRef(itemsNode, ctx.push("items"))
+		items, err = parseSchemaRef(itemsNode, ctx.push("items"))
 		if err != nil {
-			schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+			errors = append(errors, err)
 		}
 	}
 
 	// Complex property - Properties
+	var properties map[string]*openapi20models.SchemaRef
 	if propsNode := nodeGetValue(node, "properties"); propsNode != nil {
-		schema.Properties, err = parseSchemaProperties(propsNode, ctx.push("properties"))
+		properties, err = parseSchemaProperties(propsNode, ctx.push("properties"))
 		if err != nil {
-			schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+			errors = append(errors, err)
 		}
 	}
 
 	// Complex property - AdditionalProperties
+	var additionalProperties *openapi20models.SchemaRef
+	var additionalPropertiesAllowed *bool
 	if addPropsNode := nodeGetValue(node, "additionalProperties"); addPropsNode != nil {
 		// Can be boolean or schema
 		if nodeIsScalar(addPropsNode) {
 			// Boolean value
 			b := nodeGetBool(node, "additionalProperties")
-			schema.AdditionalPropertiesAllowed = &b
+			additionalPropertiesAllowed = &b
 		} else {
 			// Schema reference
-			schema.AdditionalProperties, err = parseSchemaRef(addPropsNode, ctx.push("additionalProperties"))
+			additionalProperties, err = parseSchemaRef(addPropsNode, ctx.push("additionalProperties"))
 			if err != nil {
-				schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+				errors = append(errors, err)
 			}
 		}
 	}
 
 	// Complex property - AllOf
+	var allOf []*openapi20models.SchemaRef
 	if allOfNode := nodeGetValue(node, "allOf"); allOfNode != nil {
-		schema.AllOf, err = parseSchemaRefs(allOfNode, ctx.push("allOf"))
+		allOf, err = parseSchemaRefs(allOfNode, ctx.push("allOf"))
 		if err != nil {
-			schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+			errors = append(errors, err)
 		}
 	}
 
 	// Complex property - XML
+	var xml *openapi20models.XML
 	if xmlNode := nodeGetValue(node, "xml"); xmlNode != nil {
-		schema.XML, err = parseXML(xmlNode, ctx.push("xml"))
+		xml, err = parseXML(xmlNode, ctx.push("xml"))
 		if err != nil {
-			schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+			errors = append(errors, err)
 		}
 	}
 
 	// Complex property - ExternalDocs
+	var externalDocs *openapi20models.ExternalDocs
 	if edNode := nodeGetValue(node, "externalDocs"); edNode != nil {
-		schema.ExternalDocs, err = parseExternalDocs(edNode, ctx.push("externalDocs"))
+		externalDocs, err = parseExternalDocs(edNode, ctx.push("externalDocs"))
 		if err != nil {
-			schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+			errors = append(errors, err)
 		}
+	}
+
+	schema := openapi20models.NewSchema(openapi20models.SchemaFields{
+		Title:                       nodeGetString(node, "title"),
+		Description:                 nodeGetString(node, "description"),
+		Default:                     nodeGetAny(node, "default"),
+		MultipleOf:                  nodeGetFloat64Ptr(node, "multipleOf"),
+		Maximum:                     nodeGetFloat64Ptr(node, "maximum"),
+		ExclusiveMaximum:            nodeGetBool(node, "exclusiveMaximum"),
+		Minimum:                     nodeGetFloat64Ptr(node, "minimum"),
+		ExclusiveMinimum:            nodeGetBool(node, "exclusiveMinimum"),
+		MaxLength:                   nodeGetUint64Ptr(node, "maxLength"),
+		MinLength:                   nodeGetUint64Ptr(node, "minLength"),
+		Pattern:                     nodeGetString(node, "pattern"),
+		MaxItems:                    nodeGetUint64Ptr(node, "maxItems"),
+		MinItems:                    nodeGetUint64Ptr(node, "minItems"),
+		UniqueItems:                 nodeGetBool(node, "uniqueItems"),
+		MaxProperties:               nodeGetUint64Ptr(node, "maxProperties"),
+		MinProperties:               nodeGetUint64Ptr(node, "minProperties"),
+		Required:                    nodeGetStringSlice(node, "required"),
+		Enum:                        enum,
+		Type:                        nodeGetString(node, "type"),
+		Format:                      nodeGetString(node, "format"),
+		AllOf:                       allOf,
+		Items:                       items,
+		Properties:                  properties,
+		AdditionalProperties:        additionalProperties,
+		AdditionalPropertiesAllowed: additionalPropertiesAllowed,
+		Discriminator:               nodeGetString(node, "discriminator"),
+		ReadOnly:                    nodeGetBool(node, "readOnly"),
+		XML:                         xml,
+		ExternalDocs:                externalDocs,
+		Example:                     nodeGetAny(node, "example"),
+	})
+
+	for _, e := range errors {
+		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(e))
 	}
 
 	schema.VendorExtensions = parseNodeExtensions(node)

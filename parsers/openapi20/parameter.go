@@ -16,55 +16,68 @@ func parseParameter(node *yaml.Node, ctx *ParseContext) (*openapi20models.Parame
 		return nil, ctx.errorAt(node, "parameter must be an object")
 	}
 
-	param := &openapi20models.Parameter{}
 	var err error
 
-	// Simple properties - inline
-	param.Name = nodeGetString(node, "name")
-	param.In = nodeGetString(node, "in")
-	param.Description = nodeGetString(node, "description")
-	param.Required = nodeGetBool(node, "required")
-	param.AllowEmptyValue = nodeGetBool(node, "allowEmptyValue")
-
-	// Body parameter - schema
+	// Body parameter - schema (parsed first for constructor)
+	var schema *openapi20models.SchemaRef
+	var schemaErr error
 	if schemaNode := nodeGetValue(node, "schema"); schemaNode != nil {
-		param.Schema, err = parseSchemaRef(schemaNode, ctx.push("schema"))
+		schema, err = parseSchemaRef(schemaNode, ctx.push("schema"))
 		if err != nil {
-			param.Trix.Errors = append(param.Trix.Errors, toParseError(err))
+			schemaErr = err
 		}
 	}
-
-	// Non-body parameters - type info
-	param.Type = nodeGetString(node, "type")
-	param.Format = nodeGetString(node, "format")
-	param.CollectionFormat = nodeGetString(node, "collectionFormat")
-	param.Default = nodeGetAny(node, "default")
-	param.Maximum = nodeGetFloat64Ptr(node, "maximum")
-	param.ExclusiveMaximum = nodeGetBool(node, "exclusiveMaximum")
-	param.Minimum = nodeGetFloat64Ptr(node, "minimum")
-	param.ExclusiveMinimum = nodeGetBool(node, "exclusiveMinimum")
-	param.MaxLength = nodeGetUint64Ptr(node, "maxLength")
-	param.MinLength = nodeGetUint64Ptr(node, "minLength")
-	param.Pattern = nodeGetString(node, "pattern")
-	param.MaxItems = nodeGetUint64Ptr(node, "maxItems")
-	param.MinItems = nodeGetUint64Ptr(node, "minItems")
-	param.UniqueItems = nodeGetBool(node, "uniqueItems")
-	param.MultipleOf = nodeGetFloat64Ptr(node, "multipleOf")
 
 	// Enum - array of any values
+	var enum []interface{}
 	if enumNode := nodeGetValue(node, "enum"); enumNode != nil && nodeIsSequence(enumNode) {
-		param.Enum = make([]interface{}, len(enumNode.Content))
+		enum = make([]interface{}, len(enumNode.Content))
 		for i, item := range enumNode.Content {
-			param.Enum[i] = nodeToInterface(item)
+			enum[i] = nodeToInterface(item)
 		}
 	}
 
-	// Items - for array type parameters
+	// Items - for array type parameters (parsed first for constructor)
+	var items *openapi20models.Items
+	var itemsErr error
 	if itemsNode := nodeGetValue(node, "items"); itemsNode != nil {
-		param.Items, err = parseItems(itemsNode, ctx.push("items"))
+		items, err = parseItems(itemsNode, ctx.push("items"))
 		if err != nil {
-			param.Trix.Errors = append(param.Trix.Errors, toParseError(err))
+			itemsErr = err
 		}
+	}
+
+	param := openapi20models.NewParameter(openapi20models.ParameterFields{
+		Name:             nodeGetString(node, "name"),
+		In:               nodeGetString(node, "in"),
+		Description:      nodeGetString(node, "description"),
+		Required:         nodeGetBool(node, "required"),
+		AllowEmptyValue:  nodeGetBool(node, "allowEmptyValue"),
+		Schema:           schema,
+		Type:             nodeGetString(node, "type"),
+		Format:           nodeGetString(node, "format"),
+		Items:            items,
+		CollectionFormat: nodeGetString(node, "collectionFormat"),
+		Default:          nodeGetAny(node, "default"),
+		Maximum:          nodeGetFloat64Ptr(node, "maximum"),
+		ExclusiveMaximum: nodeGetBool(node, "exclusiveMaximum"),
+		Minimum:          nodeGetFloat64Ptr(node, "minimum"),
+		ExclusiveMinimum: nodeGetBool(node, "exclusiveMinimum"),
+		MaxLength:        nodeGetUint64Ptr(node, "maxLength"),
+		MinLength:        nodeGetUint64Ptr(node, "minLength"),
+		Pattern:          nodeGetString(node, "pattern"),
+		MaxItems:         nodeGetUint64Ptr(node, "maxItems"),
+		MinItems:         nodeGetUint64Ptr(node, "minItems"),
+		UniqueItems:      nodeGetBool(node, "uniqueItems"),
+		Enum:             enum,
+		MultipleOf:       nodeGetFloat64Ptr(node, "multipleOf"),
+	})
+
+	if schemaErr != nil {
+		param.Trix.Errors = append(param.Trix.Errors, toParseError(schemaErr))
+	}
+	if itemsErr != nil {
+		param.Trix.Errors = append(param.Trix.Errors, toParseError(itemsErr))
 	}
 
 	param.VendorExtensions = parseNodeExtensions(node)

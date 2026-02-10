@@ -5,11 +5,14 @@ package openapi20
 type License struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Name string `json:"name" yaml:"name"`
-	URL  string `json:"url,omitempty" yaml:"url,omitempty"`
+	name string
+	url  string
 }
+
+func (l *License) Name() string { return l.name }
+func (l *License) URL() string  { return l.url }
 
 // NewLicense creates a new License instance.
 func NewLicense(name, url string) *License {
-	return &License{Name: name, URL: url}
+	return &License{name: name, url: url}
 }

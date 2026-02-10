@@ -32,9 +32,9 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	xml := result.Document.Definitions["Pet"].Value.XML
+	xml := result.Document.Definitions()["Pet"].Value.XML()
 	require.NotNil(t, xml)
-	assert.Equal(t, "pet", xml.Name)
+	assert.Equal(t, "pet", xml.Name())
 }
 
 // --- XML with Namespace ---
@@ -60,9 +60,9 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	xml := result.Document.Definitions["Pet"].Value.XML
-	assert.Equal(t, "http://example.com/schema", xml.Namespace)
-	assert.Equal(t, "ex", xml.Prefix)
+	xml := result.Document.Definitions()["Pet"].Value.XML()
+	assert.Equal(t, "http://example.com/schema", xml.Namespace())
+	assert.Equal(t, "ex", xml.Prefix())
 }
 
 // --- XML Attribute ---
@@ -89,9 +89,9 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	xml := result.Document.Definitions["Pet"].Value.Properties["id"].Value.XML
+	xml := result.Document.Definitions()["Pet"].Value.Properties()["id"].Value.XML()
 	require.NotNil(t, xml)
-	assert.True(t, xml.Attribute)
+	assert.True(t, xml.Attribute())
 }
 
 // --- XML Wrapped ---
@@ -121,10 +121,10 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	xml := result.Document.Definitions["Pet"].Value.Properties["tags"].Value.XML
+	xml := result.Document.Definitions()["Pet"].Value.Properties()["tags"].Value.XML()
 	require.NotNil(t, xml)
-	assert.True(t, xml.Wrapped)
-	assert.Equal(t, "tag", xml.Name)
+	assert.True(t, xml.Wrapped())
+	assert.Equal(t, "tag", xml.Name())
 }
 
 // --- XML All Properties ---
@@ -152,12 +152,12 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	xml := result.Document.Definitions["Pet"].Value.XML
-	assert.Equal(t, "pet", xml.Name)
-	assert.Equal(t, "http://example.com", xml.Namespace)
-	assert.Equal(t, "ex", xml.Prefix)
-	assert.False(t, xml.Attribute)
-	assert.True(t, xml.Wrapped)
+	xml := result.Document.Definitions()["Pet"].Value.XML()
+	assert.Equal(t, "pet", xml.Name())
+	assert.Equal(t, "http://example.com", xml.Namespace())
+	assert.Equal(t, "ex", xml.Prefix())
+	assert.False(t, xml.Attribute())
+	assert.True(t, xml.Wrapped())
 }
 
 // --- XML Extensions ---
@@ -182,7 +182,7 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	xml := result.Document.Definitions["Pet"].Value.XML
+	xml := result.Document.Definitions()["Pet"].Value.XML()
 	require.NotNil(t, xml.VendorExtensions)
 	assert.Equal(t, "value", xml.VendorExtensions["x-custom"])
 }

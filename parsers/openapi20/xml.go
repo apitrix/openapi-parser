@@ -16,14 +16,13 @@ func parseXML(node *yaml.Node, ctx *ParseContext) (*openapi20models.XML, error) 
 		return nil, ctx.errorAt(node, "xml must be an object")
 	}
 
-	xml := &openapi20models.XML{}
-
-	// Simple properties - inline
-	xml.Name = nodeGetString(node, "name")
-	xml.Namespace = nodeGetString(node, "namespace")
-	xml.Prefix = nodeGetString(node, "prefix")
-	xml.Attribute = nodeGetBool(node, "attribute")
-	xml.Wrapped = nodeGetBool(node, "wrapped")
+	xml := openapi20models.NewXML(
+		nodeGetString(node, "name"),
+		nodeGetString(node, "namespace"),
+		nodeGetString(node, "prefix"),
+		nodeGetBool(node, "attribute"),
+		nodeGetBool(node, "wrapped"),
+	)
 
 	xml.VendorExtensions = parseNodeExtensions(node)
 	xml.Trix.Source = ctx.nodeSource(node)

@@ -16,49 +16,62 @@ func parseOperation(node *yaml.Node, ctx *ParseContext) (*openapi20models.Operat
 		return nil, ctx.errorAt(node, "operation must be an object")
 	}
 
-	op := &openapi20models.Operation{}
 	var err error
+	var errors []error
 
-	// Simple properties - inline
-	op.Tags = nodeGetStringSlice(node, "tags")
-	op.Summary = nodeGetString(node, "summary")
-	op.Description = nodeGetString(node, "description")
-	op.OperationID = nodeGetString(node, "operationId")
-	op.Consumes = nodeGetStringSlice(node, "consumes")
-	op.Produces = nodeGetStringSlice(node, "produces")
-	op.Schemes = nodeGetStringSlice(node, "schemes")
-	op.Deprecated = nodeGetBool(node, "deprecated")
-
-	// Complex property - ExternalDocs
+	// Complex property - ExternalDocs (parsed first for constructor)
+	var externalDocs *openapi20models.ExternalDocs
 	if edNode := nodeGetValue(node, "externalDocs"); edNode != nil {
-		op.ExternalDocs, err = parseExternalDocs(edNode, ctx.push("externalDocs"))
+		externalDocs, err = parseExternalDocs(edNode, ctx.push("externalDocs"))
 		if err != nil {
-			op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
+			errors = append(errors, err)
 		}
 	}
 
 	// Complex property - Parameters
+	var parameters []*openapi20models.ParameterRef
 	if paramsNode := nodeGetValue(node, "parameters"); paramsNode != nil {
-		op.Parameters, err = parseParameterRefs(paramsNode, ctx.push("parameters"))
+		parameters, err = parseParameterRefs(paramsNode, ctx.push("parameters"))
 		if err != nil {
-			op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
+			errors = append(errors, err)
 		}
 	}
 
 	// Complex property - Responses
+	var responses *openapi20models.Responses
 	if respNode := nodeGetValue(node, "responses"); respNode != nil {
-		op.Responses, err = parseResponses(respNode, ctx.push("responses"))
+		responses, err = parseResponses(respNode, ctx.push("responses"))
 		if err != nil {
-			op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
+			errors = append(errors, err)
 		}
 	}
 
 	// Complex property - Security
+	var security []openapi20models.SecurityRequirement
 	if secNode := nodeGetValue(node, "security"); secNode != nil {
-		op.Security, err = parseSecurityRequirements(secNode, ctx.push("security"))
+		security, err = parseSecurityRequirements(secNode, ctx.push("security"))
 		if err != nil {
-			op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
+			errors = append(errors, err)
 		}
+	}
+
+	op := openapi20models.NewOperation(
+		nodeGetStringSlice(node, "tags"),
+		nodeGetString(node, "summary"),
+		nodeGetString(node, "description"),
+		externalDocs,
+		nodeGetString(node, "operationId"),
+		nodeGetStringSlice(node, "consumes"),
+		nodeGetStringSlice(node, "produces"),
+		parameters,
+		responses,
+		nodeGetStringSlice(node, "schemes"),
+		nodeGetBool(node, "deprecated"),
+		security,
+	)
+
+	for _, e := range errors {
+		op.Trix.Errors = append(op.Trix.Errors, toParseError(e))
 	}
 
 	op.VendorExtensions = parseNodeExtensions(node)

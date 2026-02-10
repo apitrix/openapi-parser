@@ -44,41 +44,50 @@ func parseHeader(node *yaml.Node, ctx *ParseContext) (*openapi20models.Header, e
 		return nil, ctx.errorAt(node, "header must be an object")
 	}
 
-	header := &openapi20models.Header{}
 	var err error
 
-	// Simple properties - inline
-	header.Description = nodeGetString(node, "description")
-	header.Type = nodeGetString(node, "type")
-	header.Format = nodeGetString(node, "format")
-	header.CollectionFormat = nodeGetString(node, "collectionFormat")
-	header.Default = nodeGetAny(node, "default")
-	header.Maximum = nodeGetFloat64Ptr(node, "maximum")
-	header.ExclusiveMaximum = nodeGetBool(node, "exclusiveMaximum")
-	header.Minimum = nodeGetFloat64Ptr(node, "minimum")
-	header.ExclusiveMinimum = nodeGetBool(node, "exclusiveMinimum")
-	header.MaxLength = nodeGetUint64Ptr(node, "maxLength")
-	header.MinLength = nodeGetUint64Ptr(node, "minLength")
-	header.Pattern = nodeGetString(node, "pattern")
-	header.MaxItems = nodeGetUint64Ptr(node, "maxItems")
-	header.MinItems = nodeGetUint64Ptr(node, "minItems")
-	header.UniqueItems = nodeGetBool(node, "uniqueItems")
-	header.MultipleOf = nodeGetFloat64Ptr(node, "multipleOf")
-
 	// Enum - array of any values
+	var enum []interface{}
 	if enumNode := nodeGetValue(node, "enum"); enumNode != nil && nodeIsSequence(enumNode) {
-		header.Enum = make([]interface{}, len(enumNode.Content))
+		enum = make([]interface{}, len(enumNode.Content))
 		for i, item := range enumNode.Content {
-			header.Enum[i] = nodeToInterface(item)
+			enum[i] = nodeToInterface(item)
 		}
 	}
 
-	// Items - for array type headers
+	// Items - for array type headers (parsed first for constructor)
+	var items *openapi20models.Items
+	var itemsErr error
 	if itemsNode := nodeGetValue(node, "items"); itemsNode != nil {
-		header.Items, err = parseItems(itemsNode, ctx.push("items"))
+		items, err = parseItems(itemsNode, ctx.push("items"))
 		if err != nil {
-			header.Trix.Errors = append(header.Trix.Errors, toParseError(err))
+			itemsErr = err
 		}
+	}
+
+	header := openapi20models.NewHeader(openapi20models.HeaderFields{
+		Description:      nodeGetString(node, "description"),
+		Type:             nodeGetString(node, "type"),
+		Format:           nodeGetString(node, "format"),
+		Items:            items,
+		CollectionFormat: nodeGetString(node, "collectionFormat"),
+		Default:          nodeGetAny(node, "default"),
+		Maximum:          nodeGetFloat64Ptr(node, "maximum"),
+		ExclusiveMaximum: nodeGetBool(node, "exclusiveMaximum"),
+		Minimum:          nodeGetFloat64Ptr(node, "minimum"),
+		ExclusiveMinimum: nodeGetBool(node, "exclusiveMinimum"),
+		MaxLength:        nodeGetUint64Ptr(node, "maxLength"),
+		MinLength:        nodeGetUint64Ptr(node, "minLength"),
+		Pattern:          nodeGetString(node, "pattern"),
+		MaxItems:         nodeGetUint64Ptr(node, "maxItems"),
+		MinItems:         nodeGetUint64Ptr(node, "minItems"),
+		UniqueItems:      nodeGetBool(node, "uniqueItems"),
+		Enum:             enum,
+		MultipleOf:       nodeGetFloat64Ptr(node, "multipleOf"),
+	})
+
+	if itemsErr != nil {
+		header.Trix.Errors = append(header.Trix.Errors, toParseError(itemsErr))
 	}
 
 	header.VendorExtensions = parseNodeExtensions(node)

@@ -38,8 +38,8 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	items := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value.Items
-	assert.Equal(t, "string", items.Type)
+	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value.Items()
+	assert.Equal(t, "string", items.Type())
 }
 
 // --- Items with Format ---
@@ -70,9 +70,9 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	items := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value.Items
-	assert.Equal(t, "integer", items.Type)
-	assert.Equal(t, "int64", items.Format)
+	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value.Items()
+	assert.Equal(t, "integer", items.Type())
+	assert.Equal(t, "int64", items.Format())
 }
 
 // --- Items with Validation ---
@@ -104,11 +104,11 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	items := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value.Items
-	require.NotNil(t, items.Minimum)
-	require.NotNil(t, items.Maximum)
-	assert.Equal(t, float64(0), *items.Minimum)
-	assert.Equal(t, float64(100), *items.Maximum)
+	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value.Items()
+	require.NotNil(t, items.Minimum())
+	require.NotNil(t, items.Maximum())
+	assert.Equal(t, float64(0), *items.Minimum())
+	assert.Equal(t, float64(100), *items.Maximum())
 }
 
 // --- Items with Enum ---
@@ -142,9 +142,9 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	items := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value.Items
-	require.Len(t, items.Enum, 3)
-	assert.Equal(t, "available", items.Enum[0])
+	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value.Items()
+	require.Len(t, items.Enum(), 3)
+	assert.Equal(t, "available", items.Enum()[0])
 }
 
 // --- Nested Items ---
@@ -176,10 +176,10 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	items := result.Document.Paths.Items["/matrix"].Get.Parameters[0].Value.Items
-	assert.Equal(t, "array", items.Type)
-	require.NotNil(t, items.Items)
-	assert.Equal(t, "integer", items.Items.Type)
+	items := result.Document.Paths().Items()["/matrix"].Get().Parameters()[0].Value.Items()
+	assert.Equal(t, "array", items.Type())
+	require.NotNil(t, items.Items())
+	assert.Equal(t, "integer", items.Items().Type())
 }
 
 // --- Items with CollectionFormat ---
@@ -211,8 +211,8 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	items := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value.Items
-	assert.Equal(t, "csv", items.CollectionFormat)
+	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value.Items()
+	assert.Equal(t, "csv", items.CollectionFormat())
 }
 
 // --- Items with Default ---
@@ -243,8 +243,8 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	items := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value.Items
-	assert.Equal(t, "unknown", items.Default)
+	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value.Items()
+	assert.Equal(t, "unknown", items.Default())
 }
 
 // --- Items Extensions ---
@@ -275,6 +275,6 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	items := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value.Items
+	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value.Items()
 	assert.Equal(t, "value", items.VendorExtensions["x-custom"])
 }

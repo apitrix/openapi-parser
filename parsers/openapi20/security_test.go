@@ -33,11 +33,11 @@ securityDefinitions:
 
 	// Assert
 	require.NoError(t, err)
-	scheme := result.Document.SecurityDefinitions["api_key"]
-	assert.Equal(t, "apiKey", scheme.Type)
-	assert.Equal(t, "X-API-Key", scheme.Name)
-	assert.Equal(t, "header", scheme.In)
-	assert.Equal(t, "API key authentication", scheme.Description)
+	scheme := result.Document.SecurityDefinitions()["api_key"]
+	assert.Equal(t, "apiKey", scheme.Type())
+	assert.Equal(t, "X-API-Key", scheme.Name())
+	assert.Equal(t, "header", scheme.In())
+	assert.Equal(t, "API key authentication", scheme.Description())
 }
 
 // --- Basic Authentication ---
@@ -60,8 +60,8 @@ securityDefinitions:
 
 	// Assert
 	require.NoError(t, err)
-	scheme := result.Document.SecurityDefinitions["basic_auth"]
-	assert.Equal(t, "basic", scheme.Type)
+	scheme := result.Document.SecurityDefinitions()["basic_auth"]
+	assert.Equal(t, "basic", scheme.Type())
 }
 
 // --- OAuth2 Implicit ---
@@ -88,12 +88,12 @@ securityDefinitions:
 
 	// Assert
 	require.NoError(t, err)
-	scheme := result.Document.SecurityDefinitions["oauth2_implicit"]
-	assert.Equal(t, "oauth2", scheme.Type)
-	assert.Equal(t, "implicit", scheme.Flow)
-	assert.Equal(t, "https://example.com/oauth/authorize", scheme.AuthorizationURL)
-	require.Contains(t, scheme.Scopes, "read")
-	assert.Equal(t, "Read access", scheme.Scopes["read"])
+	scheme := result.Document.SecurityDefinitions()["oauth2_implicit"]
+	assert.Equal(t, "oauth2", scheme.Type())
+	assert.Equal(t, "implicit", scheme.Flow())
+	assert.Equal(t, "https://example.com/oauth/authorize", scheme.AuthorizationURL())
+	require.Contains(t, scheme.Scopes(), "read")
+	assert.Equal(t, "Read access", scheme.Scopes()["read"])
 }
 
 // --- OAuth2 Password ---
@@ -119,9 +119,9 @@ securityDefinitions:
 
 	// Assert
 	require.NoError(t, err)
-	scheme := result.Document.SecurityDefinitions["oauth2_password"]
-	assert.Equal(t, "password", scheme.Flow)
-	assert.Equal(t, "https://example.com/oauth/token", scheme.TokenURL)
+	scheme := result.Document.SecurityDefinitions()["oauth2_password"]
+	assert.Equal(t, "password", scheme.Flow())
+	assert.Equal(t, "https://example.com/oauth/token", scheme.TokenURL())
 }
 
 // --- OAuth2 AccessCode ---
@@ -148,10 +148,10 @@ securityDefinitions:
 
 	// Assert
 	require.NoError(t, err)
-	scheme := result.Document.SecurityDefinitions["oauth2_accesscode"]
-	assert.Equal(t, "accessCode", scheme.Flow)
-	assert.NotEmpty(t, scheme.AuthorizationURL)
-	assert.NotEmpty(t, scheme.TokenURL)
+	scheme := result.Document.SecurityDefinitions()["oauth2_accesscode"]
+	assert.Equal(t, "accessCode", scheme.Flow())
+	assert.NotEmpty(t, scheme.AuthorizationURL())
+	assert.NotEmpty(t, scheme.TokenURL())
 }
 
 // --- Security Requirement Simple ---
@@ -177,7 +177,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	security := result.Document.Paths.Items["/pets"].Get.Security
+	security := result.Document.Paths().Items()["/pets"].Get().Security()
 	require.Len(t, security, 1)
 	require.Contains(t, security[0], "api_key")
 	assert.Empty(t, security[0]["api_key"])
@@ -208,7 +208,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	security := result.Document.Paths.Items["/pets"].Get.Security
+	security := result.Document.Paths().Items()["/pets"].Get().Security()
 	require.Len(t, security, 1)
 	scopes := security[0]["oauth2"]
 	assert.Equal(t, []string{"read", "write"}, scopes)
@@ -239,7 +239,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	security := result.Document.Paths.Items["/pets"].Get.Security
+	security := result.Document.Paths().Items()["/pets"].Get().Security()
 	require.Len(t, security, 2)
 }
 
@@ -261,8 +261,8 @@ security:
 
 	// Assert
 	require.NoError(t, err)
-	require.Len(t, result.Document.Security, 1)
-	assert.Contains(t, result.Document.Security[0], "api_key")
+	require.Len(t, result.Document.Security(), 1)
+	assert.Contains(t, result.Document.Security()[0], "api_key")
 }
 
 // --- Security Scheme Extensions ---
@@ -287,6 +287,6 @@ securityDefinitions:
 
 	// Assert
 	require.NoError(t, err)
-	ext := result.Document.SecurityDefinitions["api_key"].VendorExtensions
+	ext := result.Document.SecurityDefinitions()["api_key"].VendorExtensions
 	assert.Equal(t, "value", ext["x-custom"])
 }

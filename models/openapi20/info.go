@@ -5,15 +5,25 @@ package openapi20
 type Info struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Title          string   `json:"title" yaml:"title"`
-	Description    string   `json:"description,omitempty" yaml:"description,omitempty"`
-	TermsOfService string   `json:"termsOfService,omitempty" yaml:"termsOfService,omitempty"`
-	Contact        *Contact `json:"contact,omitempty" yaml:"contact,omitempty"`
-	License        *License `json:"license,omitempty" yaml:"license,omitempty"`
-	Version        string   `json:"version" yaml:"version"`
+	title          string
+	description    string
+	termsOfService string
+	contact        *Contact
+	license        *License
+	version        string
 }
 
+func (i *Info) Title() string          { return i.title }
+func (i *Info) Description() string    { return i.description }
+func (i *Info) TermsOfService() string { return i.termsOfService }
+func (i *Info) Contact() *Contact      { return i.contact }
+func (i *Info) License() *License      { return i.license }
+func (i *Info) Version() string        { return i.version }
+
 // NewInfo creates a new Info instance.
-func NewInfo(title, version string) *Info {
-	return &Info{Title: title, Version: version}
+func NewInfo(title, description, termsOfService, version string, contact *Contact, license *License) *Info {
+	return &Info{
+		title: title, description: description, termsOfService: termsOfService,
+		version: version, contact: contact, license: license,
+	}
 }

@@ -35,10 +35,10 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	op := result.Document.Paths.Items["/pets"].Get
-	assert.Equal(t, "List pets", op.Summary)
-	assert.Equal(t, "Returns all pets", op.Description)
-	assert.Equal(t, "listPets", op.OperationID)
+	op := result.Document.Paths().Items()["/pets"].Get()
+	assert.Equal(t, "List pets", op.Summary())
+	assert.Equal(t, "Returns all pets", op.Description())
+	assert.Equal(t, "listPets", op.OperationID())
 }
 
 // --- Tags ---
@@ -65,7 +65,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	assert.Equal(t, []string{"pets", "animals"}, result.Document.Paths.Items["/pets"].Get.Tags)
+	assert.Equal(t, []string{"pets", "animals"}, result.Document.Paths().Items()["/pets"].Get().Tags())
 }
 
 // --- Consumes/Produces ---
@@ -93,9 +93,9 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	op := result.Document.Paths.Items["/pets"].Post
-	assert.Equal(t, []string{"application/json"}, op.Consumes)
-	assert.Equal(t, []string{"application/json"}, op.Produces)
+	op := result.Document.Paths().Items()["/pets"].Post()
+	assert.Equal(t, []string{"application/json"}, op.Consumes())
+	assert.Equal(t, []string{"application/json"}, op.Produces())
 }
 
 // --- Parameters ---
@@ -126,10 +126,10 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	params := result.Document.Paths.Items["/pets"].Get.Parameters
+	params := result.Document.Paths().Items()["/pets"].Get().Parameters()
 	require.Len(t, params, 2)
-	assert.Equal(t, "limit", params[0].Value.Name)
-	assert.Equal(t, "offset", params[1].Value.Name)
+	assert.Equal(t, "limit", params[0].Value.Name())
+	assert.Equal(t, "offset", params[1].Value.Name())
 }
 
 // --- Responses ---
@@ -157,11 +157,11 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	responses := result.Document.Paths.Items["/pets"].Get.Responses
-	require.NotNil(t, responses.Default)
-	assert.Equal(t, "Error", responses.Default.Value.Description)
-	assert.Equal(t, "Success", responses.Codes["200"].Value.Description)
-	assert.Equal(t, "Not found", responses.Codes["404"].Value.Description)
+	responses := result.Document.Paths().Items()["/pets"].Get().Responses()
+	require.NotNil(t, responses.Default())
+	assert.Equal(t, "Error", responses.Default().Value.Description())
+	assert.Equal(t, "Success", responses.Codes()["200"].Value.Description())
+	assert.Equal(t, "Not found", responses.Codes()["404"].Value.Description())
 }
 
 // --- Deprecated ---
@@ -186,7 +186,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	assert.True(t, result.Document.Paths.Items["/pets"].Get.Deprecated)
+	assert.True(t, result.Document.Paths().Items()["/pets"].Get().Deprecated())
 }
 
 // --- Security ---
@@ -212,8 +212,8 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	require.Len(t, result.Document.Paths.Items["/pets"].Get.Security, 1)
-	assert.Contains(t, result.Document.Paths.Items["/pets"].Get.Security[0], "api_key")
+	require.Len(t, result.Document.Paths().Items()["/pets"].Get().Security(), 1)
+	assert.Contains(t, result.Document.Paths().Items()["/pets"].Get().Security()[0], "api_key")
 }
 
 // --- External Docs ---
@@ -240,8 +240,8 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Paths.Items["/pets"].Get.ExternalDocs)
-	assert.Equal(t, "https://example.com", result.Document.Paths.Items["/pets"].Get.ExternalDocs.URL)
+	require.NotNil(t, result.Document.Paths().Items()["/pets"].Get().ExternalDocs())
+	assert.Equal(t, "https://example.com", result.Document.Paths().Items()["/pets"].Get().ExternalDocs().URL())
 }
 
 // --- Extensions ---
@@ -266,6 +266,6 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Paths.Items["/pets"].Get.VendorExtensions)
-	assert.Equal(t, "value", result.Document.Paths.Items["/pets"].Get.VendorExtensions["x-custom"])
+	require.NotNil(t, result.Document.Paths().Items()["/pets"].Get().VendorExtensions)
+	assert.Equal(t, "value", result.Document.Paths().Items()["/pets"].Get().VendorExtensions["x-custom"])
 }

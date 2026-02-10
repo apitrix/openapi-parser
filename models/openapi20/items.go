@@ -5,26 +5,73 @@ package openapi20
 type Items struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Type             string        `json:"type" yaml:"type"`
-	Format           string        `json:"format,omitempty" yaml:"format,omitempty"`
-	Items            *Items        `json:"items,omitempty" yaml:"items,omitempty"`
-	CollectionFormat string        `json:"collectionFormat,omitempty" yaml:"collectionFormat,omitempty"`
-	Default          interface{}   `json:"default,omitempty" yaml:"default,omitempty"`
-	Maximum          *float64      `json:"maximum,omitempty" yaml:"maximum,omitempty"`
-	ExclusiveMaximum bool          `json:"exclusiveMaximum,omitempty" yaml:"exclusiveMaximum,omitempty"`
-	Minimum          *float64      `json:"minimum,omitempty" yaml:"minimum,omitempty"`
-	ExclusiveMinimum bool          `json:"exclusiveMinimum,omitempty" yaml:"exclusiveMinimum,omitempty"`
-	MaxLength        *uint64       `json:"maxLength,omitempty" yaml:"maxLength,omitempty"`
-	MinLength        *uint64       `json:"minLength,omitempty" yaml:"minLength,omitempty"`
-	Pattern          string        `json:"pattern,omitempty" yaml:"pattern,omitempty"`
-	MaxItems         *uint64       `json:"maxItems,omitempty" yaml:"maxItems,omitempty"`
-	MinItems         *uint64       `json:"minItems,omitempty" yaml:"minItems,omitempty"`
-	UniqueItems      bool          `json:"uniqueItems,omitempty" yaml:"uniqueItems,omitempty"`
-	Enum             []interface{} `json:"enum,omitempty" yaml:"enum,omitempty"`
-	MultipleOf       *float64      `json:"multipleOf,omitempty" yaml:"multipleOf,omitempty"`
+	itemType         string
+	format           string
+	items            *Items
+	collectionFormat string
+	defaultVal       interface{}
+	maximum          *float64
+	exclusiveMaximum bool
+	minimum          *float64
+	exclusiveMinimum bool
+	maxLength        *uint64
+	minLength        *uint64
+	pattern          string
+	maxItems         *uint64
+	minItems         *uint64
+	uniqueItems      bool
+	enum             []interface{}
+	multipleOf       *float64
+}
+
+func (it *Items) Type() string             { return it.itemType }
+func (it *Items) Format() string           { return it.format }
+func (it *Items) Items() *Items            { return it.items }
+func (it *Items) CollectionFormat() string { return it.collectionFormat }
+func (it *Items) Default() interface{}     { return it.defaultVal }
+func (it *Items) Maximum() *float64        { return it.maximum }
+func (it *Items) ExclusiveMaximum() bool   { return it.exclusiveMaximum }
+func (it *Items) Minimum() *float64        { return it.minimum }
+func (it *Items) ExclusiveMinimum() bool   { return it.exclusiveMinimum }
+func (it *Items) MaxLength() *uint64       { return it.maxLength }
+func (it *Items) MinLength() *uint64       { return it.minLength }
+func (it *Items) Pattern() string          { return it.pattern }
+func (it *Items) MaxItems() *uint64        { return it.maxItems }
+func (it *Items) MinItems() *uint64        { return it.minItems }
+func (it *Items) UniqueItems() bool        { return it.uniqueItems }
+func (it *Items) Enum() []interface{}      { return it.enum }
+func (it *Items) MultipleOf() *float64     { return it.multipleOf }
+
+// ItemsFields groups all items properties for the constructor.
+type ItemsFields struct {
+	Type             string
+	Format           string
+	Items            *Items
+	CollectionFormat string
+	Default          interface{}
+	Maximum          *float64
+	ExclusiveMaximum bool
+	Minimum          *float64
+	ExclusiveMinimum bool
+	MaxLength        *uint64
+	MinLength        *uint64
+	Pattern          string
+	MaxItems         *uint64
+	MinItems         *uint64
+	UniqueItems      bool
+	Enum             []interface{}
+	MultipleOf       *float64
 }
 
 // NewItems creates a new Items instance.
-func NewItems(itemType string) *Items {
-	return &Items{Type: itemType}
+func NewItems(f ItemsFields) *Items {
+	return &Items{
+		itemType: f.Type, format: f.Format, items: f.Items,
+		collectionFormat: f.CollectionFormat, defaultVal: f.Default,
+		maximum: f.Maximum, exclusiveMaximum: f.ExclusiveMaximum,
+		minimum: f.Minimum, exclusiveMinimum: f.ExclusiveMinimum,
+		maxLength: f.MaxLength, minLength: f.MinLength, pattern: f.Pattern,
+		maxItems: f.MaxItems, minItems: f.MinItems, uniqueItems: f.UniqueItems,
+		enum: f.Enum, multipleOf: f.MultipleOf,
+	}
 }

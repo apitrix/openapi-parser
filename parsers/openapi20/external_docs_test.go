@@ -30,9 +30,9 @@ externalDocs:
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.ExternalDocs)
-	assert.Equal(t, "https://example.com/docs", result.Document.ExternalDocs.URL)
-	assert.Equal(t, "Find more information", result.Document.ExternalDocs.Description)
+	require.NotNil(t, result.Document.ExternalDocs())
+	assert.Equal(t, "https://example.com/docs", result.Document.ExternalDocs().URL())
+	assert.Equal(t, "Find more information", result.Document.ExternalDocs().Description())
 }
 
 // --- ExternalDocs URL Only ---
@@ -53,9 +53,9 @@ externalDocs:
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.ExternalDocs)
-	assert.Equal(t, "https://example.com/docs", result.Document.ExternalDocs.URL)
-	assert.Empty(t, result.Document.ExternalDocs.Description)
+	require.NotNil(t, result.Document.ExternalDocs())
+	assert.Equal(t, "https://example.com/docs", result.Document.ExternalDocs().URL())
+	assert.Empty(t, result.Document.ExternalDocs().Description())
 }
 
 // --- ExternalDocs on Operation ---
@@ -82,9 +82,9 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	ed := result.Document.Paths.Items["/pets"].Get.ExternalDocs
+	ed := result.Document.Paths().Items()["/pets"].Get().ExternalDocs()
 	require.NotNil(t, ed)
-	assert.Equal(t, "https://example.com/pets", ed.URL)
+	assert.Equal(t, "https://example.com/pets", ed.URL())
 }
 
 // --- ExternalDocs on Tag ---
@@ -107,9 +107,9 @@ tags:
 
 	// Assert
 	require.NoError(t, err)
-	ed := result.Document.Tags[0].ExternalDocs
+	ed := result.Document.Tags()[0].ExternalDocs()
 	require.NotNil(t, ed)
-	assert.Equal(t, "https://example.com/pets", ed.URL)
+	assert.Equal(t, "https://example.com/pets", ed.URL())
 }
 
 // --- ExternalDocs on Schema ---
@@ -133,9 +133,9 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	ed := result.Document.Definitions["Pet"].Value.ExternalDocs
+	ed := result.Document.Definitions()["Pet"].Value.ExternalDocs()
 	require.NotNil(t, ed)
-	assert.Equal(t, "https://example.com/pet-schema", ed.URL)
+	assert.Equal(t, "https://example.com/pet-schema", ed.URL())
 }
 
 // --- ExternalDocs Extensions ---
@@ -157,6 +157,6 @@ externalDocs:
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.ExternalDocs.VendorExtensions)
-	assert.Equal(t, "2.0", result.Document.ExternalDocs.VendorExtensions["x-version"])
+	require.NotNil(t, result.Document.ExternalDocs().VendorExtensions)
+	assert.Equal(t, "2.0", result.Document.ExternalDocs().VendorExtensions["x-version"])
 }

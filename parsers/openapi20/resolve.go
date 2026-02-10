@@ -25,7 +25,7 @@ func resolveDocument(doc *openapi20models.Swagger, r *shared.RefResolver, resolv
 
 	// Resolve top-level definitions — pre-register each definition's canonical
 	// ref path so self-referencing schemas are immediately detected as circular.
-	for name, ref := range doc.Definitions {
+	for name, ref := range doc.Definitions() {
 		canonicalRef := "#/definitions/" + name
 		resolving[canonicalRef] = true
 		if err := resolveSchemaRef(ref, r, resolving); err != nil {
@@ -33,7 +33,7 @@ func resolveDocument(doc *openapi20models.Swagger, r *shared.RefResolver, resolv
 		}
 		delete(resolving, canonicalRef)
 	}
-	for name, ref := range doc.Parameters {
+	for name, ref := range doc.Parameters() {
 		canonicalRef := "#/parameters/" + name
 		resolving[canonicalRef] = true
 		if err := resolveParameterRef(ref, r, resolving); err != nil {
@@ -41,7 +41,7 @@ func resolveDocument(doc *openapi20models.Swagger, r *shared.RefResolver, resolv
 		}
 		delete(resolving, canonicalRef)
 	}
-	for name, ref := range doc.Responses {
+	for name, ref := range doc.Responses() {
 		canonicalRef := "#/responses/" + name
 		resolving[canonicalRef] = true
 		if err := resolveResponseRef(ref, r, resolving); err != nil {
@@ -51,8 +51,8 @@ func resolveDocument(doc *openapi20models.Swagger, r *shared.RefResolver, resolv
 	}
 
 	// Resolve paths
-	if doc.Paths != nil {
-		for _, pathItem := range doc.Paths.Items {
+	if doc.Paths() != nil {
+		for _, pathItem := range doc.Paths().Items() {
 			if err := resolvePathItem(pathItem, r, resolving); err != nil {
 				return err
 			}
@@ -68,15 +68,15 @@ func resolvePathItem(pi *openapi20models.PathItem, r *shared.RefResolver, resolv
 	}
 
 	for _, op := range []*openapi20models.Operation{
-		pi.Get, pi.Put, pi.Post, pi.Delete,
-		pi.Options, pi.Head, pi.Patch,
+		pi.Get(), pi.Put(), pi.Post(), pi.Delete(),
+		pi.Options(), pi.Head(), pi.Patch(),
 	} {
 		if err := resolveOperation(op, r, resolving); err != nil {
 			return err
 		}
 	}
 
-	for _, ref := range pi.Parameters {
+	for _, ref := range pi.Parameters() {
 		if err := resolveParameterRef(ref, r, resolving); err != nil {
 			return err
 		}
@@ -90,17 +90,17 @@ func resolveOperation(op *openapi20models.Operation, r *shared.RefResolver, reso
 		return nil
 	}
 
-	for _, ref := range op.Parameters {
+	for _, ref := range op.Parameters() {
 		if err := resolveParameterRef(ref, r, resolving); err != nil {
 			return err
 		}
 	}
 
-	if op.Responses != nil {
-		if err := resolveResponseRef(op.Responses.Default, r, resolving); err != nil {
+	if op.Responses() != nil {
+		if err := resolveResponseRef(op.Responses().Default(), r, resolving); err != nil {
 			return err
 		}
-		for _, ref := range op.Responses.Codes {
+		for _, ref := range op.Responses().Codes() {
 			if err := resolveResponseRef(ref, r, resolving); err != nil {
 				return err
 			}
@@ -157,20 +157,20 @@ func resolveSchema(schema *openapi20models.Schema, r *shared.RefResolver, resolv
 		return nil
 	}
 
-	for _, ref := range schema.AllOf {
+	for _, ref := range schema.AllOf() {
 		if err := resolveSchemaRef(ref, r, resolving); err != nil {
 			return err
 		}
 	}
-	if err := resolveSchemaRef(schema.Items, r, resolving); err != nil {
+	if err := resolveSchemaRef(schema.Items(), r, resolving); err != nil {
 		return err
 	}
-	for _, ref := range schema.Properties {
+	for _, ref := range schema.Properties() {
 		if err := resolveSchemaRef(ref, r, resolving); err != nil {
 			return err
 		}
 	}
-	return resolveSchemaRef(schema.AdditionalProperties, r, resolving)
+	return resolveSchemaRef(schema.AdditionalProperties(), r, resolving)
 }
 
 func resolveResponseRef(ref *openapi20models.ResponseRef, r *shared.RefResolver, resolving map[string]bool) error {
@@ -196,7 +196,7 @@ func resolveResponseRef(ref *openapi20models.ResponseRef, r *shared.RefResolver,
 	}
 
 	if ref.Value != nil {
-		return resolveSchemaRef(ref.Value.Schema, r, resolving)
+		return resolveSchemaRef(ref.Value.Schema(), r, resolving)
 	}
 
 	return nil
@@ -225,7 +225,7 @@ func resolveParameterRef(ref *openapi20models.ParameterRef, r *shared.RefResolve
 	}
 
 	if ref.Value != nil {
-		return resolveSchemaRef(ref.Value.Schema, r, resolving)
+		return resolveSchemaRef(ref.Value.Schema(), r, resolving)
 	}
 
 	return nil

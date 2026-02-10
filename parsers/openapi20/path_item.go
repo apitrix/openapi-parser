@@ -16,68 +16,78 @@ func parsePathItem(node *yaml.Node, ctx *ParseContext) (*openapi20models.PathIte
 		return nil, ctx.errorAt(node, "path item must be an object")
 	}
 
-	pathItem := &openapi20models.PathItem{}
 	var err error
-
-	// Handle $ref
-	pathItem.Ref = nodeGetString(node, "$ref")
+	var errors []error
 
 	// HTTP methods - delegated to operation parser
+	var get, put, post, del, options, head, patch *openapi20models.Operation
+
 	if getNode := nodeGetValue(node, "get"); getNode != nil {
-		pathItem.Get, err = parseOperation(getNode, ctx.push("get"))
+		get, err = parseOperation(getNode, ctx.push("get"))
 		if err != nil {
-			pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
+			errors = append(errors, err)
 		}
 	}
 
 	if putNode := nodeGetValue(node, "put"); putNode != nil {
-		pathItem.Put, err = parseOperation(putNode, ctx.push("put"))
+		put, err = parseOperation(putNode, ctx.push("put"))
 		if err != nil {
-			pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
+			errors = append(errors, err)
 		}
 	}
 
 	if postNode := nodeGetValue(node, "post"); postNode != nil {
-		pathItem.Post, err = parseOperation(postNode, ctx.push("post"))
+		post, err = parseOperation(postNode, ctx.push("post"))
 		if err != nil {
-			pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
+			errors = append(errors, err)
 		}
 	}
 
 	if deleteNode := nodeGetValue(node, "delete"); deleteNode != nil {
-		pathItem.Delete, err = parseOperation(deleteNode, ctx.push("delete"))
+		del, err = parseOperation(deleteNode, ctx.push("delete"))
 		if err != nil {
-			pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
+			errors = append(errors, err)
 		}
 	}
 
 	if optionsNode := nodeGetValue(node, "options"); optionsNode != nil {
-		pathItem.Options, err = parseOperation(optionsNode, ctx.push("options"))
+		options, err = parseOperation(optionsNode, ctx.push("options"))
 		if err != nil {
-			pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
+			errors = append(errors, err)
 		}
 	}
 
 	if headNode := nodeGetValue(node, "head"); headNode != nil {
-		pathItem.Head, err = parseOperation(headNode, ctx.push("head"))
+		head, err = parseOperation(headNode, ctx.push("head"))
 		if err != nil {
-			pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
+			errors = append(errors, err)
 		}
 	}
 
 	if patchNode := nodeGetValue(node, "patch"); patchNode != nil {
-		pathItem.Patch, err = parseOperation(patchNode, ctx.push("patch"))
+		patch, err = parseOperation(patchNode, ctx.push("patch"))
 		if err != nil {
-			pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
+			errors = append(errors, err)
 		}
 	}
 
 	// Path-level parameters
+	var parameters []*openapi20models.ParameterRef
 	if paramsNode := nodeGetValue(node, "parameters"); paramsNode != nil {
-		pathItem.Parameters, err = parseParameterRefs(paramsNode, ctx.push("parameters"))
+		parameters, err = parseParameterRefs(paramsNode, ctx.push("parameters"))
 		if err != nil {
-			pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
+			errors = append(errors, err)
 		}
+	}
+
+	pathItem := openapi20models.NewPathItem(
+		nodeGetString(node, "$ref"),
+		get, put, post, del, options, head, patch,
+		parameters,
+	)
+
+	for _, e := range errors {
+		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(e))
 	}
 
 	pathItem.VendorExtensions = parseNodeExtensions(node)

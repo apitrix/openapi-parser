@@ -5,17 +5,34 @@ package openapi20
 type SecurityScheme struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Type             string            `json:"type" yaml:"type"`
-	Description      string            `json:"description,omitempty" yaml:"description,omitempty"`
-	Name             string            `json:"name,omitempty" yaml:"name,omitempty"`
-	In               string            `json:"in,omitempty" yaml:"in,omitempty"`
-	Flow             string            `json:"flow,omitempty" yaml:"flow,omitempty"`
-	AuthorizationURL string            `json:"authorizationUrl,omitempty" yaml:"authorizationUrl,omitempty"`
-	TokenURL         string            `json:"tokenUrl,omitempty" yaml:"tokenUrl,omitempty"`
-	Scopes           map[string]string `json:"scopes,omitempty" yaml:"scopes,omitempty"`
+	securityType     string
+	description      string
+	name             string
+	in               string
+	flow             string
+	authorizationURL string
+	tokenURL         string
+	scopes           map[string]string
 }
 
+func (s *SecurityScheme) Type() string              { return s.securityType }
+func (s *SecurityScheme) Description() string       { return s.description }
+func (s *SecurityScheme) Name() string              { return s.name }
+func (s *SecurityScheme) In() string                { return s.in }
+func (s *SecurityScheme) Flow() string              { return s.flow }
+func (s *SecurityScheme) AuthorizationURL() string  { return s.authorizationURL }
+func (s *SecurityScheme) TokenURL() string          { return s.tokenURL }
+func (s *SecurityScheme) Scopes() map[string]string { return s.scopes }
+
 // NewSecurityScheme creates a new SecurityScheme instance.
-func NewSecurityScheme(securityType string) *SecurityScheme {
-	return &SecurityScheme{Type: securityType}
+func NewSecurityScheme(
+	securityType, description, name, in, flow, authorizationURL, tokenURL string,
+	scopes map[string]string,
+) *SecurityScheme {
+	return &SecurityScheme{
+		securityType: securityType, description: description,
+		name: name, in: in, flow: flow,
+		authorizationURL: authorizationURL, tokenURL: tokenURL,
+		scopes: scopes,
+	}
 }

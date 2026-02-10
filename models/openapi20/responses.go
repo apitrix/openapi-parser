@@ -5,11 +5,14 @@ package openapi20
 type Responses struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Default *ResponseRef            `json:"default,omitempty" yaml:"default,omitempty"`
-	Codes   map[string]*ResponseRef `json:"-" yaml:"-"` // HTTP status codes (e.g., "200", "404")
+	defaultResp *ResponseRef
+	codes       map[string]*ResponseRef // HTTP status codes (e.g., "200", "404")
 }
 
+func (r *Responses) Default() *ResponseRef          { return r.defaultResp }
+func (r *Responses) Codes() map[string]*ResponseRef { return r.codes }
+
 // NewResponses creates a new Responses instance.
-func NewResponses() *Responses {
-	return &Responses{}
+func NewResponses(defaultResp *ResponseRef, codes map[string]*ResponseRef) *Responses {
+	return &Responses{defaultResp: defaultResp, codes: codes}
 }
