@@ -5,19 +5,57 @@ package openapi31
 type OpenAPI struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	OpenAPI           string                  `json:"openapi" yaml:"openapi"`
-	Info              *Info                   `json:"info" yaml:"info"`
-	JsonSchemaDialect string                  `json:"jsonSchemaDialect,omitempty" yaml:"jsonSchemaDialect,omitempty"`
-	Servers           []*Server               `json:"servers,omitempty" yaml:"servers,omitempty"`
-	Paths             *Paths                  `json:"paths,omitempty" yaml:"paths,omitempty"`
-	Webhooks          map[string]*PathItemRef `json:"webhooks,omitempty" yaml:"webhooks,omitempty"`
-	Components        *Components             `json:"components,omitempty" yaml:"components,omitempty"`
-	Security          []SecurityRequirement   `json:"security,omitempty" yaml:"security,omitempty"`
-	Tags              []*Tag                  `json:"tags,omitempty" yaml:"tags,omitempty"`
-	ExternalDocs      *ExternalDocumentation  `json:"externalDocs,omitempty" yaml:"externalDocs,omitempty"`
+	openAPI           string
+	info              *Info
+	jsonSchemaDialect string
+	servers           []*Server
+	paths             *Paths
+	webhooks          map[string]*PathItemRef
+	components        *Components
+	security          []SecurityRequirement
+	tags              []*Tag
+	externalDocs      *ExternalDocumentation
+}
+
+func (o *OpenAPI) OpenAPIVersion() string               { return o.openAPI }
+func (o *OpenAPI) Info() *Info                          { return o.info }
+func (o *OpenAPI) JsonSchemaDialect() string            { return o.jsonSchemaDialect }
+func (o *OpenAPI) Servers() []*Server                   { return o.servers }
+func (o *OpenAPI) Paths() *Paths                        { return o.paths }
+func (o *OpenAPI) Webhooks() map[string]*PathItemRef    { return o.webhooks }
+func (o *OpenAPI) Components() *Components              { return o.components }
+func (o *OpenAPI) Security() []SecurityRequirement      { return o.security }
+func (o *OpenAPI) Tags() []*Tag                         { return o.tags }
+func (o *OpenAPI) ExternalDocs() *ExternalDocumentation { return o.externalDocs }
+
+// SetProperty sets a named property on the OpenAPI document.
+// Used by parsers for post-construction field assignment.
+func (o *OpenAPI) SetProperty(name string, value interface{}) {
+	switch name {
+	case "openapi":
+		o.openAPI = value.(string)
+	case "info":
+		o.info = value.(*Info)
+	case "jsonSchemaDialect":
+		o.jsonSchemaDialect = value.(string)
+	case "servers":
+		o.servers = value.([]*Server)
+	case "paths":
+		o.paths = value.(*Paths)
+	case "webhooks":
+		o.webhooks = value.(map[string]*PathItemRef)
+	case "components":
+		o.components = value.(*Components)
+	case "security":
+		o.security = value.([]SecurityRequirement)
+	case "tags":
+		o.tags = value.([]*Tag)
+	case "externalDocs":
+		o.externalDocs = value.(*ExternalDocumentation)
+	}
 }
 
 // NewOpenAPI creates a new OpenAPI root document instance.
 func NewOpenAPI(version string, info *Info) *OpenAPI {
-	return &OpenAPI{OpenAPI: version, Info: info}
+	return &OpenAPI{openAPI: version, info: info}
 }

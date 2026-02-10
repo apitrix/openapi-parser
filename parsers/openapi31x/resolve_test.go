@@ -62,16 +62,16 @@ components:
 		t.Fatalf("resolveDocument() error: %v", err)
 	}
 
-	pet := result.Document.Components.Schemas["Pet"]
+	pet := result.Document.Components().Schemas()["Pet"]
 	if pet == nil || pet.Value == nil {
 		t.Fatal("Pet schema should be populated")
 	}
 
-	resp := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"]
+	resp := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"]
 	if resp == nil || resp.Value == nil {
 		t.Fatal("200 response should be populated")
 	}
-	schema := resp.Value.Content["application/json"].Schema
+	schema := resp.Value.Content()["application/json"].Schema()
 	if schema == nil || schema.Value == nil {
 		t.Fatal("response schema ref should be resolved")
 	}
@@ -110,18 +110,18 @@ components:
 		t.Fatalf("resolveDocument() error: %v", err)
 	}
 
-	pet := result.Document.Components.Schemas["Pet"]
+	pet := result.Document.Components().Schemas()["Pet"]
 	if pet == nil || pet.Value == nil {
 		t.Fatal("Pet schema should be populated")
 	}
-	tagRef := pet.Value.Properties["tag"]
+	tagRef := pet.Value.Properties()["tag"]
 	if tagRef == nil {
 		t.Fatal("Pet.tag property should exist")
 	}
 	if tagRef.Value == nil {
 		t.Fatal("Pet.tag ref Value should be resolved from external file")
 	}
-	if tagRef.Value.Properties["name"] == nil {
+	if tagRef.Value.Properties()["name"] == nil {
 		t.Error("Tag schema should have 'name' property")
 	}
 }
@@ -160,15 +160,15 @@ paths:
 		t.Fatalf("resolveDocument() error: %v", err)
 	}
 
-	resp := result.Document.Paths.Items["/pets"].Get.Responses.Codes["404"]
+	resp := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["404"]
 	if resp == nil {
 		t.Fatal("404 response should exist")
 	}
 	if resp.Value == nil {
 		t.Fatal("404 response Value should be resolved from external file")
 	}
-	if resp.Value.Description != "The requested resource was not found" {
-		t.Errorf("unexpected description: %q", resp.Value.Description)
+	if resp.Value.Description() != "The requested resource was not found" {
+		t.Errorf("unexpected description: %q", resp.Value.Description())
 	}
 }
 
@@ -206,15 +206,15 @@ components:
 	}
 
 	t.Run("TreeNode self-reference", func(t *testing.T) {
-		treeNode := result.Document.Components.Schemas["TreeNode"]
+		treeNode := result.Document.Components().Schemas()["TreeNode"]
 		if treeNode == nil || treeNode.Value == nil {
 			t.Fatal("TreeNode schema should be populated")
 		}
-		children := treeNode.Value.Properties["children"]
+		children := treeNode.Value.Properties()["children"]
 		if children == nil || children.Value == nil {
 			t.Fatal("children property should exist")
 		}
-		items := children.Value.Items
+		items := children.Value.Items()
 		if items == nil {
 			t.Fatal("children.items should exist")
 		}
@@ -227,11 +227,11 @@ components:
 	})
 
 	t.Run("Person self-reference", func(t *testing.T) {
-		person := result.Document.Components.Schemas["Person"]
+		person := result.Document.Components().Schemas()["Person"]
 		if person == nil || person.Value == nil {
 			t.Fatal("Person schema should be populated")
 		}
-		bestFriend := person.Value.Properties["bestFriend"]
+		bestFriend := person.Value.Properties()["bestFriend"]
 		if bestFriend == nil {
 			t.Fatal("bestFriend property should exist")
 		}

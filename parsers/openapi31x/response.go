@@ -26,30 +26,35 @@ func (p *responseParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mo
 		return nil, ctx.errorAt(node, "response must be an object")
 	}
 
-	resp := &openapi31models.Response{}
-	var err error
-
-	// Simple properties - inline
-	resp.Description = p.ParseDescription(node)
+	var errs []openapi31models.ParseError
 
 	// Complex properties - delegated to dedicated files
-	resp.Headers, err = p.ParseHeaders(node, ctx)
+	headers, err := p.ParseHeaders(node, ctx)
 	if err != nil {
-		resp.Trix.Errors = append(resp.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	resp.Content, err = p.ParseContent(node, ctx)
+	content, err := p.ParseContent(node, ctx)
 	if err != nil {
-		resp.Trix.Errors = append(resp.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	resp.Links, err = p.ParseLinks(node, ctx)
+	links, err := p.ParseLinks(node, ctx)
 	if err != nil {
-		resp.Trix.Errors = append(resp.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
+
+	// Create via constructor
+	resp := openapi31models.NewResponse(
+		p.ParseDescription(node),
+		headers,
+		content,
+		links,
+	)
 
 	resp.VendorExtensions = parseNodeExtensions(node)
 	resp.Trix.Source = ctx.nodeSource(node)
+	resp.Trix.Errors = append(resp.Trix.Errors, errs...)
 
 	// Detect unknown fields
 	resp.Trix.Errors = append(resp.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, responseKnownFieldsSet))...)

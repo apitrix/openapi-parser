@@ -5,12 +5,16 @@ package openapi31
 type Server struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	URL         string                     `json:"url" yaml:"url"`
-	Description string                     `json:"description,omitempty" yaml:"description,omitempty"`
-	Variables   map[string]*ServerVariable `json:"variables,omitempty" yaml:"variables,omitempty"`
+	url         string
+	description string
+	variables   map[string]*ServerVariable
 }
 
+func (s *Server) URL() string                           { return s.url }
+func (s *Server) Description() string                   { return s.description }
+func (s *Server) Variables() map[string]*ServerVariable { return s.variables }
+
 // NewServer creates a new Server instance.
-func NewServer(url string) *Server {
-	return &Server{URL: url}
+func NewServer(url, description string, variables map[string]*ServerVariable) *Server {
+	return &Server{url: url, description: description, variables: variables}
 }

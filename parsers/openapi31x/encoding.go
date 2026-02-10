@@ -26,23 +26,26 @@ func (p *encodingParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mo
 		return nil, ctx.errorAt(node, "encoding must be an object")
 	}
 
-	enc := &openapi31models.Encoding{}
-	var err error
-
-	// Simple properties - inline
-	enc.ContentType = p.ParseContentType(node)
-	enc.Style = p.ParseStyle(node)
-	enc.Explode = p.ParseExplode(node)
-	enc.AllowReserved = p.ParseAllowReserved(node)
+	var errs []openapi31models.ParseError
 
 	// Complex properties - delegated to dedicated files
-	enc.Headers, err = p.ParseHeaders(node, ctx)
+	headers, err := p.ParseHeaders(node, ctx)
 	if err != nil {
-		enc.Trix.Errors = append(enc.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
+
+	// Create via constructor
+	enc := openapi31models.NewEncoding(
+		p.ParseContentType(node),
+		p.ParseStyle(node),
+		headers,
+		p.ParseExplode(node),
+		p.ParseAllowReserved(node),
+	)
 
 	enc.VendorExtensions = parseNodeExtensions(node)
 	enc.Trix.Source = ctx.nodeSource(node)
+	enc.Trix.Errors = append(enc.Trix.Errors, errs...)
 
 	// Detect unknown fields
 	enc.Trix.Errors = append(enc.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, encodingKnownFieldsSet))...)

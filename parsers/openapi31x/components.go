@@ -16,59 +16,89 @@ func parseOpenAPIComponents(node *yaml.Node, ctx *ParseContext) (*openapi31model
 		return nil, ctx.errorAt(node, "components must be an object")
 	}
 
-	components := &openapi31models.Components{}
+	components := openapi31models.NewComponents()
 	var err error
 
 	// All properties are complex (maps of refs) - delegated to dedicated files
-	components.Schemas, err = parseComponentsSchemas(node, ctx)
+	schemas, err := parseComponentsSchemas(node, ctx)
 	if err != nil {
 		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
+	if schemas != nil {
+		components.SetProperty("schemas", schemas)
+	}
 
-	components.Responses, err = parseComponentsResponses(node, ctx)
+	responses, err := parseComponentsResponses(node, ctx)
 	if err != nil {
 		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
+	if responses != nil {
+		components.SetProperty("responses", responses)
+	}
 
-	components.Parameters, err = parseComponentsParameters(node, ctx)
+	parameters, err := parseComponentsParameters(node, ctx)
 	if err != nil {
 		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
+	if parameters != nil {
+		components.SetProperty("parameters", parameters)
+	}
 
-	components.Examples, err = parseComponentsExamples(node, ctx)
+	examples, err := parseComponentsExamples(node, ctx)
 	if err != nil {
 		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
+	if examples != nil {
+		components.SetProperty("examples", examples)
+	}
 
-	components.RequestBodies, err = parseComponentsRequestBodies(node, ctx)
+	requestBodies, err := parseComponentsRequestBodies(node, ctx)
 	if err != nil {
 		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
+	if requestBodies != nil {
+		components.SetProperty("requestBodies", requestBodies)
+	}
 
-	components.Headers, err = parseComponentsHeaders(node, ctx)
+	headers, err := parseComponentsHeaders(node, ctx)
 	if err != nil {
 		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
+	if headers != nil {
+		components.SetProperty("headers", headers)
+	}
 
-	components.SecuritySchemes, err = parseComponentsSecuritySchemes(node, ctx)
+	securitySchemes, err := parseComponentsSecuritySchemes(node, ctx)
 	if err != nil {
 		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
+	if securitySchemes != nil {
+		components.SetProperty("securitySchemes", securitySchemes)
+	}
 
-	components.Links, err = parseComponentsLinks(node, ctx)
+	links, err := parseComponentsLinks(node, ctx)
 	if err != nil {
 		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
 	}
+	if links != nil {
+		components.SetProperty("links", links)
+	}
 
-	components.Callbacks, err = parseComponentsCallbacks(node, ctx)
+	callbacks, err := parseComponentsCallbacks(node, ctx)
 	if err != nil {
 		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
+	}
+	if callbacks != nil {
+		components.SetProperty("callbacks", callbacks)
 	}
 
 	// PathItems - new in 3.1
-	components.PathItems, err = parseComponentsPathItems(node, ctx)
+	pathItems, err := parseComponentsPathItems(node, ctx)
 	if err != nil {
 		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
+	}
+	if pathItems != nil {
+		components.SetProperty("pathItems", pathItems)
 	}
 
 	components.VendorExtensions = parseNodeExtensions(node)

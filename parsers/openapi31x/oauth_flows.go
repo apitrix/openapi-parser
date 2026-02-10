@@ -26,32 +26,35 @@ func (p *oauthFlowsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31
 		return nil, ctx.errorAt(node, "oauthFlows must be an object")
 	}
 
-	flows := &openapi31models.OAuthFlows{}
-	var err error
+	var errs []openapi31models.ParseError
 
 	// All properties are complex (nested OAuthFlow objects)
-	flows.Implicit, err = p.ParseImplicit(node, ctx)
+	implicit, err := p.ParseImplicit(node, ctx)
 	if err != nil {
-		flows.Trix.Errors = append(flows.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	flows.Password, err = p.ParsePassword(node, ctx)
+	password, err := p.ParsePassword(node, ctx)
 	if err != nil {
-		flows.Trix.Errors = append(flows.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	flows.ClientCredentials, err = p.ParseClientCredentials(node, ctx)
+	clientCredentials, err := p.ParseClientCredentials(node, ctx)
 	if err != nil {
-		flows.Trix.Errors = append(flows.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	flows.AuthorizationCode, err = p.ParseAuthorizationCode(node, ctx)
+	authorizationCode, err := p.ParseAuthorizationCode(node, ctx)
 	if err != nil {
-		flows.Trix.Errors = append(flows.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
+
+	// Create via constructor
+	flows := openapi31models.NewOAuthFlows(implicit, password, clientCredentials, authorizationCode)
 
 	flows.VendorExtensions = parseNodeExtensions(node)
 	flows.Trix.Source = ctx.nodeSource(node)
+	flows.Trix.Errors = append(flows.Trix.Errors, errs...)
 
 	// Detect unknown fields
 	flows.Trix.Errors = append(flows.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, oauthFlowsKnownFieldsSet))...)

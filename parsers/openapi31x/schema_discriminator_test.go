@@ -32,9 +32,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	disc := result.Document.Components.Schemas["Pet"].Value.Discriminator
+	disc := result.Document.Components().Schemas()["Pet"].Value.Discriminator()
 	require.NotNil(t, disc)
-	assert.Equal(t, "petType", disc.PropertyName)
+	assert.Equal(t, "petType", disc.PropertyName())
 }
 
 func TestParseSchemaDiscriminator_WithMapping(t *testing.T) {
@@ -62,13 +62,13 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	disc := result.Document.Components.Schemas["Pet"].Value.Discriminator
+	disc := result.Document.Components().Schemas()["Pet"].Value.Discriminator()
 	require.NotNil(t, disc)
-	assert.Equal(t, "petType", disc.PropertyName)
-	assert.Len(t, disc.Mapping, 3)
-	assert.Equal(t, "#/components/schemas/Cat", disc.Mapping["cat"])
-	assert.Equal(t, "#/components/schemas/Dog", disc.Mapping["dog"])
-	assert.Equal(t, "#/components/schemas/Cat", disc.Mapping["kitty"])
+	assert.Equal(t, "petType", disc.PropertyName())
+	assert.Len(t, disc.Mapping(), 3)
+	assert.Equal(t, "#/components/schemas/Cat", disc.Mapping()["cat"])
+	assert.Equal(t, "#/components/schemas/Dog", disc.Mapping()["dog"])
+	assert.Equal(t, "#/components/schemas/Cat", disc.Mapping()["kitty"])
 }
 
 func TestParseSchemaDiscriminator_Empty(t *testing.T) {
@@ -84,7 +84,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	disc := result.Document.Components.Schemas["Simple"].Value.Discriminator
+	disc := result.Document.Components().Schemas()["Simple"].Value.Discriminator()
 	assert.Nil(t, disc)
 }
 
@@ -109,10 +109,10 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	disc := result.Document.Components.Schemas["Pet"].Value.Discriminator
+	disc := result.Document.Components().Schemas()["Pet"].Value.Discriminator()
 	require.NotNil(t, disc)
-	assert.Equal(t, "type", disc.PropertyName)
-	assert.Empty(t, disc.Mapping)
+	assert.Equal(t, "type", disc.PropertyName())
+	assert.Empty(t, disc.Mapping())
 }
 
 func TestParseSchemaDiscriminator_Extensions(t *testing.T) {
@@ -137,7 +137,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	disc := result.Document.Components.Schemas["Pet"].Value.Discriminator
+	disc := result.Document.Components().Schemas()["Pet"].Value.Discriminator()
 	require.NotNil(t, disc)
 	require.NotNil(t, disc.VendorExtensions)
 	assert.Equal(t, "value", disc.VendorExtensions["x-custom"])

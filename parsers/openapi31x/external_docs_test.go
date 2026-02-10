@@ -24,8 +24,8 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.ExternalDocs)
-	assert.Equal(t, "https://example.com/docs", result.Document.ExternalDocs.URL)
+	require.NotNil(t, result.Document.ExternalDocs())
+	assert.Equal(t, "https://example.com/docs", result.Document.ExternalDocs().URL())
 }
 
 // --- With Description ---
@@ -42,7 +42,7 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "Find more documentation here", result.Document.ExternalDocs.Description)
+	assert.Equal(t, "Find more documentation here", result.Document.ExternalDocs().Description())
 }
 
 // --- Extensions ---
@@ -60,7 +60,7 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ext := result.Document.ExternalDocs.VendorExtensions
+	ext := result.Document.ExternalDocs().VendorExtensions
 	require.NotNil(t, ext)
 	assert.Equal(t, "value", ext["x-custom"])
 }
@@ -84,9 +84,9 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	extDocs := result.Document.Paths.Items["/pets"].Get.ExternalDocs
+	extDocs := result.Document.Paths().Items()["/pets"].Get().ExternalDocs()
 	require.NotNil(t, extDocs)
-	assert.Equal(t, "Pet documentation", extDocs.Description)
+	assert.Equal(t, "Pet documentation", extDocs.Description())
 }
 
 // --- Tag-Level ExternalDocs ---
@@ -104,8 +104,8 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Tags[0].ExternalDocs)
-	assert.Equal(t, "https://example.com/pet-docs", result.Document.Tags[0].ExternalDocs.URL)
+	require.NotNil(t, result.Document.Tags()[0].ExternalDocs())
+	assert.Equal(t, "https://example.com/pet-docs", result.Document.Tags()[0].ExternalDocs().URL())
 }
 
 // --- Missing ExternalDocs ---
@@ -119,5 +119,5 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Nil(t, result.Document.ExternalDocs)
+	assert.Nil(t, result.Document.ExternalDocs())
 }

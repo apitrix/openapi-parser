@@ -27,7 +27,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	props := result.Document.Components.Schemas["Pet"].Value.Properties
+	props := result.Document.Components().Schemas()["Pet"].Value.Properties()
 	assert.Len(t, props, 1)
 	assert.Contains(t, props, "name")
 }
@@ -54,7 +54,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	props := result.Document.Components.Schemas["Pet"].Value.Properties
+	props := result.Document.Components().Schemas()["Pet"].Value.Properties()
 	assert.Len(t, props, 4)
 }
 
@@ -72,7 +72,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	props := result.Document.Components.Schemas["Empty"].Value.Properties
+	props := result.Document.Components().Schemas()["Empty"].Value.Properties()
 	assert.Empty(t, props)
 }
 
@@ -89,7 +89,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	props := result.Document.Components.Schemas["NoProps"].Value.Properties
+	props := result.Document.Components().Schemas()["NoProps"].Value.Properties()
 	assert.Nil(t, props)
 }
 
@@ -116,10 +116,10 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	userProps := result.Document.Components.Schemas["User"].Value.Properties
+	userProps := result.Document.Components().Schemas()["User"].Value.Properties()
 	address := userProps["address"].Value
 	require.NotNil(t, address)
-	assert.Len(t, address.Properties, 3)
+	assert.Len(t, address.Properties(), 3)
 }
 
 func TestParseSchemaProperties_WithReferences(t *testing.T) {
@@ -144,7 +144,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	props := result.Document.Components.Schemas["Pet"].Value.Properties
+	props := result.Document.Components().Schemas()["Pet"].Value.Properties()
 	assert.Equal(t, "#/components/schemas/Owner", props["owner"].Ref)
 	assert.Equal(t, "#/components/schemas/Category", props["category"].Ref)
 }
@@ -171,7 +171,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	props := result.Document.Components.Schemas["Config"].Value.Properties
+	props := result.Document.Components().Schemas()["Config"].Value.Properties()
 	assert.Len(t, props, 4)
 	assert.Contains(t, props, "property-with-dashes")
 	assert.Contains(t, props, "property.with.dots")
@@ -207,11 +207,11 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	props := result.Document.Components.Schemas["Mixed"].Value.Properties
-	assert.Equal(t, "string", props["stringProp"].Value.Type.Single)
-	assert.Equal(t, "integer", props["intProp"].Value.Type.Single)
-	assert.Equal(t, "number", props["numProp"].Value.Type.Single)
-	assert.Equal(t, "boolean", props["boolProp"].Value.Type.Single)
-	assert.Equal(t, "array", props["arrayProp"].Value.Type.Single)
-	assert.Equal(t, "object", props["objectProp"].Value.Type.Single)
+	props := result.Document.Components().Schemas()["Mixed"].Value.Properties()
+	assert.Equal(t, "string", props["stringProp"].Value.Type().Single)
+	assert.Equal(t, "integer", props["intProp"].Value.Type().Single)
+	assert.Equal(t, "number", props["numProp"].Value.Type().Single)
+	assert.Equal(t, "boolean", props["boolProp"].Value.Type().Single)
+	assert.Equal(t, "array", props["arrayProp"].Value.Type().Single)
+	assert.Equal(t, "object", props["objectProp"].Value.Type().Single)
 }

@@ -5,18 +5,62 @@ package openapi31
 type Operation struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Tags         []string                `json:"tags,omitempty" yaml:"tags,omitempty"`
-	Summary      string                  `json:"summary,omitempty" yaml:"summary,omitempty"`
-	Description  string                  `json:"description,omitempty" yaml:"description,omitempty"`
-	ExternalDocs *ExternalDocumentation  `json:"externalDocs,omitempty" yaml:"externalDocs,omitempty"`
-	OperationID  string                  `json:"operationId,omitempty" yaml:"operationId,omitempty"`
-	Parameters   []*ParameterRef         `json:"parameters,omitempty" yaml:"parameters,omitempty"`
-	RequestBody  *RequestBodyRef         `json:"requestBody,omitempty" yaml:"requestBody,omitempty"`
-	Responses    *Responses              `json:"responses" yaml:"responses"`
-	Callbacks    map[string]*CallbackRef `json:"callbacks,omitempty" yaml:"callbacks,omitempty"`
-	Deprecated   bool                    `json:"deprecated,omitempty" yaml:"deprecated,omitempty"`
-	Security     []SecurityRequirement   `json:"security,omitempty" yaml:"security,omitempty"`
-	Servers      []*Server               `json:"servers,omitempty" yaml:"servers,omitempty"`
+	tags         []string
+	summary      string
+	description  string
+	externalDocs *ExternalDocumentation
+	operationID  string
+	parameters   []*ParameterRef
+	requestBody  *RequestBodyRef
+	responses    *Responses
+	callbacks    map[string]*CallbackRef
+	deprecated   bool
+	security     []SecurityRequirement
+	servers      []*Server
+}
+
+func (o *Operation) Tags() []string                       { return o.tags }
+func (o *Operation) Summary() string                      { return o.summary }
+func (o *Operation) Description() string                  { return o.description }
+func (o *Operation) ExternalDocs() *ExternalDocumentation { return o.externalDocs }
+func (o *Operation) OperationID() string                  { return o.operationID }
+func (o *Operation) Parameters() []*ParameterRef          { return o.parameters }
+func (o *Operation) RequestBody() *RequestBodyRef         { return o.requestBody }
+func (o *Operation) Responses() *Responses                { return o.responses }
+func (o *Operation) Callbacks() map[string]*CallbackRef   { return o.callbacks }
+func (o *Operation) Deprecated() bool                     { return o.deprecated }
+func (o *Operation) Security() []SecurityRequirement      { return o.security }
+func (o *Operation) Servers() []*Server                   { return o.servers }
+
+// SetProperty sets a named property on the Operation.
+// Used by parsers for post-construction field assignment.
+func (o *Operation) SetProperty(name string, value interface{}) {
+	switch name {
+	case "tags":
+		o.tags = value.([]string)
+	case "summary":
+		o.summary = value.(string)
+	case "description":
+		o.description = value.(string)
+	case "externalDocs":
+		o.externalDocs = value.(*ExternalDocumentation)
+	case "operationId":
+		o.operationID = value.(string)
+	case "parameters":
+		o.parameters = value.([]*ParameterRef)
+	case "requestBody":
+		o.requestBody = value.(*RequestBodyRef)
+	case "responses":
+		o.responses = value.(*Responses)
+	case "callbacks":
+		o.callbacks = value.(map[string]*CallbackRef)
+	case "deprecated":
+		o.deprecated = value.(bool)
+	case "security":
+		o.security = value.([]SecurityRequirement)
+	case "servers":
+		o.servers = value.([]*Server)
+	}
 }
 
 // NewOperation creates a new Operation instance.

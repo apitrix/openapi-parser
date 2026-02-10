@@ -20,11 +20,11 @@ func (p *schemaParser) ParseDiscriminator(parent *yaml.Node, c *ParseContext) (*
 		return nil, pctx.errorAt(node, "discriminator must be an object")
 	}
 
-	disc := &openapi31models.Discriminator{}
-
-	// All discriminator properties are simple
-	disc.PropertyName = nodeGetString(node, "propertyName")
-	disc.Mapping = nodeGetStringMap(node, "mapping")
+	// Create via constructor
+	disc := openapi31models.NewDiscriminator(
+		nodeGetString(node, "propertyName"),
+		nodeGetStringMap(node, "mapping"),
+	)
 
 	disc.VendorExtensions = parseNodeExtensions(node)
 	disc.Trix.Source = pctx.nodeSource(node)

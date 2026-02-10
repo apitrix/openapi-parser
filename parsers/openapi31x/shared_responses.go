@@ -12,7 +12,7 @@ import (
 var httpStatusCodePattern = regexp.MustCompile(`^[1-5][0-9][0-9]$|^[1-5]XX$`)
 
 // parseSharedResponses parses a Responses object from a yaml.Node.
-// OpenAPI 3.0.3 spec: https://spec.openapis.org/oas/v3.0.3#responses-object
+// OpenAPI 3.1.0 spec: https://spec.openapis.org/oas/v3.1.0#responses-object
 func parseSharedResponses(node *yaml.Node, ctx *ParseContext) (*openapi31models.Responses, error) {
 	if node == nil {
 		return nil, nil
@@ -22,8 +22,8 @@ func parseSharedResponses(node *yaml.Node, ctx *ParseContext) (*openapi31models.
 		return nil, ctx.errorAt(node, "responses must be an object")
 	}
 
-	responses := &openapi31models.Responses{}
-	responses.Codes = make(map[string]*openapi31models.ResponseRef)
+	var defaultResp *openapi31models.ResponseRef
+	codes := make(map[string]*openapi31models.ResponseRef)
 
 	for key, valueNode := range nodeMapPairs(node) {
 		// Skip extensions
@@ -32,19 +32,22 @@ func parseSharedResponses(node *yaml.Node, ctx *ParseContext) (*openapi31models.
 		}
 
 		if key == "default" {
-			defaultResp, err := parseResponseRef(valueNode, ctx.push("default"))
+			resp, err := parseResponseRef(valueNode, ctx.push("default"))
 			if err != nil {
 				return nil, err
 			}
-			responses.Default = defaultResp
+			defaultResp = resp
 		} else if httpStatusCodePattern.MatchString(key) {
 			resp, err := parseResponseRef(valueNode, ctx.push(key))
 			if err != nil {
 				return nil, err
 			}
-			responses.Codes[key] = resp
+			codes[key] = resp
 		}
 	}
+
+	// Create via constructor
+	responses := openapi31models.NewResponses(defaultResp, codes)
 
 	responses.VendorExtensions = parseNodeExtensions(node)
 	responses.Trix.Source = ctx.nodeSource(node)

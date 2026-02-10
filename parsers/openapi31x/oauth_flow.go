@@ -26,13 +26,13 @@ func (p *oauthFlowParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31m
 		return nil, ctx.errorAt(node, "oauthFlow must be an object")
 	}
 
-	flow := &openapi31models.OAuthFlow{}
-
-	// All properties are simple - inline
-	flow.AuthorizationURL = p.ParseAuthorizationURL(node)
-	flow.TokenURL = p.ParseTokenURL(node)
-	flow.RefreshURL = p.ParseRefreshURL(node)
-	flow.Scopes = p.ParseScopes(node)
+	// Create via constructor
+	flow := openapi31models.NewOAuthFlow(
+		p.ParseAuthorizationURL(node),
+		p.ParseTokenURL(node),
+		p.ParseRefreshURL(node),
+		p.ParseScopes(node),
+	)
 
 	flow.VendorExtensions = parseNodeExtensions(node)
 	flow.Trix.Source = ctx.nodeSource(node)

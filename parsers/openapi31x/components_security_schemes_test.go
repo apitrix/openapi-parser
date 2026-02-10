@@ -28,10 +28,10 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := result.Document.Components.SecuritySchemes["apiKey"].Value
-	assert.Equal(t, "apiKey", scheme.Type)
-	assert.Equal(t, "header", scheme.In)
-	assert.Equal(t, "X-API-Key", scheme.Name)
+	scheme := result.Document.Components().SecuritySchemes()["apiKey"].Value
+	assert.Equal(t, "apiKey", scheme.Type())
+	assert.Equal(t, "header", scheme.In())
+	assert.Equal(t, "X-API-Key", scheme.Name())
 }
 
 // --- HTTP Basic ---
@@ -50,9 +50,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := result.Document.Components.SecuritySchemes["basic"].Value
-	assert.Equal(t, "http", scheme.Type)
-	assert.Equal(t, "basic", scheme.Scheme)
+	scheme := result.Document.Components().SecuritySchemes()["basic"].Value
+	assert.Equal(t, "http", scheme.Type())
+	assert.Equal(t, "basic", scheme.Scheme())
 }
 
 // --- HTTP Bearer ---
@@ -72,10 +72,10 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := result.Document.Components.SecuritySchemes["bearer"].Value
-	assert.Equal(t, "http", scheme.Type)
-	assert.Equal(t, "bearer", scheme.Scheme)
-	assert.Equal(t, "JWT", scheme.BearerFormat)
+	scheme := result.Document.Components().SecuritySchemes()["bearer"].Value
+	assert.Equal(t, "http", scheme.Type())
+	assert.Equal(t, "bearer", scheme.Scheme())
+	assert.Equal(t, "JWT", scheme.BearerFormat())
 }
 
 // --- OAuth2 ---
@@ -97,9 +97,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := result.Document.Components.SecuritySchemes["oauth2"].Value
-	assert.Equal(t, "oauth2", scheme.Type)
-	assert.NotNil(t, scheme.Flows)
+	scheme := result.Document.Components().SecuritySchemes()["oauth2"].Value
+	assert.Equal(t, "oauth2", scheme.Type())
+	assert.NotNil(t, scheme.Flows())
 }
 
 // --- OpenID Connect ---
@@ -118,9 +118,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := result.Document.Components.SecuritySchemes["oidc"].Value
-	assert.Equal(t, "openIdConnect", scheme.Type)
-	assert.Equal(t, "https://example.com/.well-known/openid", scheme.OpenIDConnectURL)
+	scheme := result.Document.Components().SecuritySchemes()["oidc"].Value
+	assert.Equal(t, "openIdConnect", scheme.Type())
+	assert.Equal(t, "https://example.com/.well-known/openid", scheme.OpenIDConnectURL())
 }
 
 // --- Multiple Schemes ---
@@ -149,7 +149,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.SecuritySchemes, 3)
+	assert.Len(t, result.Document.Components().SecuritySchemes(), 3)
 }
 
 // --- Empty ---
@@ -165,7 +165,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, result.Document.Components.SecuritySchemes)
+	assert.Empty(t, result.Document.Components().SecuritySchemes())
 }
 
 // --- With Description ---
@@ -186,6 +186,6 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := result.Document.Components.SecuritySchemes["apiKey"].Value
-	assert.Equal(t, "API key for authentication", scheme.Description)
+	scheme := result.Document.Components().SecuritySchemes()["apiKey"].Value
+	assert.Equal(t, "API key for authentication", scheme.Description())
 }

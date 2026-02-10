@@ -24,6 +24,6 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	pathItem := result.Document.Paths.Items["/pets"]
-	assert.Len(t, pathItem.Servers, 2)
+	pathItem := result.Document.Paths().Items()["/pets"]
+	assert.Len(t, pathItem.Servers(), 2)
 }

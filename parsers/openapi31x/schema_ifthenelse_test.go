@@ -36,13 +36,13 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["Conditional"].Value
-	require.NotNil(t, schema.If)
-	require.NotNil(t, schema.Then)
-	require.NotNil(t, schema.Else)
-	assert.Contains(t, schema.If.Value.Properties, "kind")
-	assert.Contains(t, schema.Then.Value.Properties, "bark")
-	assert.Contains(t, schema.Else.Value.Properties, "purr")
+	schema := result.Document.Components().Schemas()["Conditional"].Value
+	require.NotNil(t, schema.If())
+	require.NotNil(t, schema.Then())
+	require.NotNil(t, schema.Else())
+	assert.Contains(t, schema.If().Value.Properties(), "kind")
+	assert.Contains(t, schema.Then().Value.Properties(), "bark")
+	assert.Contains(t, schema.Else().Value.Properties(), "purr")
 }
 
 func TestParseSchema_IfOnly(t *testing.T) {
@@ -62,10 +62,10 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["Test"].Value
-	require.NotNil(t, schema.If)
-	assert.Nil(t, schema.Then)
-	assert.Nil(t, schema.Else)
+	schema := result.Document.Components().Schemas()["Test"].Value
+	require.NotNil(t, schema.If())
+	assert.Nil(t, schema.Then())
+	assert.Nil(t, schema.Else())
 }
 
 func TestParseSchema_NoIfThenElse(t *testing.T) {
@@ -81,8 +81,8 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["Simple"].Value
-	assert.Nil(t, schema.If)
-	assert.Nil(t, schema.Then)
-	assert.Nil(t, schema.Else)
+	schema := result.Document.Components().Schemas()["Simple"].Value
+	assert.Nil(t, schema.If())
+	assert.Nil(t, schema.Then())
+	assert.Nil(t, schema.Else())
 }

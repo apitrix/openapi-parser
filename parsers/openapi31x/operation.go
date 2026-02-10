@@ -9,7 +9,7 @@ import (
 // parseOpenAPIPathsPathItemOperation parses an Operation for a given HTTP method.
 // This file handles all HTTP methods (get, put, post, delete, options, head, patch, trace)
 // since they all parse to the same Operation type with identical validation/migration rules.
-// OpenAPI 3.0.3 spec: https://spec.openapis.org/oas/v3.0.3#operation-object
+// OpenAPI 3.1.0 spec: https://spec.openapis.org/oas/v3.1.0#operation-object
 func parseOpenAPIPathsPathItemOperation(parent *yaml.Node, method string, ctx *ParseContext) (*openapi31models.Operation, error) {
 	node := nodeGetValue(parent, method)
 	if node == nil {
@@ -21,50 +21,82 @@ func parseOpenAPIPathsPathItemOperation(parent *yaml.Node, method string, ctx *P
 	}
 
 	opCtx := ctx.push(method)
-	op := &openapi31models.Operation{}
-	var err error
+	op := openapi31models.NewOperation()
 
-	// Simple properties - inline
-	op.Tags = nodeGetStringSlice(node, "tags")
-	op.Summary = nodeGetString(node, "summary")
-	op.Description = nodeGetString(node, "description")
-	op.OperationID = nodeGetString(node, "operationId")
-	op.Deprecated = nodeGetBool(node, "deprecated")
+	// Simple properties
+	if tags := nodeGetStringSlice(node, "tags"); tags != nil {
+		op.SetProperty("tags", tags)
+	}
+	if summary := nodeGetString(node, "summary"); summary != "" {
+		op.SetProperty("summary", summary)
+	}
+	if desc := nodeGetString(node, "description"); desc != "" {
+		op.SetProperty("description", desc)
+	}
+	if opID := nodeGetString(node, "operationId"); opID != "" {
+		op.SetProperty("operationId", opID)
+	}
+	if nodeGetBool(node, "deprecated") {
+		op.SetProperty("deprecated", true)
+	}
 
 	// Complex properties - delegated to dedicated files
-	op.ExternalDocs, err = parseOperationExternalDocs(node, opCtx)
+	var err error
+
+	externalDocs, err := parseOperationExternalDocs(node, opCtx)
 	if err != nil {
 		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 	}
+	if externalDocs != nil {
+		op.SetProperty("externalDocs", externalDocs)
+	}
 
-	op.Parameters, err = parseOperationParameters(node, opCtx)
+	parameters, err := parseOperationParameters(node, opCtx)
 	if err != nil {
 		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 	}
+	if parameters != nil {
+		op.SetProperty("parameters", parameters)
+	}
 
-	op.RequestBody, err = parseOperationRequestBody(node, opCtx)
+	requestBody, err := parseOperationRequestBody(node, opCtx)
 	if err != nil {
 		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 	}
+	if requestBody != nil {
+		op.SetProperty("requestBody", requestBody)
+	}
 
-	op.Responses, err = parseOperationResponses(node, opCtx)
+	responses, err := parseOperationResponses(node, opCtx)
 	if err != nil {
 		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 	}
+	if responses != nil {
+		op.SetProperty("responses", responses)
+	}
 
-	op.Callbacks, err = parseOperationCallbacks(node, opCtx)
+	callbacks, err := parseOperationCallbacks(node, opCtx)
 	if err != nil {
 		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 	}
+	if callbacks != nil {
+		op.SetProperty("callbacks", callbacks)
+	}
 
-	op.Security, err = parseOperationSecurity(node, opCtx)
+	security, err := parseOperationSecurity(node, opCtx)
 	if err != nil {
 		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
 	}
+	if security != nil {
+		op.SetProperty("security", security)
+	}
 
-	op.Servers, err = parseOperationServers(node, opCtx)
+	servers, err := parseOperationServers(node, opCtx)
 	if err != nil {
 		op.Trix.Errors = append(op.Trix.Errors, toParseError(err))
+	}
+	if servers != nil {
+		op.SetProperty("servers", servers)
 	}
 
 	op.VendorExtensions = parseNodeExtensions(node)

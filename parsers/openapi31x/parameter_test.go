@@ -34,10 +34,10 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets/{petId}"].Get.Parameters[0].Value
-	assert.Equal(t, "petId", param.Name)
-	assert.Equal(t, "path", param.In)
-	assert.True(t, param.Required)
+	param := result.Document.Paths().Items()["/pets/{petId}"].Get().Parameters()[0].Value
+	assert.Equal(t, "petId", param.Name())
+	assert.Equal(t, "path", param.In())
+	assert.True(t, param.Required())
 }
 
 func TestParseParameter_QueryParam(t *testing.T) {
@@ -62,10 +62,10 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value
-	assert.Equal(t, "limit", param.Name)
-	assert.Equal(t, "query", param.In)
-	assert.False(t, param.Required)
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	assert.Equal(t, "limit", param.Name())
+	assert.Equal(t, "query", param.In())
+	assert.False(t, param.Required())
 }
 
 func TestParseParameter_HeaderParam(t *testing.T) {
@@ -89,9 +89,9 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value
-	assert.Equal(t, "X-Request-ID", param.Name)
-	assert.Equal(t, "header", param.In)
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	assert.Equal(t, "X-Request-ID", param.Name())
+	assert.Equal(t, "header", param.In())
 }
 
 func TestParseParameter_CookieParam(t *testing.T) {
@@ -113,9 +113,9 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value
-	assert.Equal(t, "session_id", param.Name)
-	assert.Equal(t, "cookie", param.In)
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	assert.Equal(t, "session_id", param.Name())
+	assert.Equal(t, "cookie", param.In())
 }
 
 // --- Multiple Parameters ---
@@ -150,7 +150,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	params := result.Document.Paths.Items["/pets/{petId}"].Get.Parameters
+	params := result.Document.Paths().Items()["/pets/{petId}"].Get().Parameters()
 	assert.Len(t, params, 3)
 }
 
@@ -179,10 +179,10 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value
-	assert.Equal(t, "form", param.Style)
-	require.NotNil(t, param.Explode)
-	assert.True(t, *param.Explode)
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	assert.Equal(t, "form", param.Style())
+	require.NotNil(t, param.Explode())
+	assert.True(t, *param.Explode())
 }
 
 func TestParseParameter_PipeDelimited(t *testing.T) {
@@ -208,8 +208,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value
-	assert.Equal(t, "pipeDelimited", param.Style)
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	assert.Equal(t, "pipeDelimited", param.Style())
 }
 
 // --- AllowEmptyValue, AllowReserved, Deprecated ---
@@ -234,8 +234,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/search"].Get.Parameters[0].Value
-	assert.True(t, param.AllowEmptyValue)
+	param := result.Document.Paths().Items()["/search"].Get().Parameters()[0].Value
+	assert.True(t, param.AllowEmptyValue())
 }
 
 func TestParseParameter_AllowReserved(t *testing.T) {
@@ -258,8 +258,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/files"].Get.Parameters[0].Value
-	assert.True(t, param.AllowReserved)
+	param := result.Document.Paths().Items()["/files"].Get().Parameters()[0].Value
+	assert.True(t, param.AllowReserved())
 }
 
 func TestParseParameter_Deprecated(t *testing.T) {
@@ -282,8 +282,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value
-	assert.True(t, param.Deprecated)
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	assert.True(t, param.Deprecated())
 }
 
 // --- Examples ---
@@ -308,8 +308,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value
-	assert.Equal(t, 10, param.Example)
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	assert.Equal(t, 10, param.Example())
 }
 
 func TestParseParameter_Examples(t *testing.T) {
@@ -336,8 +336,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value
-	assert.Len(t, param.Examples, 2)
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	assert.Len(t, param.Examples(), 2)
 }
 
 // --- Reference ---
@@ -365,7 +365,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	paramRef := result.Document.Paths.Items["/pets"].Get.Parameters[0]
+	paramRef := result.Document.Paths().Items()["/pets"].Get().Parameters()[0]
 	assert.Equal(t, "#/components/parameters/LimitParam", paramRef.Ref)
 }
 
@@ -392,7 +392,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
 	require.NotNil(t, param.VendorExtensions)
 	assert.Equal(t, "value", param.VendorExtensions["x-custom"])
 }

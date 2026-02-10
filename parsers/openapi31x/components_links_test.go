@@ -26,8 +26,8 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.Links, 1)
-	assert.Contains(t, result.Document.Components.Links, "GetUser")
+	assert.Len(t, result.Document.Components().Links(), 1)
+	assert.Contains(t, result.Document.Components().Links(), "GetUser")
 }
 
 // --- Multiple Links ---
@@ -49,7 +49,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.Links, 3)
+	assert.Len(t, result.Document.Components().Links(), 3)
 }
 
 // --- Empty ---
@@ -65,7 +65,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, result.Document.Components.Links)
+	assert.Empty(t, result.Document.Components().Links())
 }
 
 // --- With Parameters ---
@@ -85,6 +85,6 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	link := result.Document.Components.Links["GetUserPets"].Value
-	assert.Contains(t, link.Parameters, "userId")
+	link := result.Document.Components().Links()["GetUserPets"].Value
+	assert.Contains(t, link.Parameters(), "userId")
 }

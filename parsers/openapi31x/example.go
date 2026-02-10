@@ -26,13 +26,13 @@ func (p *exampleParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mod
 		return nil, ctx.errorAt(node, "example must be an object")
 	}
 
-	example := &openapi31models.Example{}
-
-	// All properties are simple - inline
-	example.Summary = p.ParseSummary(node)
-	example.Description = p.ParseDescription(node)
-	example.Value = p.ParseValue(node)
-	example.ExternalValue = p.ParseExternalValue(node)
+	// Create via constructor
+	example := openapi31models.NewExample(
+		p.ParseSummary(node),
+		p.ParseDescription(node),
+		p.ParseValue(node),
+		p.ParseExternalValue(node),
+	)
 
 	example.VendorExtensions = parseNodeExtensions(node)
 	example.Trix.Source = ctx.nodeSource(node)

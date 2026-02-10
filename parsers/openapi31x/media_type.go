@@ -26,30 +26,35 @@ func (p *mediaTypeParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31m
 		return nil, ctx.errorAt(node, "mediaType must be an object")
 	}
 
-	mt := &openapi31models.MediaType{}
-	var err error
-
-	// Simple properties - inline
-	mt.Example = p.ParseExample(node)
+	var errs []openapi31models.ParseError
 
 	// Complex properties - delegated to dedicated files
-	mt.Schema, err = p.ParseSchema(node, ctx)
+	schema, err := p.ParseSchema(node, ctx)
 	if err != nil {
-		mt.Trix.Errors = append(mt.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	mt.Examples, err = p.ParseExamples(node, ctx)
+	examples, err := p.ParseExamples(node, ctx)
 	if err != nil {
-		mt.Trix.Errors = append(mt.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	mt.Encoding, err = p.ParseEncoding(node, ctx)
+	encoding, err := p.ParseEncoding(node, ctx)
 	if err != nil {
-		mt.Trix.Errors = append(mt.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
+
+	// Create via constructor
+	mt := openapi31models.NewMediaType(
+		schema,
+		p.ParseExample(node),
+		examples,
+		encoding,
+	)
 
 	mt.VendorExtensions = parseNodeExtensions(node)
 	mt.Trix.Source = ctx.nodeSource(node)
+	mt.Trix.Errors = append(mt.Trix.Errors, errs...)
 
 	// Detect unknown fields
 	mt.Trix.Errors = append(mt.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, mediaTypeKnownFieldsSet))...)

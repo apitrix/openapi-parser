@@ -29,8 +29,8 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.RequestBodies, 1)
-	assert.Contains(t, result.Document.Components.RequestBodies, "PetBody")
+	assert.Len(t, result.Document.Components().RequestBodies(), 1)
+	assert.Contains(t, result.Document.Components().RequestBodies(), "PetBody")
 }
 
 // --- Multiple RequestBodies ---
@@ -61,7 +61,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.RequestBodies, 3)
+	assert.Len(t, result.Document.Components().RequestBodies(), 3)
 }
 
 // --- Empty ---
@@ -77,7 +77,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, result.Document.Components.RequestBodies)
+	assert.Empty(t, result.Document.Components().RequestBodies())
 }
 
 // --- With Required ---
@@ -99,6 +99,6 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	rb := result.Document.Components.RequestBodies["PetBody"].Value
-	assert.True(t, rb.Required)
+	rb := result.Document.Components().RequestBodies()["PetBody"].Value
+	assert.True(t, rb.Required())
 }

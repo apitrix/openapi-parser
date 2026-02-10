@@ -28,11 +28,11 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["Tuple"].Value
-	require.Len(t, schema.PrefixItems, 3)
-	assert.Equal(t, "string", schema.PrefixItems[0].Value.Type.Single)
-	assert.Equal(t, "integer", schema.PrefixItems[1].Value.Type.Single)
-	assert.Equal(t, "boolean", schema.PrefixItems[2].Value.Type.Single)
+	schema := result.Document.Components().Schemas()["Tuple"].Value
+	require.Len(t, schema.PrefixItems(), 3)
+	assert.Equal(t, "string", schema.PrefixItems()[0].Value.Type().Single)
+	assert.Equal(t, "integer", schema.PrefixItems()[1].Value.Type().Single)
+	assert.Equal(t, "boolean", schema.PrefixItems()[2].Value.Type().Single)
 }
 
 func TestParseSchema_PrefixItems_WithRef(t *testing.T) {
@@ -53,9 +53,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["Tuple"].Value
-	require.Len(t, schema.PrefixItems, 2)
-	assert.Equal(t, "#/components/schemas/Name", schema.PrefixItems[0].Ref)
+	schema := result.Document.Components().Schemas()["Tuple"].Value
+	require.Len(t, schema.PrefixItems(), 2)
+	assert.Equal(t, "#/components/schemas/Name", schema.PrefixItems()[0].Ref)
 }
 
 func TestParseSchema_PrefixItems_Empty(t *testing.T) {
@@ -73,6 +73,6 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["Simple"].Value
-	assert.Nil(t, schema.PrefixItems)
+	schema := result.Document.Components().Schemas()["Simple"].Value
+	assert.Nil(t, schema.PrefixItems())
 }

@@ -5,15 +5,26 @@ package openapi31
 type Link struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	OperationRef string                 `json:"operationRef,omitempty" yaml:"operationRef,omitempty"`
-	OperationID  string                 `json:"operationId,omitempty" yaml:"operationId,omitempty"`
-	Parameters   map[string]interface{} `json:"parameters,omitempty" yaml:"parameters,omitempty"`
-	RequestBody  interface{}            `json:"requestBody,omitempty" yaml:"requestBody,omitempty"`
-	Description  string                 `json:"description,omitempty" yaml:"description,omitempty"`
-	Server       *Server                `json:"server,omitempty" yaml:"server,omitempty"`
+	operationRef string
+	operationID  string
+	parameters   map[string]interface{}
+	requestBody  interface{}
+	description  string
+	server       *Server
 }
 
+func (l *Link) OperationRef() string               { return l.operationRef }
+func (l *Link) OperationID() string                { return l.operationID }
+func (l *Link) Parameters() map[string]interface{} { return l.parameters }
+func (l *Link) RequestBody() interface{}           { return l.requestBody }
+func (l *Link) Description() string                { return l.description }
+func (l *Link) Server() *Server                    { return l.server }
+
 // NewLink creates a new Link instance.
-func NewLink() *Link {
-	return &Link{}
+func NewLink(operationRef, operationID, description string, parameters map[string]interface{}, requestBody interface{}, server *Server) *Link {
+	return &Link{
+		operationRef: operationRef, operationID: operationID,
+		parameters: parameters, requestBody: requestBody,
+		description: description, server: server,
+	}
 }

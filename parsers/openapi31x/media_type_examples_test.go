@@ -30,7 +30,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	mt := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Content["application/json"]
-	require.NotNil(t, mt.Examples)
-	assert.Len(t, mt.Examples, 2)
+	mt := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Content()["application/json"]
+	require.NotNil(t, mt.Examples())
+	assert.Len(t, mt.Examples(), 2)
 }

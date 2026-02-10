@@ -23,8 +23,8 @@ func resolveDocument(doc *openapi31models.OpenAPI, r *shared.RefResolver, resolv
 		return nil
 	}
 
-	if doc.Paths != nil {
-		for _, pathItem := range doc.Paths.Items {
+	if doc.Paths() != nil {
+		for _, pathItem := range doc.Paths().Items() {
 			if err := resolvePathItem(pathItem, r, resolving); err != nil {
 				return err
 			}
@@ -32,14 +32,14 @@ func resolveDocument(doc *openapi31models.OpenAPI, r *shared.RefResolver, resolv
 	}
 
 	// Resolve webhooks (new in 3.1)
-	for _, ref := range doc.Webhooks {
+	for _, ref := range doc.Webhooks() {
 		if err := resolvePathItemRef(ref, r, resolving); err != nil {
 			return err
 		}
 	}
 
-	if doc.Components != nil {
-		if err := resolveComponents(doc.Components, r, resolving); err != nil {
+	if doc.Components() != nil {
+		if err := resolveComponents(doc.Components(), r, resolving); err != nil {
 			return err
 		}
 	}
@@ -48,7 +48,7 @@ func resolveDocument(doc *openapi31models.OpenAPI, r *shared.RefResolver, resolv
 }
 
 func resolveComponents(c *openapi31models.Components, r *shared.RefResolver, resolving map[string]bool) error {
-	for name, ref := range c.Schemas {
+	for name, ref := range c.Schemas() {
 		canonicalRef := "#/components/schemas/" + name
 		resolving[canonicalRef] = true
 		if err := resolveSchemaRef(ref, r, resolving); err != nil {
@@ -56,7 +56,7 @@ func resolveComponents(c *openapi31models.Components, r *shared.RefResolver, res
 		}
 		delete(resolving, canonicalRef)
 	}
-	for name, ref := range c.Responses {
+	for name, ref := range c.Responses() {
 		canonicalRef := "#/components/responses/" + name
 		resolving[canonicalRef] = true
 		if err := resolveResponseRef(ref, r, resolving); err != nil {
@@ -64,7 +64,7 @@ func resolveComponents(c *openapi31models.Components, r *shared.RefResolver, res
 		}
 		delete(resolving, canonicalRef)
 	}
-	for name, ref := range c.Parameters {
+	for name, ref := range c.Parameters() {
 		canonicalRef := "#/components/parameters/" + name
 		resolving[canonicalRef] = true
 		if err := resolveParameterRef(ref, r, resolving); err != nil {
@@ -72,7 +72,7 @@ func resolveComponents(c *openapi31models.Components, r *shared.RefResolver, res
 		}
 		delete(resolving, canonicalRef)
 	}
-	for name, ref := range c.Examples {
+	for name, ref := range c.Examples() {
 		canonicalRef := "#/components/examples/" + name
 		resolving[canonicalRef] = true
 		if err := resolveExampleRef(ref, r, resolving); err != nil {
@@ -80,7 +80,7 @@ func resolveComponents(c *openapi31models.Components, r *shared.RefResolver, res
 		}
 		delete(resolving, canonicalRef)
 	}
-	for name, ref := range c.RequestBodies {
+	for name, ref := range c.RequestBodies() {
 		canonicalRef := "#/components/requestBodies/" + name
 		resolving[canonicalRef] = true
 		if err := resolveRequestBodyRef(ref, r, resolving); err != nil {
@@ -88,7 +88,7 @@ func resolveComponents(c *openapi31models.Components, r *shared.RefResolver, res
 		}
 		delete(resolving, canonicalRef)
 	}
-	for name, ref := range c.Headers {
+	for name, ref := range c.Headers() {
 		canonicalRef := "#/components/headers/" + name
 		resolving[canonicalRef] = true
 		if err := resolveHeaderRef(ref, r, resolving); err != nil {
@@ -96,7 +96,7 @@ func resolveComponents(c *openapi31models.Components, r *shared.RefResolver, res
 		}
 		delete(resolving, canonicalRef)
 	}
-	for name, ref := range c.SecuritySchemes {
+	for name, ref := range c.SecuritySchemes() {
 		canonicalRef := "#/components/securitySchemes/" + name
 		resolving[canonicalRef] = true
 		if err := resolveSecuritySchemeRef(ref, r, resolving); err != nil {
@@ -104,7 +104,7 @@ func resolveComponents(c *openapi31models.Components, r *shared.RefResolver, res
 		}
 		delete(resolving, canonicalRef)
 	}
-	for name, ref := range c.Links {
+	for name, ref := range c.Links() {
 		canonicalRef := "#/components/links/" + name
 		resolving[canonicalRef] = true
 		if err := resolveLinkRef(ref, r, resolving); err != nil {
@@ -112,7 +112,7 @@ func resolveComponents(c *openapi31models.Components, r *shared.RefResolver, res
 		}
 		delete(resolving, canonicalRef)
 	}
-	for name, ref := range c.Callbacks {
+	for name, ref := range c.Callbacks() {
 		canonicalRef := "#/components/callbacks/" + name
 		resolving[canonicalRef] = true
 		if err := resolveCallbackRef(ref, r, resolving); err != nil {
@@ -121,7 +121,7 @@ func resolveComponents(c *openapi31models.Components, r *shared.RefResolver, res
 		delete(resolving, canonicalRef)
 	}
 	// PathItems in components (new in 3.1)
-	for name, ref := range c.PathItems {
+	for name, ref := range c.PathItems() {
 		canonicalRef := "#/components/pathItems/" + name
 		resolving[canonicalRef] = true
 		if err := resolvePathItemRef(ref, r, resolving); err != nil {
@@ -138,15 +138,15 @@ func resolvePathItem(pi *openapi31models.PathItem, r *shared.RefResolver, resolv
 	}
 
 	for _, op := range []*openapi31models.Operation{
-		pi.Get, pi.Put, pi.Post, pi.Delete,
-		pi.Options, pi.Head, pi.Patch, pi.Trace,
+		pi.Get(), pi.Put(), pi.Post(), pi.Delete(),
+		pi.Options(), pi.Head(), pi.Patch(), pi.Trace(),
 	} {
 		if err := resolveOperation(op, r, resolving); err != nil {
 			return err
 		}
 	}
 
-	for _, ref := range pi.Parameters {
+	for _, ref := range pi.Parameters() {
 		if err := resolveParameterRef(ref, r, resolving); err != nil {
 			return err
 		}
@@ -189,28 +189,28 @@ func resolveOperation(op *openapi31models.Operation, r *shared.RefResolver, reso
 		return nil
 	}
 
-	for _, ref := range op.Parameters {
+	for _, ref := range op.Parameters() {
 		if err := resolveParameterRef(ref, r, resolving); err != nil {
 			return err
 		}
 	}
 
-	if err := resolveRequestBodyRef(op.RequestBody, r, resolving); err != nil {
+	if err := resolveRequestBodyRef(op.RequestBody(), r, resolving); err != nil {
 		return err
 	}
 
-	if op.Responses != nil {
-		if err := resolveResponseRef(op.Responses.Default, r, resolving); err != nil {
+	if op.Responses() != nil {
+		if err := resolveResponseRef(op.Responses().Default(), r, resolving); err != nil {
 			return err
 		}
-		for _, ref := range op.Responses.Codes {
+		for _, ref := range op.Responses().Codes() {
 			if err := resolveResponseRef(ref, r, resolving); err != nil {
 				return err
 			}
 		}
 	}
 
-	for _, ref := range op.Callbacks {
+	for _, ref := range op.Callbacks() {
 		if err := resolveCallbackRef(ref, r, resolving); err != nil {
 			return err
 		}
@@ -265,63 +265,63 @@ func resolveSchema(schema *openapi31models.Schema, r *shared.RefResolver, resolv
 		return nil
 	}
 
-	for _, ref := range schema.AllOf {
+	for _, ref := range schema.AllOf() {
 		if err := resolveSchemaRef(ref, r, resolving); err != nil {
 			return err
 		}
 	}
-	for _, ref := range schema.OneOf {
+	for _, ref := range schema.OneOf() {
 		if err := resolveSchemaRef(ref, r, resolving); err != nil {
 			return err
 		}
 	}
-	for _, ref := range schema.AnyOf {
+	for _, ref := range schema.AnyOf() {
 		if err := resolveSchemaRef(ref, r, resolving); err != nil {
 			return err
 		}
 	}
-	if err := resolveSchemaRef(schema.Not, r, resolving); err != nil {
+	if err := resolveSchemaRef(schema.Not(), r, resolving); err != nil {
 		return err
 	}
-	if err := resolveSchemaRef(schema.Items, r, resolving); err != nil {
+	if err := resolveSchemaRef(schema.Items(), r, resolving); err != nil {
 		return err
 	}
-	for _, ref := range schema.Properties {
+	for _, ref := range schema.Properties() {
 		if err := resolveSchemaRef(ref, r, resolving); err != nil {
 			return err
 		}
 	}
-	if err := resolveSchemaRef(schema.AdditionalProperties, r, resolving); err != nil {
+	if err := resolveSchemaRef(schema.AdditionalProperties(), r, resolving); err != nil {
 		return err
 	}
 
 	// OpenAPI 3.1 / JSON Schema 2020-12 additions
-	if err := resolveSchemaRef(schema.If, r, resolving); err != nil {
+	if err := resolveSchemaRef(schema.If(), r, resolving); err != nil {
 		return err
 	}
-	if err := resolveSchemaRef(schema.Then, r, resolving); err != nil {
+	if err := resolveSchemaRef(schema.Then(), r, resolving); err != nil {
 		return err
 	}
-	if err := resolveSchemaRef(schema.Else, r, resolving); err != nil {
+	if err := resolveSchemaRef(schema.Else(), r, resolving); err != nil {
 		return err
 	}
-	for _, ref := range schema.DependentSchemas {
+	for _, ref := range schema.DependentSchemas() {
 		if err := resolveSchemaRef(ref, r, resolving); err != nil {
 			return err
 		}
 	}
-	for _, ref := range schema.PrefixItems {
+	for _, ref := range schema.PrefixItems() {
 		if err := resolveSchemaRef(ref, r, resolving); err != nil {
 			return err
 		}
 	}
-	if err := resolveSchemaRef(schema.ContentSchema, r, resolving); err != nil {
+	if err := resolveSchemaRef(schema.ContentSchema(), r, resolving); err != nil {
 		return err
 	}
-	if err := resolveSchemaRef(schema.UnevaluatedItems, r, resolving); err != nil {
+	if err := resolveSchemaRef(schema.UnevaluatedItems(), r, resolving); err != nil {
 		return err
 	}
-	return resolveSchemaRef(schema.UnevaluatedProperties, r, resolving)
+	return resolveSchemaRef(schema.UnevaluatedProperties(), r, resolving)
 }
 
 func resolveResponseRef(ref *openapi31models.ResponseRef, r *shared.RefResolver, resolving map[string]bool) error {
@@ -347,17 +347,17 @@ func resolveResponseRef(ref *openapi31models.ResponseRef, r *shared.RefResolver,
 	}
 
 	if ref.Value != nil {
-		for _, hRef := range ref.Value.Headers {
+		for _, hRef := range ref.Value.Headers() {
 			if err := resolveHeaderRef(hRef, r, resolving); err != nil {
 				return err
 			}
 		}
-		for _, mt := range ref.Value.Content {
+		for _, mt := range ref.Value.Content() {
 			if err := resolveMediaType(mt, r, resolving); err != nil {
 				return err
 			}
 		}
-		for _, lRef := range ref.Value.Links {
+		for _, lRef := range ref.Value.Links() {
 			if err := resolveLinkRef(lRef, r, resolving); err != nil {
 				return err
 			}
@@ -390,10 +390,10 @@ func resolveParameterRef(ref *openapi31models.ParameterRef, r *shared.RefResolve
 	}
 
 	if ref.Value != nil {
-		if err := resolveSchemaRef(ref.Value.Schema, r, resolving); err != nil {
+		if err := resolveSchemaRef(ref.Value.Schema(), r, resolving); err != nil {
 			return err
 		}
-		for _, eRef := range ref.Value.Examples {
+		for _, eRef := range ref.Value.Examples() {
 			if err := resolveExampleRef(eRef, r, resolving); err != nil {
 				return err
 			}
@@ -451,7 +451,7 @@ func resolveRequestBodyRef(ref *openapi31models.RequestBodyRef, r *shared.RefRes
 	}
 
 	if ref.Value != nil {
-		for _, mt := range ref.Value.Content {
+		for _, mt := range ref.Value.Content() {
 			if err := resolveMediaType(mt, r, resolving); err != nil {
 				return err
 			}
@@ -484,10 +484,10 @@ func resolveHeaderRef(ref *openapi31models.HeaderRef, r *shared.RefResolver, res
 	}
 
 	if ref.Value != nil {
-		if err := resolveSchemaRef(ref.Value.Schema, r, resolving); err != nil {
+		if err := resolveSchemaRef(ref.Value.Schema(), r, resolving); err != nil {
 			return err
 		}
-		for _, eRef := range ref.Value.Examples {
+		for _, eRef := range ref.Value.Examples() {
 			if err := resolveExampleRef(eRef, r, resolving); err != nil {
 				return err
 			}
@@ -570,7 +570,7 @@ func resolveCallbackRef(ref *openapi31models.CallbackRef, r *shared.RefResolver,
 	}
 
 	if ref.Value != nil {
-		for _, pathItem := range ref.Value.Paths {
+		for _, pathItem := range ref.Value.Paths() {
 			if err := resolvePathItem(pathItem, r, resolving); err != nil {
 				return err
 			}
@@ -585,19 +585,19 @@ func resolveMediaType(mt *openapi31models.MediaType, r *shared.RefResolver, reso
 		return nil
 	}
 
-	if err := resolveSchemaRef(mt.Schema, r, resolving); err != nil {
+	if err := resolveSchemaRef(mt.Schema(), r, resolving); err != nil {
 		return err
 	}
 
-	for _, ref := range mt.Examples {
+	for _, ref := range mt.Examples() {
 		if err := resolveExampleRef(ref, r, resolving); err != nil {
 			return err
 		}
 	}
 
-	for _, enc := range mt.Encoding {
+	for _, enc := range mt.Encoding() {
 		if enc != nil {
-			for _, hRef := range enc.Headers {
+			for _, hRef := range enc.Headers() {
 				if err := resolveHeaderRef(hRef, r, resolving); err != nil {
 					return err
 				}

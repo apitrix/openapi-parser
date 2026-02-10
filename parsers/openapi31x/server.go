@@ -43,21 +43,24 @@ func (p *serverParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mode
 		return nil, ctx.errorAt(node, "server must be an object")
 	}
 
-	server := &openapi31models.Server{}
-	var err error
-
-	// Simple properties - inline
-	server.URL = p.ParseURL(node)
-	server.Description = p.ParseDescription(node)
+	var errs []openapi31models.ParseError
 
 	// Complex properties - delegated to dedicated files
-	server.Variables, err = p.ParseVariables(node, ctx)
+	variables, err := p.ParseVariables(node, ctx)
 	if err != nil {
-		server.Trix.Errors = append(server.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
+
+	// Create via constructor
+	server := openapi31models.NewServer(
+		p.ParseURL(node),
+		p.ParseDescription(node),
+		variables,
+	)
 
 	server.VendorExtensions = parseNodeExtensions(node)
 	server.Trix.Source = ctx.nodeSource(node)
+	server.Trix.Errors = append(server.Trix.Errors, errs...)
 
 	// Detect unknown fields
 	server.Trix.Errors = append(server.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, serverKnownFieldsSet))...)

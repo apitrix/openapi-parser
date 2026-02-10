@@ -5,16 +5,54 @@ package openapi31
 type Components struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Schemas         map[string]*SchemaRef         `json:"schemas,omitempty" yaml:"schemas,omitempty"`
-	Responses       map[string]*ResponseRef       `json:"responses,omitempty" yaml:"responses,omitempty"`
-	Parameters      map[string]*ParameterRef      `json:"parameters,omitempty" yaml:"parameters,omitempty"`
-	Examples        map[string]*ExampleRef        `json:"examples,omitempty" yaml:"examples,omitempty"`
-	RequestBodies   map[string]*RequestBodyRef    `json:"requestBodies,omitempty" yaml:"requestBodies,omitempty"`
-	Headers         map[string]*HeaderRef         `json:"headers,omitempty" yaml:"headers,omitempty"`
-	SecuritySchemes map[string]*SecuritySchemeRef `json:"securitySchemes,omitempty" yaml:"securitySchemes,omitempty"`
-	Links           map[string]*LinkRef           `json:"links,omitempty" yaml:"links,omitempty"`
-	Callbacks       map[string]*CallbackRef       `json:"callbacks,omitempty" yaml:"callbacks,omitempty"`
-	PathItems       map[string]*PathItemRef       `json:"pathItems,omitempty" yaml:"pathItems,omitempty"`
+	schemas         map[string]*SchemaRef
+	responses       map[string]*ResponseRef
+	parameters      map[string]*ParameterRef
+	examples        map[string]*ExampleRef
+	requestBodies   map[string]*RequestBodyRef
+	headers         map[string]*HeaderRef
+	securitySchemes map[string]*SecuritySchemeRef
+	links           map[string]*LinkRef
+	callbacks       map[string]*CallbackRef
+	pathItems       map[string]*PathItemRef
+}
+
+func (c *Components) Schemas() map[string]*SchemaRef                 { return c.schemas }
+func (c *Components) Responses() map[string]*ResponseRef             { return c.responses }
+func (c *Components) Parameters() map[string]*ParameterRef           { return c.parameters }
+func (c *Components) Examples() map[string]*ExampleRef               { return c.examples }
+func (c *Components) RequestBodies() map[string]*RequestBodyRef      { return c.requestBodies }
+func (c *Components) Headers() map[string]*HeaderRef                 { return c.headers }
+func (c *Components) SecuritySchemes() map[string]*SecuritySchemeRef { return c.securitySchemes }
+func (c *Components) Links() map[string]*LinkRef                     { return c.links }
+func (c *Components) Callbacks() map[string]*CallbackRef             { return c.callbacks }
+func (c *Components) PathItems() map[string]*PathItemRef             { return c.pathItems }
+
+// SetProperty sets a named property on the Components.
+// Used by parsers for post-construction field assignment.
+func (c *Components) SetProperty(name string, value interface{}) {
+	switch name {
+	case "schemas":
+		c.schemas = value.(map[string]*SchemaRef)
+	case "responses":
+		c.responses = value.(map[string]*ResponseRef)
+	case "parameters":
+		c.parameters = value.(map[string]*ParameterRef)
+	case "examples":
+		c.examples = value.(map[string]*ExampleRef)
+	case "requestBodies":
+		c.requestBodies = value.(map[string]*RequestBodyRef)
+	case "headers":
+		c.headers = value.(map[string]*HeaderRef)
+	case "securitySchemes":
+		c.securitySchemes = value.(map[string]*SecuritySchemeRef)
+	case "links":
+		c.links = value.(map[string]*LinkRef)
+	case "callbacks":
+		c.callbacks = value.(map[string]*CallbackRef)
+	case "pathItems":
+		c.pathItems = value.(map[string]*PathItemRef)
+	}
 }
 
 // NewComponents creates a new Components instance.

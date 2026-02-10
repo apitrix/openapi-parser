@@ -15,70 +15,93 @@ func parseOpenAPI(node *yaml.Node, ctx *ParseContext) (*openapi31models.OpenAPI,
 		return nil, ctx.errorAt(node, "OpenAPI document must be an object")
 	}
 
-	openapi := &openapi31models.OpenAPI{}
-	var err error
-
-	// Simple property - version (inline)
-	openapi.OpenAPI, err = parseOpenAPIVersion(node, ctx)
+	// Parse version first (required)
+	version, err := parseOpenAPIVersion(node, ctx)
 	if err != nil {
 		return nil, err // version is fatal — can't proceed without it
 	}
 
-	// Simple property - jsonSchemaDialect
-	openapi.JsonSchemaDialect = nodeGetString(node, "jsonSchemaDialect")
-
-	// Complex properties - delegated
+	// Parse info (required sub-object)
 	infoNode := nodeGetValue(node, "info")
-	openapi.Info, err = parseOpenAPIInfo(infoNode, ctx.push("info"))
+	info, err := parseOpenAPIInfo(infoNode, ctx.push("info"))
+
+	openapi := openapi31models.NewOpenAPI(version, info)
 	if err != nil {
 		openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
 	}
 
+	// Simple property - jsonSchemaDialect
+	if dialect := nodeGetString(node, "jsonSchemaDialect"); dialect != "" {
+		openapi.SetProperty("jsonSchemaDialect", dialect)
+	}
+
+	// Complex properties - delegated
 	if serversNode := nodeGetValue(node, "servers"); serversNode != nil {
-		openapi.Servers, err = parseSharedServers(serversNode, ctx.push("servers"))
+		servers, err := parseSharedServers(serversNode, ctx.push("servers"))
 		if err != nil {
 			openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
+		}
+		if servers != nil {
+			openapi.SetProperty("servers", servers)
 		}
 	}
 
 	pathsNode := nodeGetValue(node, "paths")
-	openapi.Paths, err = parseOpenAPIPaths(pathsNode, ctx.push("paths"))
+	paths, err := parseOpenAPIPaths(pathsNode, ctx.push("paths"))
 	if err != nil {
 		openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
+	}
+	if paths != nil {
+		openapi.SetProperty("paths", paths)
 	}
 
 	// Webhooks - new in 3.1
 	if webhooksNode := nodeGetValue(node, "webhooks"); webhooksNode != nil {
-		openapi.Webhooks, err = parseOpenAPIWebhooks(webhooksNode, ctx.push("webhooks"))
+		webhooks, err := parseOpenAPIWebhooks(webhooksNode, ctx.push("webhooks"))
 		if err != nil {
 			openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
+		}
+		if webhooks != nil {
+			openapi.SetProperty("webhooks", webhooks)
 		}
 	}
 
 	componentsNode := nodeGetValue(node, "components")
-	openapi.Components, err = parseOpenAPIComponents(componentsNode, ctx.push("components"))
+	components, err := parseOpenAPIComponents(componentsNode, ctx.push("components"))
 	if err != nil {
 		openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
 	}
+	if components != nil {
+		openapi.SetProperty("components", components)
+	}
 
 	if securityNode := nodeGetValue(node, "security"); securityNode != nil {
-		openapi.Security, err = parseSharedSecurityRequirements(securityNode, ctx.push("security"))
+		security, err := parseSharedSecurityRequirements(securityNode, ctx.push("security"))
 		if err != nil {
 			openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
+		}
+		if security != nil {
+			openapi.SetProperty("security", security)
 		}
 	}
 
 	if tagsNode := nodeGetValue(node, "tags"); tagsNode != nil {
-		openapi.Tags, err = parseSharedTags(tagsNode, ctx.push("tags"))
+		tags, err := parseSharedTags(tagsNode, ctx.push("tags"))
 		if err != nil {
 			openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
+		}
+		if tags != nil {
+			openapi.SetProperty("tags", tags)
 		}
 	}
 
 	if edNode := nodeGetValue(node, "externalDocs"); edNode != nil {
-		openapi.ExternalDocs, err = parseSharedExternalDocs(edNode, ctx.push("externalDocs"))
+		externalDocs, err := parseSharedExternalDocs(edNode, ctx.push("externalDocs"))
 		if err != nil {
 			openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
+		}
+		if externalDocs != nil {
+			openapi.SetProperty("externalDocs", externalDocs)
 		}
 	}
 
@@ -116,8 +139,7 @@ func parseOpenAPIPaths(node *yaml.Node, ctx *ParseContext) (*openapi31models.Pat
 		return nil, ctx.errorAt(node, "paths must be an object")
 	}
 
-	paths := &openapi31models.Paths{}
-	paths.Items = make(map[string]*openapi31models.PathItem)
+	items := make(map[string]*openapi31models.PathItem)
 
 	for key, pathItemNode := range nodeMapPairs(node) {
 		// Skip extensions
@@ -129,8 +151,11 @@ func parseOpenAPIPaths(node *yaml.Node, ctx *ParseContext) (*openapi31models.Pat
 		if err != nil {
 			return nil, err
 		}
-		paths.Items[key] = pathItem
+		items[key] = pathItem
 	}
+
+	// Create via constructor
+	paths := openapi31models.NewPaths(items)
 
 	paths.VendorExtensions = parseNodeExtensions(node)
 	paths.Trix.Source = ctx.nodeSource(node)

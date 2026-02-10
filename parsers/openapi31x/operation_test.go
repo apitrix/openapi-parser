@@ -30,11 +30,11 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	op := result.Document.Paths.Items["/pets"].Get
+	op := result.Document.Paths().Items()["/pets"].Get()
 	require.NotNil(t, op)
-	assert.Equal(t, "List pets", op.Summary)
-	assert.Equal(t, "Returns all pets", op.Description)
-	assert.Equal(t, "listPets", op.OperationID)
+	assert.Equal(t, "List pets", op.Summary())
+	assert.Equal(t, "Returns all pets", op.Description())
+	assert.Equal(t, "listPets", op.OperationID())
 }
 
 func TestParseOperation_AllMethods(t *testing.T) {
@@ -87,15 +87,15 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	path := result.Document.Paths.Items["/resource"]
-	assert.NotNil(t, path.Get)
-	assert.NotNil(t, path.Post)
-	assert.NotNil(t, path.Put)
-	assert.NotNil(t, path.Patch)
-	assert.NotNil(t, path.Delete)
-	assert.NotNil(t, path.Options)
-	assert.NotNil(t, path.Head)
-	assert.NotNil(t, path.Trace)
+	path := result.Document.Paths().Items()["/resource"]
+	assert.NotNil(t, path.Get())
+	assert.NotNil(t, path.Post())
+	assert.NotNil(t, path.Put())
+	assert.NotNil(t, path.Patch())
+	assert.NotNil(t, path.Delete())
+	assert.NotNil(t, path.Options())
+	assert.NotNil(t, path.Head())
+	assert.NotNil(t, path.Trace())
 }
 
 // --- Tags ---
@@ -118,7 +118,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	tags := result.Document.Paths.Items["/pets"].Get.Tags
+	tags := result.Document.Paths().Items()["/pets"].Get().Tags()
 	assert.Len(t, tags, 3)
 	assert.Contains(t, tags, "pets")
 	assert.Contains(t, tags, "animals")
@@ -139,7 +139,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	tags := result.Document.Paths.Items["/pets"].Get.Tags
+	tags := result.Document.Paths().Items()["/pets"].Get().Tags()
 	assert.Empty(t, tags)
 }
 
@@ -160,7 +160,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.True(t, result.Document.Paths.Items["/old-endpoint"].Get.Deprecated)
+	assert.True(t, result.Document.Paths().Items()["/old-endpoint"].Get().Deprecated())
 }
 
 // --- Extensions ---
@@ -184,7 +184,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ext := result.Document.Paths.Items["/pets"].Get.VendorExtensions
+	ext := result.Document.Paths().Items()["/pets"].Get().VendorExtensions
 	require.NotNil(t, ext)
 	assert.Equal(t, true, ext["x-internal"])
 	assert.Equal(t, 100, ext["x-rate-limit"])
@@ -232,17 +232,17 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	op := result.Document.Paths.Items["/pets/{petId}"].Put
+	op := result.Document.Paths().Items()["/pets/{petId}"].Put()
 	require.NotNil(t, op)
-	assert.Len(t, op.Tags, 1)
-	assert.Equal(t, "Update a pet", op.Summary)
-	assert.Equal(t, "updatePet", op.OperationID)
-	assert.Len(t, op.Parameters, 1)
-	require.NotNil(t, op.RequestBody)
-	assert.Len(t, op.Responses.Codes, 2)
-	assert.Len(t, op.Security, 1)
-	assert.Len(t, op.Servers, 1)
-	require.NotNil(t, op.ExternalDocs)
+	assert.Len(t, op.Tags(), 1)
+	assert.Equal(t, "Update a pet", op.Summary())
+	assert.Equal(t, "updatePet", op.OperationID())
+	assert.Len(t, op.Parameters(), 1)
+	require.NotNil(t, op.RequestBody())
+	assert.Len(t, op.Responses().Codes(), 2)
+	assert.Len(t, op.Security(), 1)
+	assert.Len(t, op.Servers(), 1)
+	require.NotNil(t, op.ExternalDocs())
 }
 
 // --- Node Source ---
@@ -261,7 +261,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	op := result.Document.Paths.Items["/pets"].Get
+	op := result.Document.Paths().Items()["/pets"].Get()
 	assert.Greater(t, op.Trix.Source.Start.Line, 0)
 }
 
@@ -294,8 +294,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Paths.Items, 3)
-	assert.Equal(t, "listPets", result.Document.Paths.Items["/pets"].Get.OperationID)
-	assert.Equal(t, "getPet", result.Document.Paths.Items["/pets/{petId}"].Get.OperationID)
-	assert.Equal(t, "listUsers", result.Document.Paths.Items["/users"].Get.OperationID)
+	assert.Len(t, result.Document.Paths().Items(), 3)
+	assert.Equal(t, "listPets", result.Document.Paths().Items()["/pets"].Get().OperationID())
+	assert.Equal(t, "getPet", result.Document.Paths().Items()["/pets/{petId}"].Get().OperationID())
+	assert.Equal(t, "listUsers", result.Document.Paths().Items()["/users"].Get().OperationID())
 }

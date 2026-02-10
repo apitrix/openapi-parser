@@ -5,14 +5,23 @@ package openapi31
 type Encoding struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	ContentType   string                `json:"contentType,omitempty" yaml:"contentType,omitempty"`
-	Headers       map[string]*HeaderRef `json:"headers,omitempty" yaml:"headers,omitempty"`
-	Style         string                `json:"style,omitempty" yaml:"style,omitempty"`
-	Explode       *bool                 `json:"explode,omitempty" yaml:"explode,omitempty"`
-	AllowReserved bool                  `json:"allowReserved,omitempty" yaml:"allowReserved,omitempty"`
+	contentType   string
+	headers       map[string]*HeaderRef
+	style         string
+	explode       *bool
+	allowReserved bool
 }
 
+func (e *Encoding) ContentType() string            { return e.contentType }
+func (e *Encoding) Headers() map[string]*HeaderRef { return e.headers }
+func (e *Encoding) Style() string                  { return e.style }
+func (e *Encoding) Explode() *bool                 { return e.explode }
+func (e *Encoding) AllowReserved() bool            { return e.allowReserved }
+
 // NewEncoding creates a new Encoding instance.
-func NewEncoding() *Encoding {
-	return &Encoding{}
+func NewEncoding(contentType, style string, headers map[string]*HeaderRef, explode *bool, allowReserved bool) *Encoding {
+	return &Encoding{
+		contentType: contentType, headers: headers, style: style,
+		explode: explode, allowReserved: allowReserved,
+	}
 }

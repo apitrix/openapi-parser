@@ -29,9 +29,9 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	servers := result.Document.Paths.Items["/pets"].Get.Servers
+	servers := result.Document.Paths().Items()["/pets"].Get().Servers()
 	assert.Len(t, servers, 1)
-	assert.Equal(t, "https://pets.example.com", servers[0].URL)
+	assert.Equal(t, "https://pets.example.com", servers[0].URL())
 }
 
 // --- Multiple Servers ---
@@ -57,7 +57,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	servers := result.Document.Paths.Items["/pets"].Get.Servers
+	servers := result.Document.Paths().Items()["/pets"].Get().Servers()
 	assert.Len(t, servers, 3)
 }
 
@@ -78,7 +78,7 @@ paths:
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	// Uses path-level or global servers
-	assert.Empty(t, result.Document.Paths.Items["/pets"].Get.Servers)
+	assert.Empty(t, result.Document.Paths().Items()["/pets"].Get().Servers())
 }
 
 // --- With Variables ---
@@ -105,8 +105,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	servers := result.Document.Paths.Items["/pets"].Get.Servers
+	servers := result.Document.Paths().Items()["/pets"].Get().Servers()
 	require.Len(t, servers, 1)
-	assert.NotNil(t, servers[0].Variables)
-	assert.Equal(t, "prod", servers[0].Variables["env"].Default)
+	assert.NotNil(t, servers[0].Variables())
+	assert.Equal(t, "prod", servers[0].Variables()["env"].Default())
 }

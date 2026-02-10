@@ -5,13 +5,18 @@ package openapi31
 type Response struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Description string                `json:"description" yaml:"description"`
-	Headers     map[string]*HeaderRef `json:"headers,omitempty" yaml:"headers,omitempty"`
-	Content     map[string]*MediaType `json:"content,omitempty" yaml:"content,omitempty"`
-	Links       map[string]*LinkRef   `json:"links,omitempty" yaml:"links,omitempty"`
+	description string
+	headers     map[string]*HeaderRef
+	content     map[string]*MediaType
+	links       map[string]*LinkRef
 }
 
+func (r *Response) Description() string            { return r.description }
+func (r *Response) Headers() map[string]*HeaderRef { return r.headers }
+func (r *Response) Content() map[string]*MediaType { return r.content }
+func (r *Response) Links() map[string]*LinkRef     { return r.links }
+
 // NewResponse creates a new Response instance.
-func NewResponse(description string) *Response {
-	return &Response{Description: description}
+func NewResponse(description string, headers map[string]*HeaderRef, content map[string]*MediaType, links map[string]*LinkRef) *Response {
+	return &Response{description: description, headers: headers, content: content, links: links}
 }

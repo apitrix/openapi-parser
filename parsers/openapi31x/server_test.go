@@ -24,8 +24,8 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.Len(t, result.Document.Servers, 1)
-	assert.Equal(t, "https://api.example.com", result.Document.Servers[0].URL)
+	require.Len(t, result.Document.Servers(), 1)
+	assert.Equal(t, "https://api.example.com", result.Document.Servers()[0].URL())
 }
 
 // --- With Description ---
@@ -42,7 +42,7 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "Production server", result.Document.Servers[0].Description)
+	assert.Equal(t, "Production server", result.Document.Servers()[0].Description())
 }
 
 // --- Multiple Servers ---
@@ -63,7 +63,7 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Servers, 3)
+	assert.Len(t, result.Document.Servers(), 3)
 }
 
 // --- Variables ---
@@ -88,11 +88,11 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	vars := result.Document.Servers[0].Variables
+	vars := result.Document.Servers()[0].Variables()
 	require.NotNil(t, vars)
 	assert.Len(t, vars, 2)
-	assert.Equal(t, "api", vars["environment"].Default)
-	assert.Len(t, vars["environment"].Enum, 3)
+	assert.Equal(t, "api", vars["environment"].Default())
+	assert.Len(t, vars["environment"].Enum(), 3)
 }
 
 // --- Variable with Description ---
@@ -115,8 +115,8 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	envVar := result.Document.Servers[0].Variables["env"]
-	assert.Equal(t, "Environment to connect to", envVar.Description)
+	envVar := result.Document.Servers()[0].Variables()["env"]
+	assert.Equal(t, "Environment to connect to", envVar.Description())
 }
 
 // --- Path-Level Servers ---
@@ -139,9 +139,9 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Servers, 1)
-	assert.Len(t, result.Document.Paths.Items["/special"].Servers, 1)
-	assert.Equal(t, "https://special-api.example.com", result.Document.Paths.Items["/special"].Servers[0].URL)
+	assert.Len(t, result.Document.Servers(), 1)
+	assert.Len(t, result.Document.Paths().Items()["/special"].Servers(), 1)
+	assert.Equal(t, "https://special-api.example.com", result.Document.Paths().Items()["/special"].Servers()[0].URL())
 }
 
 // --- Operation-Level Servers ---
@@ -165,7 +165,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	opServers := result.Document.Paths.Items["/pets"].Get.Servers
+	opServers := result.Document.Paths().Items()["/pets"].Get().Servers()
 	assert.Len(t, opServers, 2)
 }
 
@@ -184,7 +184,7 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ext := result.Document.Servers[0].VendorExtensions
+	ext := result.Document.Servers()[0].VendorExtensions
 	require.NotNil(t, ext)
 	assert.Equal(t, true, ext["x-internal"])
 	assert.Equal(t, "us-east-1", ext["x-region"])
@@ -201,7 +201,7 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, result.Document.Servers)
+	assert.Empty(t, result.Document.Servers())
 }
 
 // --- Relative URL ---
@@ -218,5 +218,5 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "/v1", result.Document.Servers[0].URL)
+	assert.Equal(t, "/v1", result.Document.Servers()[0].URL())
 }

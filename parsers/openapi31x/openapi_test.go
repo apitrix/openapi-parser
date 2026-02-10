@@ -23,8 +23,8 @@ paths: {}
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	require.NotNil(t, result.Document)
-	assert.Equal(t, "3.1.0", result.Document.OpenAPI)
-	assert.Equal(t, "Test API", result.Document.Info.Title)
+	assert.Equal(t, "3.1.0", result.Document.OpenAPIVersion())
+	assert.Equal(t, "Test API", result.Document.Info().Title())
 }
 
 // --- Different OpenAPI Versions ---
@@ -38,7 +38,7 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "3.1.0", result.Document.OpenAPI)
+	assert.Equal(t, "3.1.0", result.Document.OpenAPIVersion())
 }
 
 func TestParseOpenAPI_Version300(t *testing.T) {
@@ -50,7 +50,7 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "3.1.0", result.Document.OpenAPI)
+	assert.Equal(t, "3.1.0", result.Document.OpenAPIVersion())
 }
 
 // --- Complete Document ---
@@ -96,13 +96,13 @@ externalDocs:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.NotNil(t, result.Document.Info)
-	assert.Len(t, result.Document.Servers, 1)
-	assert.Len(t, result.Document.Tags, 1)
-	assert.NotEmpty(t, result.Document.Paths.Items)
-	assert.NotNil(t, result.Document.Components)
-	assert.Len(t, result.Document.Security, 1)
-	assert.NotNil(t, result.Document.ExternalDocs)
+	assert.NotNil(t, result.Document.Info())
+	assert.Len(t, result.Document.Servers(), 1)
+	assert.Len(t, result.Document.Tags(), 1)
+	assert.NotEmpty(t, result.Document.Paths().Items())
+	assert.NotNil(t, result.Document.Components())
+	assert.Len(t, result.Document.Security(), 1)
+	assert.NotNil(t, result.Document.ExternalDocs())
 }
 
 // --- Extensions ---
@@ -153,8 +153,8 @@ func TestParseOpenAPI_JSON(t *testing.T) {
 }`
 	result, err := Parse([]byte(json))
 	require.NoError(t, err)
-	assert.Equal(t, "3.1.0", result.Document.OpenAPI)
-	assert.Equal(t, "Test API", result.Document.Info.Title)
+	assert.Equal(t, "3.1.0", result.Document.OpenAPIVersion())
+	assert.Equal(t, "Test API", result.Document.Info().Title())
 }
 
 // --- Empty Paths ---
@@ -168,7 +168,7 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, result.Document.Paths.Items)
+	assert.Empty(t, result.Document.Paths().Items())
 }
 
 // --- Error Cases ---
@@ -200,6 +200,6 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "a", result.Document.Info.Title)
-	assert.Equal(t, "1", result.Document.Info.Version)
+	assert.Equal(t, "a", result.Document.Info().Title())
+	assert.Equal(t, "1", result.Document.Info().Version())
 }

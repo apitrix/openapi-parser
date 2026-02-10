@@ -25,10 +25,10 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
-	require.NotNil(t, result.Document.Info.License)
-	assert.Equal(t, "MIT", result.Document.Info.License.Name)
-	assert.Equal(t, "https://opensource.org/licenses/MIT", result.Document.Info.License.URL)
+	require.NotNil(t, result.Document.Info())
+	require.NotNil(t, result.Document.Info().License())
+	assert.Equal(t, "MIT", result.Document.Info().License().Name())
+	assert.Equal(t, "https://opensource.org/licenses/MIT", result.Document.Info().License().URL())
 }
 
 // --- Name Only (URL optional) ---
@@ -44,10 +44,10 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
-	require.NotNil(t, result.Document.Info.License)
-	assert.Equal(t, "Apache 2.0", result.Document.Info.License.Name)
-	assert.Empty(t, result.Document.Info.License.URL)
+	require.NotNil(t, result.Document.Info())
+	require.NotNil(t, result.Document.Info().License())
+	assert.Equal(t, "Apache 2.0", result.Document.Info().License().Name())
+	assert.Empty(t, result.Document.Info().License().URL())
 }
 
 // --- Missing License ---
@@ -61,9 +61,9 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
+	require.NotNil(t, result.Document.Info())
 	// License is nil when not provided
-	assert.Nil(t, result.Document.Info.License)
+	assert.Nil(t, result.Document.Info().License())
 }
 
 // --- Different License Types ---
@@ -80,9 +80,9 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
-	require.NotNil(t, result.Document.Info.License)
-	assert.Equal(t, "Apache 2.0", result.Document.Info.License.Name)
+	require.NotNil(t, result.Document.Info())
+	require.NotNil(t, result.Document.Info().License())
+	assert.Equal(t, "Apache 2.0", result.Document.Info().License().Name())
 }
 
 func TestParseInfoLicense_GPL(t *testing.T) {
@@ -97,9 +97,9 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
-	require.NotNil(t, result.Document.Info.License)
-	assert.Equal(t, "GPL-3.0", result.Document.Info.License.Name)
+	require.NotNil(t, result.Document.Info())
+	require.NotNil(t, result.Document.Info().License())
+	assert.Equal(t, "GPL-3.0", result.Document.Info().License().Name())
 }
 
 func TestParseInfoLicense_Proprietary(t *testing.T) {
@@ -113,9 +113,9 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
-	require.NotNil(t, result.Document.Info.License)
-	assert.Equal(t, "Proprietary", result.Document.Info.License.Name)
+	require.NotNil(t, result.Document.Info())
+	require.NotNil(t, result.Document.Info().License())
+	assert.Equal(t, "Proprietary", result.Document.Info().License().Name())
 }
 
 // --- Extensions ---
@@ -133,11 +133,11 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
-	require.NotNil(t, result.Document.Info.License)
-	require.NotNil(t, result.Document.Info.License.VendorExtensions)
-	assert.Equal(t, "MIT", result.Document.Info.License.VendorExtensions["x-spdx-id"])
-	assert.Equal(t, true, result.Document.Info.License.VendorExtensions["x-osi-approved"])
+	require.NotNil(t, result.Document.Info())
+	require.NotNil(t, result.Document.Info().License())
+	require.NotNil(t, result.Document.Info().License().VendorExtensions)
+	assert.Equal(t, "MIT", result.Document.Info().License().VendorExtensions["x-spdx-id"])
+	assert.Equal(t, true, result.Document.Info().License().VendorExtensions["x-osi-approved"])
 }
 
 // --- Empty Name (should still parse) ---
@@ -153,9 +153,9 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
-	require.NotNil(t, result.Document.Info.License)
-	assert.Empty(t, result.Document.Info.License.Name)
+	require.NotNil(t, result.Document.Info())
+	require.NotNil(t, result.Document.Info().License())
+	assert.Empty(t, result.Document.Info().License().Name())
 }
 
 // --- Special Characters in Name ---
@@ -172,7 +172,7 @@ paths: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Info)
-	require.NotNil(t, result.Document.Info.License)
-	assert.Equal(t, "CC-BY-NC-SA 4.0 (Creative Commons)", result.Document.Info.License.Name)
+	require.NotNil(t, result.Document.Info())
+	require.NotNil(t, result.Document.Info().License())
+	assert.Equal(t, "CC-BY-NC-SA 4.0 (Creative Commons)", result.Document.Info().License().Name())
 }

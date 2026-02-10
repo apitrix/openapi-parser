@@ -5,12 +5,16 @@ package openapi31
 type ServerVariable struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Enum        []string `json:"enum,omitempty" yaml:"enum,omitempty"`
-	Default     string   `json:"default" yaml:"default"`
-	Description string   `json:"description,omitempty" yaml:"description,omitempty"`
+	enum        []string
+	defaultVal  string
+	description string
 }
 
+func (v *ServerVariable) Enum() []string      { return v.enum }
+func (v *ServerVariable) Default() string     { return v.defaultVal }
+func (v *ServerVariable) Description() string { return v.description }
+
 // NewServerVariable creates a new ServerVariable instance.
-func NewServerVariable(defaultValue string) *ServerVariable {
-	return &ServerVariable{Default: defaultValue}
+func NewServerVariable(enum []string, defaultValue, description string) *ServerVariable {
+	return &ServerVariable{enum: enum, defaultVal: defaultValue, description: description}
 }

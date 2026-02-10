@@ -26,8 +26,8 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.Responses, 1)
-	assert.Contains(t, result.Document.Components.Responses, "NotFound")
+	assert.Len(t, result.Document.Components().Responses(), 1)
+	assert.Contains(t, result.Document.Components().Responses(), "NotFound")
 }
 
 // --- Multiple Responses ---
@@ -51,7 +51,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.Responses, 4)
+	assert.Len(t, result.Document.Components().Responses(), 4)
 }
 
 // --- Empty ---
@@ -67,7 +67,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, result.Document.Components.Responses)
+	assert.Empty(t, result.Document.Components().Responses())
 }
 
 // --- With Content ---
@@ -89,8 +89,8 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := result.Document.Components.Responses["Success"].Value
-	assert.NotNil(t, resp.Content["application/json"])
+	resp := result.Document.Components().Responses()["Success"].Value
+	assert.NotNil(t, resp.Content()["application/json"])
 }
 
 // --- With Headers ---
@@ -112,6 +112,6 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := result.Document.Components.Responses["RateLimited"].Value
-	assert.Contains(t, resp.Headers, "X-Rate-Limit-Remaining")
+	resp := result.Document.Components().Responses()["RateLimited"].Value
+	assert.Contains(t, resp.Headers(), "X-Rate-Limit-Remaining")
 }

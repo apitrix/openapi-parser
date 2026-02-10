@@ -26,11 +26,11 @@ func (p *externalDocsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi
 		return nil, ctx.errorAt(node, "externalDocs must be an object")
 	}
 
-	ed := &openapi31models.ExternalDocumentation{}
-
-	// All properties are simple - inline
-	ed.URL = p.ParseURL(node)
-	ed.Description = p.ParseDescription(node)
+	// Create via constructor
+	ed := openapi31models.NewExternalDocumentation(
+		p.ParseDescription(node),
+		p.ParseURL(node),
+	)
 
 	ed.VendorExtensions = parseNodeExtensions(node)
 	ed.Trix.Source = ctx.nodeSource(node)

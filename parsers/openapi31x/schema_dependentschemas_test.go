@@ -33,11 +33,11 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["Address"].Value
-	require.NotNil(t, schema.DependentSchemas)
-	require.Contains(t, schema.DependentSchemas, "street")
-	require.Contains(t, schema.DependentSchemas, "country")
-	assert.Len(t, schema.DependentSchemas["street"].Value.Required, 2)
+	schema := result.Document.Components().Schemas()["Address"].Value
+	require.NotNil(t, schema.DependentSchemas())
+	require.Contains(t, schema.DependentSchemas(), "street")
+	require.Contains(t, schema.DependentSchemas(), "country")
+	assert.Len(t, schema.DependentSchemas()["street"].Value.Required(), 2)
 }
 
 func TestParseSchema_DependentSchemas_Empty(t *testing.T) {
@@ -53,6 +53,6 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components.Schemas["Simple"].Value
-	assert.Nil(t, schema.DependentSchemas)
+	schema := result.Document.Components().Schemas()["Simple"].Value
+	assert.Nil(t, schema.DependentSchemas())
 }

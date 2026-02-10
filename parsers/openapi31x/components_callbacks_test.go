@@ -30,8 +30,8 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.Callbacks, 1)
-	assert.Contains(t, result.Document.Components.Callbacks, "Webhook")
+	assert.Len(t, result.Document.Components().Callbacks(), 1)
+	assert.Contains(t, result.Document.Components().Callbacks(), "Webhook")
 }
 
 // --- Multiple Callbacks ---
@@ -65,7 +65,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.Callbacks, 3)
+	assert.Len(t, result.Document.Components().Callbacks(), 3)
 }
 
 // --- Empty ---
@@ -81,7 +81,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Empty(t, result.Document.Components.Callbacks)
+	assert.Empty(t, result.Document.Components().Callbacks())
 }
 
 // --- Missing ---
@@ -96,5 +96,5 @@ components: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Nil(t, result.Document.Components.Callbacks)
+	assert.Nil(t, result.Document.Components().Callbacks())
 }

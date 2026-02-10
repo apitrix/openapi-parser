@@ -64,17 +64,17 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	c := result.Document.Components
+	c := result.Document.Components()
 	require.NotNil(t, c)
-	assert.Len(t, c.Schemas, 1)
-	assert.Len(t, c.Responses, 1)
-	assert.Len(t, c.Parameters, 1)
-	assert.Len(t, c.Examples, 1)
-	assert.Len(t, c.RequestBodies, 1)
-	assert.Len(t, c.Headers, 1)
-	assert.Len(t, c.SecuritySchemes, 1)
-	assert.Len(t, c.Links, 1)
-	assert.Len(t, c.Callbacks, 1)
+	assert.Len(t, c.Schemas(), 1)
+	assert.Len(t, c.Responses(), 1)
+	assert.Len(t, c.Parameters(), 1)
+	assert.Len(t, c.Examples(), 1)
+	assert.Len(t, c.RequestBodies(), 1)
+	assert.Len(t, c.Headers(), 1)
+	assert.Len(t, c.SecuritySchemes(), 1)
+	assert.Len(t, c.Links(), 1)
+	assert.Len(t, c.Callbacks(), 1)
 }
 
 // --- Empty Components ---
@@ -89,7 +89,7 @@ components: {}
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Components)
+	require.NotNil(t, result.Document.Components())
 }
 
 // --- Missing Components ---
@@ -104,8 +104,8 @@ paths: {}
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	// Components can be nil or empty
-	if result.Document.Components != nil {
-		assert.Empty(t, result.Document.Components.Schemas)
+	if result.Document.Components() != nil {
+		assert.Empty(t, result.Document.Components().Schemas())
 	}
 }
 
@@ -132,7 +132,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.Schemas, 5)
+	assert.Len(t, result.Document.Components().Schemas(), 5)
 }
 
 // --- Security Schemes Types ---
@@ -168,13 +168,13 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schemes := result.Document.Components.SecuritySchemes
+	schemes := result.Document.Components().SecuritySchemes()
 	assert.Len(t, schemes, 5)
-	assert.Equal(t, "apiKey", schemes["apiKey"].Value.Type)
-	assert.Equal(t, "http", schemes["basicAuth"].Value.Type)
-	assert.Equal(t, "http", schemes["bearerAuth"].Value.Type)
-	assert.Equal(t, "oauth2", schemes["oauth2"].Value.Type)
-	assert.Equal(t, "openIdConnect", schemes["openId"].Value.Type)
+	assert.Equal(t, "apiKey", schemes["apiKey"].Value.Type())
+	assert.Equal(t, "http", schemes["basicAuth"].Value.Type())
+	assert.Equal(t, "http", schemes["bearerAuth"].Value.Type())
+	assert.Equal(t, "oauth2", schemes["oauth2"].Value.Type())
+	assert.Equal(t, "openIdConnect", schemes["openId"].Value.Type())
 }
 
 // --- Extensions ---
@@ -194,8 +194,8 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Components.VendorExtensions)
-	assert.Equal(t, "value", result.Document.Components.VendorExtensions["x-custom"])
+	require.NotNil(t, result.Document.Components().VendorExtensions)
+	assert.Equal(t, "value", result.Document.Components().VendorExtensions["x-custom"])
 }
 
 // --- Cross-References ---
@@ -230,7 +230,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	pet := result.Document.Components.Schemas["Pet"].Value
-	assert.Equal(t, "#/components/schemas/Owner", pet.Properties["owner"].Ref)
-	assert.Equal(t, "#/components/schemas/Tag", pet.Properties["tags"].Value.Items.Ref)
+	pet := result.Document.Components().Schemas()["Pet"].Value
+	assert.Equal(t, "#/components/schemas/Owner", pet.Properties()["owner"].Ref)
+	assert.Equal(t, "#/components/schemas/Tag", pet.Properties()["tags"].Value.Items().Ref)
 }

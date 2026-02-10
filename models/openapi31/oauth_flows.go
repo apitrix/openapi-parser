@@ -5,13 +5,21 @@ package openapi31
 type OAuthFlows struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Implicit          *OAuthFlow `json:"implicit,omitempty" yaml:"implicit,omitempty"`
-	Password          *OAuthFlow `json:"password,omitempty" yaml:"password,omitempty"`
-	ClientCredentials *OAuthFlow `json:"clientCredentials,omitempty" yaml:"clientCredentials,omitempty"`
-	AuthorizationCode *OAuthFlow `json:"authorizationCode,omitempty" yaml:"authorizationCode,omitempty"`
+	implicit          *OAuthFlow
+	password          *OAuthFlow
+	clientCredentials *OAuthFlow
+	authorizationCode *OAuthFlow
 }
 
+func (f *OAuthFlows) Implicit() *OAuthFlow          { return f.implicit }
+func (f *OAuthFlows) Password() *OAuthFlow          { return f.password }
+func (f *OAuthFlows) ClientCredentials() *OAuthFlow { return f.clientCredentials }
+func (f *OAuthFlows) AuthorizationCode() *OAuthFlow { return f.authorizationCode }
+
 // NewOAuthFlows creates a new OAuthFlows instance.
-func NewOAuthFlows() *OAuthFlows {
-	return &OAuthFlows{}
+func NewOAuthFlows(implicit, password, clientCredentials, authorizationCode *OAuthFlow) *OAuthFlows {
+	return &OAuthFlows{
+		implicit: implicit, password: password,
+		clientCredentials: clientCredentials, authorizationCode: authorizationCode,
+	}
 }

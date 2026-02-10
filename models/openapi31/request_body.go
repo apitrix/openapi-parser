@@ -5,12 +5,16 @@ package openapi31
 type RequestBody struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Description string                `json:"description,omitempty" yaml:"description,omitempty"`
-	Content     map[string]*MediaType `json:"content" yaml:"content"`
-	Required    bool                  `json:"required,omitempty" yaml:"required,omitempty"`
+	description string
+	content     map[string]*MediaType
+	required    bool
 }
 
+func (r *RequestBody) Description() string            { return r.description }
+func (r *RequestBody) Content() map[string]*MediaType { return r.content }
+func (r *RequestBody) Required() bool                 { return r.required }
+
 // NewRequestBody creates a new RequestBody instance.
-func NewRequestBody() *RequestBody {
-	return &RequestBody{}
+func NewRequestBody(description string, content map[string]*MediaType, required bool) *RequestBody {
+	return &RequestBody{description: description, content: content, required: required}
 }

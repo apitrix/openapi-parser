@@ -23,7 +23,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	link := result.Document.Components.Links["GetUser"].Value
+	link := result.Document.Components().Links()["GetUser"].Value
 	require.NotNil(t, link.Server)
-	assert.Equal(t, "https://api.example.com", link.Server.URL)
+	assert.Equal(t, "https://api.example.com", link.Server().URL())
 }

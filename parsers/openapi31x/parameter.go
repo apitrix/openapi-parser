@@ -26,40 +26,44 @@ func (p *parameterParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31m
 		return nil, ctx.errorAt(node, "parameter must be an object")
 	}
 
-	param := &openapi31models.Parameter{}
-	var err error
-
-	// Simple properties - inline
-	param.Name = p.ParseName(node)
-	param.In = p.ParseIn(node)
-	param.Description = p.ParseDescription(node)
-	param.Required = p.ParseRequired(node)
-	param.Deprecated = p.ParseDeprecated(node)
-	param.AllowEmptyValue = p.ParseAllowEmptyValue(node)
-	param.Style = p.ParseStyle(node)
-	param.Explode = p.ParseExplode(node)
-	param.AllowReserved = p.ParseAllowReserved(node)
+	var errs []openapi31models.ParseError
 
 	// Complex properties - delegated to dedicated files
-	param.Schema, err = p.ParseSchema(node, ctx)
+	schema, err := p.ParseSchema(node, ctx)
 	if err != nil {
-		param.Trix.Errors = append(param.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	param.Example = p.ParseExample(node)
-
-	param.Examples, err = p.ParseExamples(node, ctx)
+	examples, err := p.ParseExamples(node, ctx)
 	if err != nil {
-		param.Trix.Errors = append(param.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	param.Content, err = p.ParseContent(node, ctx)
+	content, err := p.ParseContent(node, ctx)
 	if err != nil {
-		param.Trix.Errors = append(param.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
+
+	// Create via constructor with ParameterFields
+	param := openapi31models.NewParameter(openapi31models.ParameterFields{
+		Name:            p.ParseName(node),
+		In:              p.ParseIn(node),
+		Description:     p.ParseDescription(node),
+		Required:        p.ParseRequired(node),
+		Deprecated:      p.ParseDeprecated(node),
+		AllowEmptyValue: p.ParseAllowEmptyValue(node),
+		Style:           p.ParseStyle(node),
+		Explode:         p.ParseExplode(node),
+		AllowReserved:   p.ParseAllowReserved(node),
+		Schema:          schema,
+		Example:         p.ParseExample(node),
+		Examples:        examples,
+		Content:         content,
+	})
 
 	param.VendorExtensions = parseNodeExtensions(node)
 	param.Trix.Source = ctx.nodeSource(node)
+	param.Trix.Errors = append(param.Trix.Errors, errs...)
 
 	// Detect unknown fields
 	param.Trix.Errors = append(param.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, parameterKnownFieldsSet))...)

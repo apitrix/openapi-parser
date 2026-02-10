@@ -28,7 +28,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ex := result.Document.Components.Examples["PetExample"].Value
+	ex := result.Document.Components().Examples()["PetExample"].Value
 	require.NotNil(t, ex)
 	assert.NotNil(t, ex.Value)
 }
@@ -51,9 +51,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ex := result.Document.Components.Examples["PetExample"].Value
-	assert.Equal(t, "A sample pet", ex.Summary)
-	assert.Equal(t, "This is a detailed description of the example pet", ex.Description)
+	ex := result.Document.Components().Examples()["PetExample"].Value
+	assert.Equal(t, "A sample pet", ex.Summary())
+	assert.Equal(t, "This is a detailed description of the example pet", ex.Description())
 }
 
 // --- External Value ---
@@ -72,8 +72,8 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ex := result.Document.Components.Examples["LargeExample"].Value
-	assert.Equal(t, "https://example.com/examples/large.json", ex.ExternalValue)
+	ex := result.Document.Components().Examples()["LargeExample"].Value
+	assert.Equal(t, "https://example.com/examples/large.json", ex.ExternalValue())
 }
 
 // --- Multiple Examples ---
@@ -98,7 +98,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Components.Examples, 3)
+	assert.Len(t, result.Document.Components().Examples(), 3)
 }
 
 // --- Complex Value ---
@@ -124,7 +124,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ex := result.Document.Components.Examples["ComplexExample"].Value
+	ex := result.Document.Components().Examples()["ComplexExample"].Value
 	require.NotNil(t, ex.Value)
 }
 
@@ -156,7 +156,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	examples := result.Document.Paths.Items["/pets"].Get.Parameters[0].Value.Examples
+	examples := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value.Examples()
 	assert.Len(t, examples, 2)
 }
 
@@ -187,7 +187,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	examples := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Content["application/json"].Examples
+	examples := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Content()["application/json"].Examples()
 	assert.Len(t, examples, 2)
 }
 
@@ -217,7 +217,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	exRef := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Content["application/json"].Examples["pet"]
+	exRef := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Content()["application/json"].Examples()["pet"]
 	assert.Equal(t, "#/components/examples/PetExample", exRef.Ref)
 }
 
@@ -238,7 +238,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ex := result.Document.Components.Examples["PetExample"].Value
+	ex := result.Document.Components().Examples()["PetExample"].Value
 	require.NotNil(t, ex.VendorExtensions)
 	assert.Equal(t, "value", ex.VendorExtensions["x-custom"])
 }

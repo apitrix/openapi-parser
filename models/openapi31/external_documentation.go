@@ -5,11 +5,14 @@ package openapi31
 type ExternalDocumentation struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Description string `json:"description,omitempty" yaml:"description,omitempty"`
-	URL         string `json:"url" yaml:"url"`
+	description string
+	url         string
 }
 
+func (e *ExternalDocumentation) Description() string { return e.description }
+func (e *ExternalDocumentation) URL() string         { return e.url }
+
 // NewExternalDocumentation creates a new ExternalDocumentation instance.
-func NewExternalDocumentation(url string) *ExternalDocumentation {
-	return &ExternalDocumentation{URL: url}
+func NewExternalDocumentation(description, url string) *ExternalDocumentation {
+	return &ExternalDocumentation{description: description, url: url}
 }

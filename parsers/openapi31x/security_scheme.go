@@ -26,26 +26,29 @@ func (p *securitySchemeParser) parse(node *yaml.Node, ctx *ParseContext) (*opena
 		return nil, ctx.errorAt(node, "securityScheme must be an object")
 	}
 
-	scheme := &openapi31models.SecurityScheme{}
-	var err error
-
-	// Simple properties - inline
-	scheme.Type = p.ParseType(node)
-	scheme.Description = p.ParseDescription(node)
-	scheme.Name = p.ParseName(node)
-	scheme.In = p.ParseIn(node)
-	scheme.Scheme = p.ParseScheme(node)
-	scheme.BearerFormat = p.ParseBearerFormat(node)
-	scheme.OpenIDConnectURL = p.ParseOpenIDConnectURL(node)
+	var errs []openapi31models.ParseError
 
 	// Complex properties - delegated to dedicated files
-	scheme.Flows, err = p.ParseFlows(node, ctx)
+	flows, err := p.ParseFlows(node, ctx)
 	if err != nil {
-		scheme.Trix.Errors = append(scheme.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
+
+	// Create via constructor
+	scheme := openapi31models.NewSecurityScheme(
+		p.ParseType(node),
+		p.ParseDescription(node),
+		p.ParseName(node),
+		p.ParseIn(node),
+		p.ParseScheme(node),
+		p.ParseBearerFormat(node),
+		p.ParseOpenIDConnectURL(node),
+		flows,
+	)
 
 	scheme.VendorExtensions = parseNodeExtensions(node)
 	scheme.Trix.Source = ctx.nodeSource(node)
+	scheme.Trix.Errors = append(scheme.Trix.Errors, errs...)
 
 	// Detect unknown fields
 	scheme.Trix.Errors = append(scheme.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, securitySchemeKnownFieldsSet))...)

@@ -34,7 +34,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	callbacks := result.Document.Paths.Items["/subscribe"].Post.Callbacks
+	callbacks := result.Document.Paths().Items()["/subscribe"].Post().Callbacks()
 	require.NotNil(t, callbacks)
 	assert.Contains(t, callbacks, "onEvent")
 }
@@ -74,7 +74,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Len(t, result.Document.Paths.Items["/subscribe"].Post.Callbacks, 3)
+	assert.Len(t, result.Document.Paths().Items()["/subscribe"].Post().Callbacks(), 3)
 }
 
 // --- Expression Path ---
@@ -100,8 +100,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	callback := result.Document.Paths.Items["/subscribe"].Post.Callbacks["onEvent"].Value
-	assert.Contains(t, callback.Paths, "http://example.com/{$request.body#/id}")
+	callback := result.Document.Paths().Items()["/subscribe"].Post().Callbacks()["onEvent"].Value
+	assert.Contains(t, callback.Paths(), "http://example.com/{$request.body#/id}")
 }
 
 // --- Multiple URLs ---
@@ -132,8 +132,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	callback := result.Document.Paths.Items["/subscribe"].Post.Callbacks["onEvent"].Value
-	assert.Len(t, callback.Paths, 2)
+	callback := result.Document.Paths().Items()["/subscribe"].Post().Callbacks()["onEvent"].Value
+	assert.Len(t, callback.Paths(), 2)
 }
 
 // --- In Components ---
@@ -160,7 +160,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Contains(t, result.Document.Components.Callbacks, "WebhookCallback")
+	assert.Contains(t, result.Document.Components().Callbacks(), "WebhookCallback")
 }
 
 // --- Reference ---
@@ -190,7 +190,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	callbackRef := result.Document.Paths.Items["/subscribe"].Post.Callbacks["onEvent"]
+	callbackRef := result.Document.Paths().Items()["/subscribe"].Post().Callbacks()["onEvent"]
 	assert.Equal(t, "#/components/callbacks/WebhookCallback", callbackRef.Ref)
 }
 
@@ -218,7 +218,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	callback := result.Document.Paths.Items["/subscribe"].Post.Callbacks["onEvent"].Value
+	callback := result.Document.Paths().Items()["/subscribe"].Post().Callbacks()["onEvent"].Value
 	require.NotNil(t, callback.VendorExtensions)
 	assert.Equal(t, "value", callback.VendorExtensions["x-custom"])
 }
@@ -257,8 +257,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	pathItem := result.Document.Paths.Items["/subscribe"].Post.Callbacks["onEvent"].Value.Paths["{$url}"]
+	pathItem := result.Document.Paths().Items()["/subscribe"].Post().Callbacks()["onEvent"].Value.Paths()["{$url}"]
 	require.NotNil(t, pathItem)
-	assert.NotNil(t, pathItem.Post)
-	assert.NotNil(t, pathItem.Get)
+	assert.NotNil(t, pathItem.Post())
+	assert.NotNil(t, pathItem.Get())
 }

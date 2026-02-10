@@ -43,21 +43,24 @@ func (p *tagParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31models.
 		return nil, ctx.errorAt(node, "tag must be an object")
 	}
 
-	tag := &openapi31models.Tag{}
-	var err error
-
-	// Simple properties - inline
-	tag.Name = p.ParseName(node)
-	tag.Description = p.ParseDescription(node)
+	var errs []openapi31models.ParseError
 
 	// Complex properties - delegated to dedicated files
-	tag.ExternalDocs, err = p.ParseExternalDocs(node, ctx)
+	externalDocs, err := p.ParseExternalDocs(node, ctx)
 	if err != nil {
-		tag.Trix.Errors = append(tag.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
+
+	// Create via constructor
+	tag := openapi31models.NewTag(
+		p.ParseName(node),
+		p.ParseDescription(node),
+		externalDocs,
+	)
 
 	tag.VendorExtensions = parseNodeExtensions(node)
 	tag.Trix.Source = ctx.nodeSource(node)
+	tag.Trix.Errors = append(tag.Trix.Errors, errs...)
 
 	// Detect unknown fields
 	tag.Trix.Errors = append(tag.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, tagKnownFieldsSet))...)

@@ -28,146 +28,167 @@ func (p *schemaParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mode
 		return nil, ctx.errorAt(node, "schema must be an object")
 	}
 
-	schema := &openapi31models.Schema{}
-	var err error
+	var errs []openapi31models.ParseError
 
-	// Simple properties - inline
-	schema.Title = p.ParseTitle(node)
-	schema.Description = p.ParseDescription(node)
-	schema.Type = p.ParseType(node) // Returns SchemaType (string or []string)
-	schema.Format = p.ParseFormat(node)
-	schema.Pattern = p.ParsePattern(node)
-	schema.MultipleOf = p.ParseMultipleOf(node)
-	schema.Maximum = p.ParseMaximum(node)
-	schema.Minimum = p.ParseMinimum(node)
-	schema.ExclusiveMaximum = p.ParseExclusiveMaximum(node) // *float64 in 3.1 (was bool in 3.0)
-	schema.ExclusiveMinimum = p.ParseExclusiveMinimum(node) // *float64 in 3.1 (was bool in 3.0)
-	schema.MaxLength = p.ParseMaxLength(node)
-	schema.MinLength = p.ParseMinLength(node)
-	schema.MaxItems = p.ParseMaxItems(node)
-	schema.MinItems = p.ParseMinItems(node)
-	schema.MaxProperties = p.ParseMaxProperties(node)
-	schema.MinProperties = p.ParseMinProperties(node)
-	schema.UniqueItems = p.ParseUniqueItems(node)
-	schema.ReadOnly = p.ParseReadOnly(node)
-	schema.WriteOnly = p.ParseWriteOnly(node)
-	schema.Deprecated = p.ParseDeprecated(node)
-	schema.Required = p.ParseRequired(node)
-	schema.Enum = p.ParseEnum(node)
-	schema.Default = p.ParseDefault(node)
-	schema.Example = p.ParseExample(node)
-
-	// JSON Schema 2020-12 new simple properties
-	schema.Const = p.ParseConst(node)
-	schema.Anchor = p.ParseAnchor(node)
-	schema.DynamicRef = p.ParseDynamicRef(node)
-	schema.DynamicAnchor = p.ParseDynamicAnchor(node)
-	schema.ContentEncoding = p.ParseContentEncoding(node)
-	schema.ContentMediaType = p.ParseContentMediaType(node)
-	schema.Examples = p.ParseExamples(node)
-
-	// Complex properties - delegated to dedicated files
-	schema.AllOf, err = p.ParseAllOf(node, ctx)
+	// Complex properties - parse first
+	allOf, err := p.ParseAllOf(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	schema.OneOf, err = p.ParseOneOf(node, ctx)
+	oneOf, err := p.ParseOneOf(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	schema.AnyOf, err = p.ParseAnyOf(node, ctx)
+	anyOf, err := p.ParseAnyOf(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	schema.Not, err = p.ParseNot(node, ctx)
+	not, err := p.ParseNot(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	schema.Items, err = p.ParseItems(node, ctx)
+	items, err := p.ParseItems(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	schema.Properties, err = p.ParseProperties(node, ctx)
+	properties, err := p.ParseProperties(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
 	// Additional properties (special handling for bool vs schema)
+	var additionalProperties *openapi31models.SchemaRef
+	var additionalPropertiesAllowed *bool
 	addPropsResult, err := p.ParseAdditionalProperties(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 	if addPropsResult != nil {
-		schema.AdditionalPropertiesAllowed = addPropsResult.Allowed
-		schema.AdditionalProperties = addPropsResult.SchemaRef
+		additionalPropertiesAllowed = addPropsResult.Allowed
+		additionalProperties = addPropsResult.SchemaRef
 	}
 
-	schema.Discriminator, err = p.ParseDiscriminator(node, ctx)
+	discriminator, err := p.ParseDiscriminator(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	schema.XML, err = p.ParseXML(node, ctx)
+	xml, err := p.ParseXML(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	schema.ExternalDocs, err = p.ParseExternalDocs(node, ctx)
+	externalDocs, err := p.ParseExternalDocs(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
 	// JSON Schema 2020-12 new complex properties
-	schema.If, err = p.ParseIf(node, ctx)
+	ifSchema, err := p.ParseIf(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	schema.Then, err = p.ParseThen(node, ctx)
+	thenSchema, err := p.ParseThen(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	schema.Else, err = p.ParseElse(node, ctx)
+	elseSchema, err := p.ParseElse(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	schema.PrefixItems, err = p.ParsePrefixItems(node, ctx)
+	prefixItems, err := p.ParsePrefixItems(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	schema.DependentSchemas, err = p.ParseDependentSchemas(node, ctx)
+	dependentSchemas, err := p.ParseDependentSchemas(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	schema.ContentSchema, err = p.ParseContentSchema(node, ctx)
+	contentSchema, err := p.ParseContentSchema(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	schema.UnevaluatedItems, err = p.ParseUnevaluatedItems(node, ctx)
+	unevaluatedItems, err := p.ParseUnevaluatedItems(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
 
-	schema.UnevaluatedProperties, err = p.ParseUnevaluatedProperties(node, ctx)
+	unevaluatedProperties, err := p.ParseUnevaluatedProperties(node, ctx)
 	if err != nil {
-		schema.Trix.Errors = append(schema.Trix.Errors, toParseError(err))
+		errs = append(errs, toParseError(err))
 	}
+
+	// Create via constructor with SchemaFields
+	schema := openapi31models.NewSchema(openapi31models.SchemaFields{
+		Title:                       p.ParseTitle(node),
+		MultipleOf:                  p.ParseMultipleOf(node),
+		Maximum:                     p.ParseMaximum(node),
+		ExclusiveMaximum:            p.ParseExclusiveMaximum(node),
+		Minimum:                     p.ParseMinimum(node),
+		ExclusiveMinimum:            p.ParseExclusiveMinimum(node),
+		MaxLength:                   p.ParseMaxLength(node),
+		MinLength:                   p.ParseMinLength(node),
+		Pattern:                     p.ParsePattern(node),
+		MaxItems:                    p.ParseMaxItems(node),
+		MinItems:                    p.ParseMinItems(node),
+		UniqueItems:                 p.ParseUniqueItems(node),
+		MaxProperties:               p.ParseMaxProperties(node),
+		MinProperties:               p.ParseMinProperties(node),
+		Required:                    p.ParseRequired(node),
+		Enum:                        p.ParseEnum(node),
+		Type:                        p.ParseType(node),
+		AllOf:                       allOf,
+		OneOf:                       oneOf,
+		AnyOf:                       anyOf,
+		Not:                         not,
+		Items:                       items,
+		Properties:                  properties,
+		Description:                 p.ParseDescription(node),
+		Format:                      p.ParseFormat(node),
+		Default:                     p.ParseDefault(node),
+		AdditionalProperties:        additionalProperties,
+		AdditionalPropertiesAllowed: additionalPropertiesAllowed,
+		Const:                       p.ParseConst(node),
+		If:                          ifSchema,
+		Then:                        thenSchema,
+		Else:                        elseSchema,
+		DependentSchemas:            dependentSchemas,
+		PrefixItems:                 prefixItems,
+		Anchor:                      p.ParseAnchor(node),
+		DynamicRef:                  p.ParseDynamicRef(node),
+		DynamicAnchor:               p.ParseDynamicAnchor(node),
+		ContentEncoding:             p.ParseContentEncoding(node),
+		ContentMediaType:            p.ParseContentMediaType(node),
+		ContentSchema:               contentSchema,
+		UnevaluatedItems:            unevaluatedItems,
+		UnevaluatedProperties:       unevaluatedProperties,
+		Examples:                    p.ParseExamples(node),
+		Discriminator:               discriminator,
+		ReadOnly:                    p.ParseReadOnly(node),
+		WriteOnly:                   p.ParseWriteOnly(node),
+		XML:                         xml,
+		ExternalDocs:                externalDocs,
+		Example:                     p.ParseExample(node),
+		Deprecated:                  p.ParseDeprecated(node),
+	})
 
 	// Parse extensions
 	schema.VendorExtensions = parseNodeExtensions(node)
 
 	// Set node source info
 	schema.Trix.Source = ctx.nodeSource(node)
+	schema.Trix.Errors = append(schema.Trix.Errors, errs...)
 
 	// Detect unknown fields
 	schema.Trix.Errors = append(schema.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, schemaKnownFieldsSet))...)

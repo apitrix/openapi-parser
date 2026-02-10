@@ -5,20 +5,52 @@ package openapi31
 type Header struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Description     string                 `json:"description,omitempty" yaml:"description,omitempty"`
-	Required        bool                   `json:"required,omitempty" yaml:"required,omitempty"`
-	Deprecated      bool                   `json:"deprecated,omitempty" yaml:"deprecated,omitempty"`
-	AllowEmptyValue bool                   `json:"allowEmptyValue,omitempty" yaml:"allowEmptyValue,omitempty"`
-	Style           string                 `json:"style,omitempty" yaml:"style,omitempty"`
-	Explode         *bool                  `json:"explode,omitempty" yaml:"explode,omitempty"`
-	AllowReserved   bool                   `json:"allowReserved,omitempty" yaml:"allowReserved,omitempty"`
-	Schema          *SchemaRef             `json:"schema,omitempty" yaml:"schema,omitempty"`
-	Example         interface{}            `json:"example,omitempty" yaml:"example,omitempty"`
-	Examples        map[string]*ExampleRef `json:"examples,omitempty" yaml:"examples,omitempty"`
-	Content         map[string]*MediaType  `json:"content,omitempty" yaml:"content,omitempty"`
+	description     string
+	required        bool
+	deprecated      bool
+	allowEmptyValue bool
+	style           string
+	explode         *bool
+	allowReserved   bool
+	schema          *SchemaRef
+	example         interface{}
+	examples        map[string]*ExampleRef
+	content         map[string]*MediaType
+}
+
+func (h *Header) Description() string              { return h.description }
+func (h *Header) Required() bool                   { return h.required }
+func (h *Header) Deprecated() bool                 { return h.deprecated }
+func (h *Header) AllowEmptyValue() bool            { return h.allowEmptyValue }
+func (h *Header) Style() string                    { return h.style }
+func (h *Header) Explode() *bool                   { return h.explode }
+func (h *Header) AllowReserved() bool              { return h.allowReserved }
+func (h *Header) Schema() *SchemaRef               { return h.schema }
+func (h *Header) Example() interface{}             { return h.example }
+func (h *Header) Examples() map[string]*ExampleRef { return h.examples }
+func (h *Header) Content() map[string]*MediaType   { return h.content }
+
+// HeaderFields holds all fields for constructing a Header.
+type HeaderFields struct {
+	Description     string
+	Required        bool
+	Deprecated      bool
+	AllowEmptyValue bool
+	Style           string
+	Explode         *bool
+	AllowReserved   bool
+	Schema          *SchemaRef
+	Example         interface{}
+	Examples        map[string]*ExampleRef
+	Content         map[string]*MediaType
 }
 
 // NewHeader creates a new Header instance.
-func NewHeader() *Header {
-	return &Header{}
+func NewHeader(f HeaderFields) *Header {
+	return &Header{
+		description: f.Description, required: f.Required, deprecated: f.Deprecated,
+		allowEmptyValue: f.AllowEmptyValue, style: f.Style, explode: f.Explode,
+		allowReserved: f.AllowReserved, schema: f.Schema, example: f.Example,
+		examples: f.Examples, content: f.Content,
+	}
 }

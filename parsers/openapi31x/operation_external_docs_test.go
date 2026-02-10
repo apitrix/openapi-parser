@@ -29,9 +29,9 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	extDocs := result.Document.Paths.Items["/pets"].Get.ExternalDocs
+	extDocs := result.Document.Paths().Items()["/pets"].Get().ExternalDocs()
 	require.NotNil(t, extDocs)
-	assert.Equal(t, "https://example.com/pets-docs", extDocs.URL)
+	assert.Equal(t, "https://example.com/pets-docs", extDocs.URL())
 }
 
 // --- With Description ---
@@ -53,8 +53,8 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	extDocs := result.Document.Paths.Items["/pets"].Get.ExternalDocs
-	assert.Equal(t, "Find more info about pets", extDocs.Description)
+	extDocs := result.Document.Paths().Items()["/pets"].Get().ExternalDocs()
+	assert.Equal(t, "Find more info about pets", extDocs.Description())
 }
 
 // --- Missing ExternalDocs ---
@@ -73,7 +73,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Nil(t, result.Document.Paths.Items["/pets"].Get.ExternalDocs)
+	assert.Nil(t, result.Document.Paths().Items()["/pets"].Get().ExternalDocs())
 }
 
 // --- With Extensions ---
@@ -95,7 +95,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ext := result.Document.Paths.Items["/pets"].Get.ExternalDocs.VendorExtensions
+	ext := result.Document.Paths().Items()["/pets"].Get().ExternalDocs().VendorExtensions
 	require.NotNil(t, ext)
 	assert.Equal(t, "value", ext["x-custom"])
 }

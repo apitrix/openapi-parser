@@ -30,8 +30,8 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	flows := result.Document.Components.SecuritySchemes["oauth2"].Value.Flows
+	flows := result.Document.Components().SecuritySchemes()["oauth2"].Value.Flows()
 	require.NotNil(t, flows)
-	assert.NotNil(t, flows.Implicit)
-	assert.NotNil(t, flows.AuthorizationCode)
+	assert.NotNil(t, flows.Implicit())
+	assert.NotNil(t, flows.AuthorizationCode())
 }

@@ -26,12 +26,12 @@ func (p *serverVariableParser) parse(node *yaml.Node, ctx *ParseContext) (*opena
 		return nil, ctx.errorAt(node, "serverVariable must be an object")
 	}
 
-	sv := &openapi31models.ServerVariable{}
-
-	// All properties are simple - inline
-	sv.Enum = p.ParseEnum(node)
-	sv.Default = p.ParseDefault(node)
-	sv.Description = p.ParseDescription(node)
+	// Create via constructor
+	sv := openapi31models.NewServerVariable(
+		p.ParseEnum(node),
+		p.ParseDefault(node),
+		p.ParseDescription(node),
+	)
 
 	sv.VendorExtensions = parseNodeExtensions(node)
 	sv.Trix.Source = ctx.nodeSource(node)

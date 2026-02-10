@@ -5,19 +5,66 @@ package openapi31
 type PathItem struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	Ref         string          `json:"$ref,omitempty" yaml:"$ref,omitempty"`
-	Summary     string          `json:"summary,omitempty" yaml:"summary,omitempty"`
-	Description string          `json:"description,omitempty" yaml:"description,omitempty"`
-	Get         *Operation      `json:"get,omitempty" yaml:"get,omitempty"`
-	Put         *Operation      `json:"put,omitempty" yaml:"put,omitempty"`
-	Post        *Operation      `json:"post,omitempty" yaml:"post,omitempty"`
-	Delete      *Operation      `json:"delete,omitempty" yaml:"delete,omitempty"`
-	Options     *Operation      `json:"options,omitempty" yaml:"options,omitempty"`
-	Head        *Operation      `json:"head,omitempty" yaml:"head,omitempty"`
-	Patch       *Operation      `json:"patch,omitempty" yaml:"patch,omitempty"`
-	Trace       *Operation      `json:"trace,omitempty" yaml:"trace,omitempty"`
-	Servers     []*Server       `json:"servers,omitempty" yaml:"servers,omitempty"`
-	Parameters  []*ParameterRef `json:"parameters,omitempty" yaml:"parameters,omitempty"`
+	ref         string
+	summary     string
+	description string
+	get         *Operation
+	put         *Operation
+	post        *Operation
+	delete      *Operation
+	options     *Operation
+	head        *Operation
+	patch       *Operation
+	trace       *Operation
+	servers     []*Server
+	parameters  []*ParameterRef
+}
+
+func (p *PathItem) Ref() string                 { return p.ref }
+func (p *PathItem) Summary() string             { return p.summary }
+func (p *PathItem) Description() string         { return p.description }
+func (p *PathItem) Get() *Operation             { return p.get }
+func (p *PathItem) Put() *Operation             { return p.put }
+func (p *PathItem) Post() *Operation            { return p.post }
+func (p *PathItem) Delete() *Operation          { return p.delete }
+func (p *PathItem) Options() *Operation         { return p.options }
+func (p *PathItem) Head() *Operation            { return p.head }
+func (p *PathItem) Patch() *Operation           { return p.patch }
+func (p *PathItem) Trace() *Operation           { return p.trace }
+func (p *PathItem) Servers() []*Server          { return p.servers }
+func (p *PathItem) Parameters() []*ParameterRef { return p.parameters }
+
+// SetProperty sets a named property on the PathItem.
+// Used by parsers for post-construction field assignment.
+func (p *PathItem) SetProperty(name string, value interface{}) {
+	switch name {
+	case "$ref":
+		p.ref = value.(string)
+	case "summary":
+		p.summary = value.(string)
+	case "description":
+		p.description = value.(string)
+	case "get":
+		p.get = value.(*Operation)
+	case "put":
+		p.put = value.(*Operation)
+	case "post":
+		p.post = value.(*Operation)
+	case "delete":
+		p.delete = value.(*Operation)
+	case "options":
+		p.options = value.(*Operation)
+	case "head":
+		p.head = value.(*Operation)
+	case "patch":
+		p.patch = value.(*Operation)
+	case "trace":
+		p.trace = value.(*Operation)
+	case "servers":
+		p.servers = value.([]*Server)
+	case "parameters":
+		p.parameters = value.([]*ParameterRef)
+	}
 }
 
 // NewPathItem creates a new PathItem instance.

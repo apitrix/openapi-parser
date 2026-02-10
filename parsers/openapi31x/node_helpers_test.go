@@ -17,5 +17,5 @@ paths: {}
 	require.NoError(t, err)
 	// Node helpers are internal, just verify parsing works
 	require.NotNil(t, result.Document)
-	require.NotNil(t, result.Document.Info)
+	require.NotNil(t, result.Document.Info())
 }

@@ -26,6 +26,6 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := result.Document.Paths.Items["/users/{id}"].Get.Responses.Codes["200"].Value
-	assert.Len(t, resp.Links, 2)
+	resp := result.Document.Paths().Items()["/users/{id}"].Get().Responses().Codes()["200"].Value
+	assert.Len(t, resp.Links(), 2)
 }

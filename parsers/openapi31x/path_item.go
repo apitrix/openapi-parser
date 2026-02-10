@@ -7,7 +7,7 @@ import (
 )
 
 // parseOpenAPIPathsPathItem parses a PathItem object from a yaml.Node.
-// OpenAPI 3.0.3 spec: https://spec.openapis.org/oas/v3.0.3#path-item-object
+// OpenAPI 3.1.0 spec: https://spec.openapis.org/oas/v3.1.0#path-item-object
 func parseOpenAPIPathsPathItem(node *yaml.Node, ctx *ParseContext) (*openapi31models.PathItem, error) {
 	if node == nil {
 		return nil, nil
@@ -17,64 +17,100 @@ func parseOpenAPIPathsPathItem(node *yaml.Node, ctx *ParseContext) (*openapi31mo
 		return nil, ctx.errorAt(node, "pathItem must be an object")
 	}
 
-	pathItem := &openapi31models.PathItem{}
+	pathItem := openapi31models.NewPathItem()
 	var err error
 
-	// Simple properties - inline
-	pathItem.Ref = nodeGetString(node, "$ref")
-	pathItem.Summary = nodeGetString(node, "summary")
-	pathItem.Description = nodeGetString(node, "description")
+	// Simple properties
+	if ref := nodeGetString(node, "$ref"); ref != "" {
+		pathItem.SetProperty("$ref", ref)
+	}
+	if summary := nodeGetString(node, "summary"); summary != "" {
+		pathItem.SetProperty("summary", summary)
+	}
+	if desc := nodeGetString(node, "description"); desc != "" {
+		pathItem.SetProperty("description", desc)
+	}
 
-	// HTTP method operations - complex but handled inline since same pattern
-	pathItem.Get, err = parseOpenAPIPathsPathItemOperation(node, "get", ctx)
+	// HTTP method operations
+	get, err := parseOpenAPIPathsPathItemOperation(node, "get", ctx)
 	if err != nil {
 		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
+	if get != nil {
+		pathItem.SetProperty("get", get)
+	}
 
-	pathItem.Put, err = parseOpenAPIPathsPathItemOperation(node, "put", ctx)
+	put, err := parseOpenAPIPathsPathItemOperation(node, "put", ctx)
 	if err != nil {
 		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
+	if put != nil {
+		pathItem.SetProperty("put", put)
+	}
 
-	pathItem.Post, err = parseOpenAPIPathsPathItemOperation(node, "post", ctx)
+	post, err := parseOpenAPIPathsPathItemOperation(node, "post", ctx)
 	if err != nil {
 		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
+	if post != nil {
+		pathItem.SetProperty("post", post)
+	}
 
-	pathItem.Delete, err = parseOpenAPIPathsPathItemOperation(node, "delete", ctx)
+	del, err := parseOpenAPIPathsPathItemOperation(node, "delete", ctx)
 	if err != nil {
 		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
+	if del != nil {
+		pathItem.SetProperty("delete", del)
+	}
 
-	pathItem.Options, err = parseOpenAPIPathsPathItemOperation(node, "options", ctx)
+	options, err := parseOpenAPIPathsPathItemOperation(node, "options", ctx)
 	if err != nil {
 		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
+	if options != nil {
+		pathItem.SetProperty("options", options)
+	}
 
-	pathItem.Head, err = parseOpenAPIPathsPathItemOperation(node, "head", ctx)
+	head, err := parseOpenAPIPathsPathItemOperation(node, "head", ctx)
 	if err != nil {
 		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
+	if head != nil {
+		pathItem.SetProperty("head", head)
+	}
 
-	pathItem.Patch, err = parseOpenAPIPathsPathItemOperation(node, "patch", ctx)
+	patch, err := parseOpenAPIPathsPathItemOperation(node, "patch", ctx)
 	if err != nil {
 		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
+	if patch != nil {
+		pathItem.SetProperty("patch", patch)
+	}
 
-	pathItem.Trace, err = parseOpenAPIPathsPathItemOperation(node, "trace", ctx)
+	trace, err := parseOpenAPIPathsPathItemOperation(node, "trace", ctx)
 	if err != nil {
 		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
+	}
+	if trace != nil {
+		pathItem.SetProperty("trace", trace)
 	}
 
 	// Complex properties - delegated to dedicated files
-	pathItem.Servers, err = parsePathItemServers(node, ctx)
+	servers, err := parsePathItemServers(node, ctx)
 	if err != nil {
 		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
 	}
+	if servers != nil {
+		pathItem.SetProperty("servers", servers)
+	}
 
-	pathItem.Parameters, err = parsePathItemParameters(node, ctx)
+	parameters, err := parsePathItemParameters(node, ctx)
 	if err != nil {
 		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
+	}
+	if parameters != nil {
+		pathItem.SetProperty("parameters", parameters)
 	}
 
 	pathItem.VendorExtensions = parseNodeExtensions(node)

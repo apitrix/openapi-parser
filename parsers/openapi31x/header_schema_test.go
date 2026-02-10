@@ -26,7 +26,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	header := result.Document.Paths.Items["/pets"].Get.Responses.Codes["200"].Value.Headers["X-Rate-Limit"].Value
-	require.NotNil(t, header.Schema)
-	assert.Equal(t, "integer", header.Schema.Value.Type.Single)
+	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()["X-Rate-Limit"].Value
+	require.NotNil(t, header.Schema())
+	assert.Equal(t, "integer", header.Schema().Value.Type().Single)
 }

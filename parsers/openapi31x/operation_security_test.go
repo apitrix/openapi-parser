@@ -35,7 +35,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	security := result.Document.Paths.Items["/pets"].Get.Security
+	security := result.Document.Paths().Items()["/pets"].Get().Security()
 	assert.Len(t, security, 1)
 }
 
@@ -76,7 +76,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	security := result.Document.Paths.Items["/pets"].Get.Security
+	security := result.Document.Paths().Items()["/pets"].Get().Security()
 	assert.Len(t, security, 3)
 }
 
@@ -105,7 +105,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	security := result.Document.Paths.Items["/public"].Get.Security
+	security := result.Document.Paths().Items()["/public"].Get().Security()
 	assert.Empty(t, security)
 }
 
@@ -126,7 +126,7 @@ paths:
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	// Uses global security (nil means inherit)
-	assert.Nil(t, result.Document.Paths.Items["/pets"].Get.Security)
+	assert.Nil(t, result.Document.Paths().Items()["/pets"].Get().Security())
 }
 
 // --- With Scopes ---
@@ -159,6 +159,6 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scopes := result.Document.Paths.Items["/pets"].Get.Security[0]["oauth2"]
+	scopes := result.Document.Paths().Items()["/pets"].Get().Security()[0]["oauth2"]
 	assert.Len(t, scopes, 2)
 }
