@@ -1,5 +1,11 @@
 package openapi20
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // PathItem describes operations available on a single path.
 // https://swagger.io/specification/v2/#path-item-object
 type PathItem struct {
@@ -39,3 +45,28 @@ func NewPathItem(
 		parameters: parameters,
 	}
 }
+
+func (pi *PathItem) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "$ref", Value: pi.ref},
+		{Key: "get", Value: pi.get},
+		{Key: "put", Value: pi.put},
+		{Key: "post", Value: pi.post},
+		{Key: "delete", Value: pi.delete},
+		{Key: "options", Value: pi.options},
+		{Key: "head", Value: pi.head},
+		{Key: "patch", Value: pi.patch},
+		{Key: "parameters", Value: pi.parameters},
+	}
+	return shared.AppendExtensions(fields, pi.VendorExtensions)
+}
+
+func (pi *PathItem) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(pi.marshalFields())
+}
+
+func (pi *PathItem) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(pi.marshalFields())
+}
+
+var _ yaml.Marshaler = (*PathItem)(nil)

@@ -1,5 +1,11 @@
 package openapi20
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // Swagger is the root document object of the Swagger 2.0 specification.
 // https://swagger.io/specification/v2/#swagger-object
 type Swagger struct {
@@ -74,3 +80,34 @@ func (s *Swagger) SetProperty(key string, value interface{}) {
 		s.externalDocs = value.(*ExternalDocs)
 	}
 }
+
+func (s *Swagger) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "swagger", Value: s.swagger},
+		{Key: "info", Value: s.info},
+		{Key: "host", Value: s.host},
+		{Key: "basePath", Value: s.basePath},
+		{Key: "schemes", Value: s.schemes},
+		{Key: "consumes", Value: s.consumes},
+		{Key: "produces", Value: s.produces},
+		{Key: "paths", Value: s.paths},
+		{Key: "definitions", Value: s.definitions},
+		{Key: "parameters", Value: s.parameters},
+		{Key: "responses", Value: s.responses},
+		{Key: "securityDefinitions", Value: s.securityDefinitions},
+		{Key: "security", Value: s.security},
+		{Key: "tags", Value: s.tags},
+		{Key: "externalDocs", Value: s.externalDocs},
+	}
+	return shared.AppendExtensions(fields, s.VendorExtensions)
+}
+
+func (s *Swagger) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(s.marshalFields())
+}
+
+func (s *Swagger) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(s.marshalFields())
+}
+
+var _ yaml.Marshaler = (*Swagger)(nil)

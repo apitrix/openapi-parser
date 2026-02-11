@@ -1,5 +1,11 @@
 package openapi20
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // Header represents a Header Object in a response.
 // https://swagger.io/specification/v2/#header-object
 type Header struct {
@@ -79,3 +85,37 @@ func NewHeader(f HeaderFields) *Header {
 		multipleOf: f.MultipleOf,
 	}
 }
+
+func (h *Header) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "description", Value: h.description},
+		{Key: "type", Value: h.headerType},
+		{Key: "format", Value: h.format},
+		{Key: "items", Value: h.items},
+		{Key: "collectionFormat", Value: h.collectionFormat},
+		{Key: "default", Value: h.defaultVal},
+		{Key: "maximum", Value: h.maximum},
+		{Key: "exclusiveMaximum", Value: h.exclusiveMaximum},
+		{Key: "minimum", Value: h.minimum},
+		{Key: "exclusiveMinimum", Value: h.exclusiveMinimum},
+		{Key: "maxLength", Value: h.maxLength},
+		{Key: "minLength", Value: h.minLength},
+		{Key: "pattern", Value: h.pattern},
+		{Key: "maxItems", Value: h.maxItems},
+		{Key: "minItems", Value: h.minItems},
+		{Key: "uniqueItems", Value: h.uniqueItems},
+		{Key: "enum", Value: h.enum},
+		{Key: "multipleOf", Value: h.multipleOf},
+	}
+	return shared.AppendExtensions(fields, h.VendorExtensions)
+}
+
+func (h *Header) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(h.marshalFields())
+}
+
+func (h *Header) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(h.marshalFields())
+}
+
+var _ yaml.Marshaler = (*Header)(nil)

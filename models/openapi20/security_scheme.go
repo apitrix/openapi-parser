@@ -1,5 +1,11 @@
 package openapi20
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // SecurityScheme defines a security scheme for the API.
 // https://swagger.io/specification/v2/#security-scheme-object
 type SecurityScheme struct {
@@ -36,3 +42,27 @@ func NewSecurityScheme(
 		scopes: scopes,
 	}
 }
+
+func (s *SecurityScheme) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "type", Value: s.securityType},
+		{Key: "description", Value: s.description},
+		{Key: "name", Value: s.name},
+		{Key: "in", Value: s.in},
+		{Key: "flow", Value: s.flow},
+		{Key: "authorizationUrl", Value: s.authorizationURL},
+		{Key: "tokenUrl", Value: s.tokenURL},
+		{Key: "scopes", Value: s.scopes},
+	}
+	return shared.AppendExtensions(fields, s.VendorExtensions)
+}
+
+func (s *SecurityScheme) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(s.marshalFields())
+}
+
+func (s *SecurityScheme) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(s.marshalFields())
+}
+
+var _ yaml.Marshaler = (*SecurityScheme)(nil)

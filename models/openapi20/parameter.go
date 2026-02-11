@@ -1,5 +1,11 @@
 package openapi20
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // Parameter describes a single operation parameter.
 // https://swagger.io/specification/v2/#parameter-object
 type Parameter struct {
@@ -100,3 +106,42 @@ func NewParameter(f ParameterFields) *Parameter {
 		multipleOf: f.MultipleOf,
 	}
 }
+
+func (p *Parameter) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "name", Value: p.name},
+		{Key: "in", Value: p.in},
+		{Key: "description", Value: p.description},
+		{Key: "required", Value: p.required},
+		{Key: "allowEmptyValue", Value: p.allowEmptyValue},
+		{Key: "schema", Value: p.schema},
+		{Key: "type", Value: p.paramType},
+		{Key: "format", Value: p.format},
+		{Key: "items", Value: p.items},
+		{Key: "collectionFormat", Value: p.collectionFormat},
+		{Key: "default", Value: p.defaultVal},
+		{Key: "maximum", Value: p.maximum},
+		{Key: "exclusiveMaximum", Value: p.exclusiveMaximum},
+		{Key: "minimum", Value: p.minimum},
+		{Key: "exclusiveMinimum", Value: p.exclusiveMinimum},
+		{Key: "maxLength", Value: p.maxLength},
+		{Key: "minLength", Value: p.minLength},
+		{Key: "pattern", Value: p.pattern},
+		{Key: "maxItems", Value: p.maxItems},
+		{Key: "minItems", Value: p.minItems},
+		{Key: "uniqueItems", Value: p.uniqueItems},
+		{Key: "enum", Value: p.enum},
+		{Key: "multipleOf", Value: p.multipleOf},
+	}
+	return shared.AppendExtensions(fields, p.VendorExtensions)
+}
+
+func (p *Parameter) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(p.marshalFields())
+}
+
+func (p *Parameter) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(p.marshalFields())
+}
+
+var _ yaml.Marshaler = (*Parameter)(nil)

@@ -1,5 +1,11 @@
 package openapi20
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // Info provides metadata about the API.
 // https://swagger.io/specification/v2/#info-object
 type Info struct {
@@ -27,3 +33,25 @@ func NewInfo(title, description, termsOfService, version string, contact *Contac
 		version: version, contact: contact, license: license,
 	}
 }
+
+func (i *Info) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "title", Value: i.title},
+		{Key: "description", Value: i.description},
+		{Key: "termsOfService", Value: i.termsOfService},
+		{Key: "contact", Value: i.contact},
+		{Key: "license", Value: i.license},
+		{Key: "version", Value: i.version},
+	}
+	return shared.AppendExtensions(fields, i.VendorExtensions)
+}
+
+func (i *Info) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(i.marshalFields())
+}
+
+func (i *Info) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(i.marshalFields())
+}
+
+var _ yaml.Marshaler = (*Info)(nil)

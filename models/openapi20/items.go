@@ -1,5 +1,11 @@
 package openapi20
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // Items describes the type of items in an array parameter.
 // https://swagger.io/specification/v2/#items-object
 type Items struct {
@@ -75,3 +81,36 @@ func NewItems(f ItemsFields) *Items {
 		enum: f.Enum, multipleOf: f.MultipleOf,
 	}
 }
+
+func (it *Items) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "type", Value: it.itemType},
+		{Key: "format", Value: it.format},
+		{Key: "items", Value: it.items},
+		{Key: "collectionFormat", Value: it.collectionFormat},
+		{Key: "default", Value: it.defaultVal},
+		{Key: "maximum", Value: it.maximum},
+		{Key: "exclusiveMaximum", Value: it.exclusiveMaximum},
+		{Key: "minimum", Value: it.minimum},
+		{Key: "exclusiveMinimum", Value: it.exclusiveMinimum},
+		{Key: "maxLength", Value: it.maxLength},
+		{Key: "minLength", Value: it.minLength},
+		{Key: "pattern", Value: it.pattern},
+		{Key: "maxItems", Value: it.maxItems},
+		{Key: "minItems", Value: it.minItems},
+		{Key: "uniqueItems", Value: it.uniqueItems},
+		{Key: "enum", Value: it.enum},
+		{Key: "multipleOf", Value: it.multipleOf},
+	}
+	return shared.AppendExtensions(fields, it.VendorExtensions)
+}
+
+func (it *Items) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(it.marshalFields())
+}
+
+func (it *Items) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(it.marshalFields())
+}
+
+var _ yaml.Marshaler = (*Items)(nil)
