@@ -1,5 +1,11 @@
 package openapi31
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // PathItem describes operations available on a single path.
 // https://spec.openapis.org/oas/v3.1.0#path-item-object
 type PathItem struct {
@@ -71,3 +77,32 @@ func (p *PathItem) SetProperty(name string, value interface{}) {
 func NewPathItem() *PathItem {
 	return &PathItem{}
 }
+
+func (p *PathItem) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "$ref", Value: p.ref},
+		{Key: "summary", Value: p.summary},
+		{Key: "description", Value: p.description},
+		{Key: "get", Value: p.get},
+		{Key: "put", Value: p.put},
+		{Key: "post", Value: p.post},
+		{Key: "delete", Value: p.delete},
+		{Key: "options", Value: p.options},
+		{Key: "head", Value: p.head},
+		{Key: "patch", Value: p.patch},
+		{Key: "trace", Value: p.trace},
+		{Key: "servers", Value: p.servers},
+		{Key: "parameters", Value: p.parameters},
+	}
+	return shared.AppendExtensions(fields, p.VendorExtensions)
+}
+
+func (p *PathItem) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(p.marshalFields())
+}
+
+func (p *PathItem) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(p.marshalFields())
+}
+
+var _ yaml.Marshaler = (*PathItem)(nil)

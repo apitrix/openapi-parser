@@ -1,5 +1,11 @@
 package openapi31
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // Components holds reusable objects for the specification.
 // https://spec.openapis.org/oas/v3.1.0#components-object
 type Components struct {
@@ -59,3 +65,29 @@ func (c *Components) SetProperty(name string, value interface{}) {
 func NewComponents() *Components {
 	return &Components{}
 }
+
+func (c *Components) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "schemas", Value: c.schemas},
+		{Key: "responses", Value: c.responses},
+		{Key: "parameters", Value: c.parameters},
+		{Key: "examples", Value: c.examples},
+		{Key: "requestBodies", Value: c.requestBodies},
+		{Key: "headers", Value: c.headers},
+		{Key: "securitySchemes", Value: c.securitySchemes},
+		{Key: "links", Value: c.links},
+		{Key: "callbacks", Value: c.callbacks},
+		{Key: "pathItems", Value: c.pathItems},
+	}
+	return shared.AppendExtensions(fields, c.VendorExtensions)
+}
+
+func (c *Components) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(c.marshalFields())
+}
+
+func (c *Components) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(c.marshalFields())
+}
+
+var _ yaml.Marshaler = (*Components)(nil)

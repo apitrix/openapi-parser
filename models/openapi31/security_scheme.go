@@ -1,5 +1,11 @@
 package openapi31
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // SecurityScheme defines a security scheme for the API.
 // https://spec.openapis.org/oas/v3.1.0#security-scheme-object
 type SecurityScheme struct {
@@ -32,3 +38,27 @@ func NewSecurityScheme(schemeType, description, name, in, scheme, bearerFormat, 
 		flows: flows, openIDConnectURL: openIDConnectURL,
 	}
 }
+
+func (s *SecurityScheme) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "type", Value: s.schemeType},
+		{Key: "description", Value: s.description},
+		{Key: "name", Value: s.name},
+		{Key: "in", Value: s.in},
+		{Key: "scheme", Value: s.scheme},
+		{Key: "bearerFormat", Value: s.bearerFormat},
+		{Key: "flows", Value: s.flows},
+		{Key: "openIdConnectUrl", Value: s.openIDConnectURL},
+	}
+	return shared.AppendExtensions(fields, s.VendorExtensions)
+}
+
+func (s *SecurityScheme) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(s.marshalFields())
+}
+
+func (s *SecurityScheme) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(s.marshalFields())
+}
+
+var _ yaml.Marshaler = (*SecurityScheme)(nil)

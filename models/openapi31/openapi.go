@@ -1,5 +1,11 @@
 package openapi31
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // OpenAPI is the root document object of the OpenAPI specification.
 // https://spec.openapis.org/oas/v3.1.0#openapi-object
 type OpenAPI struct {
@@ -59,3 +65,29 @@ func (o *OpenAPI) SetProperty(name string, value interface{}) {
 func NewOpenAPI(version string, info *Info) *OpenAPI {
 	return &OpenAPI{openAPI: version, info: info}
 }
+
+func (o *OpenAPI) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "openapi", Value: o.openAPI},
+		{Key: "info", Value: o.info},
+		{Key: "jsonSchemaDialect", Value: o.jsonSchemaDialect},
+		{Key: "servers", Value: o.servers},
+		{Key: "paths", Value: o.paths},
+		{Key: "webhooks", Value: o.webhooks},
+		{Key: "components", Value: o.components},
+		{Key: "security", Value: o.security},
+		{Key: "tags", Value: o.tags},
+		{Key: "externalDocs", Value: o.externalDocs},
+	}
+	return shared.AppendExtensions(fields, o.VendorExtensions)
+}
+
+func (o *OpenAPI) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(o.marshalFields())
+}
+
+func (o *OpenAPI) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(o.marshalFields())
+}
+
+var _ yaml.Marshaler = (*OpenAPI)(nil)

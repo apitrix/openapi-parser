@@ -1,5 +1,12 @@
 package openapi31
 
+import (
+	"openapi-parser/models/shared"
+	"sort"
+
+	"gopkg.in/yaml.v3"
+)
+
 // Callback is a map of possible out-of-band callbacks related to the parent operation.
 // https://spec.openapis.org/oas/v3.1.0#callback-object
 type Callback struct {
@@ -14,3 +21,28 @@ func (c *Callback) Paths() map[string]*PathItem { return c.paths }
 func NewCallback(paths map[string]*PathItem) *Callback {
 	return &Callback{paths: paths}
 }
+
+func (c *Callback) marshalFields() []shared.Field {
+	var fields []shared.Field
+	if len(c.paths) > 0 {
+		keys := make([]string, 0, len(c.paths))
+		for k := range c.paths {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		for _, k := range keys {
+			fields = append(fields, shared.Field{Key: k, Value: c.paths[k]})
+		}
+	}
+	return shared.AppendExtensions(fields, c.VendorExtensions)
+}
+
+func (c *Callback) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(c.marshalFields())
+}
+
+func (c *Callback) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(c.marshalFields())
+}
+
+var _ yaml.Marshaler = (*Callback)(nil)

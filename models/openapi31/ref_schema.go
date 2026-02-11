@@ -1,5 +1,11 @@
 package openapi31
 
+import (
+	"encoding/json"
+
+	"gopkg.in/yaml.v3"
+)
+
 // SchemaRef represents a reference to a Schema or an inline Schema.
 type SchemaRef struct {
 	Node                // embedded - provides VendorExtensions and Trix
@@ -14,3 +20,48 @@ type SchemaRef struct {
 func NewSchemaRef(ref string) *SchemaRef {
 	return &SchemaRef{Ref: ref}
 }
+
+func (r *SchemaRef) MarshalJSON() ([]byte, error) {
+	if r.Ref != "" {
+		m := map[string]string{"$ref": r.Ref}
+		if r.Summary != "" {
+			m["summary"] = r.Summary
+		}
+		if r.Description != "" {
+			m["description"] = r.Description
+		}
+		return json.Marshal(m)
+	}
+	if r.Value != nil {
+		return r.Value.MarshalJSON()
+	}
+	return []byte("null"), nil
+}
+
+func (r *SchemaRef) MarshalYAML() (interface{}, error) {
+	if r.Ref != "" {
+		content := []*yaml.Node{
+			{Kind: yaml.ScalarNode, Tag: "!!str", Value: "$ref"},
+			{Kind: yaml.ScalarNode, Tag: "!!str", Value: r.Ref},
+		}
+		if r.Summary != "" {
+			content = append(content,
+				&yaml.Node{Kind: yaml.ScalarNode, Tag: "!!str", Value: "summary"},
+				&yaml.Node{Kind: yaml.ScalarNode, Tag: "!!str", Value: r.Summary},
+			)
+		}
+		if r.Description != "" {
+			content = append(content,
+				&yaml.Node{Kind: yaml.ScalarNode, Tag: "!!str", Value: "description"},
+				&yaml.Node{Kind: yaml.ScalarNode, Tag: "!!str", Value: r.Description},
+			)
+		}
+		return &yaml.Node{Kind: yaml.MappingNode, Tag: "!!map", Content: content}, nil
+	}
+	if r.Value != nil {
+		return r.Value.MarshalYAML()
+	}
+	return nil, nil
+}
+
+var _ yaml.Marshaler = (*SchemaRef)(nil)

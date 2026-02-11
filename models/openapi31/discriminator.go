@@ -1,5 +1,11 @@
 package openapi31
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // Discriminator is used for polymorphism support.
 // https://spec.openapis.org/oas/v3.1.0#discriminator-object
 type Discriminator struct {
@@ -16,3 +22,21 @@ func (d *Discriminator) Mapping() map[string]string { return d.mapping }
 func NewDiscriminator(propertyName string, mapping map[string]string) *Discriminator {
 	return &Discriminator{propertyName: propertyName, mapping: mapping}
 }
+
+func (d *Discriminator) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "propertyName", Value: d.propertyName},
+		{Key: "mapping", Value: d.mapping},
+	}
+	return shared.AppendExtensions(fields, d.VendorExtensions)
+}
+
+func (d *Discriminator) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(d.marshalFields())
+}
+
+func (d *Discriminator) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(d.marshalFields())
+}
+
+var _ yaml.Marshaler = (*Discriminator)(nil)

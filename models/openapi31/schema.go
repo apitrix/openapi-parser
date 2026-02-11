@@ -1,5 +1,12 @@
 package openapi31
 
+import (
+	"openapi-parser/models/shared"
+	"sort"
+
+	"gopkg.in/yaml.v3"
+)
+
 // Schema represents the OpenAPI 3.1 Schema Object.
 // Based on JSON Schema Draft 2020-12.
 // https://spec.openapis.org/oas/v3.1.0#schema-object
@@ -205,3 +212,110 @@ type SchemaFields struct {
 	Example       interface{}
 	Deprecated    bool
 }
+
+func (s *Schema) marshalFields() []shared.Field {
+	// additionalProperties: bool pointer or schema ref
+	var addProps interface{}
+	if s.additionalPropertiesAllowed != nil {
+		addProps = s.additionalPropertiesAllowed
+	} else if s.additionalProperties != nil {
+		addProps = s.additionalProperties
+	}
+
+	// properties: sorted keys
+	var propsFields []shared.Field
+	if len(s.properties) > 0 {
+		keys := make([]string, 0, len(s.properties))
+		for k := range s.properties {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		propsFields = make([]shared.Field, 0, len(keys))
+		for _, k := range keys {
+			propsFields = append(propsFields, shared.Field{Key: k, Value: s.properties[k]})
+		}
+	}
+
+	// dependentSchemas: sorted keys
+	var depSchemaFields []shared.Field
+	if len(s.dependentSchemas) > 0 {
+		keys := make([]string, 0, len(s.dependentSchemas))
+		for k := range s.dependentSchemas {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		depSchemaFields = make([]shared.Field, 0, len(keys))
+		for _, k := range keys {
+			depSchemaFields = append(depSchemaFields, shared.Field{Key: k, Value: s.dependentSchemas[k]})
+		}
+	}
+
+	// type: use SchemaType's marshal (string or array)
+	var schemaTypeVal interface{}
+	if !s.schemaType.IsEmpty() {
+		schemaTypeVal = s.schemaType
+	}
+
+	fields := []shared.Field{
+		{Key: "title", Value: s.title},
+		{Key: "multipleOf", Value: s.multipleOf},
+		{Key: "maximum", Value: s.maximum},
+		{Key: "exclusiveMaximum", Value: s.exclusiveMaximum},
+		{Key: "minimum", Value: s.minimum},
+		{Key: "exclusiveMinimum", Value: s.exclusiveMinimum},
+		{Key: "maxLength", Value: s.maxLength},
+		{Key: "minLength", Value: s.minLength},
+		{Key: "pattern", Value: s.pattern},
+		{Key: "maxItems", Value: s.maxItems},
+		{Key: "minItems", Value: s.minItems},
+		{Key: "uniqueItems", Value: s.uniqueItems},
+		{Key: "maxProperties", Value: s.maxProperties},
+		{Key: "minProperties", Value: s.minProperties},
+		{Key: "required", Value: s.required},
+		{Key: "enum", Value: s.enum},
+		{Key: "type", Value: schemaTypeVal},
+		{Key: "allOf", Value: s.allOf},
+		{Key: "oneOf", Value: s.oneOf},
+		{Key: "anyOf", Value: s.anyOf},
+		{Key: "not", Value: s.not},
+		{Key: "items", Value: s.items},
+		{Key: "prefixItems", Value: s.prefixItems},
+		{Key: "properties", Value: propsFields},
+		{Key: "additionalProperties", Value: addProps},
+		{Key: "description", Value: s.description},
+		{Key: "format", Value: s.format},
+		{Key: "default", Value: s.defaultVal},
+		{Key: "const", Value: s.constVal},
+		{Key: "if", Value: s.ifSchema},
+		{Key: "then", Value: s.thenSchema},
+		{Key: "else", Value: s.elseSchema},
+		{Key: "dependentSchemas", Value: depSchemaFields},
+		{Key: "$anchor", Value: s.anchor},
+		{Key: "$dynamicRef", Value: s.dynamicRef},
+		{Key: "$dynamicAnchor", Value: s.dynamicAnchor},
+		{Key: "contentEncoding", Value: s.contentEncoding},
+		{Key: "contentMediaType", Value: s.contentMediaType},
+		{Key: "contentSchema", Value: s.contentSchema},
+		{Key: "unevaluatedItems", Value: s.unevaluatedItems},
+		{Key: "unevaluatedProperties", Value: s.unevaluatedProperties},
+		{Key: "examples", Value: s.examples},
+		{Key: "discriminator", Value: s.discriminator},
+		{Key: "readOnly", Value: s.readOnly},
+		{Key: "writeOnly", Value: s.writeOnly},
+		{Key: "xml", Value: s.xml},
+		{Key: "externalDocs", Value: s.externalDocs},
+		{Key: "example", Value: s.example},
+		{Key: "deprecated", Value: s.deprecated},
+	}
+	return shared.AppendExtensions(fields, s.VendorExtensions)
+}
+
+func (s *Schema) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(s.marshalFields())
+}
+
+func (s *Schema) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(s.marshalFields())
+}
+
+var _ yaml.Marshaler = (*Schema)(nil)

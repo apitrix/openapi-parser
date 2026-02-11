@@ -1,5 +1,11 @@
 package openapi31
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // Link represents a possible design-time link for a response.
 // https://spec.openapis.org/oas/v3.1.0#link-object
 type Link struct {
@@ -28,3 +34,25 @@ func NewLink(operationRef, operationID, description string, parameters map[strin
 		description: description, server: server,
 	}
 }
+
+func (l *Link) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "operationRef", Value: l.operationRef},
+		{Key: "operationId", Value: l.operationID},
+		{Key: "parameters", Value: l.parameters},
+		{Key: "requestBody", Value: l.requestBody},
+		{Key: "description", Value: l.description},
+		{Key: "server", Value: l.server},
+	}
+	return shared.AppendExtensions(fields, l.VendorExtensions)
+}
+
+func (l *Link) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(l.marshalFields())
+}
+
+func (l *Link) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(l.marshalFields())
+}
+
+var _ yaml.Marshaler = (*Link)(nil)

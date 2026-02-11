@@ -1,5 +1,11 @@
 package openapi31
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // Operation describes a single API operation on a path.
 // https://spec.openapis.org/oas/v3.1.0#operation-object
 type Operation struct {
@@ -67,3 +73,31 @@ func (o *Operation) SetProperty(name string, value interface{}) {
 func NewOperation() *Operation {
 	return &Operation{}
 }
+
+func (o *Operation) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "tags", Value: o.tags},
+		{Key: "summary", Value: o.summary},
+		{Key: "description", Value: o.description},
+		{Key: "externalDocs", Value: o.externalDocs},
+		{Key: "operationId", Value: o.operationID},
+		{Key: "parameters", Value: o.parameters},
+		{Key: "requestBody", Value: o.requestBody},
+		{Key: "responses", Value: o.responses},
+		{Key: "callbacks", Value: o.callbacks},
+		{Key: "deprecated", Value: o.deprecated},
+		{Key: "security", Value: o.security},
+		{Key: "servers", Value: o.servers},
+	}
+	return shared.AppendExtensions(fields, o.VendorExtensions)
+}
+
+func (o *Operation) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(o.marshalFields())
+}
+
+func (o *Operation) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(o.marshalFields())
+}
+
+var _ yaml.Marshaler = (*Operation)(nil)
