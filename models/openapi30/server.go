@@ -1,5 +1,11 @@
 package openapi30
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // Server represents a server.
 // https://spec.openapis.org/oas/v3.0.3#server-object
 type Server struct {
@@ -18,3 +24,22 @@ func (s *Server) Variables() map[string]*ServerVariable { return s.variables }
 func NewServer(url, description string, variables map[string]*ServerVariable) *Server {
 	return &Server{url: url, description: description, variables: variables}
 }
+
+func (s *Server) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "url", Value: s.url},
+		{Key: "description", Value: s.description},
+		{Key: "variables", Value: s.variables},
+	}
+	return shared.AppendExtensions(fields, s.VendorExtensions)
+}
+
+func (s *Server) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(s.marshalFields())
+}
+
+func (s *Server) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(s.marshalFields())
+}
+
+var _ yaml.Marshaler = (*Server)(nil)

@@ -1,5 +1,11 @@
 package openapi30
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // Header represents a Header Object.
 // https://spec.openapis.org/oas/v3.0.3#header-object
 type Header struct {
@@ -44,3 +50,30 @@ func NewHeader(
 		examples: examples, content: content,
 	}
 }
+
+func (h *Header) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "description", Value: h.description},
+		{Key: "required", Value: h.required},
+		{Key: "deprecated", Value: h.deprecated},
+		{Key: "allowEmptyValue", Value: h.allowEmptyValue},
+		{Key: "style", Value: h.style},
+		{Key: "explode", Value: h.explode},
+		{Key: "allowReserved", Value: h.allowReserved},
+		{Key: "schema", Value: h.schema},
+		{Key: "example", Value: h.example},
+		{Key: "examples", Value: h.examples},
+		{Key: "content", Value: h.content},
+	}
+	return shared.AppendExtensions(fields, h.VendorExtensions)
+}
+
+func (h *Header) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(h.marshalFields())
+}
+
+func (h *Header) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(h.marshalFields())
+}
+
+var _ yaml.Marshaler = (*Header)(nil)

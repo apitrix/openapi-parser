@@ -1,5 +1,11 @@
 package openapi30
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // Schema represents the OpenAPI 3.0 Schema Object.
 // https://spec.openapis.org/oas/v3.0.3#schema-object
 type Schema struct {
@@ -150,3 +156,64 @@ type SchemaFields struct {
 	Example       interface{}
 	Deprecated    bool
 }
+
+func (s *Schema) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "title", Value: s.title},
+		{Key: "multipleOf", Value: s.multipleOf},
+		{Key: "maximum", Value: s.maximum},
+		{Key: "exclusiveMaximum", Value: s.exclusiveMaximum},
+		{Key: "minimum", Value: s.minimum},
+		{Key: "exclusiveMinimum", Value: s.exclusiveMinimum},
+		{Key: "maxLength", Value: s.maxLength},
+		{Key: "minLength", Value: s.minLength},
+		{Key: "pattern", Value: s.pattern},
+		{Key: "maxItems", Value: s.maxItems},
+		{Key: "minItems", Value: s.minItems},
+		{Key: "uniqueItems", Value: s.uniqueItems},
+		{Key: "maxProperties", Value: s.maxProperties},
+		{Key: "minProperties", Value: s.minProperties},
+		{Key: "required", Value: s.required},
+		{Key: "enum", Value: s.enum},
+		{Key: "type", Value: s.schemaType},
+		{Key: "allOf", Value: s.allOf},
+		{Key: "oneOf", Value: s.oneOf},
+		{Key: "anyOf", Value: s.anyOf},
+		{Key: "not", Value: s.not},
+		{Key: "items", Value: s.items},
+		{Key: "properties", Value: s.properties},
+		{Key: "description", Value: s.description},
+		{Key: "format", Value: s.format},
+		{Key: "default", Value: s.defaultVal},
+	}
+
+	// additionalProperties: either a boolean or a schema reference
+	if s.additionalPropertiesAllowed != nil {
+		fields = append(fields, shared.Field{Key: "additionalProperties", Value: s.additionalPropertiesAllowed})
+	} else if s.additionalProperties != nil {
+		fields = append(fields, shared.Field{Key: "additionalProperties", Value: s.additionalProperties})
+	}
+
+	fields = append(fields,
+		shared.Field{Key: "nullable", Value: s.nullable},
+		shared.Field{Key: "discriminator", Value: s.discriminator},
+		shared.Field{Key: "readOnly", Value: s.readOnly},
+		shared.Field{Key: "writeOnly", Value: s.writeOnly},
+		shared.Field{Key: "xml", Value: s.xml},
+		shared.Field{Key: "externalDocs", Value: s.externalDocs},
+		shared.Field{Key: "example", Value: s.example},
+		shared.Field{Key: "deprecated", Value: s.deprecated},
+	)
+
+	return shared.AppendExtensions(fields, s.VendorExtensions)
+}
+
+func (s *Schema) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(s.marshalFields())
+}
+
+func (s *Schema) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(s.marshalFields())
+}
+
+var _ yaml.Marshaler = (*Schema)(nil)

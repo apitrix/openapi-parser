@@ -1,5 +1,11 @@
 package openapi30
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // Contact provides contact information for the API.
 // https://spec.openapis.org/oas/v3.0.3#contact-object
 type Contact struct {
@@ -23,3 +29,23 @@ func (c *Contact) Email() string { return c.email }
 func NewContact(name, url, email string) *Contact {
 	return &Contact{name: name, url: url, email: email}
 }
+
+func (c *Contact) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "name", Value: c.name},
+		{Key: "url", Value: c.url},
+		{Key: "email", Value: c.email},
+	}
+	return shared.AppendExtensions(fields, c.VendorExtensions)
+}
+
+func (c *Contact) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(c.marshalFields())
+}
+
+func (c *Contact) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(c.marshalFields())
+}
+
+// Ensure Contact implements yaml.Marshaler.
+var _ yaml.Marshaler = (*Contact)(nil)

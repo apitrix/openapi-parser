@@ -1,5 +1,11 @@
 package openapi30
 
+import (
+	"openapi-parser/models/shared"
+
+	"gopkg.in/yaml.v3"
+)
+
 // Parameter describes a single operation parameter.
 // https://spec.openapis.org/oas/v3.0.3#parameter-object
 type Parameter struct {
@@ -48,3 +54,32 @@ func NewParameter(
 		schema: schema, example: example, examples: examples, content: content,
 	}
 }
+
+func (p *Parameter) marshalFields() []shared.Field {
+	fields := []shared.Field{
+		{Key: "name", Value: p.name},
+		{Key: "in", Value: p.in},
+		{Key: "description", Value: p.description},
+		{Key: "required", Value: p.required},
+		{Key: "deprecated", Value: p.deprecated},
+		{Key: "allowEmptyValue", Value: p.allowEmptyValue},
+		{Key: "style", Value: p.style},
+		{Key: "explode", Value: p.explode},
+		{Key: "allowReserved", Value: p.allowReserved},
+		{Key: "schema", Value: p.schema},
+		{Key: "example", Value: p.example},
+		{Key: "examples", Value: p.examples},
+		{Key: "content", Value: p.content},
+	}
+	return shared.AppendExtensions(fields, p.VendorExtensions)
+}
+
+func (p *Parameter) MarshalJSON() ([]byte, error) {
+	return shared.MarshalFieldsJSON(p.marshalFields())
+}
+
+func (p *Parameter) MarshalYAML() (interface{}, error) {
+	return shared.MarshalFieldsYAML(p.marshalFields())
+}
+
+var _ yaml.Marshaler = (*Parameter)(nil)
