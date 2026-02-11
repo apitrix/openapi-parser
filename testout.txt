@@ -1,0 +1,9 @@
+ok  	openapi-parser/models/openapi20	(cached)
+ok  	openapi-parser/models/openapi30	(cached)
+ok  	openapi-parser/models/openapi31	(cached)
+ok  	openapi-parser/models/shared	(cached)
+?   	openapi-parser/models/testutil	[no test files]
+ok  	openapi-parser/parsers/openapi20	(cached)
+ok  	openapi-parser/parsers/openapi30x	(cached)
+ok  	openapi-parser/parsers/openapi31x	(cached)
+ok  	openapi-parser/parsers/shared	(cached)
