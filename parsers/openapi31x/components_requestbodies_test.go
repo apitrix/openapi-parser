@@ -99,6 +99,6 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	rb := result.Document.Components().RequestBodies()["PetBody"].Value
+	rb := result.Document.Components().RequestBodies()["PetBody"].Value()
 	assert.True(t, rb.Required())
 }

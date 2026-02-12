@@ -6,10 +6,12 @@ import (
 )
 
 func TestHeader_MarshalJSON_AllFields(t *testing.T) {
+	schemaRef := &SchemaRef{}
+	schemaRef.SetValue(NewSchema(SchemaFields{Type: SchemaType{Single: "integer"}}))
 	h := NewHeader(HeaderFields{
 		Description: "Rate limit",
 		Required:    true,
-		Schema:      &SchemaRef{Value: NewSchema(SchemaFields{Type: SchemaType{Single: "integer"}})},
+		Schema:      schemaRef,
 	})
 	got, err := json.Marshal(h)
 	if err != nil {

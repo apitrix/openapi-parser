@@ -99,12 +99,12 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "string", result.Document.Components().Schemas()["StringSchema"].Value.Type().Single)
-	assert.Equal(t, "integer", result.Document.Components().Schemas()["IntSchema"].Value.Type().Single)
-	assert.Equal(t, "number", result.Document.Components().Schemas()["NumberSchema"].Value.Type().Single)
-	assert.Equal(t, "boolean", result.Document.Components().Schemas()["BoolSchema"].Value.Type().Single)
-	assert.Equal(t, "array", result.Document.Components().Schemas()["ArraySchema"].Value.Type().Single)
-	assert.Equal(t, "object", result.Document.Components().Schemas()["ObjectSchema"].Value.Type().Single)
+	assert.Equal(t, "string", result.Document.Components().Schemas()["StringSchema"].Value().Type().Single)
+	assert.Equal(t, "integer", result.Document.Components().Schemas()["IntSchema"].Value().Type().Single)
+	assert.Equal(t, "number", result.Document.Components().Schemas()["NumberSchema"].Value().Type().Single)
+	assert.Equal(t, "boolean", result.Document.Components().Schemas()["BoolSchema"].Value().Type().Single)
+	assert.Equal(t, "array", result.Document.Components().Schemas()["ArraySchema"].Value().Type().Single)
+	assert.Equal(t, "object", result.Document.Components().Schemas()["ObjectSchema"].Value().Type().Single)
 }
 
 // --- Reference Between Schemas ---
@@ -133,9 +133,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	pet := result.Document.Components().Schemas()["Pet"].Value
+	pet := result.Document.Components().Schemas()["Pet"].Value()
 	assert.Equal(t, "#/components/schemas/User", pet.Properties()["owner"].Ref)
-	assert.Equal(t, "#/components/schemas/Tag", pet.Properties()["tags"].Value.Items().Ref)
+	assert.Equal(t, "#/components/schemas/Tag", pet.Properties()["tags"].Value().Items().Ref)
 }
 
 // --- Special Names ---
@@ -193,8 +193,8 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Pet"].Value
+	schema := result.Document.Components().Schemas()["Pet"].Value()
 	assert.Len(t, schema.Required(), 2)
 	assert.Len(t, schema.Properties(), 3)
-	assert.Len(t, schema.Properties()["status"].Value.Enum(), 3)
+	assert.Len(t, schema.Properties()["status"].Value().Enum(), 3)
 }

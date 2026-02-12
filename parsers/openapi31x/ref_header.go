@@ -31,7 +31,7 @@ func parseHeaderRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.Header
 	if err != nil {
 		return nil, err
 	}
-	ref.Value = header
+	ref.SetValue(header)
 
 	return ref, nil
 }

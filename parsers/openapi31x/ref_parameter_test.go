@@ -146,5 +146,5 @@ components:
 	params := result.Document.Paths().Items()["/pets"].Get().Parameters()
 	assert.Len(t, params, 2)
 	assert.Equal(t, "#/components/parameters/LimitParam", params[0].Ref)
-	assert.Equal(t, "filter", params[1].Value.Name())
+	assert.Equal(t, "filter", params[1].Value().Name())
 }

@@ -38,8 +38,8 @@ components:
 	require.NoError(t, err)
 	require.NotNil(t, result.Document.Components())
 	require.Len(t, result.Document.Components().PathItems(), 2)
-	assert.NotNil(t, result.Document.Components().PathItems()["SharedOps"].Value.Get())
-	assert.NotNil(t, result.Document.Components().PathItems()["AnotherOp"].Value.Post())
+	assert.NotNil(t, result.Document.Components().PathItems()["SharedOps"].Value().Get())
+	assert.NotNil(t, result.Document.Components().PathItems()["AnotherOp"].Value().Post())
 }
 
 func TestParseComponentsPathItems_WithRef(t *testing.T) {
@@ -102,5 +102,5 @@ components:
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	ops := result.Document.Components().PathItems()["Ops"]
-	assert.Equal(t, "value", ops.Value.VendorExtensions["x-custom"])
+	assert.Equal(t, "value", ops.Value().VendorExtensions["x-custom"])
 }

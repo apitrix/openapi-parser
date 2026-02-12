@@ -100,7 +100,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	callback := result.Document.Paths().Items()["/subscribe"].Post().Callbacks()["onEvent"].Value
+	callback := result.Document.Paths().Items()["/subscribe"].Post().Callbacks()["onEvent"].Value()
 	assert.Contains(t, callback.Paths(), "http://example.com/{$request.body#/id}")
 }
 
@@ -132,7 +132,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	callback := result.Document.Paths().Items()["/subscribe"].Post().Callbacks()["onEvent"].Value
+	callback := result.Document.Paths().Items()["/subscribe"].Post().Callbacks()["onEvent"].Value()
 	assert.Len(t, callback.Paths(), 2)
 }
 
@@ -218,7 +218,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	callback := result.Document.Paths().Items()["/subscribe"].Post().Callbacks()["onEvent"].Value
+	callback := result.Document.Paths().Items()["/subscribe"].Post().Callbacks()["onEvent"].Value()
 	require.NotNil(t, callback.VendorExtensions)
 	assert.Equal(t, "value", callback.VendorExtensions["x-custom"])
 }
@@ -257,7 +257,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	pathItem := result.Document.Paths().Items()["/subscribe"].Post().Callbacks()["onEvent"].Value.Paths()["{$url}"]
+	pathItem := result.Document.Paths().Items()["/subscribe"].Post().Callbacks()["onEvent"].Value().Paths()["{$url}"]
 	require.NotNil(t, pathItem)
 	assert.NotNil(t, pathItem.Post())
 	assert.NotNil(t, pathItem.Get())

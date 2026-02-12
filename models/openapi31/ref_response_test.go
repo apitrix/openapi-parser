@@ -19,7 +19,8 @@ func TestResponseRef_MarshalJSON_Ref(t *testing.T) {
 
 func TestResponseRef_MarshalJSON_InlineValue(t *testing.T) {
 	r := NewResponse("Not found", nil, nil, nil)
-	ref := &ResponseRef{Value: r}
+	ref := &ResponseRef{}
+	ref.SetValue(r)
 	got, err := json.Marshal(ref)
 	if err != nil {
 		t.Fatal(err)

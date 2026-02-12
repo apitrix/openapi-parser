@@ -85,6 +85,6 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	link := result.Document.Components().Links()["GetUserPets"].Value
+	link := result.Document.Components().Links()["GetUserPets"].Value()
 	assert.Contains(t, link.Parameters(), "userId")
 }

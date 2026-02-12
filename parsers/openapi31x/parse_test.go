@@ -49,8 +49,8 @@ func TestParsePetstore31(t *testing.T) {
 	require.Contains(t, result.Document.Webhooks(), "newPet")
 	webhook := result.Document.Webhooks()["newPet"]
 	require.NotNil(t, webhook.Value)
-	require.NotNil(t, webhook.Value.Post())
-	assert.Equal(t, "newPetWebhook", webhook.Value.Post().OperationID())
+	require.NotNil(t, webhook.Value().Post())
+	assert.Equal(t, "newPetWebhook", webhook.Value().Post().OperationID())
 
 	// Verify paths
 	require.NotNil(t, result.Document.Paths())
@@ -63,8 +63,8 @@ func TestParsePetstore31(t *testing.T) {
 	assert.Equal(t, "listPets", getPets.OperationID())
 	require.Len(t, getPets.Parameters(), 1)
 	require.NotNil(t, getPets.Parameters()[0].Value)
-	assert.Equal(t, "limit", getPets.Parameters()[0].Value.Name())
-	assert.Equal(t, "query", getPets.Parameters()[0].Value.In())
+	assert.Equal(t, "limit", getPets.Parameters()[0].Value().Name())
+	assert.Equal(t, "query", getPets.Parameters()[0].Value().In())
 
 	// Verify POST /pets
 	postPets := result.Document.Paths().Items()["/pets"].Post()
@@ -78,7 +78,7 @@ func TestParsePetstore31(t *testing.T) {
 	require.Contains(t, result.Document.Components().Schemas(), "PetList")
 
 	// Verify Pet schema
-	petSchema := result.Document.Components().Schemas()["Pet"].Value
+	petSchema := result.Document.Components().Schemas()["Pet"].Value()
 	require.NotNil(t, petSchema)
 	assert.Equal(t, "object", petSchema.Type().Single)
 	require.Contains(t, petSchema.Properties(), "id")
@@ -86,27 +86,27 @@ func TestParsePetstore31(t *testing.T) {
 	require.Contains(t, petSchema.Properties(), "tag")
 
 	// Verify type array (tag field: [string, null])
-	tagSchema := petSchema.Properties()["tag"].Value
+	tagSchema := petSchema.Properties()["tag"].Value()
 	require.NotNil(t, tagSchema)
 	require.Len(t, tagSchema.Type().Array, 2)
 	assert.Contains(t, tagSchema.Type().Array, "string")
 	assert.Contains(t, tagSchema.Type().Array, "null")
 
 	// Verify const (status field)
-	statusSchema := petSchema.Properties()["status"].Value
+	statusSchema := petSchema.Properties()["status"].Value()
 	require.NotNil(t, statusSchema)
 	assert.Equal(t, "available", statusSchema.Const())
 	require.Len(t, statusSchema.Enum(), 3)
 
 	// Verify if/then/else (color field)
-	colorSchema := petSchema.Properties()["color"].Value
+	colorSchema := petSchema.Properties()["color"].Value()
 	require.NotNil(t, colorSchema)
 	require.NotNil(t, colorSchema.If())
 	require.NotNil(t, colorSchema.Then())
 	require.NotNil(t, colorSchema.Else())
 
 	// Verify unevaluatedProperties (metadata field)
-	metadataSchema := petSchema.Properties()["metadata"].Value
+	metadataSchema := petSchema.Properties()["metadata"].Value()
 	require.NotNil(t, metadataSchema)
 	require.NotNil(t, metadataSchema.UnevaluatedProperties())
 
@@ -115,7 +115,7 @@ func TestParsePetstore31(t *testing.T) {
 	assert.True(t, *metadataSchema.AdditionalPropertiesAllowed())
 
 	// Verify prefixItems (PetList schema)
-	petListSchema := result.Document.Components().Schemas()["PetList"].Value
+	petListSchema := result.Document.Components().Schemas()["PetList"].Value()
 	require.NotNil(t, petListSchema)
 	require.Len(t, petListSchema.PrefixItems(), 1)
 
@@ -311,21 +311,21 @@ components:
 	require.NotNil(t, result.Document)
 
 	// Type array
-	nullableStr := result.Document.Components().Schemas()["NullableString"].Value
+	nullableStr := result.Document.Components().Schemas()["NullableString"].Value()
 	require.NotNil(t, nullableStr)
 	assert.Empty(t, nullableStr.Type().Single)
 	assert.Equal(t, []string{"string", "null"}, nullableStr.Type().Array)
 	assert.Equal(t, []string{"string", "null"}, nullableStr.Type().Values())
 
 	// Single type
-	singleType := result.Document.Components().Schemas()["SingleType"].Value
+	singleType := result.Document.Components().Schemas()["SingleType"].Value()
 	require.NotNil(t, singleType)
 	assert.Equal(t, "string", singleType.Type().Single)
 	assert.Empty(t, singleType.Type().Array)
 	assert.Equal(t, []string{"string"}, singleType.Type().Values())
 
 	// No type
-	noType := result.Document.Components().Schemas()["NoType"].Value
+	noType := result.Document.Components().Schemas()["NoType"].Value()
 	require.NotNil(t, noType)
 	assert.True(t, noType.Type().IsEmpty())
 	assert.Nil(t, noType.Type().Values())
@@ -417,8 +417,8 @@ components:
 	// Inline webhook
 	orderCreated := result.Document.Webhooks()["orderCreated"]
 	require.NotNil(t, orderCreated.Value)
-	require.NotNil(t, orderCreated.Value.Post())
-	assert.Equal(t, "orderCreated", orderCreated.Value.Post().OperationID())
+	require.NotNil(t, orderCreated.Value().Post())
+	assert.Equal(t, "orderCreated", orderCreated.Value().Post().OperationID())
 
 	// $ref webhook
 	orderDeleted := result.Document.Webhooks()["orderDeleted"]
@@ -450,6 +450,6 @@ components:
 	require.Contains(t, result.Document.Components().PathItems(), "SharedOps")
 	sharedOps := result.Document.Components().PathItems()["SharedOps"]
 	require.NotNil(t, sharedOps.Value)
-	require.NotNil(t, sharedOps.Value.Get())
-	assert.Equal(t, "sharedGet", sharedOps.Value.Get().OperationID())
+	require.NotNil(t, sharedOps.Value().Get())
+	assert.Equal(t, "sharedGet", sharedOps.Value().Get().OperationID())
 }

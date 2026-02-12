@@ -19,7 +19,8 @@ func TestHeaderRef_MarshalJSON_Ref(t *testing.T) {
 
 func TestHeaderRef_MarshalJSON_InlineValue(t *testing.T) {
 	h := NewHeader(HeaderFields{Description: "Rate limit"})
-	ref := &HeaderRef{Value: h}
+	ref := &HeaderRef{}
+	ref.SetValue(h)
 	got, err := json.Marshal(ref)
 	if err != nil {
 		t.Fatal(err)

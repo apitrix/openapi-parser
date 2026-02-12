@@ -28,6 +28,6 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value
+	resp := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value()
 	assert.Len(t, resp.Content(), 2)
 }

@@ -38,8 +38,10 @@ func TestComponents_MarshalJSON_Empty(t *testing.T) {
 
 func TestComponents_MarshalJSON_WithSchemas(t *testing.T) {
 	comp := NewComponents()
+	petRef := &SchemaRef{}
+	petRef.SetValue(NewSchema(SchemaFields{Type: SchemaType{Single: "object"}}))
 	comp.SetProperty("schemas", map[string]*SchemaRef{
-		"Pet": {Value: NewSchema(SchemaFields{Type: SchemaType{Single: "object"}})},
+		"Pet": petRef,
 	})
 	got, err := json.Marshal(comp)
 	if err != nil {

@@ -34,7 +34,7 @@ func parseSchemaRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.Schema
 	if err != nil {
 		return nil, err
 	}
-	ref.Value = schema
+	ref.SetValue(schema)
 
 	return ref, nil
 }

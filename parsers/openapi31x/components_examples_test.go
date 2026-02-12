@@ -91,7 +91,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ex := result.Document.Components().Examples()["Complete"].Value
+	ex := result.Document.Components().Examples()["Complete"].Value()
 	assert.Equal(t, "A complete example", ex.Summary())
 	assert.Equal(t, "This is a detailed description", ex.Description())
 }

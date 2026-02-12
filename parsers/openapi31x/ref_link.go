@@ -31,7 +31,7 @@ func parseLinkRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.LinkRef,
 	if err != nil {
 		return nil, err
 	}
-	ref.Value = link
+	ref.SetValue(link)
 
 	return ref, nil
 }

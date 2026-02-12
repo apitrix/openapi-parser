@@ -19,7 +19,8 @@ func TestLinkRef_MarshalJSON_Ref(t *testing.T) {
 
 func TestLinkRef_MarshalJSON_InlineValue(t *testing.T) {
 	l := NewLink("", "getUser", "Get a user by ID", nil, nil, nil)
-	ref := &LinkRef{Value: l}
+	ref := &LinkRef{}
+	ref.SetValue(l)
 	got, err := json.Marshal(ref)
 	if err != nil {
 		t.Fatal(err)

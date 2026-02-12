@@ -31,7 +31,7 @@ func parseCallbackRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.Call
 	if err != nil {
 		return nil, err
 	}
-	ref.Value = cb
+	ref.SetValue(cb)
 
 	return ref, nil
 }

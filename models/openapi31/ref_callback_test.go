@@ -40,7 +40,8 @@ func TestCallbackRef_MarshalJSON_InlineValue(t *testing.T) {
 	pi := NewPathItem()
 	pi.SetProperty("summary", "Webhook")
 	cb := NewCallback(map[string]*PathItem{"{$request.body#/callbackUrl}": pi})
-	ref := &CallbackRef{Value: cb}
+	ref := &CallbackRef{}
+	ref.SetValue(cb)
 	got, err := json.Marshal(ref)
 	if err != nil {
 		t.Fatal(err)

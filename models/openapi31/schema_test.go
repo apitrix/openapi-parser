@@ -55,9 +55,12 @@ func TestSchema_MarshalJSON_Const(t *testing.T) {
 }
 
 func TestSchema_MarshalJSON_IfThenElse(t *testing.T) {
-	ifSchema := &SchemaRef{Value: NewSchema(SchemaFields{Type: SchemaType{Single: "string"}})}
-	thenSchema := &SchemaRef{Value: NewSchema(SchemaFields{Format: "email"})}
-	elseSchema := &SchemaRef{Value: NewSchema(SchemaFields{Format: "uri"})}
+	ifSchema := &SchemaRef{}
+	ifSchema.SetValue(NewSchema(SchemaFields{Type: SchemaType{Single: "string"}}))
+	thenSchema := &SchemaRef{}
+	thenSchema.SetValue(NewSchema(SchemaFields{Format: "email"}))
+	elseSchema := &SchemaRef{}
+	elseSchema.SetValue(NewSchema(SchemaFields{Format: "uri"}))
 	s := NewSchema(SchemaFields{If: ifSchema, Then: thenSchema, Else: elseSchema})
 	got, err := json.Marshal(s)
 	if err != nil {
@@ -75,8 +78,10 @@ func TestSchema_MarshalJSON_IfThenElse(t *testing.T) {
 }
 
 func TestSchema_MarshalJSON_PrefixItems(t *testing.T) {
-	item1 := &SchemaRef{Value: NewSchema(SchemaFields{Type: SchemaType{Single: "string"}})}
-	item2 := &SchemaRef{Value: NewSchema(SchemaFields{Type: SchemaType{Single: "integer"}})}
+	item1 := &SchemaRef{}
+	item1.SetValue(NewSchema(SchemaFields{Type: SchemaType{Single: "string"}}))
+	item2 := &SchemaRef{}
+	item2.SetValue(NewSchema(SchemaFields{Type: SchemaType{Single: "integer"}}))
 	s := NewSchema(SchemaFields{PrefixItems: []*SchemaRef{item1, item2}})
 	got, err := json.Marshal(s)
 	if err != nil {

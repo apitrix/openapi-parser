@@ -29,9 +29,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Strict"].Value
+	schema := result.Document.Components().Schemas()["Strict"].Value()
 	require.NotNil(t, schema.UnevaluatedProperties())
-	assert.Equal(t, "string", schema.UnevaluatedProperties().Value.Type().Single)
+	assert.Equal(t, "string", schema.UnevaluatedProperties().Value().Type().Single)
 }
 
 func TestParseSchema_UnevaluatedItems_HappyPath(t *testing.T) {
@@ -51,9 +51,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["StrictArray"].Value
+	schema := result.Document.Components().Schemas()["StrictArray"].Value()
 	require.NotNil(t, schema.UnevaluatedItems())
-	assert.Equal(t, "integer", schema.UnevaluatedItems().Value.Type().Single)
+	assert.Equal(t, "integer", schema.UnevaluatedItems().Value().Type().Single)
 }
 
 func TestParseSchema_NoUnevaluated(t *testing.T) {
@@ -69,7 +69,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Normal"].Value
+	schema := result.Document.Components().Schemas()["Normal"].Value()
 	assert.Nil(t, schema.UnevaluatedProperties())
 	assert.Nil(t, schema.UnevaluatedItems())
 }

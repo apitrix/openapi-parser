@@ -6,7 +6,8 @@ import (
 )
 
 func TestResponses_MarshalJSON_WithDefault(t *testing.T) {
-	defResp := &ResponseRef{Value: NewResponse("Default error", nil, nil, nil)}
+	defResp := &ResponseRef{}
+	defResp.SetValue(NewResponse("Default error", nil, nil, nil))
 	resp := NewResponses(defResp, nil)
 	got, err := json.Marshal(resp)
 	if err != nil {
@@ -22,8 +23,10 @@ func TestResponses_MarshalJSON_WithDefault(t *testing.T) {
 }
 
 func TestResponses_MarshalJSON_WithCodes(t *testing.T) {
-	code200 := &ResponseRef{Value: NewResponse("Success", nil, nil, nil)}
-	code404 := &ResponseRef{Value: NewResponse("Not found", nil, nil, nil)}
+	code200 := &ResponseRef{}
+	code200.SetValue(NewResponse("Success", nil, nil, nil))
+	code404 := &ResponseRef{}
+	code404.SetValue(NewResponse("Not found", nil, nil, nil))
 	resp := NewResponses(nil, map[string]*ResponseRef{
 		"200": code200,
 		"404": code404,

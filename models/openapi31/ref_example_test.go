@@ -19,7 +19,8 @@ func TestExampleRef_MarshalJSON_Ref(t *testing.T) {
 
 func TestExampleRef_MarshalJSON_InlineValue(t *testing.T) {
 	ex := NewExample("A pet", "", "Rex", "")
-	ref := &ExampleRef{Value: ex}
+	ref := &ExampleRef{}
+	ref.SetValue(ex)
 	got, err := json.Marshal(ref)
 	if err != nil {
 		t.Fatal(err)

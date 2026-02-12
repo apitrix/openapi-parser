@@ -31,7 +31,7 @@ func parseResponseRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.Resp
 	if err != nil {
 		return nil, err
 	}
-	ref.Value = response
+	ref.SetValue(response)
 
 	return ref, nil
 }

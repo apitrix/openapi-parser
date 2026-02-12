@@ -42,7 +42,8 @@ func TestSchemaRef_MarshalJSON_RefWithSummaryDescription(t *testing.T) {
 
 func TestSchemaRef_MarshalJSON_InlineValue(t *testing.T) {
 	schema := NewSchema(SchemaFields{Type: SchemaType{Single: "string"}, Description: "A name"})
-	ref := &SchemaRef{Value: schema}
+	ref := &SchemaRef{}
+	ref.SetValue(schema)
 	got, err := json.Marshal(ref)
 	if err != nil {
 		t.Fatal(err)

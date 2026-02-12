@@ -35,7 +35,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schemaRef := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Content()["application/json"].Schema()
+	schemaRef := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Content()["application/json"].Schema()
 	assert.Equal(t, "#/components/schemas/Pet", schemaRef.Ref)
 }
 
@@ -59,7 +59,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ref := result.Document.Components().Schemas()["Pet"].Value.Properties()["owner"]
+	ref := result.Document.Components().Schemas()["Pet"].Value().Properties()["owner"]
 	assert.Equal(t, "#/components/schemas/User", ref.Ref)
 }
 
@@ -82,7 +82,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ref := result.Document.Components().Schemas()["PetList"].Value.Items()
+	ref := result.Document.Components().Schemas()["PetList"].Value().Items()
 	assert.Equal(t, "#/components/schemas/Pet", ref.Ref)
 }
 
@@ -108,7 +108,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	ref := result.Document.Components().Schemas()["Cat"].Value.AllOf()[0]
+	ref := result.Document.Components().Schemas()["Cat"].Value().AllOf()[0]
 	assert.Equal(t, "#/components/schemas/Pet", ref.Ref)
 }
 
@@ -142,8 +142,8 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	pet := result.Document.Components().Schemas()["Pet"].Value
+	pet := result.Document.Components().Schemas()["Pet"].Value()
 	assert.Equal(t, "#/components/schemas/User", pet.Properties()["owner"].Ref)
 	assert.Equal(t, "#/components/schemas/Category", pet.Properties()["category"].Ref)
-	assert.Equal(t, "#/components/schemas/Tag", pet.Properties()["tags"].Value.Items().Ref)
+	assert.Equal(t, "#/components/schemas/Tag", pet.Properties()["tags"].Value().Items().Ref)
 }

@@ -19,7 +19,8 @@ func TestRequestBodyRef_MarshalJSON_Ref(t *testing.T) {
 
 func TestRequestBodyRef_MarshalJSON_InlineValue(t *testing.T) {
 	rb := NewRequestBody("A pet body", nil, true)
-	ref := &RequestBodyRef{Value: rb}
+	ref := &RequestBodyRef{}
+	ref.SetValue(rb)
 	got, err := json.Marshal(ref)
 	if err != nil {
 		t.Fatal(err)

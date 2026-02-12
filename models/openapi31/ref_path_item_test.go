@@ -43,7 +43,8 @@ func TestPathItemRef_MarshalJSON_RefWithSummaryDescription(t *testing.T) {
 func TestPathItemRef_MarshalJSON_InlineValue(t *testing.T) {
 	pi := NewPathItem()
 	pi.SetProperty("summary", "Pet endpoint")
-	ref := &PathItemRef{Value: pi}
+	ref := &PathItemRef{}
+	ref.SetValue(pi)
 	got, err := json.Marshal(ref)
 	if err != nil {
 		t.Fatal(err)

@@ -27,7 +27,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	flow := result.Document.Components().SecuritySchemes()["oauth2"].Value.Flows().ClientCredentials()
+	flow := result.Document.Components().SecuritySchemes()["oauth2"].Value().Flows().ClientCredentials()
 	require.NotNil(t, flow)
 	assert.Equal(t, "https://example.com/oauth/token", flow.TokenURL())
 	assert.Equal(t, "https://example.com/oauth/refresh", flow.RefreshURL())

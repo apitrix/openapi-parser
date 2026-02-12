@@ -6,12 +6,14 @@ import (
 )
 
 func TestParameter_MarshalJSON_AllFields(t *testing.T) {
+	schemaRef := &SchemaRef{}
+	schemaRef.SetValue(NewSchema(SchemaFields{Type: SchemaType{Single: "integer"}}))
 	p := NewParameter(ParameterFields{
 		Name:        "limit",
 		In:          "query",
 		Description: "Max items to return",
 		Required:    true,
-		Schema:      &SchemaRef{Value: NewSchema(SchemaFields{Type: SchemaType{Single: "integer"}})},
+		Schema:      schemaRef,
 	})
 	got, err := json.Marshal(p)
 	if err != nil {

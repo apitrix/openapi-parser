@@ -19,7 +19,8 @@ func TestParameterRef_MarshalJSON_Ref(t *testing.T) {
 
 func TestParameterRef_MarshalJSON_InlineValue(t *testing.T) {
 	p := NewParameter(ParameterFields{Name: "limit", In: "query"})
-	ref := &ParameterRef{Value: p}
+	ref := &ParameterRef{}
+	ref.SetValue(p)
 	got, err := json.Marshal(ref)
 	if err != nil {
 		t.Fatal(err)

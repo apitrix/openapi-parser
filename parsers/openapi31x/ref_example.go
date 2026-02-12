@@ -31,7 +31,7 @@ func parseExampleRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.Examp
 	if err != nil {
 		return nil, err
 	}
-	ref.Value = example
+	ref.SetValue(example)
 
 	return ref, nil
 }

@@ -25,6 +25,22 @@ type ParseResult struct {
 
 	// Config is the ParseConfig that was used for this parse.
 	Config *shared.ParseConfig
+
+	// done is closed when background reference resolution is complete.
+	done chan struct{}
+
+	// resolveErr holds any error from background reference resolution.
+	resolveErr error
+}
+
+// Wait blocks until all background reference resolution is complete.
+// Returns any error that occurred during resolution.
+// It is safe to call Wait multiple times.
+func (pr *ParseResult) Wait() error {
+	if pr.done != nil {
+		<-pr.done
+	}
+	return pr.resolveErr
 }
 
 // Parse parses OpenAPI 3.1/3.2 specification from bytes (JSON or YAML).
@@ -107,7 +123,7 @@ func ParseFile(pathOrURL string, cfgs ...*shared.ParseConfig) (*ParseResult, err
 }
 
 // parseAndResolve unmarshals YAML data, parses the OpenAPI document, and optionally
-// resolves all $ref references based on the config.
+// resolves all $ref references in the background based on the config.
 func parseAndResolve(data []byte, basePath string, cfg *shared.ParseConfig) (*ParseResult, error) {
 	var rootNode yaml.Node
 	if err := yaml.Unmarshal(data, &rootNode); err != nil {
@@ -131,16 +147,21 @@ func parseAndResolve(data []byte, basePath string, cfg *shared.ParseConfig) (*Pa
 		return nil, err
 	}
 
-	// Resolve $ref references if enabled
-	if cfg.ResolveInternalRefs || cfg.ResolveExternalRefs {
-		if err := Resolve(doc, docNode, basePath); err != nil {
-			return nil, fmt.Errorf("failed to resolve references: %w", err)
-		}
-	}
-
-	return &ParseResult{
+	pr := &ParseResult{
 		Document: doc,
 		Errors:   flattenErrors(doc),
 		Config:   cfg,
-	}, nil
+	}
+
+	// Resolve $ref references in background if enabled
+	if cfg.ResolveInternalRefs || cfg.ResolveExternalRefs {
+		initRefDoneChannels(doc)
+		pr.done = make(chan struct{})
+		go func() {
+			pr.resolveErr = Resolve(doc, docNode, basePath)
+			close(pr.done)
+		}()
+	}
+
+	return pr, nil
 }

@@ -27,7 +27,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value
+	resp := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value()
 	assert.Equal(t, "Successful response", resp.Description())
 }
 
@@ -83,7 +83,7 @@ paths:
 	require.NoError(t, err)
 	defaultResp := result.Document.Paths().Items()["/pets"].Get().Responses().Default()
 	require.NotNil(t, defaultResp)
-	assert.Equal(t, "Unexpected error", defaultResp.Value.Description())
+	assert.Equal(t, "Unexpected error", defaultResp.Value().Description())
 }
 
 // --- Content Types ---
@@ -115,7 +115,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	content := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Content()
+	content := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Content()
 	assert.Len(t, content, 4)
 }
 
@@ -148,7 +148,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	headers := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()
+	headers := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Headers()
 	assert.Len(t, headers, 3)
 }
 
@@ -175,7 +175,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	links := result.Document.Paths().Items()["/users/{id}"].Get().Responses().Codes()["200"].Value.Links()
+	links := result.Document.Paths().Items()["/users/{id}"].Get().Responses().Codes()["200"].Value().Links()
 	assert.Len(t, links, 2)
 }
 
@@ -225,7 +225,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value
+	resp := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value()
 	require.NotNil(t, resp.VendorExtensions)
 	assert.Equal(t, "value", resp.VendorExtensions["x-custom"])
 }
@@ -259,7 +259,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value
+	resp := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value()
 	assert.NotEmpty(t, resp.Description())
 	assert.NotEmpty(t, resp.Headers())
 	assert.NotEmpty(t, resp.Content())

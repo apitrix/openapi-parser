@@ -6,7 +6,8 @@ import (
 )
 
 func TestMediaType_MarshalJSON_WithSchema(t *testing.T) {
-	schema := &SchemaRef{Value: NewSchema(SchemaFields{Type: SchemaType{Single: "object"}})}
+	schema := &SchemaRef{}
+	schema.SetValue(NewSchema(SchemaFields{Type: SchemaType{Single: "object"}}))
 	mt := NewMediaType(schema, nil, nil, nil)
 	got, err := json.Marshal(mt)
 	if err != nil {

@@ -34,7 +34,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/pets/{petId}"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/pets/{petId}"].Get().Parameters()[0].Value()
 	assert.Equal(t, "petId", param.Name())
 	assert.Equal(t, "path", param.In())
 	assert.True(t, param.Required())
@@ -62,7 +62,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value()
 	assert.Equal(t, "limit", param.Name())
 	assert.Equal(t, "query", param.In())
 	assert.False(t, param.Required())
@@ -89,7 +89,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value()
 	assert.Equal(t, "X-Request-ID", param.Name())
 	assert.Equal(t, "header", param.In())
 }
@@ -113,7 +113,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value()
 	assert.Equal(t, "session_id", param.Name())
 	assert.Equal(t, "cookie", param.In())
 }
@@ -179,7 +179,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value()
 	assert.Equal(t, "form", param.Style())
 	require.NotNil(t, param.Explode())
 	assert.True(t, *param.Explode())
@@ -208,7 +208,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value()
 	assert.Equal(t, "pipeDelimited", param.Style())
 }
 
@@ -234,7 +234,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/search"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/search"].Get().Parameters()[0].Value()
 	assert.True(t, param.AllowEmptyValue())
 }
 
@@ -258,7 +258,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/files"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/files"].Get().Parameters()[0].Value()
 	assert.True(t, param.AllowReserved())
 }
 
@@ -282,7 +282,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value()
 	assert.True(t, param.Deprecated())
 }
 
@@ -308,7 +308,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value()
 	assert.Equal(t, 10, param.Example())
 }
 
@@ -336,7 +336,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value()
 	assert.Len(t, param.Examples(), 2)
 }
 
@@ -392,7 +392,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value()
 	require.NotNil(t, param.VendorExtensions)
 	assert.Equal(t, "value", param.VendorExtensions["x-custom"])
 }

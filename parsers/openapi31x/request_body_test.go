@@ -33,7 +33,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	rb := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value
+	rb := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value()
 	assert.Equal(t, "Pet to add", rb.Description())
 }
 
@@ -59,7 +59,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	rb := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value
+	rb := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value()
 	assert.True(t, rb.Required())
 }
 
@@ -83,7 +83,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	rb := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value
+	rb := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value()
 	assert.False(t, rb.Required())
 }
 
@@ -117,7 +117,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	content := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value.Content()
+	content := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value().Content()
 	assert.Len(t, content, 4)
 }
 
@@ -174,7 +174,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	rb := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value
+	rb := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value()
 	require.NotNil(t, rb.VendorExtensions)
 	assert.Equal(t, "value", rb.VendorExtensions["x-custom"])
 }
@@ -209,7 +209,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value.Content()["application/json"].Schema().Value
+	schema := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value().Content()["application/json"].Schema().Value()
 	assert.Equal(t, "object", schema.Type().Single)
 	assert.Len(t, schema.Required(), 1)
 	assert.Len(t, schema.Properties(), 2)
