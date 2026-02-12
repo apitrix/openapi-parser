@@ -24,6 +24,21 @@ type ParseResult struct {
 
 	// Config is the ParseConfig that was used for this parse.
 	Config *shared.ParseConfig
+
+	// done is closed when background reference resolution is complete.
+	done chan struct{}
+
+	// resolveErr captures errors from background resolution.
+	resolveErr error
+}
+
+// Wait blocks until background reference resolution is complete.
+// Returns the resolution error, if any.
+func (r *ParseResult) Wait() error {
+	if r.done != nil {
+		<-r.done
+	}
+	return r.resolveErr
 }
 
 // Parse parses Swagger 2.0 specification from bytes (JSON or YAML).
@@ -106,7 +121,7 @@ func ParseFile(pathOrURL string, cfgs ...*shared.ParseConfig) (*ParseResult, err
 }
 
 // parseAndResolve unmarshals YAML data, parses the Swagger document, and optionally
-// resolves all $ref references based on the config.
+// resolves all $ref references in a background goroutine based on the config.
 func parseAndResolve(data []byte, basePath string, cfg *shared.ParseConfig) (*ParseResult, error) {
 	var rootNode yaml.Node
 	if err := yaml.Unmarshal(data, &rootNode); err != nil {
@@ -130,16 +145,23 @@ func parseAndResolve(data []byte, basePath string, cfg *shared.ParseConfig) (*Pa
 		return nil, err
 	}
 
-	// Resolve $ref references if enabled
-	if cfg.ResolveInternalRefs || cfg.ResolveExternalRefs {
-		if err := Resolve(doc, docNode, basePath); err != nil {
-			return nil, fmt.Errorf("failed to resolve references: %w", err)
-		}
-	}
-
-	return &ParseResult{
+	result := &ParseResult{
 		Document: doc,
 		Errors:   flattenErrors(doc),
 		Config:   cfg,
-	}, nil
+	}
+
+	// Resolve $ref references if enabled — run in a background goroutine
+	if cfg.ResolveInternalRefs || cfg.ResolveExternalRefs {
+		initRefDoneChannels(doc)
+		result.done = make(chan struct{})
+		go func() {
+			defer close(result.done)
+			if err := Resolve(doc, docNode, basePath); err != nil {
+				result.resolveErr = err
+			}
+		}()
+	}
+
+	return result, nil
 }

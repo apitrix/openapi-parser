@@ -38,7 +38,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value.Items()
+	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value().Items()
 	assert.Equal(t, "string", items.Type())
 }
 
@@ -70,7 +70,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value.Items()
+	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value().Items()
 	assert.Equal(t, "integer", items.Type())
 	assert.Equal(t, "int64", items.Format())
 }
@@ -104,7 +104,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value.Items()
+	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value().Items()
 	require.NotNil(t, items.Minimum())
 	require.NotNil(t, items.Maximum())
 	assert.Equal(t, float64(0), *items.Minimum())
@@ -142,7 +142,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value.Items()
+	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value().Items()
 	require.Len(t, items.Enum(), 3)
 	assert.Equal(t, "available", items.Enum()[0])
 }
@@ -176,7 +176,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	items := result.Document.Paths().Items()["/matrix"].Get().Parameters()[0].Value.Items()
+	items := result.Document.Paths().Items()["/matrix"].Get().Parameters()[0].Value().Items()
 	assert.Equal(t, "array", items.Type())
 	require.NotNil(t, items.Items())
 	assert.Equal(t, "integer", items.Items().Type())
@@ -211,7 +211,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value.Items()
+	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value().Items()
 	assert.Equal(t, "csv", items.CollectionFormat())
 }
 
@@ -243,7 +243,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value.Items()
+	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value().Items()
 	assert.Equal(t, "unknown", items.Default())
 }
 
@@ -275,6 +275,6 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value.Items()
+	items := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value().Items()
 	assert.Equal(t, "value", items.VendorExtensions["x-custom"])
 }

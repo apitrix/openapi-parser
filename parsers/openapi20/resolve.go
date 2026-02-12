@@ -115,15 +115,16 @@ func resolveOperation(op *openapi20models.Operation, r *shared.RefResolver, reso
 // =============================================================================
 
 func resolveSchemaRef(ref *openapi20models.SchemaRef, r *shared.RefResolver, resolving map[string]bool) error {
-	if ref == nil || ref.Circular {
+	if ref == nil || ref.RawCircular() {
 		return nil
 	}
 
-	if ref.Ref != "" && ref.Value == nil {
+	if ref.Ref != "" && ref.RawValue() == nil {
 		// Check model-level cycle: if we're already resolving this $ref string,
 		// it means we hit a circular reference through the parsed model tree.
 		if resolving[ref.Ref] {
-			ref.Circular = true
+			ref.SetCircular(true)
+			ref.MarkDone()
 			return nil
 		}
 		resolving[ref.Ref] = true
@@ -131,22 +132,28 @@ func resolveSchemaRef(ref *openapi20models.SchemaRef, r *shared.RefResolver, res
 
 		result, err := r.Resolve(ref.Ref)
 		if err != nil {
-			return fmt.Errorf("resolving schema ref %q: %w", ref.Ref, err)
+			ref.SetResolveErr(fmt.Errorf("resolving schema ref %q: %w", ref.Ref, err))
+			ref.MarkDone()
+			return nil
 		}
 		if result.Circular {
-			ref.Circular = true
+			ref.SetCircular(true)
+			ref.MarkDone()
 			return nil
 		}
 		ctx := newParseContext(result.Node, shared.All())
 		schema, err := parseSchema(result.Node, ctx)
 		if err != nil {
-			return fmt.Errorf("parsing resolved schema ref %q: %w", ref.Ref, err)
+			ref.SetResolveErr(fmt.Errorf("parsing resolved schema ref %q: %w", ref.Ref, err))
+			ref.MarkDone()
+			return nil
 		}
-		ref.Value = schema
+		ref.SetValue(schema)
+		ref.MarkDone()
 	}
 
-	if ref.Value != nil {
-		return resolveSchema(ref.Value, r, resolving)
+	if ref.RawValue() != nil {
+		return resolveSchema(ref.RawValue(), r, resolving)
 	}
 
 	return nil
@@ -174,59 +181,185 @@ func resolveSchema(schema *openapi20models.Schema, r *shared.RefResolver, resolv
 }
 
 func resolveResponseRef(ref *openapi20models.ResponseRef, r *shared.RefResolver, resolving map[string]bool) error {
-	if ref == nil || ref.Circular {
+	if ref == nil || ref.RawCircular() {
 		return nil
 	}
 
-	if ref.Ref != "" && ref.Value == nil {
+	if ref.Ref != "" && ref.RawValue() == nil {
 		result, err := r.Resolve(ref.Ref)
 		if err != nil {
-			return fmt.Errorf("resolving response ref %q: %w", ref.Ref, err)
+			ref.SetResolveErr(fmt.Errorf("resolving response ref %q: %w", ref.Ref, err))
+			ref.MarkDone()
+			return nil
 		}
 		if result.Circular {
-			ref.Circular = true
+			ref.SetCircular(true)
+			ref.MarkDone()
 			return nil
 		}
 		ctx := newParseContext(result.Node, shared.All())
 		val, err := parseResponse(result.Node, ctx)
 		if err != nil {
-			return fmt.Errorf("parsing resolved response ref %q: %w", ref.Ref, err)
+			ref.SetResolveErr(fmt.Errorf("parsing resolved response ref %q: %w", ref.Ref, err))
+			ref.MarkDone()
+			return nil
 		}
-		ref.Value = val
+		ref.SetValue(val)
+		ref.MarkDone()
 	}
 
-	if ref.Value != nil {
-		return resolveSchemaRef(ref.Value.Schema(), r, resolving)
+	if ref.RawValue() != nil {
+		return resolveSchemaRef(ref.RawValue().Schema(), r, resolving)
 	}
 
 	return nil
 }
 
 func resolveParameterRef(ref *openapi20models.ParameterRef, r *shared.RefResolver, resolving map[string]bool) error {
-	if ref == nil || ref.Circular {
+	if ref == nil || ref.RawCircular() {
 		return nil
 	}
 
-	if ref.Ref != "" && ref.Value == nil {
+	if ref.Ref != "" && ref.RawValue() == nil {
 		result, err := r.Resolve(ref.Ref)
 		if err != nil {
-			return fmt.Errorf("resolving parameter ref %q: %w", ref.Ref, err)
+			ref.SetResolveErr(fmt.Errorf("resolving parameter ref %q: %w", ref.Ref, err))
+			ref.MarkDone()
+			return nil
 		}
 		if result.Circular {
-			ref.Circular = true
+			ref.SetCircular(true)
+			ref.MarkDone()
 			return nil
 		}
 		ctx := newParseContext(result.Node, shared.All())
 		val, err := parseParameter(result.Node, ctx)
 		if err != nil {
-			return fmt.Errorf("parsing resolved parameter ref %q: %w", ref.Ref, err)
+			ref.SetResolveErr(fmt.Errorf("parsing resolved parameter ref %q: %w", ref.Ref, err))
+			ref.MarkDone()
+			return nil
 		}
-		ref.Value = val
+		ref.SetValue(val)
+		ref.MarkDone()
 	}
 
-	if ref.Value != nil {
-		return resolveSchemaRef(ref.Value.Schema(), r, resolving)
+	if ref.RawValue() != nil {
+		return resolveSchemaRef(ref.RawValue().Schema(), r, resolving)
 	}
 
 	return nil
+}
+
+// =============================================================================
+// Done channel initialization — walk the tree and InitDone() on all ref nodes
+// BEFORE the background goroutine starts.
+// =============================================================================
+
+func initRefDoneChannels(doc *openapi20models.Swagger) {
+	if doc == nil {
+		return
+	}
+
+	// Definitions
+	for _, ref := range doc.Definitions() {
+		initSchemaRefDone(ref)
+	}
+	// Parameters
+	for _, ref := range doc.Parameters() {
+		initParameterRefDone(ref)
+	}
+	// Responses
+	for _, ref := range doc.Responses() {
+		initResponseRefDone(ref)
+	}
+
+	// Paths
+	if doc.Paths() != nil {
+		for _, pi := range doc.Paths().Items() {
+			initPathItemDone(pi)
+		}
+	}
+}
+
+func initPathItemDone(pi *openapi20models.PathItem) {
+	if pi == nil {
+		return
+	}
+	for _, op := range []*openapi20models.Operation{
+		pi.Get(), pi.Put(), pi.Post(), pi.Delete(),
+		pi.Options(), pi.Head(), pi.Patch(),
+	} {
+		initOperationDone(op)
+	}
+	for _, ref := range pi.Parameters() {
+		initParameterRefDone(ref)
+	}
+}
+
+func initOperationDone(op *openapi20models.Operation) {
+	if op == nil {
+		return
+	}
+	for _, ref := range op.Parameters() {
+		initParameterRefDone(ref)
+	}
+	if op.Responses() != nil {
+		initResponseRefDone(op.Responses().Default())
+		for _, ref := range op.Responses().Codes() {
+			initResponseRefDone(ref)
+		}
+	}
+}
+
+func initSchemaRefDone(ref *openapi20models.SchemaRef) {
+	if ref == nil {
+		return
+	}
+	if ref.Ref != "" {
+		ref.InitDone()
+		return
+	}
+	if ref.RawValue() != nil {
+		initSchemaDone(ref.RawValue())
+	}
+}
+
+func initSchemaDone(schema *openapi20models.Schema) {
+	if schema == nil {
+		return
+	}
+	for _, ref := range schema.AllOf() {
+		initSchemaRefDone(ref)
+	}
+	initSchemaRefDone(schema.Items())
+	for _, ref := range schema.Properties() {
+		initSchemaRefDone(ref)
+	}
+	initSchemaRefDone(schema.AdditionalProperties())
+}
+
+func initParameterRefDone(ref *openapi20models.ParameterRef) {
+	if ref == nil {
+		return
+	}
+	if ref.Ref != "" {
+		ref.InitDone()
+		return
+	}
+	if ref.RawValue() != nil {
+		initSchemaRefDone(ref.RawValue().Schema())
+	}
+}
+
+func initResponseRefDone(ref *openapi20models.ResponseRef) {
+	if ref == nil {
+		return
+	}
+	if ref.Ref != "" {
+		ref.InitDone()
+		return
+	}
+	if ref.RawValue() != nil {
+		initSchemaRefDone(ref.RawValue().Schema())
+	}
 }

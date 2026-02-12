@@ -7,8 +7,10 @@ import (
 
 func TestOperation_MarshalJSON_AllFields(t *testing.T) {
 	// Arrange
+	okRef := &ResponseRef{}
+	okRef.SetValue(NewResponse("OK", nil, nil, nil))
 	resp := NewResponses(
-		&ResponseRef{Value: NewResponse("OK", nil, nil, nil)},
+		okRef,
 		nil,
 	)
 	op := NewOperation(
@@ -38,8 +40,10 @@ func TestOperation_MarshalJSON_AllFields(t *testing.T) {
 
 func TestOperation_MarshalJSON_Minimal(t *testing.T) {
 	// Arrange
+	okRef := &ResponseRef{}
+	okRef.SetValue(NewResponse("OK", nil, nil, nil))
 	resp := NewResponses(
-		&ResponseRef{Value: NewResponse("OK", nil, nil, nil)},
+		okRef,
 		nil,
 	)
 	op := NewOperation(nil, "", "", nil, "", nil, nil, nil, resp, nil, false, nil)

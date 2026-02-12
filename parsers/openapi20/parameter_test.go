@@ -38,7 +38,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value()
 	assert.Equal(t, "limit", param.Name())
 	assert.Equal(t, "query", param.In())
 	assert.Equal(t, "integer", param.Type())
@@ -71,7 +71,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/pets/{petId}"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/pets/{petId}"].Get().Parameters()[0].Value()
 	assert.Equal(t, "petId", param.Name())
 	assert.Equal(t, "path", param.In())
 	assert.True(t, param.Required())
@@ -107,10 +107,10 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/pets"].Post().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/pets"].Post().Parameters()[0].Value()
 	assert.Equal(t, "body", param.In())
 	require.NotNil(t, param.Schema())
-	assert.Equal(t, "object", param.Schema().Value.Type())
+	assert.Equal(t, "object", param.Schema().Value().Type())
 }
 
 // --- Array Parameters ---
@@ -141,7 +141,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value()
 	assert.Equal(t, "array", param.Type())
 	assert.Equal(t, "csv", param.CollectionFormat())
 	require.NotNil(t, param.Items())
@@ -176,7 +176,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value()
 	require.NotNil(t, param.Minimum())
 	require.NotNil(t, param.Maximum())
 	assert.Equal(t, float64(1), *param.Minimum())
@@ -213,7 +213,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value()
 	require.Len(t, param.Enum(), 3)
 	assert.Equal(t, "available", param.Enum()[0])
 }
@@ -276,7 +276,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value
+	param := result.Document.Paths().Items()["/pets"].Get().Parameters()[0].Value()
 	assert.Equal(t, "X-Request-ID", param.Name())
 	assert.Equal(t, "header", param.In())
 }

@@ -118,8 +118,8 @@ paths:
 	require.NoError(t, err)
 	pathItem := result.Document.Paths().Items()["/pets/{petId}"]
 	require.Len(t, pathItem.Parameters(), 1)
-	assert.Equal(t, "petId", pathItem.Parameters()[0].Value.Name())
-	assert.Equal(t, "path", pathItem.Parameters()[0].Value.In())
+	assert.Equal(t, "petId", pathItem.Parameters()[0].Value().Name())
+	assert.Equal(t, "path", pathItem.Parameters()[0].Value().In())
 }
 
 // --- Path with $ref ---

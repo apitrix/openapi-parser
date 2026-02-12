@@ -32,7 +32,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	resp := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value
+	resp := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value()
 	assert.Equal(t, "Success response", resp.Description())
 }
 
@@ -61,7 +61,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	schema := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Schema().Value
+	schema := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Schema().Value()
 	assert.Equal(t, "array", schema.Type())
 }
 
@@ -90,7 +90,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	headers := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()
+	headers := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Headers()
 	require.Contains(t, headers, "X-Rate-Limit")
 	assert.Equal(t, "integer", headers["X-Rate-Limit"].Type())
 }
@@ -119,7 +119,7 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	examples := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Examples()
+	examples := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Examples()
 	require.Contains(t, examples, "application/json")
 }
 
@@ -145,7 +145,7 @@ paths:
 	// Assert
 	require.NoError(t, err)
 	require.NotNil(t, result.Document.Paths().Items()["/pets"].Get().Responses().Default())
-	assert.Equal(t, "Unexpected error", result.Document.Paths().Items()["/pets"].Get().Responses().Default().Value.Description())
+	assert.Equal(t, "Unexpected error", result.Document.Paths().Items()["/pets"].Get().Responses().Default().Value().Description())
 }
 
 // --- Response $ref ---
@@ -197,6 +197,6 @@ paths:
 
 	// Assert
 	require.NoError(t, err)
-	ext := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.VendorExtensions
+	ext := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().VendorExtensions
 	assert.Equal(t, "value", ext["x-custom"])
 }

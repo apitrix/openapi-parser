@@ -52,8 +52,10 @@ func TestPathItem_MarshalJSON_WithRef(t *testing.T) {
 
 func TestPathItem_MarshalJSON_WithParameters(t *testing.T) {
 	// Arrange
+	idParam := &ParameterRef{}
+	idParam.SetValue(NewParameter(ParameterFields{Name: "id", In: "path", Type: "string"}))
 	params := []*ParameterRef{
-		{Value: NewParameter(ParameterFields{Name: "id", In: "path", Type: "string"})},
+		idParam,
 	}
 	pi := NewPathItem("", nil, nil, nil, nil, nil, nil, nil, params)
 

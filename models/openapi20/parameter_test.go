@@ -7,7 +7,8 @@ import (
 
 func TestParameter_MarshalJSON_BodyParam(t *testing.T) {
 	// Arrange
-	schema := &SchemaRef{Value: NewSchema(SchemaFields{Type: "object"})}
+	schema := &SchemaRef{}
+	schema.SetValue(NewSchema(SchemaFields{Type: "object"}))
 	p := NewParameter(ParameterFields{
 		Name:        "body",
 		In:          "body",

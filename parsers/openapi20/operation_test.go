@@ -128,8 +128,8 @@ paths:
 	require.NoError(t, err)
 	params := result.Document.Paths().Items()["/pets"].Get().Parameters()
 	require.Len(t, params, 2)
-	assert.Equal(t, "limit", params[0].Value.Name())
-	assert.Equal(t, "offset", params[1].Value.Name())
+	assert.Equal(t, "limit", params[0].Value().Name())
+	assert.Equal(t, "offset", params[1].Value().Name())
 }
 
 // --- Responses ---
@@ -159,9 +159,9 @@ paths:
 	require.NoError(t, err)
 	responses := result.Document.Paths().Items()["/pets"].Get().Responses()
 	require.NotNil(t, responses.Default())
-	assert.Equal(t, "Error", responses.Default().Value.Description())
-	assert.Equal(t, "Success", responses.Codes()["200"].Value.Description())
-	assert.Equal(t, "Not found", responses.Codes()["404"].Value.Description())
+	assert.Equal(t, "Error", responses.Default().Value().Description())
+	assert.Equal(t, "Success", responses.Codes()["200"].Value().Description())
+	assert.Equal(t, "Not found", responses.Codes()["404"].Value().Description())
 }
 
 // --- Deprecated ---

@@ -45,7 +45,8 @@ func TestSchema_MarshalJSON_AdditionalPropertiesBool(t *testing.T) {
 
 func TestSchema_MarshalJSON_AdditionalPropertiesSchema(t *testing.T) {
 	// Arrange
-	addProps := &SchemaRef{Value: NewSchema(SchemaFields{Type: "string"})}
+	addProps := &SchemaRef{}
+	addProps.SetValue(NewSchema(SchemaFields{Type: "string"}))
 	s := NewSchema(SchemaFields{
 		Type:                 "object",
 		AdditionalProperties: addProps,
@@ -66,10 +67,12 @@ func TestSchema_MarshalJSON_AdditionalPropertiesSchema(t *testing.T) {
 
 func TestSchema_MarshalJSON_AllOf(t *testing.T) {
 	// Arrange
+	inlineRef := &SchemaRef{}
+	inlineRef.SetValue(NewSchema(SchemaFields{Type: "object"}))
 	s := NewSchema(SchemaFields{
 		AllOf: []*SchemaRef{
 			NewSchemaRef("#/definitions/Base"),
-			{Value: NewSchema(SchemaFields{Type: "object"})},
+			inlineRef,
 		},
 	})
 

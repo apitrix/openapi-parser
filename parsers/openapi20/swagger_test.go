@@ -116,7 +116,7 @@ definitions:
 	require.NoError(t, err)
 	require.NotNil(t, result.Document.Definitions())
 	require.Contains(t, result.Document.Definitions(), "Pet")
-	assert.Equal(t, "object", result.Document.Definitions()["Pet"].Value.Type())
+	assert.Equal(t, "object", result.Document.Definitions()["Pet"].Value().Type())
 }
 
 func TestParseSwagger_DefinitionsWithRef(t *testing.T) {
@@ -140,8 +140,8 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	require.NotNil(t, result.Document.Definitions()["PetList"].Value.Items())
-	assert.Equal(t, "#/definitions/Pet", result.Document.Definitions()["PetList"].Value.Items().Ref)
+	require.NotNil(t, result.Document.Definitions()["PetList"].Value().Items())
+	assert.Equal(t, "#/definitions/Pet", result.Document.Definitions()["PetList"].Value().Items().Ref)
 }
 
 // --- Global Parameters ---
@@ -167,8 +167,8 @@ parameters:
 	require.NoError(t, err)
 	require.NotNil(t, result.Document.Parameters())
 	require.Contains(t, result.Document.Parameters(), "limitParam")
-	assert.Equal(t, "limit", result.Document.Parameters()["limitParam"].Value.Name())
-	assert.Equal(t, "query", result.Document.Parameters()["limitParam"].Value.In())
+	assert.Equal(t, "limit", result.Document.Parameters()["limitParam"].Value().Name())
+	assert.Equal(t, "query", result.Document.Parameters()["limitParam"].Value().In())
 }
 
 // --- Global Responses ---
@@ -192,7 +192,7 @@ responses:
 	require.NoError(t, err)
 	require.NotNil(t, result.Document.Responses())
 	require.Contains(t, result.Document.Responses(), "NotFound")
-	assert.Equal(t, "Resource not found", result.Document.Responses()["NotFound"].Value.Description())
+	assert.Equal(t, "Resource not found", result.Document.Responses()["NotFound"].Value().Description())
 }
 
 // --- SecurityDefinitions ---

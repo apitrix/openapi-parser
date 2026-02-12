@@ -133,7 +133,7 @@ definitions:
 
 	// Assert
 	require.NoError(t, err)
-	ed := result.Document.Definitions()["Pet"].Value.ExternalDocs()
+	ed := result.Document.Definitions()["Pet"].Value().ExternalDocs()
 	require.NotNil(t, ed)
 	assert.Equal(t, "https://example.com/pet-schema", ed.URL())
 }

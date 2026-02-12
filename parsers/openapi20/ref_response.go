@@ -30,7 +30,7 @@ func parseResponseRef(node *yaml.Node, ctx *ParseContext) (*openapi20models.Resp
 	if err != nil {
 		return nil, err
 	}
-	ref.Value = response
+	ref.SetValue(response)
 	ref.Trix.Source = ctx.nodeSource(node)
 
 	return ref, nil

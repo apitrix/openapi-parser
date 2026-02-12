@@ -64,8 +64,10 @@ func TestSwagger_MarshalJSON_WithDefinitions(t *testing.T) {
 	doc := &Swagger{}
 	doc.SetProperty("swagger", "2.0")
 	doc.SetProperty("info", NewInfo("API", "", "", "1.0", nil, nil))
+	petRef := &SchemaRef{}
+	petRef.SetValue(NewSchema(SchemaFields{Type: "object"}))
 	doc.SetProperty("definitions", map[string]*SchemaRef{
-		"Pet": {Value: NewSchema(SchemaFields{Type: "object"})},
+		"Pet": petRef,
 	})
 
 	// Act

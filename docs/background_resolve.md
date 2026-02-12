@@ -2,7 +2,7 @@
 
 ## Overview
 
-The OpenAPI 3.0 parser supports **background reference resolution** — `ParseFile()` returns immediately while `$ref` references resolve concurrently in a background goroutine. Consumers only block when they access a specific ref's value.
+The OpenAPI 3.0 and OpenAPI 2.0 (Swagger) parsers support **background reference resolution** — `ParseFile()` returns immediately while `$ref` references resolve concurrently in a background goroutine. Consumers only block when they access a specific ref's value.
 
 ## How It Works
 

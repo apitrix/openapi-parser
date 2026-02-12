@@ -7,7 +7,8 @@ import (
 
 func TestResponse_MarshalJSON_AllFields(t *testing.T) {
 	// Arrange
-	schema := &SchemaRef{Value: NewSchema(SchemaFields{Type: "object"})}
+	schema := &SchemaRef{}
+	schema.SetValue(NewSchema(SchemaFields{Type: "object"}))
 	headers := map[string]*Header{
 		"X-Rate-Limit": NewHeader(HeaderFields{Type: "integer"}),
 	}

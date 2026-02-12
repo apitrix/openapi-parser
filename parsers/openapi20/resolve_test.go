@@ -60,16 +60,16 @@ definitions:
 	}
 
 	pet := result.Document.Definitions()["Pet"]
-	if pet == nil || pet.Value == nil {
+	if pet == nil || pet.Value() == nil {
 		t.Fatal("Pet definition should be populated")
 	}
 
 	resp := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"]
-	if resp == nil || resp.Value == nil {
+	if resp == nil || resp.Value() == nil {
 		t.Fatal("200 response should exist")
 	}
-	schema := resp.Value.Schema()
-	if schema == nil || schema.Value == nil {
+	schema := resp.Value().Schema()
+	if schema == nil || schema.Value() == nil {
 		t.Fatal("response schema ref should be resolved")
 	}
 }
@@ -107,17 +107,17 @@ definitions:
 	}
 
 	pet := result.Document.Definitions()["Pet"]
-	if pet == nil || pet.Value == nil {
+	if pet == nil || pet.Value() == nil {
 		t.Fatal("Pet definition should be populated")
 	}
-	tagRef := pet.Value.Properties()["tag"]
+	tagRef := pet.Value().Properties()["tag"]
 	if tagRef == nil {
 		t.Fatal("Pet.tag property should exist")
 	}
-	if tagRef.Value == nil {
+	if tagRef.Value() == nil {
 		t.Fatal("Pet.tag ref Value should be resolved from external file")
 	}
-	if tagRef.Value.Properties()["name"] == nil {
+	if tagRef.Value().Properties()["name"] == nil {
 		t.Error("Tag schema should have 'name' property")
 	}
 }
@@ -156,32 +156,32 @@ definitions:
 
 	t.Run("TreeNode self-reference", func(t *testing.T) {
 		treeNode := result.Document.Definitions()["TreeNode"]
-		if treeNode == nil || treeNode.Value == nil {
+		if treeNode == nil || treeNode.Value() == nil {
 			t.Fatal("TreeNode schema should be populated")
 		}
-		children := treeNode.Value.Properties()["children"]
-		if children == nil || children.Value == nil {
+		children := treeNode.Value().Properties()["children"]
+		if children == nil || children.Value() == nil {
 			t.Fatal("children property should exist")
 		}
-		items := children.Value.Items()
+		items := children.Value().Items()
 		if items == nil {
 			t.Fatal("children.items should exist")
 		}
-		if !items.Circular {
+		if !items.Circular() {
 			t.Error("TreeNode self-reference should be marked circular")
 		}
 	})
 
 	t.Run("Person self-reference", func(t *testing.T) {
 		person := result.Document.Definitions()["Person"]
-		if person == nil || person.Value == nil {
+		if person == nil || person.Value() == nil {
 			t.Fatal("Person schema should be populated")
 		}
-		bestFriend := person.Value.Properties()["bestFriend"]
+		bestFriend := person.Value().Properties()["bestFriend"]
 		if bestFriend == nil {
 			t.Fatal("bestFriend property should exist")
 		}
-		if !bestFriend.Circular {
+		if !bestFriend.Circular() {
 			t.Error("Person self-reference should be marked circular")
 		}
 	})
