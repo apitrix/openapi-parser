@@ -28,7 +28,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := result.Document.Components().SecuritySchemes()["apiKey"].Value
+	scheme := result.Document.Components().SecuritySchemes()["apiKey"].Value()
 	assert.Equal(t, "apiKey", scheme.Type())
 	assert.Equal(t, "header", scheme.In())
 	assert.Equal(t, "X-API-Key", scheme.Name())
@@ -50,7 +50,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := result.Document.Components().SecuritySchemes()["basic"].Value
+	scheme := result.Document.Components().SecuritySchemes()["basic"].Value()
 	assert.Equal(t, "http", scheme.Type())
 	assert.Equal(t, "basic", scheme.Scheme())
 }
@@ -72,7 +72,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := result.Document.Components().SecuritySchemes()["bearer"].Value
+	scheme := result.Document.Components().SecuritySchemes()["bearer"].Value()
 	assert.Equal(t, "http", scheme.Type())
 	assert.Equal(t, "bearer", scheme.Scheme())
 	assert.Equal(t, "JWT", scheme.BearerFormat())
@@ -97,7 +97,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := result.Document.Components().SecuritySchemes()["oauth2"].Value
+	scheme := result.Document.Components().SecuritySchemes()["oauth2"].Value()
 	assert.Equal(t, "oauth2", scheme.Type())
 	assert.NotNil(t, scheme.Flows())
 }
@@ -118,7 +118,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := result.Document.Components().SecuritySchemes()["oidc"].Value
+	scheme := result.Document.Components().SecuritySchemes()["oidc"].Value()
 	assert.Equal(t, "openIdConnect", scheme.Type())
 	assert.Equal(t, "https://example.com/.well-known/openid", scheme.OpenIDConnectURL())
 }
@@ -186,6 +186,6 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	scheme := result.Document.Components().SecuritySchemes()["apiKey"].Value
+	scheme := result.Document.Components().SecuritySchemes()["apiKey"].Value()
 	assert.Equal(t, "API key for authentication", scheme.Description())
 }

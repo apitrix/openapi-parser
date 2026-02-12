@@ -43,7 +43,8 @@ func TestSchema_MarshalJSON_AdditionalPropertiesAsBoolean(t *testing.T) {
 
 func TestSchema_MarshalJSON_AdditionalPropertiesAsSchema(t *testing.T) {
 	// Arrange
-	propSchema := &SchemaRef{Value: NewSchema(SchemaFields{Type: "string"})}
+	propSchema := &SchemaRef{}
+	propSchema.SetValue(NewSchema(SchemaFields{Type: "string"}))
 	s := NewSchema(SchemaFields{Type: "object", AdditionalProperties: propSchema})
 
 	// Act

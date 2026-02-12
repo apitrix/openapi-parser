@@ -170,11 +170,11 @@ components:
 	require.NoError(t, err)
 	schemes := result.Document.Components().SecuritySchemes()
 	assert.Len(t, schemes, 5)
-	assert.Equal(t, "apiKey", schemes["apiKey"].Value.Type())
-	assert.Equal(t, "http", schemes["basicAuth"].Value.Type())
-	assert.Equal(t, "http", schemes["bearerAuth"].Value.Type())
-	assert.Equal(t, "oauth2", schemes["oauth2"].Value.Type())
-	assert.Equal(t, "openIdConnect", schemes["openId"].Value.Type())
+	assert.Equal(t, "apiKey", schemes["apiKey"].Value().Type())
+	assert.Equal(t, "http", schemes["basicAuth"].Value().Type())
+	assert.Equal(t, "http", schemes["bearerAuth"].Value().Type())
+	assert.Equal(t, "oauth2", schemes["oauth2"].Value().Type())
+	assert.Equal(t, "openIdConnect", schemes["openId"].Value().Type())
 }
 
 // --- Extensions ---
@@ -230,7 +230,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	pet := result.Document.Components().Schemas()["Pet"].Value
+	pet := result.Document.Components().Schemas()["Pet"].Value()
 	assert.Equal(t, "#/components/schemas/Owner", pet.Properties()["owner"].Ref)
-	assert.Equal(t, "#/components/schemas/Tag", pet.Properties()["tags"].Value.Items().Ref)
+	assert.Equal(t, "#/components/schemas/Tag", pet.Properties()["tags"].Value().Items().Ref)
 }

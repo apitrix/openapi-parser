@@ -25,6 +25,22 @@ type ParseResult struct {
 
 	// Config is the ParseConfig that was used for this parse.
 	Config *shared.ParseConfig
+
+	// done is closed when background reference resolution is complete.
+	done chan struct{}
+
+	// resolveErr holds any error from background reference resolution.
+	resolveErr error
+}
+
+// Wait blocks until all background reference resolution is complete.
+// Returns any error that occurred during resolution.
+// It is safe to call Wait multiple times.
+func (r *ParseResult) Wait() error {
+	if r.done != nil {
+		<-r.done
+	}
+	return r.resolveErr
 }
 
 // Parse parses OpenAPI 3.0 specification from bytes (JSON or YAML).
@@ -131,16 +147,25 @@ func parseAndResolve(data []byte, basePath string, cfg *shared.ParseConfig) (*Pa
 		return nil, err
 	}
 
-	// Resolve $ref references if enabled
-	if cfg.ResolveInternalRefs || cfg.ResolveExternalRefs {
-		if err := Resolve(doc, docNode, basePath); err != nil {
-			return nil, fmt.Errorf("failed to resolve references: %w", err)
-		}
-	}
-
-	return &ParseResult{
+	result := &ParseResult{
 		Document: doc,
 		Errors:   flattenErrors(doc),
 		Config:   cfg,
-	}, nil
+	}
+
+	// Resolve $ref references in background if enabled
+	if cfg.ResolveInternalRefs || cfg.ResolveExternalRefs {
+		// Init done channels on all $ref nodes BEFORE goroutine starts,
+		// so consumers calling Value() will block correctly.
+		initRefDoneChannels(doc)
+		result.done = make(chan struct{})
+		go func() {
+			defer close(result.done)
+			if err := Resolve(doc, docNode, basePath); err != nil {
+				result.resolveErr = err
+			}
+		}()
+	}
+
+	return result, nil
 }

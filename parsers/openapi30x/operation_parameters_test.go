@@ -105,10 +105,10 @@ paths:
 	require.NoError(t, err)
 	params := result.Document.Paths().Items()["/pets/{petId}"].Get().Parameters()
 	assert.Len(t, params, 4)
-	assert.Equal(t, "path", params[0].Value.In())
-	assert.Equal(t, "query", params[1].Value.In())
-	assert.Equal(t, "header", params[2].Value.In())
-	assert.Equal(t, "cookie", params[3].Value.In())
+	assert.Equal(t, "path", params[0].Value().In())
+	assert.Equal(t, "query", params[1].Value().In())
+	assert.Equal(t, "header", params[2].Value().In())
+	assert.Equal(t, "cookie", params[3].Value().In())
 }
 
 // --- Reference Parameter ---

@@ -77,7 +77,7 @@ paths:
 	require.NoError(t, err)
 	defaultResp := result.Document.Paths().Items()["/pets"].Get().Responses().Default()
 	require.NotNil(t, defaultResp)
-	assert.Equal(t, "Unexpected error", defaultResp.Value.Description())
+	assert.Equal(t, "Unexpected error", defaultResp.Value().Description())
 }
 
 // --- With Content ---
@@ -102,7 +102,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	content := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Content()
+	content := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Content()
 	assert.Contains(t, content, "application/json")
 }
 

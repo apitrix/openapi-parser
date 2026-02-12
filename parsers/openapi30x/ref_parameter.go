@@ -31,7 +31,7 @@ func parseParameterRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.Par
 	if err != nil {
 		return nil, err
 	}
-	ref.Value = parameter
+	ref.SetValue(parameter)
 
 	return ref, nil
 }

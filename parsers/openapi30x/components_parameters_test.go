@@ -115,8 +115,8 @@ components:
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	assert.Len(t, result.Document.Components().Parameters(), 4)
-	assert.Equal(t, "path", result.Document.Components().Parameters()["PathParam"].Value.In())
-	assert.Equal(t, "query", result.Document.Components().Parameters()["QueryParam"].Value.In())
-	assert.Equal(t, "header", result.Document.Components().Parameters()["HeaderParam"].Value.In())
-	assert.Equal(t, "cookie", result.Document.Components().Parameters()["CookieParam"].Value.In())
+	assert.Equal(t, "path", result.Document.Components().Parameters()["PathParam"].Value().In())
+	assert.Equal(t, "query", result.Document.Components().Parameters()["QueryParam"].Value().In())
+	assert.Equal(t, "header", result.Document.Components().Parameters()["HeaderParam"].Value().In())
+	assert.Equal(t, "cookie", result.Document.Components().Parameters()["CookieParam"].Value().In())
 }

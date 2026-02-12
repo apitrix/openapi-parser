@@ -63,34 +63,34 @@ func TestParsePetstore(t *testing.T) {
 
 	// /pets GET - Parameters
 	require.Len(t, petsPath.Get().Parameters(), 1)
-	limitParam := petsPath.Get().Parameters()[0].Value
+	limitParam := petsPath.Get().Parameters()[0].Value()
 	require.NotNil(t, limitParam)
 	assert.Equal(t, "limit", limitParam.Name())
 	assert.Equal(t, "query", limitParam.In())
 	assert.Equal(t, "How many items to return", limitParam.Description())
 	assert.False(t, limitParam.Required())
 	require.NotNil(t, limitParam.Schema())
-	assert.Equal(t, "integer", limitParam.Schema().Value.Type())
-	assert.Equal(t, "int32", limitParam.Schema().Value.Format())
+	assert.Equal(t, "integer", limitParam.Schema().Value().Type())
+	assert.Equal(t, "int32", limitParam.Schema().Value().Format())
 
 	// /pets GET - Responses
 	require.NotNil(t, petsPath.Get().Responses())
 	require.Contains(t, petsPath.Get().Responses().Codes(), "200")
 	require.NotNil(t, petsPath.Get().Responses().Default())
 
-	resp200 := petsPath.Get().Responses().Codes()["200"].Value
+	resp200 := petsPath.Get().Responses().Codes()["200"].Value()
 	assert.Equal(t, "A list of pets", resp200.Description())
 	require.Contains(t, resp200.Content(), "application/json")
-	assert.Equal(t, "array", resp200.Content()["application/json"].Schema().Value.Type())
+	assert.Equal(t, "array", resp200.Content()["application/json"].Schema().Value().Type())
 
 	// /pets - POST
 	require.NotNil(t, petsPath.Post())
 	assert.Equal(t, "Create a pet", petsPath.Post().Summary())
 	assert.Equal(t, "createPet", petsPath.Post().OperationID())
 	require.NotNil(t, petsPath.Post().RequestBody())
-	assert.True(t, petsPath.Post().RequestBody().Value.Required())
-	require.Contains(t, petsPath.Post().RequestBody().Value.Content(), "application/json")
-	assert.Equal(t, "#/components/schemas/NewPet", petsPath.Post().RequestBody().Value.Content()["application/json"].Schema().Ref)
+	assert.True(t, petsPath.Post().RequestBody().Value().Required())
+	require.Contains(t, petsPath.Post().RequestBody().Value().Content(), "application/json")
+	assert.Equal(t, "#/components/schemas/NewPet", petsPath.Post().RequestBody().Value().Content()["application/json"].Schema().Ref)
 
 	// /pets/{petId} - GET
 	petByIdPath := result.Document.Paths().Items()["/pets/{petId}"]
@@ -98,7 +98,7 @@ func TestParsePetstore(t *testing.T) {
 	assert.Equal(t, "Get a pet by ID", petByIdPath.Get().Summary())
 	assert.Equal(t, "getPetById", petByIdPath.Get().OperationID())
 	require.Len(t, petByIdPath.Get().Parameters(), 1)
-	petIdParam := petByIdPath.Get().Parameters()[0].Value
+	petIdParam := petByIdPath.Get().Parameters()[0].Value()
 	assert.Equal(t, "petId", petIdParam.Name())
 	assert.Equal(t, "path", petIdParam.In())
 	assert.True(t, petIdParam.Required())
@@ -107,14 +107,14 @@ func TestParsePetstore(t *testing.T) {
 	// /pets/{petId} GET - Responses
 	require.Contains(t, petByIdPath.Get().Responses().Codes(), "200")
 	require.Contains(t, petByIdPath.Get().Responses().Codes(), "404")
-	assert.Equal(t, "Pet not found", petByIdPath.Get().Responses().Codes()["404"].Value.Description())
+	assert.Equal(t, "Pet not found", petByIdPath.Get().Responses().Codes()["404"].Value().Description())
 
 	// /pets/{petId} - DELETE
 	require.NotNil(t, petByIdPath.Delete())
 	assert.Equal(t, "Delete a pet", petByIdPath.Delete().Summary())
 	assert.Equal(t, "deletePet", petByIdPath.Delete().OperationID())
 	require.Contains(t, petByIdPath.Delete().Responses().Codes(), "204")
-	assert.Equal(t, "Pet deleted", petByIdPath.Delete().Responses().Codes()["204"].Value.Description())
+	assert.Equal(t, "Pet deleted", petByIdPath.Delete().Responses().Codes()["204"].Value().Description())
 
 	// Components - Schemas
 	require.NotNil(t, result.Document.Components())
@@ -123,17 +123,17 @@ func TestParsePetstore(t *testing.T) {
 	require.Contains(t, result.Document.Components().Schemas(), "NewPet")
 	require.Contains(t, result.Document.Components().Schemas(), "Error")
 
-	petSchema := result.Document.Components().Schemas()["Pet"].Value
+	petSchema := result.Document.Components().Schemas()["Pet"].Value()
 	assert.Equal(t, "object", petSchema.Type())
 	assert.Equal(t, []string{"id", "name"}, petSchema.Required())
 	require.Len(t, petSchema.Properties(), 3)
-	assert.Equal(t, "integer", petSchema.Properties()["id"].Value.Type())
-	assert.Equal(t, "string", petSchema.Properties()["name"].Value.Type())
+	assert.Equal(t, "integer", petSchema.Properties()["id"].Value().Type())
+	assert.Equal(t, "string", petSchema.Properties()["name"].Value().Type())
 	assert.Equal(t, "pet-extra", petSchema.VendorExtensions["x-schema-extension"])
 
 	// Components - Security Schemes
 	require.Contains(t, result.Document.Components().SecuritySchemes(), "bearerAuth")
-	bearerScheme := result.Document.Components().SecuritySchemes()["bearerAuth"].Value
+	bearerScheme := result.Document.Components().SecuritySchemes()["bearerAuth"].Value()
 	assert.Equal(t, "http", bearerScheme.Type())
 	assert.Equal(t, "bearer", bearerScheme.Scheme())
 	assert.Equal(t, "JWT", bearerScheme.BearerFormat())

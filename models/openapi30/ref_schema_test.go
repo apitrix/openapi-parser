@@ -25,7 +25,8 @@ func TestSchemaRef_MarshalJSON_Ref(t *testing.T) {
 func TestSchemaRef_MarshalJSON_InlineValue(t *testing.T) {
 	// Arrange
 	schema := NewSchema(SchemaFields{Type: "string", Description: "A name"})
-	ref := &SchemaRef{Value: schema}
+	ref := &SchemaRef{}
+	ref.SetValue(schema)
 
 	// Act
 	got, err := json.Marshal(ref)

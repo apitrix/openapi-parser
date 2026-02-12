@@ -89,7 +89,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := result.Document.Components().Responses()["Success"].Value
+	resp := result.Document.Components().Responses()["Success"].Value()
 	assert.NotNil(t, resp.Content()["application/json"])
 }
 
@@ -112,6 +112,6 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	resp := result.Document.Components().Responses()["RateLimited"].Value
+	resp := result.Document.Components().Responses()["RateLimited"].Value()
 	assert.Contains(t, resp.Headers(), "X-Rate-Limit-Remaining")
 }

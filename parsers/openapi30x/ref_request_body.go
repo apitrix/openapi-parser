@@ -31,7 +31,7 @@ func parseRequestBodyRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.R
 	if err != nil {
 		return nil, err
 	}
-	ref.Value = requestBody
+	ref.SetValue(requestBody)
 
 	return ref, nil
 }

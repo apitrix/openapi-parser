@@ -25,7 +25,8 @@ func TestSecuritySchemeRef_MarshalJSON_Ref(t *testing.T) {
 func TestSecuritySchemeRef_MarshalJSON_InlineValue(t *testing.T) {
 	// Arrange
 	ss := NewSecurityScheme("http", "", "", "", "bearer", "JWT", nil, "")
-	ref := &SecuritySchemeRef{Value: ss}
+	ref := &SecuritySchemeRef{}
+	ref.SetValue(ss)
 
 	// Act
 	got, err := json.Marshal(ref)

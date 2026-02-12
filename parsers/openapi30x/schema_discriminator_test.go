@@ -32,7 +32,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	disc := result.Document.Components().Schemas()["Pet"].Value.Discriminator()
+	disc := result.Document.Components().Schemas()["Pet"].Value().Discriminator()
 	require.NotNil(t, disc)
 	assert.Equal(t, "petType", disc.PropertyName())
 }
@@ -62,7 +62,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	disc := result.Document.Components().Schemas()["Pet"].Value.Discriminator()
+	disc := result.Document.Components().Schemas()["Pet"].Value().Discriminator()
 	require.NotNil(t, disc)
 	assert.Equal(t, "petType", disc.PropertyName())
 	assert.Len(t, disc.Mapping(), 3)
@@ -84,7 +84,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	disc := result.Document.Components().Schemas()["Simple"].Value.Discriminator()
+	disc := result.Document.Components().Schemas()["Simple"].Value().Discriminator()
 	assert.Nil(t, disc)
 }
 
@@ -109,7 +109,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	disc := result.Document.Components().Schemas()["Pet"].Value.Discriminator()
+	disc := result.Document.Components().Schemas()["Pet"].Value().Discriminator()
 	require.NotNil(t, disc)
 	assert.Equal(t, "type", disc.PropertyName())
 	assert.Empty(t, disc.Mapping())
@@ -137,7 +137,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	disc := result.Document.Components().Schemas()["Pet"].Value.Discriminator()
+	disc := result.Document.Components().Schemas()["Pet"].Value().Discriminator()
 	require.NotNil(t, disc)
 	require.NotNil(t, disc.VendorExtensions)
 	assert.Equal(t, "value", disc.VendorExtensions["x-custom"])

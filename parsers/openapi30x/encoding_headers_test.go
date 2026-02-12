@@ -32,7 +32,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	enc := result.Document.Paths().Items()["/upload"].Post().RequestBody().Value.Content()["multipart/form-data"].Encoding()["data"]
+	enc := result.Document.Paths().Items()["/upload"].Post().RequestBody().Value().Content()["multipart/form-data"].Encoding()["data"]
 	require.NotNil(t, enc.Headers())
 	assert.Contains(t, enc.Headers(), "X-Custom")
 }

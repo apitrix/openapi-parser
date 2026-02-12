@@ -25,7 +25,8 @@ func TestLinkRef_MarshalJSON_Ref(t *testing.T) {
 func TestLinkRef_MarshalJSON_InlineValue(t *testing.T) {
 	// Arrange
 	l := NewLink("", "getUser", nil, nil, "Get a user", nil)
-	ref := &LinkRef{Value: l}
+	ref := &LinkRef{}
+	ref.SetValue(l)
 
 	// Act
 	got, err := json.Marshal(ref)

@@ -7,7 +7,8 @@ import (
 
 func TestParameter_MarshalJSON_AllFields(t *testing.T) {
 	// Arrange
-	schema := &SchemaRef{Value: NewSchema(SchemaFields{Type: "integer"})}
+	schema := &SchemaRef{}
+	schema.SetValue(NewSchema(SchemaFields{Type: "integer"}))
 	p := NewParameter("limit", "query", "Max items", false, false, false, "", nil, false, schema, nil, nil, nil)
 
 	// Act

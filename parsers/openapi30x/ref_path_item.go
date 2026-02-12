@@ -31,7 +31,7 @@ func parsePathItemRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.Path
 	if err != nil {
 		return nil, err
 	}
-	ref.Value = pathItem
+	ref.SetValue(pathItem)
 
 	return ref, nil
 }

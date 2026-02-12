@@ -32,7 +32,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	rb := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value
+	rb := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value()
 	require.NotNil(t, rb)
 	assert.NotNil(t, rb.Content()["application/json"])
 }
@@ -59,7 +59,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	rb := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value
+	rb := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value()
 	assert.True(t, rb.Required())
 }
 
@@ -132,6 +132,6 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	rb := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value
+	rb := result.Document.Paths().Items()["/pets"].Post().RequestBody().Value()
 	assert.Equal(t, "Pet to add to the store", rb.Description())
 }

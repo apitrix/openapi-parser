@@ -64,8 +64,8 @@ paths:
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
 	// Verify deep schema is accessible
-	resp := result.Document.Paths().Items()["/pets/{id}"].Get().Responses().Codes()["200"].Value
-	schema := resp.Content()["application/json"].Schema().Value
+	resp := result.Document.Paths().Items()["/pets/{id}"].Get().Responses().Codes()["200"].Value()
+	schema := resp.Content()["application/json"].Schema().Value()
 	assert.NotNil(t, schema.Properties()["nested"])
 }
 
@@ -146,5 +146,5 @@ paths:
 	assert.Equal(t, "info", result.Document.Info().VendorExtensions["x-info-ext"])
 	assert.Equal(t, "path", result.Document.Paths().Items()["/pets"].VendorExtensions["x-path-ext"])
 	assert.Equal(t, "operation", result.Document.Paths().Items()["/pets"].Get().VendorExtensions["x-op-ext"])
-	assert.Equal(t, "response", result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.VendorExtensions["x-resp-ext"])
+	assert.Equal(t, "response", result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().VendorExtensions["x-resp-ext"])
 }

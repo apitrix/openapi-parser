@@ -7,8 +7,10 @@ import (
 
 func TestComponents_MarshalJSON_WithSchemas(t *testing.T) {
 	// Arrange
+	petRef := &SchemaRef{}
+	petRef.SetValue(NewSchema(SchemaFields{Type: "object"}))
 	schemas := map[string]*SchemaRef{
-		"Pet": {Value: NewSchema(SchemaFields{Type: "object"})},
+		"Pet": petRef,
 	}
 	c := NewComponents(schemas, nil, nil, nil, nil, nil, nil, nil, nil)
 
@@ -53,11 +55,15 @@ func TestComponents_MarshalJSON_Empty(t *testing.T) {
 
 func TestComponents_MarshalJSON_Multiple(t *testing.T) {
 	// Arrange
+	petRef := &SchemaRef{}
+	petRef.SetValue(NewSchema(SchemaFields{Type: "object"}))
 	schemas := map[string]*SchemaRef{
-		"Pet": {Value: NewSchema(SchemaFields{Type: "object"})},
+		"Pet": petRef,
 	}
+	bearerRef := &SecuritySchemeRef{}
+	bearerRef.SetValue(NewSecurityScheme("http", "", "", "", "bearer", "", nil, ""))
 	secSchemes := map[string]*SecuritySchemeRef{
-		"BearerAuth": {Value: NewSecurityScheme("http", "", "", "", "bearer", "", nil, "")},
+		"BearerAuth": bearerRef,
 	}
 	c := NewComponents(schemas, nil, nil, nil, nil, nil, secSchemes, nil, nil)
 

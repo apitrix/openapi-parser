@@ -26,7 +26,8 @@ func TestCallbackRef_MarshalJSON_InlineValue(t *testing.T) {
 	// Arrange
 	pi := NewPathItem("", "Webhook", "", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 	cb := NewCallback(map[string]*PathItem{"{$request.body#/callbackUrl}": pi})
-	ref := &CallbackRef{Value: cb}
+	ref := &CallbackRef{}
+	ref.SetValue(cb)
 
 	// Act
 	got, err := json.Marshal(ref)

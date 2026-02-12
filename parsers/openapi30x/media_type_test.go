@@ -31,7 +31,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	mt := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Content()["application/json"]
+	mt := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Content()["application/json"]
 	require.NotNil(t, mt)
 	assert.NotNil(t, mt.Schema())
 }
@@ -65,7 +65,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	content := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Content()
+	content := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Content()
 	assert.Len(t, content, 4)
 }
 
@@ -92,7 +92,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	mt := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Content()["application/json"]
+	mt := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Content()["application/json"]
 	assert.NotNil(t, mt.Example())
 }
 
@@ -127,7 +127,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	mt := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Content()["application/json"]
+	mt := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Content()["application/json"]
 	assert.Len(t, mt.Examples(), 2)
 	assert.Contains(t, mt.Examples(), "cat")
 	assert.Contains(t, mt.Examples(), "dog")
@@ -165,7 +165,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	enc := result.Document.Paths().Items()["/upload"].Post().RequestBody().Value.Content()["multipart/form-data"].Encoding()
+	enc := result.Document.Paths().Items()["/upload"].Post().RequestBody().Value().Content()["multipart/form-data"].Encoding()
 	assert.Len(t, enc, 2)
 	assert.Contains(t, enc, "file")
 	assert.Contains(t, enc, "metadata")
@@ -195,7 +195,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	mt := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Content()["application/json"]
+	mt := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Content()["application/json"]
 	assert.Equal(t, "#/components/schemas/Pet", mt.Schema().Ref)
 }
 
@@ -220,7 +220,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	mt := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Content()["application/json"]
+	mt := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Content()["application/json"]
 	require.NotNil(t, mt.VendorExtensions)
 	assert.Equal(t, "value", mt.VendorExtensions["x-custom"])
 }
@@ -250,7 +250,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	content := result.Document.Paths().Items()["/files"].Get().Responses().Codes()["200"].Value.Content()
+	content := result.Document.Paths().Items()["/files"].Get().Responses().Codes()["200"].Value().Content()
 	assert.Contains(t, content, "*/*")
 	assert.Contains(t, content, "image/*")
 }

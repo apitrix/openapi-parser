@@ -25,7 +25,8 @@ func TestParameterRef_MarshalJSON_Ref(t *testing.T) {
 func TestParameterRef_MarshalJSON_InlineValue(t *testing.T) {
 	// Arrange
 	p := NewParameter("limit", "query", "Max items", false, false, false, "", nil, false, nil, nil, nil, nil)
-	ref := &ParameterRef{Value: p}
+	ref := &ParameterRef{}
+	ref.SetValue(p)
 
 	// Act
 	got, err := json.Marshal(ref)

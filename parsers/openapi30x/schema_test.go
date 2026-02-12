@@ -27,7 +27,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Name"].Value
+	schema := result.Document.Components().Schemas()["Name"].Value()
 	assert.Equal(t, "string", schema.Type())
 }
 
@@ -45,7 +45,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Count"].Value
+	schema := result.Document.Components().Schemas()["Count"].Value()
 	assert.Equal(t, "integer", schema.Type())
 	assert.Equal(t, "int32", schema.Format())
 }
@@ -64,7 +64,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Price"].Value
+	schema := result.Document.Components().Schemas()["Price"].Value()
 	assert.Equal(t, "number", schema.Type())
 	assert.Equal(t, "double", schema.Format())
 }
@@ -82,7 +82,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Active"].Value
+	schema := result.Document.Components().Schemas()["Active"].Value()
 	assert.Equal(t, "boolean", schema.Type())
 }
 
@@ -101,7 +101,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Tags"].Value
+	schema := result.Document.Components().Schemas()["Tags"].Value()
 	assert.Equal(t, "array", schema.Type())
 	require.NotNil(t, schema.Items())
 }
@@ -122,7 +122,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Pet"].Value
+	schema := result.Document.Components().Schemas()["Pet"].Value()
 	assert.Equal(t, "object", schema.Type())
 	assert.Len(t, schema.Properties(), 1)
 }
@@ -145,7 +145,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Username"].Value
+	schema := result.Document.Components().Schemas()["Username"].Value()
 	require.NotNil(t, schema.MinLength())
 	assert.Equal(t, uint64(3), *schema.MinLength())
 	require.NotNil(t, schema.MaxLength())
@@ -172,7 +172,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Age"].Value
+	schema := result.Document.Components().Schemas()["Age"].Value()
 	require.NotNil(t, schema.Minimum())
 	assert.Equal(t, float64(0), *schema.Minimum())
 	require.NotNil(t, schema.Maximum())
@@ -195,7 +195,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Even"].Value
+	schema := result.Document.Components().Schemas()["Even"].Value()
 	require.NotNil(t, schema.MultipleOf())
 	assert.Equal(t, float64(2), *schema.MultipleOf())
 }
@@ -220,7 +220,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Tags"].Value
+	schema := result.Document.Components().Schemas()["Tags"].Value()
 	require.NotNil(t, schema.MinItems())
 	assert.Equal(t, uint64(1), *schema.MinItems())
 	require.NotNil(t, schema.MaxItems())
@@ -245,7 +245,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Config"].Value
+	schema := result.Document.Components().Schemas()["Config"].Value()
 	require.NotNil(t, schema.MinProperties())
 	assert.Equal(t, uint64(1), *schema.MinProperties())
 	require.NotNil(t, schema.MaxProperties())
@@ -280,7 +280,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Pet"].Value
+	schema := result.Document.Components().Schemas()["Pet"].Value()
 	assert.Len(t, schema.Required(), 3)
 	assert.Contains(t, schema.Required(), "id")
 	assert.Contains(t, schema.Required(), "name")
@@ -303,7 +303,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["OptionalName"].Value
+	schema := result.Document.Components().Schemas()["OptionalName"].Value()
 	assert.True(t, schema.Nullable())
 }
 
@@ -327,9 +327,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["User"].Value
-	assert.True(t, schema.Properties()["id"].Value.ReadOnly())
-	assert.True(t, schema.Properties()["password"].Value.WriteOnly())
+	schema := result.Document.Components().Schemas()["User"].Value()
+	assert.True(t, schema.Properties()["id"].Value().ReadOnly())
+	assert.True(t, schema.Properties()["password"].Value().WriteOnly())
 }
 
 func TestParseSchema_Deprecated(t *testing.T) {
@@ -346,7 +346,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["OldApi"].Value
+	schema := result.Document.Components().Schemas()["OldApi"].Value()
 	assert.True(t, schema.Deprecated())
 }
 
@@ -369,7 +369,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Status"].Value
+	schema := result.Document.Components().Schemas()["Status"].Value()
 	assert.Len(t, schema.Enum(), 3)
 }
 
@@ -387,7 +387,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Count"].Value
+	schema := result.Document.Components().Schemas()["Count"].Value()
 	assert.Equal(t, 10, schema.Default())
 }
 
@@ -405,7 +405,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Name"].Value
+	schema := result.Document.Components().Schemas()["Name"].Value()
 	assert.Equal(t, "John Doe", schema.Example())
 }
 
@@ -426,7 +426,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Pet"].Value
+	schema := result.Document.Components().Schemas()["Pet"].Value()
 	assert.Equal(t, "Pet Model", schema.Title())
 	assert.Equal(t, "A representation of a pet in the system", schema.Description())
 }
@@ -451,7 +451,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Pet"].Value
+	schema := result.Document.Components().Schemas()["Pet"].Value()
 	require.NotNil(t, schema.VendorExtensions)
 	assert.Equal(t, true, schema.VendorExtensions["x-internal"])
 	assert.Equal(t, "PetModel", schema.VendorExtensions["x-model-name"])
@@ -472,7 +472,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Pet"].Value
+	schema := result.Document.Components().Schemas()["Pet"].Value()
 	assert.Greater(t, schema.Trix.Source.Start.Line, 0)
 	assert.Greater(t, schema.Trix.Source.Start.Column, 0)
 }
@@ -492,7 +492,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Any"].Value
+	schema := result.Document.Components().Schemas()["Any"].Value()
 	require.NotNil(t, schema)
 	assert.Empty(t, schema.Type())
 }
@@ -527,9 +527,9 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Order"].Value
-	items := schema.Properties()["items"].Value
+	schema := result.Document.Components().Schemas()["Order"].Value()
+	items := schema.Properties()["items"].Value()
 	require.NotNil(t, items.Items())
-	itemSchema := items.Items().Value
+	itemSchema := items.Items().Value()
 	require.NotNil(t, itemSchema.Properties()["product"])
 }

@@ -25,7 +25,8 @@ func TestPathItemRef_MarshalJSON_Ref(t *testing.T) {
 func TestPathItemRef_MarshalJSON_InlineValue(t *testing.T) {
 	// Arrange
 	pi := NewPathItem("", "Shared path item", "", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	ref := &PathItemRef{Value: pi}
+	ref := &PathItemRef{}
+	ref.SetValue(pi)
 
 	// Act
 	got, err := json.Marshal(ref)

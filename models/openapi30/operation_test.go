@@ -7,8 +7,10 @@ import (
 
 func TestOperation_MarshalJSON_AllFields(t *testing.T) {
 	// Arrange
+	defaultRef := &ResponseRef{}
+	defaultRef.SetValue(NewResponse("OK", nil, nil, nil))
 	resp := NewResponses(
-		&ResponseRef{Value: NewResponse("OK", nil, nil, nil)},
+		defaultRef,
 		nil,
 	)
 	op := NewOperation(

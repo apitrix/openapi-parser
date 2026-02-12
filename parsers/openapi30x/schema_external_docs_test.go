@@ -28,7 +28,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	extDocs := result.Document.Components().Schemas()["Pet"].Value.ExternalDocs()
+	extDocs := result.Document.Components().Schemas()["Pet"].Value().ExternalDocs()
 	require.NotNil(t, extDocs)
 	assert.Equal(t, "https://example.com/pet-docs", extDocs.URL())
 }
@@ -51,7 +51,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	extDocs := result.Document.Components().Schemas()["Pet"].Value.ExternalDocs()
+	extDocs := result.Document.Components().Schemas()["Pet"].Value().ExternalDocs()
 	assert.Equal(t, "Find more info about pets here", extDocs.Description())
 }
 
@@ -70,7 +70,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	extDocs := result.Document.Components().Schemas()["Pet"].Value.ExternalDocs()
+	extDocs := result.Document.Components().Schemas()["Pet"].Value().ExternalDocs()
 	assert.Nil(t, extDocs)
 }
 
@@ -92,7 +92,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	extDocs := result.Document.Components().Schemas()["Pet"].Value.ExternalDocs()
+	extDocs := result.Document.Components().Schemas()["Pet"].Value().ExternalDocs()
 	require.NotNil(t, extDocs.VendorExtensions)
 	assert.Equal(t, "value", extDocs.VendorExtensions["x-custom"])
 }

@@ -46,7 +46,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Test"].Value
+	schema := result.Document.Components().Schemas()["Test"].Value()
 	assert.True(t, schema.Deprecated())
 	assert.True(t, schema.Nullable())
 	assert.False(t, schema.ReadOnly())
@@ -68,7 +68,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Test"].Value
+	schema := result.Document.Components().Schemas()["Test"].Value()
 	require.NotNil(t, schema.MinLength())
 	require.NotNil(t, schema.MaxLength())
 	assert.Equal(t, uint64(5), *schema.MinLength())
@@ -91,7 +91,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Test"].Value
+	schema := result.Document.Components().Schemas()["Test"].Value()
 	require.NotNil(t, schema.Minimum())
 	require.NotNil(t, schema.Maximum())
 	require.NotNil(t, schema.MultipleOf())
@@ -117,7 +117,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	schema := result.Document.Components().Schemas()["Test"].Value
+	schema := result.Document.Components().Schemas()["Test"].Value()
 	assert.Len(t, schema.Required(), 3)
 	assert.Contains(t, schema.Required(), "id")
 	assert.Contains(t, schema.Required(), "name")
@@ -144,7 +144,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	props := result.Document.Components().Schemas()["Test"].Value.Properties()
+	props := result.Document.Components().Schemas()["Test"].Value().Properties()
 	assert.Len(t, props, 3)
 	assert.Contains(t, props, "a")
 	assert.Contains(t, props, "b")
@@ -192,7 +192,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	enum := result.Document.Components().Schemas()["Status"].Value.Enum()
+	enum := result.Document.Components().Schemas()["Status"].Value().Enum()
 	assert.Len(t, enum, 4)
 }
 
@@ -216,7 +216,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	assert.Equal(t, "hello", result.Document.Components().Schemas()["StringDefault"].Value.Default())
-	assert.Equal(t, 42, result.Document.Components().Schemas()["IntDefault"].Value.Default())
-	assert.Equal(t, true, result.Document.Components().Schemas()["BoolDefault"].Value.Default())
+	assert.Equal(t, "hello", result.Document.Components().Schemas()["StringDefault"].Value().Default())
+	assert.Equal(t, 42, result.Document.Components().Schemas()["IntDefault"].Value().Default())
+	assert.Equal(t, true, result.Document.Components().Schemas()["BoolDefault"].Value().Default())
 }

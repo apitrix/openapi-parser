@@ -31,7 +31,7 @@ func parseSecuritySchemeRef(node *yaml.Node, ctx *ParseContext) (*openapi30model
 	if err != nil {
 		return nil, err
 	}
-	ref.Value = scheme
+	ref.SetValue(scheme)
 
 	return ref, nil
 }

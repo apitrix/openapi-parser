@@ -25,7 +25,8 @@ func TestExampleRef_MarshalJSON_Ref(t *testing.T) {
 func TestExampleRef_MarshalJSON_InlineValue(t *testing.T) {
 	// Arrange
 	ex := NewExample("Dog", "", nil, "")
-	ref := &ExampleRef{Value: ex}
+	ref := &ExampleRef{}
+	ref.SetValue(ex)
 
 	// Act
 	got, err := json.Marshal(ref)

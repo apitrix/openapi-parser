@@ -25,7 +25,8 @@ func TestResponseRef_MarshalJSON_Ref(t *testing.T) {
 func TestResponseRef_MarshalJSON_InlineValue(t *testing.T) {
 	// Arrange
 	resp := NewResponse("Success", nil, nil, nil)
-	ref := &ResponseRef{Value: resp}
+	ref := &ResponseRef{}
+	ref.SetValue(resp)
 
 	// Act
 	got, err := json.Marshal(ref)

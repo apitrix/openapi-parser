@@ -25,7 +25,8 @@ func TestRequestBodyRef_MarshalJSON_Ref(t *testing.T) {
 func TestRequestBodyRef_MarshalJSON_InlineValue(t *testing.T) {
 	// Arrange
 	rb := NewRequestBody("A request body", nil, true)
-	ref := &RequestBodyRef{Value: rb}
+	ref := &RequestBodyRef{}
+	ref.SetValue(rb)
 
 	// Act
 	got, err := json.Marshal(ref)

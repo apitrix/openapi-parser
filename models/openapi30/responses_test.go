@@ -7,10 +7,15 @@ import (
 
 func TestResponses_MarshalJSON_DefaultFirst(t *testing.T) {
 	// Arrange
-	defaultResp := &ResponseRef{Value: NewResponse("Unexpected error", nil, nil, nil)}
+	defaultResp := &ResponseRef{}
+	defaultResp.SetValue(NewResponse("Unexpected error", nil, nil, nil))
+	ok200 := &ResponseRef{}
+	ok200.SetValue(NewResponse("OK", nil, nil, nil))
+	nf404 := &ResponseRef{}
+	nf404.SetValue(NewResponse("Not Found", nil, nil, nil))
 	codes := map[string]*ResponseRef{
-		"200": {Value: NewResponse("OK", nil, nil, nil)},
-		"404": {Value: NewResponse("Not Found", nil, nil, nil)},
+		"200": ok200,
+		"404": nf404,
 	}
 	r := NewResponses(defaultResp, codes)
 
@@ -38,8 +43,10 @@ func TestResponses_MarshalJSON_DefaultFirst(t *testing.T) {
 
 func TestResponses_MarshalJSON_NoDefault(t *testing.T) {
 	// Arrange
+	ok200 := &ResponseRef{}
+	ok200.SetValue(NewResponse("OK", nil, nil, nil))
 	codes := map[string]*ResponseRef{
-		"200": {Value: NewResponse("OK", nil, nil, nil)},
+		"200": ok200,
 	}
 	r := NewResponses(nil, codes)
 

@@ -31,7 +31,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()["X-Rate-Limit"].Value
+	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Headers()["X-Rate-Limit"].Value()
 	require.NotNil(t, header)
 	assert.NotNil(t, header.Schema())
 }
@@ -57,7 +57,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()["X-Rate-Limit"].Value
+	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Headers()["X-Rate-Limit"].Value()
 	assert.Equal(t, "Number of requests allowed per hour", header.Description())
 }
 
@@ -90,7 +90,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	headers := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()
+	headers := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Headers()
 	assert.Len(t, headers, 4)
 }
 
@@ -119,9 +119,9 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	headers := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()
-	assert.True(t, headers["X-Required"].Value.Required())
-	assert.True(t, headers["X-Deprecated"].Value.Deprecated())
+	headers := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Headers()
+	assert.True(t, headers["X-Required"].Value().Required())
+	assert.True(t, headers["X-Deprecated"].Value().Deprecated())
 }
 
 // --- Style and Explode ---
@@ -148,7 +148,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()["X-Custom"].Value
+	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Headers()["X-Custom"].Value()
 	assert.Equal(t, "simple", header.Style())
 	require.NotNil(t, header.Explode())
 	assert.False(t, *header.Explode())
@@ -176,7 +176,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()["X-Custom"].Value
+	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Headers()["X-Custom"].Value()
 	require.NotNil(t, header.Content())
 	assert.Contains(t, header.Content(), "application/json")
 }
@@ -206,7 +206,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()["X-Custom"].Value
+	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Headers()["X-Custom"].Value()
 	assert.Len(t, header.Examples(), 2)
 }
 
@@ -234,7 +234,7 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	headerRef := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()["X-Rate-Limit"]
+	headerRef := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Headers()["X-Rate-Limit"]
 	assert.Equal(t, "#/components/headers/RateLimit", headerRef.Ref)
 }
 
@@ -259,7 +259,7 @@ paths:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value.Headers()["X-Custom"].Value
+	header := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Headers()["X-Custom"].Value()
 	require.NotNil(t, header.VendorExtensions)
 	assert.Equal(t, true, header.VendorExtensions["x-internal"])
 }

@@ -89,6 +89,6 @@ components:
 `
 	result, err := Parse([]byte(yaml))
 	require.NoError(t, err)
-	header := result.Document.Components().Headers()["X-Rate-Limit"].Value
+	header := result.Document.Components().Headers()["X-Rate-Limit"].Value()
 	assert.Equal(t, "The number of allowed requests per hour", header.Description())
 }
