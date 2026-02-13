@@ -391,3 +391,325 @@ func TestRefResolver_RemoteRefInvalidYAML(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "failed to parse response")
 }
+
+// =============================================================================
+// $anchor resolution tests
+// =============================================================================
+
+func TestBuildAnchorIndex_FindsAnchors(t *testing.T) {
+	// Arrange
+	root := parseYAML(t, `
+components:
+  schemas:
+    Pet:
+      $anchor: pet
+      type: object
+      properties:
+        name:
+          type: string
+    Dog:
+      $anchor: dog
+      type: object
+`)
+	resolver := NewRefResolverWithFs(".", root, afero.NewMemMapFs())
+
+	// Act
+	resolver.BuildAnchorIndex("", root)
+
+	// Assert
+	assert.Contains(t, resolver.anchorCache, "")
+	assert.Contains(t, resolver.anchorCache[""], "pet")
+	assert.Contains(t, resolver.anchorCache[""], "dog")
+}
+
+func TestResolve_AnchorRef(t *testing.T) {
+	// Arrange
+	root := parseYAML(t, `
+components:
+  schemas:
+    Pet:
+      $anchor: pet
+      type: object
+      properties:
+        name:
+          type: string
+`)
+	resolver := NewRefResolverWithFs(".", root, afero.NewMemMapFs())
+	resolver.BuildAnchorIndex("", root)
+
+	// Act
+	result, err := resolver.Resolve("#pet")
+
+	// Assert
+	require.NoError(t, err)
+	require.NotNil(t, result.Node)
+	assert.False(t, result.Circular)
+	// The resolved node should be the mapping node containing $anchor
+	assert.Equal(t, yaml.MappingNode, result.Node.Kind)
+}
+
+func TestResolve_AnchorNotFound(t *testing.T) {
+	// Arrange
+	root := parseYAML(t, `type: object`)
+	resolver := NewRefResolverWithFs(".", root, afero.NewMemMapFs())
+	resolver.BuildAnchorIndex("", root)
+
+	// Act
+	_, err := resolver.Resolve("#nonexistent")
+
+	// Assert
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "anchor \"nonexistent\" not found")
+}
+
+func TestResolve_AnchorInExternalFile(t *testing.T) {
+	// Arrange
+	fs := afero.NewMemMapFs()
+	_ = afero.WriteFile(fs, "/base/models.yaml", []byte(`
+Tag:
+  $anchor: tag
+  type: object
+  properties:
+    id:
+      type: integer
+`), 0644)
+
+	root := parseYAML(t, `type: object`)
+	resolver := NewRefResolverWithFs("/base", root, fs)
+
+	// Load the external file and build its anchor index
+	extNode, err := resolver.loadFile("models.yaml")
+	require.NoError(t, err)
+	resolver.BuildAnchorIndex(resolver.anchorDocKey("models.yaml"), extNode)
+
+	// Act
+	result, err := resolver.Resolve("models.yaml#tag")
+
+	// Assert
+	require.NoError(t, err)
+	require.NotNil(t, result.Node)
+	assert.Equal(t, yaml.MappingNode, result.Node.Kind)
+}
+
+// =============================================================================
+// $dynamicRef / $dynamicAnchor tests
+// =============================================================================
+
+func TestBuildDynamicAnchorIndex_FindsDynamicAnchors(t *testing.T) {
+	// Arrange
+	root := parseYAML(t, `
+components:
+  schemas:
+    Base:
+      $dynamicAnchor: meta
+      type: object
+    Extension:
+      $dynamicAnchor: ext
+      type: string
+`)
+	resolver := NewRefResolverWithFs(".", root, afero.NewMemMapFs())
+
+	// Act
+	resolver.BuildDynamicAnchorIndex(root)
+
+	// Assert
+	assert.Contains(t, resolver.dynamicAnchorCache, "meta")
+	assert.Contains(t, resolver.dynamicAnchorCache, "ext")
+}
+
+func TestResolveDynamicRef(t *testing.T) {
+	// Arrange
+	root := parseYAML(t, `
+components:
+  schemas:
+    Base:
+      $dynamicAnchor: meta
+      type: object
+      properties:
+        name:
+          type: string
+`)
+	resolver := NewRefResolverWithFs(".", root, afero.NewMemMapFs())
+	resolver.BuildDynamicAnchorIndex(root)
+
+	// Act
+	result, err := resolver.ResolveDynamicRef("#meta")
+
+	// Assert
+	require.NoError(t, err)
+	require.NotNil(t, result.Node)
+	assert.Equal(t, yaml.MappingNode, result.Node.Kind)
+}
+
+func TestResolveDynamicRef_NotFound(t *testing.T) {
+	// Arrange
+	root := parseYAML(t, `type: object`)
+	resolver := NewRefResolverWithFs(".", root, afero.NewMemMapFs())
+	resolver.BuildDynamicAnchorIndex(root)
+
+	// Act
+	_, err := resolver.ResolveDynamicRef("#nonexistent")
+
+	// Assert
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "$dynamicAnchor \"nonexistent\" not found")
+}
+
+func TestResolveDynamicRef_Empty(t *testing.T) {
+	// Arrange
+	root := parseYAML(t, `type: object`)
+	resolver := NewRefResolverWithFs(".", root, afero.NewMemMapFs())
+
+	// Act
+	_, err := resolver.ResolveDynamicRef("#")
+
+	// Assert
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "empty $dynamicRef")
+}
+
+// =============================================================================
+// discriminator.mapping resolution tests
+// =============================================================================
+
+func TestResolveMapping_BareSchemaName(t *testing.T) {
+	// Arrange
+	root := parseYAML(t, `
+components:
+  schemas:
+    Dog:
+      type: object
+      properties:
+        breed:
+          type: string
+`)
+	resolver := NewRefResolverWithFs(".", root, afero.NewMemMapFs())
+
+	// Act — bare name "Dog" should resolve as #/components/schemas/Dog
+	result, err := resolver.ResolveMapping("Dog")
+
+	// Assert
+	require.NoError(t, err)
+	require.NotNil(t, result.Node)
+	assert.Equal(t, yaml.MappingNode, result.Node.Kind)
+}
+
+func TestResolveMapping_RefString(t *testing.T) {
+	// Arrange
+	root := parseYAML(t, `
+components:
+  schemas:
+    Cat:
+      type: object
+`)
+	resolver := NewRefResolverWithFs(".", root, afero.NewMemMapFs())
+
+	// Act — explicit ref string
+	result, err := resolver.ResolveMapping("#/components/schemas/Cat")
+
+	// Assert
+	require.NoError(t, err)
+	require.NotNil(t, result.Node)
+}
+
+func TestResolveMapping_ExternalFile(t *testing.T) {
+	// Arrange
+	fs := afero.NewMemMapFs()
+	_ = afero.WriteFile(fs, "/base/models/dog.yaml", []byte(`
+type: object
+properties:
+  breed:
+    type: string
+`), 0644)
+
+	root := parseYAML(t, `type: object`)
+	resolver := NewRefResolverWithFs("/base", root, fs)
+
+	// Act — external file ref
+	result, err := resolver.ResolveMapping("./models/dog.yaml")
+
+	// Assert
+	require.NoError(t, err)
+	require.NotNil(t, result.Node)
+}
+
+func TestResolveMapping_NotFound(t *testing.T) {
+	// Arrange
+	root := parseYAML(t, `
+components:
+  schemas:
+    Cat:
+      type: object
+`)
+	resolver := NewRefResolverWithFs(".", root, afero.NewMemMapFs())
+
+	// Act
+	_, err := resolver.ResolveMapping("NonExistent")
+
+	// Assert
+	require.Error(t, err)
+}
+
+// =============================================================================
+// ParseOperationRef tests
+// =============================================================================
+
+func TestParseOperationRef_Simple(t *testing.T) {
+	// Act
+	path, method, err := ParseOperationRef("#/paths/~1users/get")
+
+	// Assert
+	require.NoError(t, err)
+	assert.Equal(t, "/users", path)
+	assert.Equal(t, "get", method)
+}
+
+func TestParseOperationRef_WithPathParam(t *testing.T) {
+	// Act
+	path, method, err := ParseOperationRef("#/paths/~1users~1{id}/get")
+
+	// Assert
+	require.NoError(t, err)
+	assert.Equal(t, "/users/{id}", path)
+	assert.Equal(t, "get", method)
+}
+
+func TestParseOperationRef_NestedPath(t *testing.T) {
+	// Act
+	path, method, err := ParseOperationRef("#/paths/~1api~1v1~1users~1{userId}~1orders/post")
+
+	// Assert
+	require.NoError(t, err)
+	assert.Equal(t, "/api/v1/users/{userId}/orders", path)
+	assert.Equal(t, "post", method)
+}
+
+func TestParseOperationRef_AllMethods(t *testing.T) {
+	methods := []string{"get", "put", "post", "delete", "options", "head", "patch", "trace"}
+	for _, m := range methods {
+		t.Run(m, func(t *testing.T) {
+			path, method, err := ParseOperationRef("#/paths/~1test/" + m)
+			require.NoError(t, err)
+			assert.Equal(t, "/test", path)
+			assert.Equal(t, m, method)
+		})
+	}
+}
+
+func TestParseOperationRef_InvalidMethod(t *testing.T) {
+	_, _, err := ParseOperationRef("#/paths/~1users/foo")
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "invalid HTTP method")
+}
+
+func TestParseOperationRef_NoPointer(t *testing.T) {
+	_, _, err := ParseOperationRef("Pet")
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "has no JSON pointer")
+}
+
+func TestParseOperationRef_NotPathsFormat(t *testing.T) {
+	_, _, err := ParseOperationRef("#/components/schemas/Pet")
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "does not match")
+}

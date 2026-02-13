@@ -226,3 +226,106 @@ components:
 		assert.True(t, bestFriend.Circular(), "Person self-reference should be marked circular")
 	})
 }
+
+func TestResolve_DiscriminatorMapping(t *testing.T) {
+	spec := `openapi: "3.0.3"
+info:
+  title: Test
+  version: "1.0"
+paths: {}
+components:
+  schemas:
+    Pet:
+      type: object
+      discriminator:
+        propertyName: petType
+        mapping:
+          dog: '#/components/schemas/Dog'
+          cat: Cat
+      oneOf:
+        - $ref: '#/components/schemas/Dog'
+        - $ref: '#/components/schemas/Cat'
+    Dog:
+      type: object
+      properties:
+        petType:
+          type: string
+        breed:
+          type: string
+    Cat:
+      type: object
+      properties:
+        petType:
+          type: string
+        color:
+          type: string`
+
+	result, docNode := parseForResolve(t, spec)
+	err := Resolve(result.Document, docNode, "/base")
+	require.NoError(t, err)
+
+	pet := result.Document.Components().Schemas()["Pet"]
+	require.NotNil(t, pet)
+	require.NotNil(t, pet.Value())
+
+	disc := pet.Value().Discriminator()
+	require.NotNil(t, disc, "Pet should have a discriminator")
+
+	resolved := disc.Trix.ResolvedMapping
+	require.NotNil(t, resolved, "discriminator should have ResolvedMapping in Trix")
+	assert.Len(t, resolved, 2)
+
+	require.NotNil(t, resolved["dog"])
+	require.NotNil(t, resolved["dog"].Value(), "'dog' mapping should be resolved")
+	assert.NotNil(t, resolved["dog"].Value().Properties()["breed"])
+
+	require.NotNil(t, resolved["cat"])
+	require.NotNil(t, resolved["cat"].Value(), "'cat' mapping should be resolved (bare name)")
+	assert.NotNil(t, resolved["cat"].Value().Properties()["color"])
+}
+
+func TestResolve_OperationRef(t *testing.T) {
+	spec := `openapi: "3.0.3"
+info:
+  title: Test
+  version: "1.0"
+paths:
+  /users:
+    post:
+      operationId: createUser
+      responses:
+        "201":
+          description: Created
+          links:
+            GetUser:
+              operationRef: '#/paths/~1users~1{id}/get'
+              description: Get the created user
+  /users/{id}:
+    get:
+      operationId: getUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ok`
+
+	result, docNode := parseForResolve(t, spec)
+	err := Resolve(result.Document, docNode, "/base")
+	require.NoError(t, err)
+
+	resp := result.Document.Paths().Items()["/users"].Post().Responses().Codes()["201"]
+	require.NotNil(t, resp)
+	require.NotNil(t, resp.Value())
+
+	getUserLink := resp.Value().Links()["GetUser"]
+	require.NotNil(t, getUserLink)
+	require.NotNil(t, getUserLink.Value())
+
+	resolvedOp := getUserLink.Value().Trix.ResolvedOperation
+	require.NotNil(t, resolvedOp, "GetUser link should have ResolvedOperation in Trix")
+	assert.Equal(t, "getUser", resolvedOp.OperationID())
+}

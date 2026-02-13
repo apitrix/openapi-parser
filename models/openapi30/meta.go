@@ -26,6 +26,15 @@ type ParseError struct {
 type Trix struct {
 	Source NodeSource   `json:"-" yaml:"-"` // Source location info
 	Errors []ParseError `json:"-" yaml:"-"` // Parsing errors attached to this node
+
+	// Resolved reference fields — populated by the resolver, not part of the spec.
+	// These are nil/empty unless the resolver has run.
+
+	// ResolvedMapping holds discriminator mapping values resolved to schema refs (Discriminator only).
+	ResolvedMapping map[string]*SchemaRef `json:"-" yaml:"-"`
+
+	// ResolvedOperation holds the operation resolved from operationRef (Link only).
+	ResolvedOperation *Operation `json:"-" yaml:"-"`
 }
 
 // Node is embedded in all v30 types to provide vendor extensions and library metadata.

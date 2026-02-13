@@ -14,8 +14,15 @@ import (
 // root is the yaml.Node tree (for local JSON pointer refs).
 func Resolve(doc *openapi31models.OpenAPI, root *yaml.Node, basePath string) error {
 	r := shared.NewRefResolver(basePath, root)
+	r.BuildAnchorIndex("", root)
+	r.BuildDynamicAnchorIndex(root)
 	resolving := make(map[string]bool)
-	return resolveDocument(doc, r, resolving)
+	if err := resolveDocument(doc, r, resolving); err != nil {
+		return err
+	}
+	// Post-resolve: wire up operationRefs now that all operations are parsed
+	resolveOperationRefs(doc)
+	return nil
 }
 
 func resolveDocument(doc *openapi31models.OpenAPI, r *shared.RefResolver, resolving map[string]bool) error {
@@ -334,7 +341,45 @@ func resolveSchema(schema *openapi31models.Schema, r *shared.RefResolver, resolv
 	if err := resolveSchemaRef(schema.UnevaluatedItems(), r, resolving); err != nil {
 		return err
 	}
-	return resolveSchemaRef(schema.UnevaluatedProperties(), r, resolving)
+	if err := resolveSchemaRef(schema.UnevaluatedProperties(), r, resolving); err != nil {
+		return err
+	}
+
+	// Resolve $dynamicRef → look up matching $dynamicAnchor
+	if schema.DynamicRef() != "" {
+		result, err := r.ResolveDynamicRef(schema.DynamicRef())
+		if err == nil && !result.Circular {
+			ctx := newParseContext(result.Node, shared.All())
+			resolved, parseErr := parseSharedSchema(result.Node, ctx)
+			if parseErr == nil {
+				ref := openapi31models.NewSchemaRef("")
+				ref.SetValue(resolved)
+				schema.Trix.ResolvedDynamicRef = ref
+			}
+		}
+	}
+
+	// Resolve discriminator.mapping values
+	if schema.Discriminator() != nil && len(schema.Discriminator().Mapping()) > 0 {
+		resolved := make(map[string]*openapi31models.SchemaRef)
+		for key, val := range schema.Discriminator().Mapping() {
+			mapResult, mapErr := r.ResolveMapping(val)
+			if mapErr == nil {
+				ctx := newParseContext(mapResult.Node, shared.All())
+				s, parseErr := parseSharedSchema(mapResult.Node, ctx)
+				if parseErr == nil {
+					ref := openapi31models.NewSchemaRef(val)
+					ref.SetValue(s)
+					resolved[key] = ref
+				}
+			}
+		}
+		if len(resolved) > 0 {
+			schema.Discriminator().Trix.ResolvedMapping = resolved
+		}
+	}
+
+	return nil
 }
 
 func resolveResponseRef(ref *openapi31models.ResponseRef, r *shared.RefResolver, resolving map[string]bool) error {
@@ -667,6 +712,119 @@ func resolveMediaType(mt *openapi31models.MediaType, r *shared.RefResolver, reso
 	}
 
 	return nil
+}
+
+// =============================================================================
+// operationRef resolution — post-resolve step
+// =============================================================================
+
+// resolveOperationRefs walks all Link objects in the document and resolves
+// operationRef values to the already-parsed Operation in the document tree.
+// This runs after all $ref resolution is complete.
+func resolveOperationRefs(doc *openapi31models.OpenAPI) {
+	if doc == nil {
+		return
+	}
+
+	// Collect all operations by path+method
+	ops := collectOperations(doc)
+
+	// Walk all responses to find links with operationRef
+	walkLinksForOperationRef(doc, ops)
+}
+
+// collectOperations builds a map of "path|method" → *Operation from the document.
+func collectOperations(doc *openapi31models.OpenAPI) map[string]*openapi31models.Operation {
+	ops := make(map[string]*openapi31models.Operation)
+	if doc.Paths() == nil {
+		return ops
+	}
+
+	for path, pi := range doc.Paths().Items() {
+		for method, op := range pathItemOps(pi) {
+			if op != nil {
+				ops[path+"|"+method] = op
+			}
+		}
+	}
+	return ops
+}
+
+// pathItemOps returns a map of method → operation for the given path item.
+func pathItemOps(pi *openapi31models.PathItem) map[string]*openapi31models.Operation {
+	return map[string]*openapi31models.Operation{
+		"get":     pi.Get(),
+		"put":     pi.Put(),
+		"post":    pi.Post(),
+		"delete":  pi.Delete(),
+		"options": pi.Options(),
+		"head":    pi.Head(),
+		"patch":   pi.Patch(),
+		"trace":   pi.Trace(),
+	}
+}
+
+// walkLinksForOperationRef iterates over all response links and resolves operationRef.
+func walkLinksForOperationRef(doc *openapi31models.OpenAPI, ops map[string]*openapi31models.Operation) {
+	resolveLinksInPaths := func(pi *openapi31models.PathItem) {
+		if pi == nil {
+			return
+		}
+		for _, op := range []*openapi31models.Operation{
+			pi.Get(), pi.Put(), pi.Post(), pi.Delete(),
+			pi.Options(), pi.Head(), pi.Patch(), pi.Trace(),
+		} {
+			if op == nil || op.Responses() == nil {
+				continue
+			}
+			// Check default response
+			if op.Responses().Default() != nil && op.Responses().Default().RawValue() != nil {
+				resolveLinksInResponse(op.Responses().Default().RawValue(), ops)
+			}
+			// Check status code responses
+			for _, respRef := range op.Responses().Codes() {
+				if respRef != nil && respRef.RawValue() != nil {
+					resolveLinksInResponse(respRef.RawValue(), ops)
+				}
+			}
+		}
+	}
+
+	if doc.Paths() != nil {
+		for _, pi := range doc.Paths().Items() {
+			resolveLinksInPaths(pi)
+		}
+	}
+
+	// Also check components
+	if doc.Components() != nil {
+		for _, linkRef := range doc.Components().Links() {
+			if linkRef != nil && linkRef.RawValue() != nil {
+				resolveSingleLinkOperationRef(linkRef.RawValue(), ops)
+			}
+		}
+	}
+}
+
+func resolveLinksInResponse(resp *openapi31models.Response, ops map[string]*openapi31models.Operation) {
+	for _, linkRef := range resp.Links() {
+		if linkRef != nil && linkRef.RawValue() != nil {
+			resolveSingleLinkOperationRef(linkRef.RawValue(), ops)
+		}
+	}
+}
+
+func resolveSingleLinkOperationRef(link *openapi31models.Link, ops map[string]*openapi31models.Operation) {
+	if link.OperationRef() == "" {
+		return
+	}
+	path, method, err := shared.ParseOperationRef(link.OperationRef())
+	if err != nil {
+		return
+	}
+	if op, ok := ops[path+"|"+method]; ok {
+		link.Trix.ResolvedOperation = op
+	}
 }
 
 // =============================================================================

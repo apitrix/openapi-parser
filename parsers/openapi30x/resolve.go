@@ -19,7 +19,12 @@ import (
 func Resolve(doc *openapi30models.OpenAPI, root *yaml.Node, basePath string) error {
 	r := shared.NewRefResolver(basePath, root)
 	resolving := make(map[string]bool)
-	return resolveDocument(doc, r, resolving)
+	if err := resolveDocument(doc, r, resolving); err != nil {
+		return err
+	}
+	// Post-resolve: wire up operationRefs now that all operations are parsed
+	resolveOperationRefs(doc)
+	return nil
 }
 
 func resolveDocument(doc *openapi30models.OpenAPI, r *shared.RefResolver, resolving map[string]bool) error {
@@ -257,7 +262,31 @@ func resolveSchema(schema *openapi30models.Schema, r *shared.RefResolver, resolv
 			return err
 		}
 	}
-	return resolveSchemaRef(schema.AdditionalProperties(), r, resolving)
+	if err := resolveSchemaRef(schema.AdditionalProperties(), r, resolving); err != nil {
+		return err
+	}
+
+	// Resolve discriminator.mapping values
+	if schema.Discriminator() != nil && len(schema.Discriminator().Mapping()) > 0 {
+		resolved := make(map[string]*openapi30models.SchemaRef)
+		for key, val := range schema.Discriminator().Mapping() {
+			mapResult, mapErr := r.ResolveMapping(val)
+			if mapErr == nil {
+				ctx := newParseContext(mapResult.Node, shared.All())
+				s, parseErr := parseSharedSchema(mapResult.Node, ctx)
+				if parseErr == nil {
+					ref := openapi30models.NewSchemaRef(val)
+					ref.SetValue(s)
+					resolved[key] = ref
+				}
+			}
+		}
+		if len(resolved) > 0 {
+			schema.Discriminator().Trix.ResolvedMapping = resolved
+		}
+	}
+
+	return nil
 }
 
 func resolveResponseRef(ref *openapi30models.ResponseRef, r *shared.RefResolver, resolving map[string]bool) error {
@@ -590,6 +619,105 @@ func resolveMediaType(mt *openapi30models.MediaType, r *shared.RefResolver, reso
 	}
 
 	return nil
+}
+
+// =============================================================================
+// operationRef resolution — post-resolve step
+// =============================================================================
+
+func resolveOperationRefs(doc *openapi30models.OpenAPI) {
+	if doc == nil {
+		return
+	}
+	ops := collectOperations(doc)
+	walkLinksForOperationRef(doc, ops)
+}
+
+func collectOperations(doc *openapi30models.OpenAPI) map[string]*openapi30models.Operation {
+	ops := make(map[string]*openapi30models.Operation)
+	if doc.Paths() == nil {
+		return ops
+	}
+	for path, pi := range doc.Paths().Items() {
+		for method, op := range pathItemOps(pi) {
+			if op != nil {
+				ops[path+"|"+method] = op
+			}
+		}
+	}
+	return ops
+}
+
+func pathItemOps(pi *openapi30models.PathItem) map[string]*openapi30models.Operation {
+	return map[string]*openapi30models.Operation{
+		"get":     pi.Get(),
+		"put":     pi.Put(),
+		"post":    pi.Post(),
+		"delete":  pi.Delete(),
+		"options": pi.Options(),
+		"head":    pi.Head(),
+		"patch":   pi.Patch(),
+		"trace":   pi.Trace(),
+	}
+}
+
+func walkLinksForOperationRef(doc *openapi30models.OpenAPI, ops map[string]*openapi30models.Operation) {
+	resolveLinksInPaths := func(pi *openapi30models.PathItem) {
+		if pi == nil {
+			return
+		}
+		for _, op := range []*openapi30models.Operation{
+			pi.Get(), pi.Put(), pi.Post(), pi.Delete(),
+			pi.Options(), pi.Head(), pi.Patch(), pi.Trace(),
+		} {
+			if op == nil || op.Responses() == nil {
+				continue
+			}
+			if op.Responses().Default() != nil && op.Responses().Default().RawValue() != nil {
+				resolveLinksInResponse(op.Responses().Default().RawValue(), ops)
+			}
+			for _, respRef := range op.Responses().Codes() {
+				if respRef != nil && respRef.RawValue() != nil {
+					resolveLinksInResponse(respRef.RawValue(), ops)
+				}
+			}
+		}
+	}
+
+	if doc.Paths() != nil {
+		for _, pi := range doc.Paths().Items() {
+			resolveLinksInPaths(pi)
+		}
+	}
+
+	if doc.Components() != nil {
+		for _, linkRef := range doc.Components().Links() {
+			if linkRef != nil && linkRef.RawValue() != nil {
+				resolveSingleLinkOperationRef(linkRef.RawValue(), ops)
+			}
+		}
+	}
+}
+
+func resolveLinksInResponse(resp *openapi30models.Response, ops map[string]*openapi30models.Operation) {
+	for _, linkRef := range resp.Links() {
+		if linkRef != nil && linkRef.RawValue() != nil {
+			resolveSingleLinkOperationRef(linkRef.RawValue(), ops)
+		}
+	}
+}
+
+func resolveSingleLinkOperationRef(link *openapi30models.Link, ops map[string]*openapi30models.Operation) {
+	if link.OperationRef() == "" {
+		return
+	}
+	path, method, err := shared.ParseOperationRef(link.OperationRef())
+	if err != nil {
+		return
+	}
+	if op, ok := ops[path+"|"+method]; ok {
+		link.Trix.ResolvedOperation = op
+	}
 }
 
 // =============================================================================
