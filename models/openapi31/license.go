@@ -20,6 +20,28 @@ func (l *License) Name() string       { return l.name }
 func (l *License) Identifier() string { return l.identifier }
 func (l *License) URL() string        { return l.url }
 
+func (l *License) SetName(name string) error {
+	if err := l.Trix.RunHooks("name", l.name, name); err != nil {
+		return err
+	}
+	l.name = name
+	return nil
+}
+func (l *License) SetIdentifier(identifier string) error {
+	if err := l.Trix.RunHooks("identifier", l.identifier, identifier); err != nil {
+		return err
+	}
+	l.identifier = identifier
+	return nil
+}
+func (l *License) SetURL(url string) error {
+	if err := l.Trix.RunHooks("url", l.url, url); err != nil {
+		return err
+	}
+	l.url = url
+	return nil
+}
+
 // NewLicense creates a new License instance.
 func NewLicense(name, identifier, url string) *License {
 	return &License{name: name, identifier: identifier, url: url}

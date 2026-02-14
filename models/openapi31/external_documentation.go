@@ -18,6 +18,21 @@ type ExternalDocumentation struct {
 func (e *ExternalDocumentation) Description() string { return e.description }
 func (e *ExternalDocumentation) URL() string         { return e.url }
 
+func (e *ExternalDocumentation) SetDescription(description string) error {
+	if err := e.Trix.RunHooks("description", e.description, description); err != nil {
+		return err
+	}
+	e.description = description
+	return nil
+}
+func (e *ExternalDocumentation) SetURL(url string) error {
+	if err := e.Trix.RunHooks("url", e.url, url); err != nil {
+		return err
+	}
+	e.url = url
+	return nil
+}
+
 // NewExternalDocumentation creates a new ExternalDocumentation instance.
 func NewExternalDocumentation(description, url string) *ExternalDocumentation {
 	return &ExternalDocumentation{description: description, url: url}

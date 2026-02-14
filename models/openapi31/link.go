@@ -26,6 +26,49 @@ func (l *Link) RequestBody() interface{}           { return l.requestBody }
 func (l *Link) Description() string                { return l.description }
 func (l *Link) Server() *Server                    { return l.server }
 
+func (l *Link) SetOperationRef(operationRef string) error {
+	if err := l.Trix.RunHooks("operationRef", l.operationRef, operationRef); err != nil {
+		return err
+	}
+	l.operationRef = operationRef
+	return nil
+}
+func (l *Link) SetOperationID(operationID string) error {
+	if err := l.Trix.RunHooks("operationId", l.operationID, operationID); err != nil {
+		return err
+	}
+	l.operationID = operationID
+	return nil
+}
+func (l *Link) SetParameters(parameters map[string]interface{}) error {
+	if err := l.Trix.RunHooks("parameters", l.parameters, parameters); err != nil {
+		return err
+	}
+	l.parameters = parameters
+	return nil
+}
+func (l *Link) SetRequestBody(requestBody interface{}) error {
+	if err := l.Trix.RunHooks("requestBody", l.requestBody, requestBody); err != nil {
+		return err
+	}
+	l.requestBody = requestBody
+	return nil
+}
+func (l *Link) SetDescription(description string) error {
+	if err := l.Trix.RunHooks("description", l.description, description); err != nil {
+		return err
+	}
+	l.description = description
+	return nil
+}
+func (l *Link) SetServer(server *Server) error {
+	if err := l.Trix.RunHooks("server", l.server, server); err != nil {
+		return err
+	}
+	l.server = server
+	return nil
+}
+
 // NewLink creates a new Link instance.
 func NewLink(operationRef, operationID, description string, parameters map[string]interface{}, requestBody interface{}, server *Server) *Link {
 	return &Link{

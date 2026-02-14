@@ -22,6 +22,35 @@ func (mt *MediaType) Example() interface{}                      { return mt.exam
 func (mt *MediaType) Examples() map[string]*shared.Ref[Example] { return mt.examples }
 func (mt *MediaType) Encoding() map[string]*Encoding            { return mt.encoding }
 
+func (mt *MediaType) SetSchema(schema *shared.Ref[Schema]) error {
+	if err := mt.Trix.RunHooks("schema", mt.schema, schema); err != nil {
+		return err
+	}
+	mt.schema = schema
+	return nil
+}
+func (mt *MediaType) SetExample(example interface{}) error {
+	if err := mt.Trix.RunHooks("example", mt.example, example); err != nil {
+		return err
+	}
+	mt.example = example
+	return nil
+}
+func (mt *MediaType) SetExamples(examples map[string]*shared.Ref[Example]) error {
+	if err := mt.Trix.RunHooks("examples", mt.examples, examples); err != nil {
+		return err
+	}
+	mt.examples = examples
+	return nil
+}
+func (mt *MediaType) SetEncoding(encoding map[string]*Encoding) error {
+	if err := mt.Trix.RunHooks("encoding", mt.encoding, encoding); err != nil {
+		return err
+	}
+	mt.encoding = encoding
+	return nil
+}
+
 // NewMediaType creates a new MediaType instance.
 func NewMediaType(schema *shared.Ref[Schema], example interface{}, examples map[string]*shared.Ref[Example], encoding map[string]*Encoding) *MediaType {
 	return &MediaType{schema: schema, example: example, examples: examples, encoding: encoding}

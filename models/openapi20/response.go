@@ -19,8 +19,37 @@ type Response struct {
 
 func (r *Response) Description() string              { return r.description }
 func (r *Response) Schema() *shared.Ref[Schema]      { return r.schema }
-func (r *Response) Headers() map[string]*Header      { return r.headers }
+func (r *Response) Headers() map[string]*Header     { return r.headers }
 func (r *Response) Examples() map[string]interface{} { return r.examples }
+
+func (r *Response) SetDescription(description string) error {
+	if err := r.Trix.RunHooks("description", r.description, description); err != nil {
+		return err
+	}
+	r.description = description
+	return nil
+}
+func (r *Response) SetSchema(schema *shared.Ref[Schema]) error {
+	if err := r.Trix.RunHooks("schema", r.schema, schema); err != nil {
+		return err
+	}
+	r.schema = schema
+	return nil
+}
+func (r *Response) SetHeaders(headers map[string]*Header) error {
+	if err := r.Trix.RunHooks("headers", r.headers, headers); err != nil {
+		return err
+	}
+	r.headers = headers
+	return nil
+}
+func (r *Response) SetExamples(examples map[string]interface{}) error {
+	if err := r.Trix.RunHooks("examples", r.examples, examples); err != nil {
+		return err
+	}
+	r.examples = examples
+	return nil
+}
 
 // NewResponse creates a new Response instance.
 func NewResponse(description string, schema *shared.Ref[Schema], headers map[string]*Header, examples map[string]interface{}) *Response {

@@ -22,6 +22,35 @@ func (f *OAuthFlows) Password() *OAuthFlow          { return f.password }
 func (f *OAuthFlows) ClientCredentials() *OAuthFlow { return f.clientCredentials }
 func (f *OAuthFlows) AuthorizationCode() *OAuthFlow { return f.authorizationCode }
 
+func (f *OAuthFlows) SetImplicit(implicit *OAuthFlow) error {
+	if err := f.Trix.RunHooks("implicit", f.implicit, implicit); err != nil {
+		return err
+	}
+	f.implicit = implicit
+	return nil
+}
+func (f *OAuthFlows) SetPassword(password *OAuthFlow) error {
+	if err := f.Trix.RunHooks("password", f.password, password); err != nil {
+		return err
+	}
+	f.password = password
+	return nil
+}
+func (f *OAuthFlows) SetClientCredentials(clientCredentials *OAuthFlow) error {
+	if err := f.Trix.RunHooks("clientCredentials", f.clientCredentials, clientCredentials); err != nil {
+		return err
+	}
+	f.clientCredentials = clientCredentials
+	return nil
+}
+func (f *OAuthFlows) SetAuthorizationCode(authorizationCode *OAuthFlow) error {
+	if err := f.Trix.RunHooks("authorizationCode", f.authorizationCode, authorizationCode); err != nil {
+		return err
+	}
+	f.authorizationCode = authorizationCode
+	return nil
+}
+
 // NewOAuthFlows creates a new OAuthFlows instance.
 func NewOAuthFlows(implicit, password, clientCredentials, authorizationCode *OAuthFlow) *OAuthFlows {
 	return &OAuthFlows{

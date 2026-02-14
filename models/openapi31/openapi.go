@@ -34,6 +34,77 @@ func (o *OpenAPI) Security() []SecurityRequirement                    { return o
 func (o *OpenAPI) Tags() []*Tag                                       { return o.tags }
 func (o *OpenAPI) ExternalDocs() *ExternalDocumentation               { return o.externalDocs }
 
+func (o *OpenAPI) SetOpenAPIVersion(openAPI string) error {
+	if err := o.Trix.RunHooks("openapi", o.openAPI, openAPI); err != nil {
+		return err
+	}
+	o.openAPI = openAPI
+	return nil
+}
+func (o *OpenAPI) SetInfo(info *Info) error {
+	if err := o.Trix.RunHooks("info", o.info, info); err != nil {
+		return err
+	}
+	o.info = info
+	return nil
+}
+func (o *OpenAPI) SetJsonSchemaDialect(jsonSchemaDialect string) error {
+	if err := o.Trix.RunHooks("jsonSchemaDialect", o.jsonSchemaDialect, jsonSchemaDialect); err != nil {
+		return err
+	}
+	o.jsonSchemaDialect = jsonSchemaDialect
+	return nil
+}
+func (o *OpenAPI) SetServers(servers []*Server) error {
+	if err := o.Trix.RunHooks("servers", o.servers, servers); err != nil {
+		return err
+	}
+	o.servers = servers
+	return nil
+}
+func (o *OpenAPI) SetPaths(paths *Paths) error {
+	if err := o.Trix.RunHooks("paths", o.paths, paths); err != nil {
+		return err
+	}
+	o.paths = paths
+	return nil
+}
+func (o *OpenAPI) SetWebhooks(webhooks map[string]*shared.RefWithMeta[PathItem]) error {
+	if err := o.Trix.RunHooks("webhooks", o.webhooks, webhooks); err != nil {
+		return err
+	}
+	o.webhooks = webhooks
+	return nil
+}
+func (o *OpenAPI) SetComponents(components *Components) error {
+	if err := o.Trix.RunHooks("components", o.components, components); err != nil {
+		return err
+	}
+	o.components = components
+	return nil
+}
+func (o *OpenAPI) SetSecurity(security []SecurityRequirement) error {
+	if err := o.Trix.RunHooks("security", o.security, security); err != nil {
+		return err
+	}
+	o.security = security
+	return nil
+}
+func (o *OpenAPI) SetTags(tags []*Tag) error {
+	if err := o.Trix.RunHooks("tags", o.tags, tags); err != nil {
+		return err
+	}
+	o.tags = tags
+	return nil
+}
+func (o *OpenAPI) SetExternalDocs(externalDocs *ExternalDocumentation) error {
+	if err := o.Trix.RunHooks("externalDocs", o.externalDocs, externalDocs); err != nil {
+		return err
+	}
+	o.externalDocs = externalDocs
+	return nil
+}
+
 // SetProperty sets a named property on the OpenAPI document.
 // Used by parsers for post-construction field assignment.
 func (o *OpenAPI) SetProperty(name string, value interface{}) {

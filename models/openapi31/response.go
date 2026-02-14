@@ -22,6 +22,35 @@ func (r *Response) Headers() map[string]*shared.RefWithMeta[Header] { return r.h
 func (r *Response) Content() map[string]*MediaType                  { return r.content }
 func (r *Response) Links() map[string]*shared.RefWithMeta[Link]     { return r.links }
 
+func (r *Response) SetDescription(description string) error {
+	if err := r.Trix.RunHooks("description", r.description, description); err != nil {
+		return err
+	}
+	r.description = description
+	return nil
+}
+func (r *Response) SetHeaders(headers map[string]*shared.RefWithMeta[Header]) error {
+	if err := r.Trix.RunHooks("headers", r.headers, headers); err != nil {
+		return err
+	}
+	r.headers = headers
+	return nil
+}
+func (r *Response) SetContent(content map[string]*MediaType) error {
+	if err := r.Trix.RunHooks("content", r.content, content); err != nil {
+		return err
+	}
+	r.content = content
+	return nil
+}
+func (r *Response) SetLinks(links map[string]*shared.RefWithMeta[Link]) error {
+	if err := r.Trix.RunHooks("links", r.links, links); err != nil {
+		return err
+	}
+	r.links = links
+	return nil
+}
+
 // NewResponse creates a new Response instance.
 func NewResponse(description string, headers map[string]*shared.RefWithMeta[Header], content map[string]*MediaType, links map[string]*shared.RefWithMeta[Link]) *Response {
 	return &Response{description: description, headers: headers, content: content, links: links}

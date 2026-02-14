@@ -36,6 +36,84 @@ func (h *Header) Example() interface{}                              { return h.e
 func (h *Header) Examples() map[string]*shared.RefWithMeta[Example] { return h.examples }
 func (h *Header) Content() map[string]*MediaType                    { return h.content }
 
+func (h *Header) SetDescription(description string) error {
+	if err := h.Trix.RunHooks("description", h.description, description); err != nil {
+		return err
+	}
+	h.description = description
+	return nil
+}
+func (h *Header) SetRequired(required bool) error {
+	if err := h.Trix.RunHooks("required", h.required, required); err != nil {
+		return err
+	}
+	h.required = required
+	return nil
+}
+func (h *Header) SetDeprecated(deprecated bool) error {
+	if err := h.Trix.RunHooks("deprecated", h.deprecated, deprecated); err != nil {
+		return err
+	}
+	h.deprecated = deprecated
+	return nil
+}
+func (h *Header) SetAllowEmptyValue(allowEmptyValue bool) error {
+	if err := h.Trix.RunHooks("allowEmptyValue", h.allowEmptyValue, allowEmptyValue); err != nil {
+		return err
+	}
+	h.allowEmptyValue = allowEmptyValue
+	return nil
+}
+func (h *Header) SetStyle(style string) error {
+	if err := h.Trix.RunHooks("style", h.style, style); err != nil {
+		return err
+	}
+	h.style = style
+	return nil
+}
+func (h *Header) SetExplode(explode *bool) error {
+	if err := h.Trix.RunHooks("explode", h.explode, explode); err != nil {
+		return err
+	}
+	h.explode = explode
+	return nil
+}
+func (h *Header) SetAllowReserved(allowReserved bool) error {
+	if err := h.Trix.RunHooks("allowReserved", h.allowReserved, allowReserved); err != nil {
+		return err
+	}
+	h.allowReserved = allowReserved
+	return nil
+}
+func (h *Header) SetSchema(schema *shared.RefWithMeta[Schema]) error {
+	if err := h.Trix.RunHooks("schema", h.schema, schema); err != nil {
+		return err
+	}
+	h.schema = schema
+	return nil
+}
+func (h *Header) SetExample(example interface{}) error {
+	if err := h.Trix.RunHooks("example", h.example, example); err != nil {
+		return err
+	}
+	h.example = example
+	return nil
+}
+func (h *Header) SetExamples(examples map[string]*shared.RefWithMeta[Example]) error {
+	if err := h.Trix.RunHooks("examples", h.examples, examples); err != nil {
+		return err
+	}
+	h.examples = examples
+	return nil
+}
+func (h *Header) SetContent(content map[string]*MediaType) error {
+	if err := h.Trix.RunHooks("content", h.content, content); err != nil {
+		return err
+	}
+	h.content = content
+	return nil
+}
+
 // HeaderFields holds all fields for constructing a Header.
 type HeaderFields struct {
 	Description     string

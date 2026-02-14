@@ -15,8 +15,7 @@ type ParseError = shared.ParseError
 // Everything under Trix is provided by the apitrix library,
 // not part of the OpenAPI specification itself.
 type Trix struct {
-	Source NodeSource   `json:"-" yaml:"-"` // Source location info
-	Errors []ParseError `json:"-" yaml:"-"` // Parsing errors attached to this node
+	shared.Trix // promotes Source, Errors, OnSet, RunHooks
 
 	// Resolved reference fields — populated by the resolver, not part of the spec.
 	// These are nil/empty unless the resolver has run.

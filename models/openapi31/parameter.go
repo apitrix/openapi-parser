@@ -40,6 +40,98 @@ func (p *Parameter) Example() interface{}                              { return 
 func (p *Parameter) Examples() map[string]*shared.RefWithMeta[Example] { return p.examples }
 func (p *Parameter) Content() map[string]*MediaType                    { return p.content }
 
+func (p *Parameter) SetName(name string) error {
+	if err := p.Trix.RunHooks("name", p.name, name); err != nil {
+		return err
+	}
+	p.name = name
+	return nil
+}
+func (p *Parameter) SetIn(in string) error {
+	if err := p.Trix.RunHooks("in", p.in, in); err != nil {
+		return err
+	}
+	p.in = in
+	return nil
+}
+func (p *Parameter) SetDescription(description string) error {
+	if err := p.Trix.RunHooks("description", p.description, description); err != nil {
+		return err
+	}
+	p.description = description
+	return nil
+}
+func (p *Parameter) SetRequired(required bool) error {
+	if err := p.Trix.RunHooks("required", p.required, required); err != nil {
+		return err
+	}
+	p.required = required
+	return nil
+}
+func (p *Parameter) SetDeprecated(deprecated bool) error {
+	if err := p.Trix.RunHooks("deprecated", p.deprecated, deprecated); err != nil {
+		return err
+	}
+	p.deprecated = deprecated
+	return nil
+}
+func (p *Parameter) SetAllowEmptyValue(allowEmptyValue bool) error {
+	if err := p.Trix.RunHooks("allowEmptyValue", p.allowEmptyValue, allowEmptyValue); err != nil {
+		return err
+	}
+	p.allowEmptyValue = allowEmptyValue
+	return nil
+}
+func (p *Parameter) SetStyle(style string) error {
+	if err := p.Trix.RunHooks("style", p.style, style); err != nil {
+		return err
+	}
+	p.style = style
+	return nil
+}
+func (p *Parameter) SetExplode(explode *bool) error {
+	if err := p.Trix.RunHooks("explode", p.explode, explode); err != nil {
+		return err
+	}
+	p.explode = explode
+	return nil
+}
+func (p *Parameter) SetAllowReserved(allowReserved bool) error {
+	if err := p.Trix.RunHooks("allowReserved", p.allowReserved, allowReserved); err != nil {
+		return err
+	}
+	p.allowReserved = allowReserved
+	return nil
+}
+func (p *Parameter) SetSchema(schema *shared.RefWithMeta[Schema]) error {
+	if err := p.Trix.RunHooks("schema", p.schema, schema); err != nil {
+		return err
+	}
+	p.schema = schema
+	return nil
+}
+func (p *Parameter) SetExample(example interface{}) error {
+	if err := p.Trix.RunHooks("example", p.example, example); err != nil {
+		return err
+	}
+	p.example = example
+	return nil
+}
+func (p *Parameter) SetExamples(examples map[string]*shared.RefWithMeta[Example]) error {
+	if err := p.Trix.RunHooks("examples", p.examples, examples); err != nil {
+		return err
+	}
+	p.examples = examples
+	return nil
+}
+func (p *Parameter) SetContent(content map[string]*MediaType) error {
+	if err := p.Trix.RunHooks("content", p.content, content); err != nil {
+		return err
+	}
+	p.content = content
+	return nil
+}
+
 // ParameterFields holds all fields for constructing a Parameter.
 type ParameterFields struct {
 	Name            string

@@ -24,6 +24,42 @@ func (e *Encoding) Style() string                           { return e.style }
 func (e *Encoding) Explode() *bool                          { return e.explode }
 func (e *Encoding) AllowReserved() bool                     { return e.allowReserved }
 
+func (e *Encoding) SetContentType(contentType string) error {
+	if err := e.Trix.RunHooks("contentType", e.contentType, contentType); err != nil {
+		return err
+	}
+	e.contentType = contentType
+	return nil
+}
+func (e *Encoding) SetHeaders(headers map[string]*shared.Ref[Header]) error {
+	if err := e.Trix.RunHooks("headers", e.headers, headers); err != nil {
+		return err
+	}
+	e.headers = headers
+	return nil
+}
+func (e *Encoding) SetStyle(style string) error {
+	if err := e.Trix.RunHooks("style", e.style, style); err != nil {
+		return err
+	}
+	e.style = style
+	return nil
+}
+func (e *Encoding) SetExplode(explode *bool) error {
+	if err := e.Trix.RunHooks("explode", e.explode, explode); err != nil {
+		return err
+	}
+	e.explode = explode
+	return nil
+}
+func (e *Encoding) SetAllowReserved(allowReserved bool) error {
+	if err := e.Trix.RunHooks("allowReserved", e.allowReserved, allowReserved); err != nil {
+		return err
+	}
+	e.allowReserved = allowReserved
+	return nil
+}
+
 // NewEncoding creates a new Encoding instance.
 func NewEncoding(contentType string, headers map[string]*shared.Ref[Header], style string, explode *bool, allowReserved bool) *Encoding {
 	return &Encoding{contentType: contentType, headers: headers, style: style, explode: explode, allowReserved: allowReserved}

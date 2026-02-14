@@ -20,6 +20,28 @@ func (sv *ServerVariable) Enum() []string      { return sv.enum }
 func (sv *ServerVariable) Default() string     { return sv.defaultVal }
 func (sv *ServerVariable) Description() string { return sv.description }
 
+func (sv *ServerVariable) SetEnum(enum []string) error {
+	if err := sv.Trix.RunHooks("enum", sv.enum, enum); err != nil {
+		return err
+	}
+	sv.enum = enum
+	return nil
+}
+func (sv *ServerVariable) SetDefault(defaultVal string) error {
+	if err := sv.Trix.RunHooks("default", sv.defaultVal, defaultVal); err != nil {
+		return err
+	}
+	sv.defaultVal = defaultVal
+	return nil
+}
+func (sv *ServerVariable) SetDescription(description string) error {
+	if err := sv.Trix.RunHooks("description", sv.description, description); err != nil {
+		return err
+	}
+	sv.description = description
+	return nil
+}
+
 // NewServerVariable creates a new ServerVariable instance.
 func NewServerVariable(defaultValue, description string, enum []string) *ServerVariable {
 	return &ServerVariable{defaultVal: defaultValue, description: description, enum: enum}

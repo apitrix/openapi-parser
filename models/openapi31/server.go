@@ -20,6 +20,28 @@ func (s *Server) URL() string                           { return s.url }
 func (s *Server) Description() string                   { return s.description }
 func (s *Server) Variables() map[string]*ServerVariable { return s.variables }
 
+func (s *Server) SetURL(url string) error {
+	if err := s.Trix.RunHooks("url", s.url, url); err != nil {
+		return err
+	}
+	s.url = url
+	return nil
+}
+func (s *Server) SetDescription(description string) error {
+	if err := s.Trix.RunHooks("description", s.description, description); err != nil {
+		return err
+	}
+	s.description = description
+	return nil
+}
+func (s *Server) SetVariables(variables map[string]*ServerVariable) error {
+	if err := s.Trix.RunHooks("variables", s.variables, variables); err != nil {
+		return err
+	}
+	s.variables = variables
+	return nil
+}
+
 // NewServer creates a new Server instance.
 func NewServer(url, description string, variables map[string]*ServerVariable) *Server {
 	return &Server{url: url, description: description, variables: variables}

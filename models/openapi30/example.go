@@ -22,6 +22,35 @@ func (e *Example) Description() string   { return e.description }
 func (e *Example) Value() interface{}    { return e.value }
 func (e *Example) ExternalValue() string { return e.externalValue }
 
+func (e *Example) SetSummary(summary string) error {
+	if err := e.Trix.RunHooks("summary", e.summary, summary); err != nil {
+		return err
+	}
+	e.summary = summary
+	return nil
+}
+func (e *Example) SetDescription(description string) error {
+	if err := e.Trix.RunHooks("description", e.description, description); err != nil {
+		return err
+	}
+	e.description = description
+	return nil
+}
+func (e *Example) SetValue(value interface{}) error {
+	if err := e.Trix.RunHooks("value", e.value, value); err != nil {
+		return err
+	}
+	e.value = value
+	return nil
+}
+func (e *Example) SetExternalValue(externalValue string) error {
+	if err := e.Trix.RunHooks("externalValue", e.externalValue, externalValue); err != nil {
+		return err
+	}
+	e.externalValue = externalValue
+	return nil
+}
+
 // NewExample creates a new Example instance.
 func NewExample(summary, description string, value interface{}, externalValue string) *Example {
 	return &Example{summary: summary, description: description, value: value, externalValue: externalValue}

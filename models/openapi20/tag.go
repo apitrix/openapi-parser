@@ -20,6 +20,28 @@ func (t *Tag) Name() string                { return t.name }
 func (t *Tag) Description() string         { return t.description }
 func (t *Tag) ExternalDocs() *ExternalDocs { return t.externalDocs }
 
+func (t *Tag) SetName(name string) error {
+	if err := t.Trix.RunHooks("name", t.name, name); err != nil {
+		return err
+	}
+	t.name = name
+	return nil
+}
+func (t *Tag) SetDescription(description string) error {
+	if err := t.Trix.RunHooks("description", t.description, description); err != nil {
+		return err
+	}
+	t.description = description
+	return nil
+}
+func (t *Tag) SetExternalDocs(externalDocs *ExternalDocs) error {
+	if err := t.Trix.RunHooks("externalDocs", t.externalDocs, externalDocs); err != nil {
+		return err
+	}
+	t.externalDocs = externalDocs
+	return nil
+}
+
 // NewTag creates a new Tag instance.
 func NewTag(name, description string, externalDocs *ExternalDocs) *Tag {
 	return &Tag{name: name, description: description, externalDocs: externalDocs}

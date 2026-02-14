@@ -17,6 +17,14 @@ type Callback struct {
 
 func (c *Callback) Paths() map[string]*PathItem { return c.paths }
 
+func (c *Callback) SetPaths(paths map[string]*PathItem) error {
+	if err := c.Trix.RunHooks("paths", c.paths, paths); err != nil {
+		return err
+	}
+	c.paths = paths
+	return nil
+}
+
 // NewCallback creates a new Callback instance.
 func NewCallback(paths map[string]*PathItem) *Callback {
 	return &Callback{paths: paths}

@@ -24,6 +24,42 @@ func (x *XML) Prefix() string    { return x.prefix }
 func (x *XML) Attribute() bool   { return x.attribute }
 func (x *XML) Wrapped() bool     { return x.wrapped }
 
+func (x *XML) SetName(name string) error {
+	if err := x.Trix.RunHooks("name", x.name, name); err != nil {
+		return err
+	}
+	x.name = name
+	return nil
+}
+func (x *XML) SetNamespace(namespace string) error {
+	if err := x.Trix.RunHooks("namespace", x.namespace, namespace); err != nil {
+		return err
+	}
+	x.namespace = namespace
+	return nil
+}
+func (x *XML) SetPrefix(prefix string) error {
+	if err := x.Trix.RunHooks("prefix", x.prefix, prefix); err != nil {
+		return err
+	}
+	x.prefix = prefix
+	return nil
+}
+func (x *XML) SetAttribute(attribute bool) error {
+	if err := x.Trix.RunHooks("attribute", x.attribute, attribute); err != nil {
+		return err
+	}
+	x.attribute = attribute
+	return nil
+}
+func (x *XML) SetWrapped(wrapped bool) error {
+	if err := x.Trix.RunHooks("wrapped", x.wrapped, wrapped); err != nil {
+		return err
+	}
+	x.wrapped = wrapped
+	return nil
+}
+
 // NewXML creates a new XML instance.
 func NewXML(name, namespace, prefix string, attribute, wrapped bool) *XML {
 	return &XML{name: name, namespace: namespace, prefix: prefix, attribute: attribute, wrapped: wrapped}

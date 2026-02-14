@@ -20,6 +20,28 @@ func (c *Contact) Name() string  { return c.name }
 func (c *Contact) URL() string   { return c.url }
 func (c *Contact) Email() string { return c.email }
 
+func (c *Contact) SetName(name string) error {
+	if err := c.Trix.RunHooks("name", c.name, name); err != nil {
+		return err
+	}
+	c.name = name
+	return nil
+}
+func (c *Contact) SetURL(url string) error {
+	if err := c.Trix.RunHooks("url", c.url, url); err != nil {
+		return err
+	}
+	c.url = url
+	return nil
+}
+func (c *Contact) SetEmail(email string) error {
+	if err := c.Trix.RunHooks("email", c.email, email); err != nil {
+		return err
+	}
+	c.email = email
+	return nil
+}
+
 // NewContact creates a new Contact instance.
 func NewContact(name, url, email string) *Contact {
 	return &Contact{name: name, url: url, email: email}

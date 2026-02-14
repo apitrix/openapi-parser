@@ -19,6 +19,21 @@ type Responses struct {
 func (r *Responses) Default() *shared.RefWithMeta[Response]          { return r.defaultResp }
 func (r *Responses) Codes() map[string]*shared.RefWithMeta[Response] { return r.codes }
 
+func (r *Responses) SetDefault(defaultResp *shared.RefWithMeta[Response]) error {
+	if err := r.Trix.RunHooks("default", r.defaultResp, defaultResp); err != nil {
+		return err
+	}
+	r.defaultResp = defaultResp
+	return nil
+}
+func (r *Responses) SetCodes(codes map[string]*shared.RefWithMeta[Response]) error {
+	if err := r.Trix.RunHooks("codes", r.codes, codes); err != nil {
+		return err
+	}
+	r.codes = codes
+	return nil
+}
+
 // NewResponses creates a new Responses instance.
 func NewResponses(defaultResp *shared.RefWithMeta[Response], codes map[string]*shared.RefWithMeta[Response]) *Responses {
 	return &Responses{defaultResp: defaultResp, codes: codes}

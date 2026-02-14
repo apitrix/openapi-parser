@@ -24,11 +24,68 @@ type SecurityScheme struct {
 func (s *SecurityScheme) Type() string              { return s.securityType }
 func (s *SecurityScheme) Description() string       { return s.description }
 func (s *SecurityScheme) Name() string              { return s.name }
-func (s *SecurityScheme) In() string                { return s.in }
-func (s *SecurityScheme) Flow() string              { return s.flow }
-func (s *SecurityScheme) AuthorizationURL() string  { return s.authorizationURL }
+func (s *SecurityScheme) In() string                 { return s.in }
+func (s *SecurityScheme) Flow() string               { return s.flow }
+func (s *SecurityScheme) AuthorizationURL() string   { return s.authorizationURL }
 func (s *SecurityScheme) TokenURL() string          { return s.tokenURL }
-func (s *SecurityScheme) Scopes() map[string]string { return s.scopes }
+func (s *SecurityScheme) Scopes() map[string]string  { return s.scopes }
+
+func (s *SecurityScheme) SetType(securityType string) error {
+	if err := s.Trix.RunHooks("type", s.securityType, securityType); err != nil {
+		return err
+	}
+	s.securityType = securityType
+	return nil
+}
+func (s *SecurityScheme) SetDescription(description string) error {
+	if err := s.Trix.RunHooks("description", s.description, description); err != nil {
+		return err
+	}
+	s.description = description
+	return nil
+}
+func (s *SecurityScheme) SetName(name string) error {
+	if err := s.Trix.RunHooks("name", s.name, name); err != nil {
+		return err
+	}
+	s.name = name
+	return nil
+}
+func (s *SecurityScheme) SetIn(in string) error {
+	if err := s.Trix.RunHooks("in", s.in, in); err != nil {
+		return err
+	}
+	s.in = in
+	return nil
+}
+func (s *SecurityScheme) SetFlow(flow string) error {
+	if err := s.Trix.RunHooks("flow", s.flow, flow); err != nil {
+		return err
+	}
+	s.flow = flow
+	return nil
+}
+func (s *SecurityScheme) SetAuthorizationURL(authorizationURL string) error {
+	if err := s.Trix.RunHooks("authorizationUrl", s.authorizationURL, authorizationURL); err != nil {
+		return err
+	}
+	s.authorizationURL = authorizationURL
+	return nil
+}
+func (s *SecurityScheme) SetTokenURL(tokenURL string) error {
+	if err := s.Trix.RunHooks("tokenUrl", s.tokenURL, tokenURL); err != nil {
+		return err
+	}
+	s.tokenURL = tokenURL
+	return nil
+}
+func (s *SecurityScheme) SetScopes(scopes map[string]string) error {
+	if err := s.Trix.RunHooks("scopes", s.scopes, scopes); err != nil {
+		return err
+	}
+	s.scopes = scopes
+	return nil
+}
 
 // NewSecurityScheme creates a new SecurityScheme instance.
 func NewSecurityScheme(

@@ -18,6 +18,21 @@ type Discriminator struct {
 func (d *Discriminator) PropertyName() string       { return d.propertyName }
 func (d *Discriminator) Mapping() map[string]string { return d.mapping }
 
+func (d *Discriminator) SetPropertyName(propertyName string) error {
+	if err := d.Trix.RunHooks("propertyName", d.propertyName, propertyName); err != nil {
+		return err
+	}
+	d.propertyName = propertyName
+	return nil
+}
+func (d *Discriminator) SetMapping(mapping map[string]string) error {
+	if err := d.Trix.RunHooks("mapping", d.mapping, mapping); err != nil {
+		return err
+	}
+	d.mapping = mapping
+	return nil
+}
+
 // NewDiscriminator creates a new Discriminator instance.
 func NewDiscriminator(propertyName string, mapping map[string]string) *Discriminator {
 	return &Discriminator{propertyName: propertyName, mapping: mapping}

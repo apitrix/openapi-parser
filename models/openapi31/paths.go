@@ -17,6 +17,14 @@ type Paths struct {
 
 func (p *Paths) Items() map[string]*PathItem { return p.items }
 
+func (p *Paths) SetItems(items map[string]*PathItem) error {
+	if err := p.Trix.RunHooks("items", p.items, items); err != nil {
+		return err
+	}
+	p.items = items
+	return nil
+}
+
 // NewPaths creates a new Paths instance with the given items map.
 func NewPaths(items map[string]*PathItem) *Paths {
 	return &Paths{items: items}

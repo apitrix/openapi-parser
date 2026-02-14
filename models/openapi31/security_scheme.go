@@ -30,6 +30,63 @@ func (s *SecurityScheme) BearerFormat() string     { return s.bearerFormat }
 func (s *SecurityScheme) Flows() *OAuthFlows       { return s.flows }
 func (s *SecurityScheme) OpenIDConnectURL() string { return s.openIDConnectURL }
 
+func (s *SecurityScheme) SetType(schemeType string) error {
+	if err := s.Trix.RunHooks("type", s.schemeType, schemeType); err != nil {
+		return err
+	}
+	s.schemeType = schemeType
+	return nil
+}
+func (s *SecurityScheme) SetDescription(description string) error {
+	if err := s.Trix.RunHooks("description", s.description, description); err != nil {
+		return err
+	}
+	s.description = description
+	return nil
+}
+func (s *SecurityScheme) SetName(name string) error {
+	if err := s.Trix.RunHooks("name", s.name, name); err != nil {
+		return err
+	}
+	s.name = name
+	return nil
+}
+func (s *SecurityScheme) SetIn(in string) error {
+	if err := s.Trix.RunHooks("in", s.in, in); err != nil {
+		return err
+	}
+	s.in = in
+	return nil
+}
+func (s *SecurityScheme) SetScheme(scheme string) error {
+	if err := s.Trix.RunHooks("scheme", s.scheme, scheme); err != nil {
+		return err
+	}
+	s.scheme = scheme
+	return nil
+}
+func (s *SecurityScheme) SetBearerFormat(bearerFormat string) error {
+	if err := s.Trix.RunHooks("bearerFormat", s.bearerFormat, bearerFormat); err != nil {
+		return err
+	}
+	s.bearerFormat = bearerFormat
+	return nil
+}
+func (s *SecurityScheme) SetFlows(flows *OAuthFlows) error {
+	if err := s.Trix.RunHooks("flows", s.flows, flows); err != nil {
+		return err
+	}
+	s.flows = flows
+	return nil
+}
+func (s *SecurityScheme) SetOpenIDConnectURL(openIDConnectURL string) error {
+	if err := s.Trix.RunHooks("openIdConnectUrl", s.openIDConnectURL, openIDConnectURL); err != nil {
+		return err
+	}
+	s.openIDConnectURL = openIDConnectURL
+	return nil
+}
+
 // NewSecurityScheme creates a new SecurityScheme instance.
 func NewSecurityScheme(schemeType, description, name, in, scheme, bearerFormat, openIDConnectURL string, flows *OAuthFlows) *SecurityScheme {
 	return &SecurityScheme{

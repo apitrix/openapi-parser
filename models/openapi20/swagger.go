@@ -30,19 +30,125 @@ type Swagger struct {
 
 func (s *Swagger) SwaggerVersion() string                          { return s.swagger }
 func (s *Swagger) Info() *Info                                     { return s.info }
-func (s *Swagger) Host() string                                    { return s.host }
-func (s *Swagger) BasePath() string                                { return s.basePath }
-func (s *Swagger) Schemes() []string                               { return s.schemes }
-func (s *Swagger) Consumes() []string                              { return s.consumes }
-func (s *Swagger) Produces() []string                              { return s.produces }
-func (s *Swagger) Paths() *Paths                                   { return s.paths }
-func (s *Swagger) Definitions() map[string]*shared.Ref[Schema]     { return s.definitions }
-func (s *Swagger) Parameters() map[string]*shared.Ref[Parameter]   { return s.parameters }
+func (s *Swagger) Host() string                                     { return s.host }
+func (s *Swagger) BasePath() string                                 { return s.basePath }
+func (s *Swagger) Schemes() []string                                { return s.schemes }
+func (s *Swagger) Consumes() []string                               { return s.consumes }
+func (s *Swagger) Produces() []string                               { return s.produces }
+func (s *Swagger) Paths() *Paths                                    { return s.paths }
+func (s *Swagger) Definitions() map[string]*shared.Ref[Schema]      { return s.definitions }
+func (s *Swagger) Parameters() map[string]*shared.Ref[Parameter]    { return s.parameters }
 func (s *Swagger) Responses() map[string]*shared.Ref[Response]     { return s.responses }
 func (s *Swagger) SecurityDefinitions() map[string]*SecurityScheme { return s.securityDefinitions }
-func (s *Swagger) Security() []SecurityRequirement                 { return s.security }
-func (s *Swagger) Tags() []*Tag                                    { return s.tags }
+func (s *Swagger) Security() []SecurityRequirement                  { return s.security }
+func (s *Swagger) Tags() []*Tag                                     { return s.tags }
 func (s *Swagger) ExternalDocs() *ExternalDocs                     { return s.externalDocs }
+
+func (s *Swagger) SetSwaggerVersion(swagger string) error {
+	if err := s.Trix.RunHooks("swagger", s.swagger, swagger); err != nil {
+		return err
+	}
+	s.swagger = swagger
+	return nil
+}
+func (s *Swagger) SetInfo(info *Info) error {
+	if err := s.Trix.RunHooks("info", s.info, info); err != nil {
+		return err
+	}
+	s.info = info
+	return nil
+}
+func (s *Swagger) SetHost(host string) error {
+	if err := s.Trix.RunHooks("host", s.host, host); err != nil {
+		return err
+	}
+	s.host = host
+	return nil
+}
+func (s *Swagger) SetBasePath(basePath string) error {
+	if err := s.Trix.RunHooks("basePath", s.basePath, basePath); err != nil {
+		return err
+	}
+	s.basePath = basePath
+	return nil
+}
+func (s *Swagger) SetSchemes(schemes []string) error {
+	if err := s.Trix.RunHooks("schemes", s.schemes, schemes); err != nil {
+		return err
+	}
+	s.schemes = schemes
+	return nil
+}
+func (s *Swagger) SetConsumes(consumes []string) error {
+	if err := s.Trix.RunHooks("consumes", s.consumes, consumes); err != nil {
+		return err
+	}
+	s.consumes = consumes
+	return nil
+}
+func (s *Swagger) SetProduces(produces []string) error {
+	if err := s.Trix.RunHooks("produces", s.produces, produces); err != nil {
+		return err
+	}
+	s.produces = produces
+	return nil
+}
+func (s *Swagger) SetPaths(paths *Paths) error {
+	if err := s.Trix.RunHooks("paths", s.paths, paths); err != nil {
+		return err
+	}
+	s.paths = paths
+	return nil
+}
+func (s *Swagger) SetDefinitions(definitions map[string]*shared.Ref[Schema]) error {
+	if err := s.Trix.RunHooks("definitions", s.definitions, definitions); err != nil {
+		return err
+	}
+	s.definitions = definitions
+	return nil
+}
+func (s *Swagger) SetParameters(parameters map[string]*shared.Ref[Parameter]) error {
+	if err := s.Trix.RunHooks("parameters", s.parameters, parameters); err != nil {
+		return err
+	}
+	s.parameters = parameters
+	return nil
+}
+func (s *Swagger) SetResponses(responses map[string]*shared.Ref[Response]) error {
+	if err := s.Trix.RunHooks("responses", s.responses, responses); err != nil {
+		return err
+	}
+	s.responses = responses
+	return nil
+}
+func (s *Swagger) SetSecurityDefinitions(securityDefinitions map[string]*SecurityScheme) error {
+	if err := s.Trix.RunHooks("securityDefinitions", s.securityDefinitions, securityDefinitions); err != nil {
+		return err
+	}
+	s.securityDefinitions = securityDefinitions
+	return nil
+}
+func (s *Swagger) SetSecurity(security []SecurityRequirement) error {
+	if err := s.Trix.RunHooks("security", s.security, security); err != nil {
+		return err
+	}
+	s.security = security
+	return nil
+}
+func (s *Swagger) SetTags(tags []*Tag) error {
+	if err := s.Trix.RunHooks("tags", s.tags, tags); err != nil {
+		return err
+	}
+	s.tags = tags
+	return nil
+}
+func (s *Swagger) SetExternalDocs(externalDocs *ExternalDocs) error {
+	if err := s.Trix.RunHooks("externalDocs", s.externalDocs, externalDocs); err != nil {
+		return err
+	}
+	s.externalDocs = externalDocs
+	return nil
+}
 
 // SetProperty sets a property on the Swagger document. Used by parsers for
 // incremental building of the root document where many fields are optional.

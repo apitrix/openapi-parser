@@ -30,6 +30,63 @@ func (ss *SecurityScheme) BearerFormat() string     { return ss.bearerFormat }
 func (ss *SecurityScheme) Flows() *OAuthFlows       { return ss.flows }
 func (ss *SecurityScheme) OpenIDConnectURL() string { return ss.openIDConnectURL }
 
+func (ss *SecurityScheme) SetType(secType string) error {
+	if err := ss.Trix.RunHooks("type", ss.secType, secType); err != nil {
+		return err
+	}
+	ss.secType = secType
+	return nil
+}
+func (ss *SecurityScheme) SetDescription(description string) error {
+	if err := ss.Trix.RunHooks("description", ss.description, description); err != nil {
+		return err
+	}
+	ss.description = description
+	return nil
+}
+func (ss *SecurityScheme) SetName(name string) error {
+	if err := ss.Trix.RunHooks("name", ss.name, name); err != nil {
+		return err
+	}
+	ss.name = name
+	return nil
+}
+func (ss *SecurityScheme) SetIn(in string) error {
+	if err := ss.Trix.RunHooks("in", ss.in, in); err != nil {
+		return err
+	}
+	ss.in = in
+	return nil
+}
+func (ss *SecurityScheme) SetScheme(scheme string) error {
+	if err := ss.Trix.RunHooks("scheme", ss.scheme, scheme); err != nil {
+		return err
+	}
+	ss.scheme = scheme
+	return nil
+}
+func (ss *SecurityScheme) SetBearerFormat(bearerFormat string) error {
+	if err := ss.Trix.RunHooks("bearerFormat", ss.bearerFormat, bearerFormat); err != nil {
+		return err
+	}
+	ss.bearerFormat = bearerFormat
+	return nil
+}
+func (ss *SecurityScheme) SetFlows(flows *OAuthFlows) error {
+	if err := ss.Trix.RunHooks("flows", ss.flows, flows); err != nil {
+		return err
+	}
+	ss.flows = flows
+	return nil
+}
+func (ss *SecurityScheme) SetOpenIDConnectURL(openIDConnectURL string) error {
+	if err := ss.Trix.RunHooks("openIdConnectUrl", ss.openIDConnectURL, openIDConnectURL); err != nil {
+		return err
+	}
+	ss.openIDConnectURL = openIDConnectURL
+	return nil
+}
+
 // NewSecurityScheme creates a new SecurityScheme instance.
 func NewSecurityScheme(secType, description, name, in, scheme, bearerFormat string, flows *OAuthFlows, openIDConnectURL string) *SecurityScheme {
 	return &SecurityScheme{secType: secType, description: description, name: name, in: in, scheme: scheme, bearerFormat: bearerFormat, flows: flows, openIDConnectURL: openIDConnectURL}

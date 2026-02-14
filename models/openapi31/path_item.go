@@ -40,6 +40,98 @@ func (p *PathItem) Trace() *Operation                            { return p.trac
 func (p *PathItem) Servers() []*Server                           { return p.servers }
 func (p *PathItem) Parameters() []*shared.RefWithMeta[Parameter] { return p.parameters }
 
+func (p *PathItem) SetRef(ref string) error {
+	if err := p.Trix.RunHooks("$ref", p.ref, ref); err != nil {
+		return err
+	}
+	p.ref = ref
+	return nil
+}
+func (p *PathItem) SetSummary(summary string) error {
+	if err := p.Trix.RunHooks("summary", p.summary, summary); err != nil {
+		return err
+	}
+	p.summary = summary
+	return nil
+}
+func (p *PathItem) SetDescription(description string) error {
+	if err := p.Trix.RunHooks("description", p.description, description); err != nil {
+		return err
+	}
+	p.description = description
+	return nil
+}
+func (p *PathItem) SetGet(get *Operation) error {
+	if err := p.Trix.RunHooks("get", p.get, get); err != nil {
+		return err
+	}
+	p.get = get
+	return nil
+}
+func (p *PathItem) SetPut(put *Operation) error {
+	if err := p.Trix.RunHooks("put", p.put, put); err != nil {
+		return err
+	}
+	p.put = put
+	return nil
+}
+func (p *PathItem) SetPost(post *Operation) error {
+	if err := p.Trix.RunHooks("post", p.post, post); err != nil {
+		return err
+	}
+	p.post = post
+	return nil
+}
+func (p *PathItem) SetDelete(delete *Operation) error {
+	if err := p.Trix.RunHooks("delete", p.delete, delete); err != nil {
+		return err
+	}
+	p.delete = delete
+	return nil
+}
+func (p *PathItem) SetOptions(options *Operation) error {
+	if err := p.Trix.RunHooks("options", p.options, options); err != nil {
+		return err
+	}
+	p.options = options
+	return nil
+}
+func (p *PathItem) SetHead(head *Operation) error {
+	if err := p.Trix.RunHooks("head", p.head, head); err != nil {
+		return err
+	}
+	p.head = head
+	return nil
+}
+func (p *PathItem) SetPatch(patch *Operation) error {
+	if err := p.Trix.RunHooks("patch", p.patch, patch); err != nil {
+		return err
+	}
+	p.patch = patch
+	return nil
+}
+func (p *PathItem) SetTrace(trace *Operation) error {
+	if err := p.Trix.RunHooks("trace", p.trace, trace); err != nil {
+		return err
+	}
+	p.trace = trace
+	return nil
+}
+func (p *PathItem) SetServers(servers []*Server) error {
+	if err := p.Trix.RunHooks("servers", p.servers, servers); err != nil {
+		return err
+	}
+	p.servers = servers
+	return nil
+}
+func (p *PathItem) SetParameters(parameters []*shared.RefWithMeta[Parameter]) error {
+	if err := p.Trix.RunHooks("parameters", p.parameters, parameters); err != nil {
+		return err
+	}
+	p.parameters = parameters
+	return nil
+}
+
 // SetProperty sets a named property on the PathItem.
 // Used by parsers for post-construction field assignment.
 func (p *PathItem) SetProperty(name string, value interface{}) {

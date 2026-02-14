@@ -20,6 +20,28 @@ func (r *RequestBody) Description() string            { return r.description }
 func (r *RequestBody) Content() map[string]*MediaType { return r.content }
 func (r *RequestBody) Required() bool                 { return r.required }
 
+func (r *RequestBody) SetDescription(description string) error {
+	if err := r.Trix.RunHooks("description", r.description, description); err != nil {
+		return err
+	}
+	r.description = description
+	return nil
+}
+func (r *RequestBody) SetContent(content map[string]*MediaType) error {
+	if err := r.Trix.RunHooks("content", r.content, content); err != nil {
+		return err
+	}
+	r.content = content
+	return nil
+}
+func (r *RequestBody) SetRequired(required bool) error {
+	if err := r.Trix.RunHooks("required", r.required, required); err != nil {
+		return err
+	}
+	r.required = required
+	return nil
+}
+
 // NewRequestBody creates a new RequestBody instance.
 func NewRequestBody(description string, content map[string]*MediaType, required bool) *RequestBody {
 	return &RequestBody{description: description, content: content, required: required}

@@ -32,6 +32,70 @@ func (pi *PathItem) Head() *Operation                     { return pi.head }
 func (pi *PathItem) Patch() *Operation                    { return pi.patch }
 func (pi *PathItem) Parameters() []*shared.Ref[Parameter] { return pi.parameters }
 
+func (pi *PathItem) SetRef(ref string) error {
+	if err := pi.Trix.RunHooks("$ref", pi.ref, ref); err != nil {
+		return err
+	}
+	pi.ref = ref
+	return nil
+}
+func (pi *PathItem) SetGet(get *Operation) error {
+	if err := pi.Trix.RunHooks("get", pi.get, get); err != nil {
+		return err
+	}
+	pi.get = get
+	return nil
+}
+func (pi *PathItem) SetPut(put *Operation) error {
+	if err := pi.Trix.RunHooks("put", pi.put, put); err != nil {
+		return err
+	}
+	pi.put = put
+	return nil
+}
+func (pi *PathItem) SetPost(post *Operation) error {
+	if err := pi.Trix.RunHooks("post", pi.post, post); err != nil {
+		return err
+	}
+	pi.post = post
+	return nil
+}
+func (pi *PathItem) SetDelete(delete *Operation) error {
+	if err := pi.Trix.RunHooks("delete", pi.delete, delete); err != nil {
+		return err
+	}
+	pi.delete = delete
+	return nil
+}
+func (pi *PathItem) SetOptions(options *Operation) error {
+	if err := pi.Trix.RunHooks("options", pi.options, options); err != nil {
+		return err
+	}
+	pi.options = options
+	return nil
+}
+func (pi *PathItem) SetHead(head *Operation) error {
+	if err := pi.Trix.RunHooks("head", pi.head, head); err != nil {
+		return err
+	}
+	pi.head = head
+	return nil
+}
+func (pi *PathItem) SetPatch(patch *Operation) error {
+	if err := pi.Trix.RunHooks("patch", pi.patch, patch); err != nil {
+		return err
+	}
+	pi.patch = patch
+	return nil
+}
+func (pi *PathItem) SetParameters(parameters []*shared.Ref[Parameter]) error {
+	if err := pi.Trix.RunHooks("parameters", pi.parameters, parameters); err != nil {
+		return err
+	}
+	pi.parameters = parameters
+	return nil
+}
+
 // NewPathItem creates a new PathItem instance.
 func NewPathItem(
 	ref string,

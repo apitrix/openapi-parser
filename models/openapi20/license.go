@@ -18,6 +18,21 @@ type License struct {
 func (l *License) Name() string { return l.name }
 func (l *License) URL() string  { return l.url }
 
+func (l *License) SetName(name string) error {
+	if err := l.Trix.RunHooks("name", l.name, name); err != nil {
+		return err
+	}
+	l.name = name
+	return nil
+}
+func (l *License) SetURL(url string) error {
+	if err := l.Trix.RunHooks("url", l.url, url); err != nil {
+		return err
+	}
+	l.url = url
+	return nil
+}
+
 // NewLicense creates a new License instance.
 func NewLicense(name, url string) *License {
 	return &License{name: name, url: url}

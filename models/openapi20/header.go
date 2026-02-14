@@ -39,16 +39,143 @@ func (h *Header) CollectionFormat() string { return h.collectionFormat }
 func (h *Header) Default() interface{}     { return h.defaultVal }
 func (h *Header) Maximum() *float64        { return h.maximum }
 func (h *Header) ExclusiveMaximum() bool   { return h.exclusiveMaximum }
-func (h *Header) Minimum() *float64        { return h.minimum }
+func (h *Header) Minimum() *float64         { return h.minimum }
 func (h *Header) ExclusiveMinimum() bool   { return h.exclusiveMinimum }
 func (h *Header) MaxLength() *uint64       { return h.maxLength }
 func (h *Header) MinLength() *uint64       { return h.minLength }
-func (h *Header) Pattern() string          { return h.pattern }
+func (h *Header) Pattern() string           { return h.pattern }
 func (h *Header) MaxItems() *uint64        { return h.maxItems }
 func (h *Header) MinItems() *uint64        { return h.minItems }
-func (h *Header) UniqueItems() bool        { return h.uniqueItems }
+func (h *Header) UniqueItems() bool         { return h.uniqueItems }
 func (h *Header) Enum() []interface{}      { return h.enum }
-func (h *Header) MultipleOf() *float64     { return h.multipleOf }
+func (h *Header) MultipleOf() *float64      { return h.multipleOf }
+
+func (h *Header) SetDescription(description string) error {
+	if err := h.Trix.RunHooks("description", h.description, description); err != nil {
+		return err
+	}
+	h.description = description
+	return nil
+}
+func (h *Header) SetType(headerType string) error {
+	if err := h.Trix.RunHooks("type", h.headerType, headerType); err != nil {
+		return err
+	}
+	h.headerType = headerType
+	return nil
+}
+func (h *Header) SetFormat(format string) error {
+	if err := h.Trix.RunHooks("format", h.format, format); err != nil {
+		return err
+	}
+	h.format = format
+	return nil
+}
+func (h *Header) SetItems(items *Items) error {
+	if err := h.Trix.RunHooks("items", h.items, items); err != nil {
+		return err
+	}
+	h.items = items
+	return nil
+}
+func (h *Header) SetCollectionFormat(collectionFormat string) error {
+	if err := h.Trix.RunHooks("collectionFormat", h.collectionFormat, collectionFormat); err != nil {
+		return err
+	}
+	h.collectionFormat = collectionFormat
+	return nil
+}
+func (h *Header) SetDefault(defaultVal interface{}) error {
+	if err := h.Trix.RunHooks("default", h.defaultVal, defaultVal); err != nil {
+		return err
+	}
+	h.defaultVal = defaultVal
+	return nil
+}
+func (h *Header) SetMaximum(maximum *float64) error {
+	if err := h.Trix.RunHooks("maximum", h.maximum, maximum); err != nil {
+		return err
+	}
+	h.maximum = maximum
+	return nil
+}
+func (h *Header) SetExclusiveMaximum(exclusiveMaximum bool) error {
+	if err := h.Trix.RunHooks("exclusiveMaximum", h.exclusiveMaximum, exclusiveMaximum); err != nil {
+		return err
+	}
+	h.exclusiveMaximum = exclusiveMaximum
+	return nil
+}
+func (h *Header) SetMinimum(minimum *float64) error {
+	if err := h.Trix.RunHooks("minimum", h.minimum, minimum); err != nil {
+		return err
+	}
+	h.minimum = minimum
+	return nil
+}
+func (h *Header) SetExclusiveMinimum(exclusiveMinimum bool) error {
+	if err := h.Trix.RunHooks("exclusiveMinimum", h.exclusiveMinimum, exclusiveMinimum); err != nil {
+		return err
+	}
+	h.exclusiveMinimum = exclusiveMinimum
+	return nil
+}
+func (h *Header) SetMaxLength(maxLength *uint64) error {
+	if err := h.Trix.RunHooks("maxLength", h.maxLength, maxLength); err != nil {
+		return err
+	}
+	h.maxLength = maxLength
+	return nil
+}
+func (h *Header) SetMinLength(minLength *uint64) error {
+	if err := h.Trix.RunHooks("minLength", h.minLength, minLength); err != nil {
+		return err
+	}
+	h.minLength = minLength
+	return nil
+}
+func (h *Header) SetPattern(pattern string) error {
+	if err := h.Trix.RunHooks("pattern", h.pattern, pattern); err != nil {
+		return err
+	}
+	h.pattern = pattern
+	return nil
+}
+func (h *Header) SetMaxItems(maxItems *uint64) error {
+	if err := h.Trix.RunHooks("maxItems", h.maxItems, maxItems); err != nil {
+		return err
+	}
+	h.maxItems = maxItems
+	return nil
+}
+func (h *Header) SetMinItems(minItems *uint64) error {
+	if err := h.Trix.RunHooks("minItems", h.minItems, minItems); err != nil {
+		return err
+	}
+	h.minItems = minItems
+	return nil
+}
+func (h *Header) SetUniqueItems(uniqueItems bool) error {
+	if err := h.Trix.RunHooks("uniqueItems", h.uniqueItems, uniqueItems); err != nil {
+		return err
+	}
+	h.uniqueItems = uniqueItems
+	return nil
+}
+func (h *Header) SetEnum(enum []interface{}) error {
+	if err := h.Trix.RunHooks("enum", h.enum, enum); err != nil {
+		return err
+	}
+	h.enum = enum
+	return nil
+}
+func (h *Header) SetMultipleOf(multipleOf *float64) error {
+	if err := h.Trix.RunHooks("multipleOf", h.multipleOf, multipleOf); err != nil {
+		return err
+	}
+	h.multipleOf = multipleOf
+	return nil
+}
 
 // HeaderFields groups all header properties for the constructor.
 type HeaderFields struct {

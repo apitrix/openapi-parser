@@ -38,6 +38,91 @@ func (o *Operation) Deprecated() bool                            { return o.depr
 func (o *Operation) Security() []SecurityRequirement             { return o.security }
 func (o *Operation) Servers() []*Server                          { return o.servers }
 
+func (o *Operation) SetTags(tags []string) error {
+	if err := o.Trix.RunHooks("tags", o.tags, tags); err != nil {
+		return err
+	}
+	o.tags = tags
+	return nil
+}
+func (o *Operation) SetSummary(summary string) error {
+	if err := o.Trix.RunHooks("summary", o.summary, summary); err != nil {
+		return err
+	}
+	o.summary = summary
+	return nil
+}
+func (o *Operation) SetDescription(description string) error {
+	if err := o.Trix.RunHooks("description", o.description, description); err != nil {
+		return err
+	}
+	o.description = description
+	return nil
+}
+func (o *Operation) SetExternalDocs(externalDocs *ExternalDocumentation) error {
+	if err := o.Trix.RunHooks("externalDocs", o.externalDocs, externalDocs); err != nil {
+		return err
+	}
+	o.externalDocs = externalDocs
+	return nil
+}
+func (o *Operation) SetOperationID(operationID string) error {
+	if err := o.Trix.RunHooks("operationId", o.operationID, operationID); err != nil {
+		return err
+	}
+	o.operationID = operationID
+	return nil
+}
+func (o *Operation) SetParameters(parameters []*shared.Ref[Parameter]) error {
+	if err := o.Trix.RunHooks("parameters", o.parameters, parameters); err != nil {
+		return err
+	}
+	o.parameters = parameters
+	return nil
+}
+func (o *Operation) SetRequestBody(requestBody *shared.Ref[RequestBody]) error {
+	if err := o.Trix.RunHooks("requestBody", o.requestBody, requestBody); err != nil {
+		return err
+	}
+	o.requestBody = requestBody
+	return nil
+}
+func (o *Operation) SetResponses(responses *Responses) error {
+	if err := o.Trix.RunHooks("responses", o.responses, responses); err != nil {
+		return err
+	}
+	o.responses = responses
+	return nil
+}
+func (o *Operation) SetCallbacks(callbacks map[string]*shared.Ref[Callback]) error {
+	if err := o.Trix.RunHooks("callbacks", o.callbacks, callbacks); err != nil {
+		return err
+	}
+	o.callbacks = callbacks
+	return nil
+}
+func (o *Operation) SetDeprecated(deprecated bool) error {
+	if err := o.Trix.RunHooks("deprecated", o.deprecated, deprecated); err != nil {
+		return err
+	}
+	o.deprecated = deprecated
+	return nil
+}
+func (o *Operation) SetSecurity(security []SecurityRequirement) error {
+	if err := o.Trix.RunHooks("security", o.security, security); err != nil {
+		return err
+	}
+	o.security = security
+	return nil
+}
+func (o *Operation) SetServers(servers []*Server) error {
+	if err := o.Trix.RunHooks("servers", o.servers, servers); err != nil {
+		return err
+	}
+	o.servers = servers
+	return nil
+}
+
 // NewOperation creates a new Operation instance.
 func NewOperation(
 	tags []string, summary, description string, externalDocs *ExternalDocumentation,

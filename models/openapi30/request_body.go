@@ -18,7 +18,29 @@ type RequestBody struct {
 
 func (rb *RequestBody) Description() string            { return rb.description }
 func (rb *RequestBody) Content() map[string]*MediaType { return rb.content }
-func (rb *RequestBody) Required() bool                 { return rb.required }
+func (rb *RequestBody) Required() bool                { return rb.required }
+
+func (rb *RequestBody) SetDescription(description string) error {
+	if err := rb.Trix.RunHooks("description", rb.description, description); err != nil {
+		return err
+	}
+	rb.description = description
+	return nil
+}
+func (rb *RequestBody) SetContent(content map[string]*MediaType) error {
+	if err := rb.Trix.RunHooks("content", rb.content, content); err != nil {
+		return err
+	}
+	rb.content = content
+	return nil
+}
+func (rb *RequestBody) SetRequired(required bool) error {
+	if err := rb.Trix.RunHooks("required", rb.required, required); err != nil {
+		return err
+	}
+	rb.required = required
+	return nil
+}
 
 // NewRequestBody creates a new RequestBody instance.
 func NewRequestBody(description string, content map[string]*MediaType, required bool) *RequestBody {

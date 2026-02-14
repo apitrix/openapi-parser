@@ -34,6 +34,70 @@ func (c *Components) SecuritySchemes() map[string]*shared.Ref[SecurityScheme] {
 func (c *Components) Links() map[string]*shared.Ref[Link]         { return c.links }
 func (c *Components) Callbacks() map[string]*shared.Ref[Callback] { return c.callbacks }
 
+func (c *Components) SetSchemas(schemas map[string]*shared.Ref[Schema]) error {
+	if err := c.Trix.RunHooks("schemas", c.schemas, schemas); err != nil {
+		return err
+	}
+	c.schemas = schemas
+	return nil
+}
+func (c *Components) SetResponses(responses map[string]*shared.Ref[Response]) error {
+	if err := c.Trix.RunHooks("responses", c.responses, responses); err != nil {
+		return err
+	}
+	c.responses = responses
+	return nil
+}
+func (c *Components) SetParameters(parameters map[string]*shared.Ref[Parameter]) error {
+	if err := c.Trix.RunHooks("parameters", c.parameters, parameters); err != nil {
+		return err
+	}
+	c.parameters = parameters
+	return nil
+}
+func (c *Components) SetExamples(examples map[string]*shared.Ref[Example]) error {
+	if err := c.Trix.RunHooks("examples", c.examples, examples); err != nil {
+		return err
+	}
+	c.examples = examples
+	return nil
+}
+func (c *Components) SetRequestBodies(requestBodies map[string]*shared.Ref[RequestBody]) error {
+	if err := c.Trix.RunHooks("requestBodies", c.requestBodies, requestBodies); err != nil {
+		return err
+	}
+	c.requestBodies = requestBodies
+	return nil
+}
+func (c *Components) SetHeaders(headers map[string]*shared.Ref[Header]) error {
+	if err := c.Trix.RunHooks("headers", c.headers, headers); err != nil {
+		return err
+	}
+	c.headers = headers
+	return nil
+}
+func (c *Components) SetSecuritySchemes(securitySchemes map[string]*shared.Ref[SecurityScheme]) error {
+	if err := c.Trix.RunHooks("securitySchemes", c.securitySchemes, securitySchemes); err != nil {
+		return err
+	}
+	c.securitySchemes = securitySchemes
+	return nil
+}
+func (c *Components) SetLinks(links map[string]*shared.Ref[Link]) error {
+	if err := c.Trix.RunHooks("links", c.links, links); err != nil {
+		return err
+	}
+	c.links = links
+	return nil
+}
+func (c *Components) SetCallbacks(callbacks map[string]*shared.Ref[Callback]) error {
+	if err := c.Trix.RunHooks("callbacks", c.callbacks, callbacks); err != nil {
+		return err
+	}
+	c.callbacks = callbacks
+	return nil
+}
+
 // NewComponents creates a new Components instance.
 func NewComponents(
 	schemas map[string]*shared.Ref[Schema],
