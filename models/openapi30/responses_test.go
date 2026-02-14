@@ -1,19 +1,20 @@
 package openapi30
 
 import (
+	"openapi-parser/models/shared"
 	"encoding/json"
 	"testing"
 )
 
 func TestResponses_MarshalJSON_DefaultFirst(t *testing.T) {
 	// Arrange
-	defaultResp := &ResponseRef{}
+	defaultResp := &shared.Ref[Response]{}
 	defaultResp.SetValue(NewResponse("Unexpected error", nil, nil, nil))
-	ok200 := &ResponseRef{}
+	ok200 := &shared.Ref[Response]{}
 	ok200.SetValue(NewResponse("OK", nil, nil, nil))
-	nf404 := &ResponseRef{}
+	nf404 := &shared.Ref[Response]{}
 	nf404.SetValue(NewResponse("Not Found", nil, nil, nil))
-	codes := map[string]*ResponseRef{
+	codes := map[string]*shared.Ref[Response]{
 		"200": ok200,
 		"404": nf404,
 	}
@@ -43,9 +44,9 @@ func TestResponses_MarshalJSON_DefaultFirst(t *testing.T) {
 
 func TestResponses_MarshalJSON_NoDefault(t *testing.T) {
 	// Arrange
-	ok200 := &ResponseRef{}
+	ok200 := &shared.Ref[Response]{}
 	ok200.SetValue(NewResponse("OK", nil, nil, nil))
-	codes := map[string]*ResponseRef{
+	codes := map[string]*shared.Ref[Response]{
 		"200": ok200,
 	}
 	r := NewResponses(nil, codes)

@@ -19,9 +19,9 @@ type Swagger struct {
 	consumes            []string
 	produces            []string
 	paths               *Paths
-	definitions         map[string]*SchemaRef
-	parameters          map[string]*ParameterRef
-	responses           map[string]*ResponseRef
+	definitions         map[string]*shared.Ref[Schema]
+	parameters          map[string]*shared.Ref[Parameter]
+	responses           map[string]*shared.Ref[Response]
 	securityDefinitions map[string]*SecurityScheme
 	security            []SecurityRequirement
 	tags                []*Tag
@@ -36,9 +36,9 @@ func (s *Swagger) Schemes() []string                               { return s.sc
 func (s *Swagger) Consumes() []string                              { return s.consumes }
 func (s *Swagger) Produces() []string                              { return s.produces }
 func (s *Swagger) Paths() *Paths                                   { return s.paths }
-func (s *Swagger) Definitions() map[string]*SchemaRef              { return s.definitions }
-func (s *Swagger) Parameters() map[string]*ParameterRef            { return s.parameters }
-func (s *Swagger) Responses() map[string]*ResponseRef              { return s.responses }
+func (s *Swagger) Definitions() map[string]*shared.Ref[Schema]              { return s.definitions }
+func (s *Swagger) Parameters() map[string]*shared.Ref[Parameter]            { return s.parameters }
+func (s *Swagger) Responses() map[string]*shared.Ref[Response]              { return s.responses }
 func (s *Swagger) SecurityDefinitions() map[string]*SecurityScheme { return s.securityDefinitions }
 func (s *Swagger) Security() []SecurityRequirement                 { return s.security }
 func (s *Swagger) Tags() []*Tag                                    { return s.tags }
@@ -65,11 +65,11 @@ func (s *Swagger) SetProperty(key string, value interface{}) {
 	case "paths":
 		s.paths = value.(*Paths)
 	case "definitions":
-		s.definitions = value.(map[string]*SchemaRef)
+		s.definitions = value.(map[string]*shared.Ref[Schema])
 	case "parameters":
-		s.parameters = value.(map[string]*ParameterRef)
+		s.parameters = value.(map[string]*shared.Ref[Parameter])
 	case "responses":
-		s.responses = value.(map[string]*ResponseRef)
+		s.responses = value.(map[string]*shared.Ref[Response])
 	case "securityDefinitions":
 		s.securityDefinitions = value.(map[string]*SecurityScheme)
 	case "security":

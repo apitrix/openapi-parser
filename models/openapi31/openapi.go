@@ -16,7 +16,7 @@ type OpenAPI struct {
 	jsonSchemaDialect string
 	servers           []*Server
 	paths             *Paths
-	webhooks          map[string]*PathItemRef
+	webhooks          map[string]*shared.RefWithMeta[PathItem]
 	components        *Components
 	security          []SecurityRequirement
 	tags              []*Tag
@@ -28,7 +28,7 @@ func (o *OpenAPI) Info() *Info                          { return o.info }
 func (o *OpenAPI) JsonSchemaDialect() string            { return o.jsonSchemaDialect }
 func (o *OpenAPI) Servers() []*Server                   { return o.servers }
 func (o *OpenAPI) Paths() *Paths                        { return o.paths }
-func (o *OpenAPI) Webhooks() map[string]*PathItemRef    { return o.webhooks }
+func (o *OpenAPI) Webhooks() map[string]*shared.RefWithMeta[PathItem]    { return o.webhooks }
 func (o *OpenAPI) Components() *Components              { return o.components }
 func (o *OpenAPI) Security() []SecurityRequirement      { return o.security }
 func (o *OpenAPI) Tags() []*Tag                         { return o.tags }
@@ -49,7 +49,7 @@ func (o *OpenAPI) SetProperty(name string, value interface{}) {
 	case "paths":
 		o.paths = value.(*Paths)
 	case "webhooks":
-		o.webhooks = value.(map[string]*PathItemRef)
+		o.webhooks = value.(map[string]*shared.RefWithMeta[PathItem])
 	case "components":
 		o.components = value.(*Components)
 	case "security":

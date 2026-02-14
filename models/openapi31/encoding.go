@@ -12,20 +12,20 @@ type Encoding struct {
 	Node // embedded - provides VendorExtensions and Trix
 
 	contentType   string
-	headers       map[string]*HeaderRef
+	headers       map[string]*shared.RefWithMeta[Header]
 	style         string
 	explode       *bool
 	allowReserved bool
 }
 
 func (e *Encoding) ContentType() string            { return e.contentType }
-func (e *Encoding) Headers() map[string]*HeaderRef { return e.headers }
+func (e *Encoding) Headers() map[string]*shared.RefWithMeta[Header] { return e.headers }
 func (e *Encoding) Style() string                  { return e.style }
 func (e *Encoding) Explode() *bool                 { return e.explode }
 func (e *Encoding) AllowReserved() bool            { return e.allowReserved }
 
 // NewEncoding creates a new Encoding instance.
-func NewEncoding(contentType, style string, headers map[string]*HeaderRef, explode *bool, allowReserved bool) *Encoding {
+func NewEncoding(contentType, style string, headers map[string]*shared.RefWithMeta[Header], explode *bool, allowReserved bool) *Encoding {
 	return &Encoding{
 		contentType: contentType, headers: headers, style: style,
 		explode: explode, allowReserved: allowReserved,

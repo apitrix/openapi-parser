@@ -19,7 +19,7 @@ type PathItem struct {
 	options    *Operation
 	head       *Operation
 	patch      *Operation
-	parameters []*ParameterRef
+	parameters []*shared.Ref[Parameter]
 }
 
 func (pi *PathItem) Ref() string                 { return pi.ref }
@@ -30,13 +30,13 @@ func (pi *PathItem) Delete() *Operation          { return pi.delete }
 func (pi *PathItem) Options() *Operation         { return pi.options }
 func (pi *PathItem) Head() *Operation            { return pi.head }
 func (pi *PathItem) Patch() *Operation           { return pi.patch }
-func (pi *PathItem) Parameters() []*ParameterRef { return pi.parameters }
+func (pi *PathItem) Parameters() []*shared.Ref[Parameter] { return pi.parameters }
 
 // NewPathItem creates a new PathItem instance.
 func NewPathItem(
 	ref string,
 	get, put, post, del, options, head, patch *Operation,
-	parameters []*ParameterRef,
+	parameters []*shared.Ref[Parameter],
 ) *PathItem {
 	return &PathItem{
 		ref: ref,

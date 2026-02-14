@@ -1,13 +1,14 @@
 package openapi31x
 
 import (
+	"openapi-parser/models/shared"
 	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
 )
 
 // parseSecuritySchemeRef parses a SecuritySchemeRef from a yaml.Node.
-func parseSecuritySchemeRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.SecuritySchemeRef, error) {
+func parseSecuritySchemeRef(node *yaml.Node, ctx *ParseContext) (*shared.RefWithMeta[openapi31models.SecurityScheme], error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -16,7 +17,7 @@ func parseSecuritySchemeRef(node *yaml.Node, ctx *ParseContext) (*openapi31model
 		return nil, ctx.errorAt(node, "securityScheme must be an object")
 	}
 
-	ref := &openapi31models.SecuritySchemeRef{}
+	ref := &shared.RefWithMeta[openapi31models.SecurityScheme]{}
 	ref.Trix.Source = ctx.nodeSource(node)
 	ref.VendorExtensions = parseNodeExtensions(node)
 

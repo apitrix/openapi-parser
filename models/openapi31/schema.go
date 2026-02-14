@@ -31,35 +31,35 @@ type Schema struct {
 	required         []string
 	enum             []interface{}
 	schemaType       SchemaType
-	allOf            []*SchemaRef
-	oneOf            []*SchemaRef
-	anyOf            []*SchemaRef
-	not              *SchemaRef
-	items            *SchemaRef
-	properties       map[string]*SchemaRef
+	allOf            []*shared.RefWithMeta[Schema]
+	oneOf            []*shared.RefWithMeta[Schema]
+	anyOf            []*shared.RefWithMeta[Schema]
+	not              *shared.RefWithMeta[Schema]
+	items            *shared.RefWithMeta[Schema]
+	properties       map[string]*shared.RefWithMeta[Schema]
 	description      string
 	format           string
 	defaultVal       interface{}
 
 	// AdditionalProperties can be a boolean or a schema.
-	additionalProperties        *SchemaRef
+	additionalProperties        *shared.RefWithMeta[Schema]
 	additionalPropertiesAllowed *bool
 
 	// JSON Schema 2020-12 new keywords
 	constVal              interface{}
-	ifSchema              *SchemaRef
-	thenSchema            *SchemaRef
-	elseSchema            *SchemaRef
-	dependentSchemas      map[string]*SchemaRef
-	prefixItems           []*SchemaRef
+	ifSchema              *shared.RefWithMeta[Schema]
+	thenSchema            *shared.RefWithMeta[Schema]
+	elseSchema            *shared.RefWithMeta[Schema]
+	dependentSchemas      map[string]*shared.RefWithMeta[Schema]
+	prefixItems           []*shared.RefWithMeta[Schema]
 	anchor                string
 	dynamicRef            string
 	dynamicAnchor         string
 	contentEncoding       string
 	contentMediaType      string
-	contentSchema         *SchemaRef
-	unevaluatedItems      *SchemaRef
-	unevaluatedProperties *SchemaRef
+	contentSchema         *shared.RefWithMeta[Schema]
+	unevaluatedItems      *shared.RefWithMeta[Schema]
+	unevaluatedProperties *shared.RefWithMeta[Schema]
 	examples              []interface{}
 
 	// OpenAPI extensions (still present in 3.1)
@@ -89,31 +89,31 @@ func (s *Schema) MinProperties() *uint64                  { return s.minProperti
 func (s *Schema) Required() []string                      { return s.required }
 func (s *Schema) Enum() []interface{}                     { return s.enum }
 func (s *Schema) Type() SchemaType                        { return s.schemaType }
-func (s *Schema) AllOf() []*SchemaRef                     { return s.allOf }
-func (s *Schema) OneOf() []*SchemaRef                     { return s.oneOf }
-func (s *Schema) AnyOf() []*SchemaRef                     { return s.anyOf }
-func (s *Schema) Not() *SchemaRef                         { return s.not }
-func (s *Schema) Items() *SchemaRef                       { return s.items }
-func (s *Schema) Properties() map[string]*SchemaRef       { return s.properties }
+func (s *Schema) AllOf() []*shared.RefWithMeta[Schema]                     { return s.allOf }
+func (s *Schema) OneOf() []*shared.RefWithMeta[Schema]                     { return s.oneOf }
+func (s *Schema) AnyOf() []*shared.RefWithMeta[Schema]                     { return s.anyOf }
+func (s *Schema) Not() *shared.RefWithMeta[Schema]                         { return s.not }
+func (s *Schema) Items() *shared.RefWithMeta[Schema]                       { return s.items }
+func (s *Schema) Properties() map[string]*shared.RefWithMeta[Schema]       { return s.properties }
 func (s *Schema) Description() string                     { return s.description }
 func (s *Schema) Format() string                          { return s.format }
 func (s *Schema) Default() interface{}                    { return s.defaultVal }
-func (s *Schema) AdditionalProperties() *SchemaRef        { return s.additionalProperties }
+func (s *Schema) AdditionalProperties() *shared.RefWithMeta[Schema]        { return s.additionalProperties }
 func (s *Schema) AdditionalPropertiesAllowed() *bool      { return s.additionalPropertiesAllowed }
 func (s *Schema) Const() interface{}                      { return s.constVal }
-func (s *Schema) If() *SchemaRef                          { return s.ifSchema }
-func (s *Schema) Then() *SchemaRef                        { return s.thenSchema }
-func (s *Schema) Else() *SchemaRef                        { return s.elseSchema }
-func (s *Schema) DependentSchemas() map[string]*SchemaRef { return s.dependentSchemas }
-func (s *Schema) PrefixItems() []*SchemaRef               { return s.prefixItems }
+func (s *Schema) If() *shared.RefWithMeta[Schema]                          { return s.ifSchema }
+func (s *Schema) Then() *shared.RefWithMeta[Schema]                        { return s.thenSchema }
+func (s *Schema) Else() *shared.RefWithMeta[Schema]                        { return s.elseSchema }
+func (s *Schema) DependentSchemas() map[string]*shared.RefWithMeta[Schema] { return s.dependentSchemas }
+func (s *Schema) PrefixItems() []*shared.RefWithMeta[Schema]               { return s.prefixItems }
 func (s *Schema) Anchor() string                          { return s.anchor }
 func (s *Schema) DynamicRef() string                      { return s.dynamicRef }
 func (s *Schema) DynamicAnchor() string                   { return s.dynamicAnchor }
 func (s *Schema) ContentEncoding() string                 { return s.contentEncoding }
 func (s *Schema) ContentMediaType() string                { return s.contentMediaType }
-func (s *Schema) ContentSchema() *SchemaRef               { return s.contentSchema }
-func (s *Schema) UnevaluatedItems() *SchemaRef            { return s.unevaluatedItems }
-func (s *Schema) UnevaluatedProperties() *SchemaRef       { return s.unevaluatedProperties }
+func (s *Schema) ContentSchema() *shared.RefWithMeta[Schema]               { return s.contentSchema }
+func (s *Schema) UnevaluatedItems() *shared.RefWithMeta[Schema]            { return s.unevaluatedItems }
+func (s *Schema) UnevaluatedProperties() *shared.RefWithMeta[Schema]       { return s.unevaluatedProperties }
 func (s *Schema) Examples() []interface{}                 { return s.examples }
 func (s *Schema) Discriminator() *Discriminator           { return s.discriminator }
 func (s *Schema) ReadOnly() bool                          { return s.readOnly }
@@ -173,34 +173,34 @@ type SchemaFields struct {
 	Required         []string
 	Enum             []interface{}
 	Type             SchemaType
-	AllOf            []*SchemaRef
-	OneOf            []*SchemaRef
-	AnyOf            []*SchemaRef
-	Not              *SchemaRef
-	Items            *SchemaRef
-	Properties       map[string]*SchemaRef
+	AllOf            []*shared.RefWithMeta[Schema]
+	OneOf            []*shared.RefWithMeta[Schema]
+	AnyOf            []*shared.RefWithMeta[Schema]
+	Not              *shared.RefWithMeta[Schema]
+	Items            *shared.RefWithMeta[Schema]
+	Properties       map[string]*shared.RefWithMeta[Schema]
 	Description      string
 	Format           string
 	Default          interface{}
 
-	AdditionalProperties        *SchemaRef
+	AdditionalProperties        *shared.RefWithMeta[Schema]
 	AdditionalPropertiesAllowed *bool
 
 	// JSON Schema 2020-12
 	Const                 interface{}
-	If                    *SchemaRef
-	Then                  *SchemaRef
-	Else                  *SchemaRef
-	DependentSchemas      map[string]*SchemaRef
-	PrefixItems           []*SchemaRef
+	If                    *shared.RefWithMeta[Schema]
+	Then                  *shared.RefWithMeta[Schema]
+	Else                  *shared.RefWithMeta[Schema]
+	DependentSchemas      map[string]*shared.RefWithMeta[Schema]
+	PrefixItems           []*shared.RefWithMeta[Schema]
 	Anchor                string
 	DynamicRef            string
 	DynamicAnchor         string
 	ContentEncoding       string
 	ContentMediaType      string
-	ContentSchema         *SchemaRef
-	UnevaluatedItems      *SchemaRef
-	UnevaluatedProperties *SchemaRef
+	ContentSchema         *shared.RefWithMeta[Schema]
+	UnevaluatedItems      *shared.RefWithMeta[Schema]
+	UnevaluatedProperties *shared.RefWithMeta[Schema]
 	Examples              []interface{}
 
 	// OpenAPI extensions

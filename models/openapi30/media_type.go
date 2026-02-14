@@ -11,19 +11,19 @@ import (
 type MediaType struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	schema   *SchemaRef
+	schema   *shared.Ref[Schema]
 	example  interface{}
-	examples map[string]*ExampleRef
+	examples map[string]*shared.Ref[Example]
 	encoding map[string]*Encoding
 }
 
-func (mt *MediaType) Schema() *SchemaRef               { return mt.schema }
+func (mt *MediaType) Schema() *shared.Ref[Schema]               { return mt.schema }
 func (mt *MediaType) Example() interface{}             { return mt.example }
-func (mt *MediaType) Examples() map[string]*ExampleRef { return mt.examples }
+func (mt *MediaType) Examples() map[string]*shared.Ref[Example] { return mt.examples }
 func (mt *MediaType) Encoding() map[string]*Encoding   { return mt.encoding }
 
 // NewMediaType creates a new MediaType instance.
-func NewMediaType(schema *SchemaRef, example interface{}, examples map[string]*ExampleRef, encoding map[string]*Encoding) *MediaType {
+func NewMediaType(schema *shared.Ref[Schema], example interface{}, examples map[string]*shared.Ref[Example], encoding map[string]*Encoding) *MediaType {
 	return &MediaType{schema: schema, example: example, examples: examples, encoding: encoding}
 }
 

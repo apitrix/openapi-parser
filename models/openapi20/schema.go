@@ -32,10 +32,10 @@ type Schema struct {
 	enum                        []interface{}
 	schemaType                  string
 	format                      string
-	allOf                       []*SchemaRef
-	items                       *SchemaRef
-	properties                  map[string]*SchemaRef
-	additionalProperties        *SchemaRef
+	allOf                       []*shared.Ref[Schema]
+	items                       *shared.Ref[Schema]
+	properties                  map[string]*shared.Ref[Schema]
+	additionalProperties        *shared.Ref[Schema]
 	additionalPropertiesAllowed *bool
 
 	// Swagger 2.0 specific fields
@@ -66,10 +66,10 @@ func (s *Schema) Required() []string                 { return s.required }
 func (s *Schema) Enum() []interface{}                { return s.enum }
 func (s *Schema) Type() string                       { return s.schemaType }
 func (s *Schema) Format() string                     { return s.format }
-func (s *Schema) AllOf() []*SchemaRef                { return s.allOf }
-func (s *Schema) Items() *SchemaRef                  { return s.items }
-func (s *Schema) Properties() map[string]*SchemaRef  { return s.properties }
-func (s *Schema) AdditionalProperties() *SchemaRef   { return s.additionalProperties }
+func (s *Schema) AllOf() []*shared.Ref[Schema]                { return s.allOf }
+func (s *Schema) Items() *shared.Ref[Schema]                  { return s.items }
+func (s *Schema) Properties() map[string]*shared.Ref[Schema]  { return s.properties }
+func (s *Schema) AdditionalProperties() *shared.Ref[Schema]   { return s.additionalProperties }
 func (s *Schema) AdditionalPropertiesAllowed() *bool { return s.additionalPropertiesAllowed }
 func (s *Schema) Discriminator() string              { return s.discriminator }
 func (s *Schema) ReadOnly() bool                     { return s.readOnly }
@@ -99,10 +99,10 @@ type SchemaFields struct {
 	Enum                        []interface{}
 	Type                        string
 	Format                      string
-	AllOf                       []*SchemaRef
-	Items                       *SchemaRef
-	Properties                  map[string]*SchemaRef
-	AdditionalProperties        *SchemaRef
+	AllOf                       []*shared.Ref[Schema]
+	Items                       *shared.Ref[Schema]
+	Properties                  map[string]*shared.Ref[Schema]
+	AdditionalProperties        *shared.Ref[Schema]
 	AdditionalPropertiesAllowed *bool
 	Discriminator               string
 	ReadOnly                    bool

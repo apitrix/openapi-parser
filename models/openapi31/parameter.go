@@ -20,9 +20,9 @@ type Parameter struct {
 	style           string
 	explode         *bool
 	allowReserved   bool
-	schema          *SchemaRef
+	schema          *shared.RefWithMeta[Schema]
 	example         interface{}
-	examples        map[string]*ExampleRef
+	examples        map[string]*shared.RefWithMeta[Example]
 	content         map[string]*MediaType
 }
 
@@ -35,9 +35,9 @@ func (p *Parameter) AllowEmptyValue() bool            { return p.allowEmptyValue
 func (p *Parameter) Style() string                    { return p.style }
 func (p *Parameter) Explode() *bool                   { return p.explode }
 func (p *Parameter) AllowReserved() bool              { return p.allowReserved }
-func (p *Parameter) Schema() *SchemaRef               { return p.schema }
+func (p *Parameter) Schema() *shared.RefWithMeta[Schema]               { return p.schema }
 func (p *Parameter) Example() interface{}             { return p.example }
-func (p *Parameter) Examples() map[string]*ExampleRef { return p.examples }
+func (p *Parameter) Examples() map[string]*shared.RefWithMeta[Example] { return p.examples }
 func (p *Parameter) Content() map[string]*MediaType   { return p.content }
 
 // ParameterFields holds all fields for constructing a Parameter.
@@ -51,9 +51,9 @@ type ParameterFields struct {
 	Style           string
 	Explode         *bool
 	AllowReserved   bool
-	Schema          *SchemaRef
+	Schema          *shared.RefWithMeta[Schema]
 	Example         interface{}
-	Examples        map[string]*ExampleRef
+	Examples        map[string]*shared.RefWithMeta[Example]
 	Content         map[string]*MediaType
 }
 

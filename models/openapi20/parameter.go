@@ -18,7 +18,7 @@ type Parameter struct {
 	allowEmptyValue bool
 
 	// For body parameters only
-	schema *SchemaRef
+	schema *shared.Ref[Schema]
 
 	// For non-body parameters (query, header, path, formData)
 	paramType        string
@@ -45,7 +45,7 @@ func (p *Parameter) In() string               { return p.in }
 func (p *Parameter) Description() string      { return p.description }
 func (p *Parameter) Required() bool           { return p.required }
 func (p *Parameter) AllowEmptyValue() bool    { return p.allowEmptyValue }
-func (p *Parameter) Schema() *SchemaRef       { return p.schema }
+func (p *Parameter) Schema() *shared.Ref[Schema]       { return p.schema }
 func (p *Parameter) Type() string             { return p.paramType }
 func (p *Parameter) Format() string           { return p.format }
 func (p *Parameter) Items() *Items            { return p.items }
@@ -71,7 +71,7 @@ type ParameterFields struct {
 	Description      string
 	Required         bool
 	AllowEmptyValue  bool
-	Schema           *SchemaRef
+	Schema           *shared.Ref[Schema]
 	Type             string
 	Format           string
 	Items            *Items

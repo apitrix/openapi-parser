@@ -1,13 +1,14 @@
 package openapi30x
 
 import (
+	"openapi-parser/models/shared"
 	openapi30models "openapi-parser/models/openapi30"
 
 	"gopkg.in/yaml.v3"
 )
 
 // parseExampleRef parses an ExampleRef from a yaml.Node.
-func parseExampleRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.ExampleRef, error) {
+func parseExampleRef(node *yaml.Node, ctx *ParseContext) (*shared.Ref[openapi30models.Example], error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -16,7 +17,7 @@ func parseExampleRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.Examp
 		return nil, ctx.errorAt(node, "example must be an object")
 	}
 
-	ref := &openapi30models.ExampleRef{}
+	ref := &shared.Ref[openapi30models.Example]{}
 	ref.Trix.Source = ctx.nodeSource(node)
 	ref.VendorExtensions = parseNodeExtensions(node)
 

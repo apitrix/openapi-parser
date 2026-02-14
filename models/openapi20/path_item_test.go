@@ -1,6 +1,7 @@
 package openapi20
 
 import (
+	"openapi-parser/models/shared"
 	"encoding/json"
 	"testing"
 )
@@ -52,9 +53,9 @@ func TestPathItem_MarshalJSON_WithRef(t *testing.T) {
 
 func TestPathItem_MarshalJSON_WithParameters(t *testing.T) {
 	// Arrange
-	idParam := &ParameterRef{}
+	idParam := &shared.Ref[Parameter]{}
 	idParam.SetValue(NewParameter(ParameterFields{Name: "id", In: "path", Type: "string"}))
-	params := []*ParameterRef{
+	params := []*shared.Ref[Parameter]{
 		idParam,
 	}
 	pi := NewPathItem("", nil, nil, nil, nil, nil, nil, nil, params)

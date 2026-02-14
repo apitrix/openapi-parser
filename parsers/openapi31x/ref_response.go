@@ -1,13 +1,14 @@
 package openapi31x
 
 import (
+	"openapi-parser/models/shared"
 	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
 )
 
 // parseResponseRef parses a ResponseRef from a yaml.Node.
-func parseResponseRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.ResponseRef, error) {
+func parseResponseRef(node *yaml.Node, ctx *ParseContext) (*shared.RefWithMeta[openapi31models.Response], error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -16,7 +17,7 @@ func parseResponseRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.Resp
 		return nil, ctx.errorAt(node, "response must be an object")
 	}
 
-	ref := &openapi31models.ResponseRef{}
+	ref := &shared.RefWithMeta[openapi31models.Response]{}
 	ref.Trix.Source = ctx.nodeSource(node)
 	ref.VendorExtensions = parseNodeExtensions(node)
 

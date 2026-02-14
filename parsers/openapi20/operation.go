@@ -1,6 +1,7 @@
 package openapi20
 
 import (
+	"openapi-parser/models/shared"
 	openapi20models "openapi-parser/models/openapi20"
 
 	"gopkg.in/yaml.v3"
@@ -29,7 +30,7 @@ func parseOperation(node *yaml.Node, ctx *ParseContext) (*openapi20models.Operat
 	}
 
 	// Complex property - Parameters
-	var parameters []*openapi20models.ParameterRef
+	var parameters []*shared.Ref[openapi20models.Parameter]
 	if paramsNode := nodeGetValue(node, "parameters"); paramsNode != nil {
 		parameters, err = parseParameterRefs(paramsNode, ctx.push("parameters"))
 		if err != nil {

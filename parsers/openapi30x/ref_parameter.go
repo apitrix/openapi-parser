@@ -1,13 +1,14 @@
 package openapi30x
 
 import (
+	"openapi-parser/models/shared"
 	openapi30models "openapi-parser/models/openapi30"
 
 	"gopkg.in/yaml.v3"
 )
 
 // parseParameterRef parses a ParameterRef from a yaml.Node.
-func parseParameterRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.ParameterRef, error) {
+func parseParameterRef(node *yaml.Node, ctx *ParseContext) (*shared.Ref[openapi30models.Parameter], error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -16,7 +17,7 @@ func parseParameterRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.Par
 		return nil, ctx.errorAt(node, "parameter must be an object")
 	}
 
-	ref := &openapi30models.ParameterRef{}
+	ref := &shared.Ref[openapi30models.Parameter]{}
 	ref.Trix.Source = ctx.nodeSource(node)
 	ref.VendorExtensions = parseNodeExtensions(node)
 

@@ -11,53 +11,53 @@ import (
 type Components struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	schemas         map[string]*SchemaRef
-	responses       map[string]*ResponseRef
-	parameters      map[string]*ParameterRef
-	examples        map[string]*ExampleRef
-	requestBodies   map[string]*RequestBodyRef
-	headers         map[string]*HeaderRef
-	securitySchemes map[string]*SecuritySchemeRef
-	links           map[string]*LinkRef
-	callbacks       map[string]*CallbackRef
-	pathItems       map[string]*PathItemRef
+	schemas         map[string]*shared.RefWithMeta[Schema]
+	responses       map[string]*shared.RefWithMeta[Response]
+	parameters      map[string]*shared.RefWithMeta[Parameter]
+	examples        map[string]*shared.RefWithMeta[Example]
+	requestBodies   map[string]*shared.RefWithMeta[RequestBody]
+	headers         map[string]*shared.RefWithMeta[Header]
+	securitySchemes map[string]*shared.RefWithMeta[SecurityScheme]
+	links           map[string]*shared.RefWithMeta[Link]
+	callbacks       map[string]*shared.RefWithMeta[Callback]
+	pathItems       map[string]*shared.RefWithMeta[PathItem]
 }
 
-func (c *Components) Schemas() map[string]*SchemaRef                 { return c.schemas }
-func (c *Components) Responses() map[string]*ResponseRef             { return c.responses }
-func (c *Components) Parameters() map[string]*ParameterRef           { return c.parameters }
-func (c *Components) Examples() map[string]*ExampleRef               { return c.examples }
-func (c *Components) RequestBodies() map[string]*RequestBodyRef      { return c.requestBodies }
-func (c *Components) Headers() map[string]*HeaderRef                 { return c.headers }
-func (c *Components) SecuritySchemes() map[string]*SecuritySchemeRef { return c.securitySchemes }
-func (c *Components) Links() map[string]*LinkRef                     { return c.links }
-func (c *Components) Callbacks() map[string]*CallbackRef             { return c.callbacks }
-func (c *Components) PathItems() map[string]*PathItemRef             { return c.pathItems }
+func (c *Components) Schemas() map[string]*shared.RefWithMeta[Schema]                 { return c.schemas }
+func (c *Components) Responses() map[string]*shared.RefWithMeta[Response]             { return c.responses }
+func (c *Components) Parameters() map[string]*shared.RefWithMeta[Parameter]           { return c.parameters }
+func (c *Components) Examples() map[string]*shared.RefWithMeta[Example]               { return c.examples }
+func (c *Components) RequestBodies() map[string]*shared.RefWithMeta[RequestBody]      { return c.requestBodies }
+func (c *Components) Headers() map[string]*shared.RefWithMeta[Header]                 { return c.headers }
+func (c *Components) SecuritySchemes() map[string]*shared.RefWithMeta[SecurityScheme] { return c.securitySchemes }
+func (c *Components) Links() map[string]*shared.RefWithMeta[Link]                     { return c.links }
+func (c *Components) Callbacks() map[string]*shared.RefWithMeta[Callback]             { return c.callbacks }
+func (c *Components) PathItems() map[string]*shared.RefWithMeta[PathItem]             { return c.pathItems }
 
 // SetProperty sets a named property on the Components.
 // Used by parsers for post-construction field assignment.
 func (c *Components) SetProperty(name string, value interface{}) {
 	switch name {
 	case "schemas":
-		c.schemas = value.(map[string]*SchemaRef)
+		c.schemas = value.(map[string]*shared.RefWithMeta[Schema])
 	case "responses":
-		c.responses = value.(map[string]*ResponseRef)
+		c.responses = value.(map[string]*shared.RefWithMeta[Response])
 	case "parameters":
-		c.parameters = value.(map[string]*ParameterRef)
+		c.parameters = value.(map[string]*shared.RefWithMeta[Parameter])
 	case "examples":
-		c.examples = value.(map[string]*ExampleRef)
+		c.examples = value.(map[string]*shared.RefWithMeta[Example])
 	case "requestBodies":
-		c.requestBodies = value.(map[string]*RequestBodyRef)
+		c.requestBodies = value.(map[string]*shared.RefWithMeta[RequestBody])
 	case "headers":
-		c.headers = value.(map[string]*HeaderRef)
+		c.headers = value.(map[string]*shared.RefWithMeta[Header])
 	case "securitySchemes":
-		c.securitySchemes = value.(map[string]*SecuritySchemeRef)
+		c.securitySchemes = value.(map[string]*shared.RefWithMeta[SecurityScheme])
 	case "links":
-		c.links = value.(map[string]*LinkRef)
+		c.links = value.(map[string]*shared.RefWithMeta[Link])
 	case "callbacks":
-		c.callbacks = value.(map[string]*CallbackRef)
+		c.callbacks = value.(map[string]*shared.RefWithMeta[Callback])
 	case "pathItems":
-		c.pathItems = value.(map[string]*PathItemRef)
+		c.pathItems = value.(map[string]*shared.RefWithMeta[PathItem])
 	}
 }
 

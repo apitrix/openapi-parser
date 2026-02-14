@@ -1,6 +1,7 @@
 package openapi31
 
 import (
+	"openapi-parser/models/shared"
 	"encoding/json"
 	"testing"
 )
@@ -8,7 +9,7 @@ import (
 func TestComponents_MarshalJSON_WithPathItems(t *testing.T) {
 	// pathItems is 3.1-specific
 	comp := NewComponents()
-	comp.SetProperty("pathItems", map[string]*PathItemRef{
+	comp.SetProperty("pathItems", map[string]*shared.RefWithMeta[PathItem]{
 		"MyPath": {Ref: "#/components/pathItems/MyPath"},
 	})
 	got, err := json.Marshal(comp)
@@ -38,9 +39,9 @@ func TestComponents_MarshalJSON_Empty(t *testing.T) {
 
 func TestComponents_MarshalJSON_WithSchemas(t *testing.T) {
 	comp := NewComponents()
-	petRef := &SchemaRef{}
+	petRef := &shared.RefWithMeta[Schema]{}
 	petRef.SetValue(NewSchema(SchemaFields{Type: SchemaType{Single: "object"}}))
-	comp.SetProperty("schemas", map[string]*SchemaRef{
+	comp.SetProperty("schemas", map[string]*shared.RefWithMeta[Schema]{
 		"Pet": petRef,
 	})
 	got, err := json.Marshal(comp)

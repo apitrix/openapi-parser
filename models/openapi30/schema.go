@@ -29,18 +29,18 @@ type Schema struct {
 	required         []string
 	enum             []interface{}
 	schemaType       string
-	allOf            []*SchemaRef
-	oneOf            []*SchemaRef
-	anyOf            []*SchemaRef
-	not              *SchemaRef
-	items            *SchemaRef
-	properties       map[string]*SchemaRef
+	allOf            []*shared.Ref[Schema]
+	oneOf            []*shared.Ref[Schema]
+	anyOf            []*shared.Ref[Schema]
+	not              *shared.Ref[Schema]
+	items            *shared.Ref[Schema]
+	properties       map[string]*shared.Ref[Schema]
 	description      string
 	format           string
 	defaultVal       interface{}
 
 	// AdditionalProperties can be a boolean or a schema.
-	additionalProperties        *SchemaRef
+	additionalProperties        *shared.Ref[Schema]
 	additionalPropertiesAllowed *bool
 
 	// OpenAPI 3.0 specific fields
@@ -71,16 +71,16 @@ func (s *Schema) MinProperties() *uint64               { return s.minProperties 
 func (s *Schema) Required() []string                   { return s.required }
 func (s *Schema) Enum() []interface{}                  { return s.enum }
 func (s *Schema) Type() string                         { return s.schemaType }
-func (s *Schema) AllOf() []*SchemaRef                  { return s.allOf }
-func (s *Schema) OneOf() []*SchemaRef                  { return s.oneOf }
-func (s *Schema) AnyOf() []*SchemaRef                  { return s.anyOf }
-func (s *Schema) Not() *SchemaRef                      { return s.not }
-func (s *Schema) Items() *SchemaRef                    { return s.items }
-func (s *Schema) Properties() map[string]*SchemaRef    { return s.properties }
+func (s *Schema) AllOf() []*shared.Ref[Schema]                  { return s.allOf }
+func (s *Schema) OneOf() []*shared.Ref[Schema]                  { return s.oneOf }
+func (s *Schema) AnyOf() []*shared.Ref[Schema]                  { return s.anyOf }
+func (s *Schema) Not() *shared.Ref[Schema]                      { return s.not }
+func (s *Schema) Items() *shared.Ref[Schema]                    { return s.items }
+func (s *Schema) Properties() map[string]*shared.Ref[Schema]    { return s.properties }
 func (s *Schema) Description() string                  { return s.description }
 func (s *Schema) Format() string                       { return s.format }
 func (s *Schema) Default() interface{}                 { return s.defaultVal }
-func (s *Schema) AdditionalProperties() *SchemaRef     { return s.additionalProperties }
+func (s *Schema) AdditionalProperties() *shared.Ref[Schema]     { return s.additionalProperties }
 func (s *Schema) AdditionalPropertiesAllowed() *bool   { return s.additionalPropertiesAllowed }
 func (s *Schema) Nullable() bool                       { return s.nullable }
 func (s *Schema) Discriminator() *Discriminator        { return s.discriminator }
@@ -134,17 +134,17 @@ type SchemaFields struct {
 	Required         []string
 	Enum             []interface{}
 	Type             string
-	AllOf            []*SchemaRef
-	OneOf            []*SchemaRef
-	AnyOf            []*SchemaRef
-	Not              *SchemaRef
-	Items            *SchemaRef
-	Properties       map[string]*SchemaRef
+	AllOf            []*shared.Ref[Schema]
+	OneOf            []*shared.Ref[Schema]
+	AnyOf            []*shared.Ref[Schema]
+	Not              *shared.Ref[Schema]
+	Items            *shared.Ref[Schema]
+	Properties       map[string]*shared.Ref[Schema]
 	Description      string
 	Format           string
 	Default          interface{}
 
-	AdditionalProperties        *SchemaRef
+	AdditionalProperties        *shared.Ref[Schema]
 	AdditionalPropertiesAllowed *bool
 
 	Nullable      bool

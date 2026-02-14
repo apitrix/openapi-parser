@@ -1,13 +1,14 @@
 package openapi30x
 
 import (
+	"openapi-parser/models/shared"
 	openapi30models "openapi-parser/models/openapi30"
 
 	"gopkg.in/yaml.v3"
 )
 
 // parseSchemaRef parses a SchemaRef from a yaml.Node.
-func parseSchemaRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.SchemaRef, error) {
+func parseSchemaRef(node *yaml.Node, ctx *ParseContext) (*shared.Ref[openapi30models.Schema], error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -16,7 +17,7 @@ func parseSchemaRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.Schema
 		return nil, ctx.errorAt(node, "schema must be an object")
 	}
 
-	ref := &openapi30models.SchemaRef{}
+	ref := &shared.Ref[openapi30models.Schema]{}
 	ref.Trix.Source = ctx.nodeSource(node)
 	ref.VendorExtensions = parseNodeExtensions(node)
 

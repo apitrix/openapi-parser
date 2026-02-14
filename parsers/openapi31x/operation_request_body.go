@@ -1,13 +1,14 @@
 package openapi31x
 
 import (
+	"openapi-parser/models/shared"
 	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
 )
 
 // parseOperationRequestBody parses the Operation.RequestBody field.
-func parseOperationRequestBody(parent *yaml.Node, ctx *ParseContext) (*openapi31models.RequestBodyRef, error) {
+func parseOperationRequestBody(parent *yaml.Node, ctx *ParseContext) (*shared.RefWithMeta[openapi31models.RequestBody], error) {
 	node := nodeGetValue(parent, "requestBody")
 	if node == nil {
 		return nil, nil

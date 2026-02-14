@@ -11,38 +11,38 @@ import (
 type Components struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	schemas         map[string]*SchemaRef
-	responses       map[string]*ResponseRef
-	parameters      map[string]*ParameterRef
-	examples        map[string]*ExampleRef
-	requestBodies   map[string]*RequestBodyRef
-	headers         map[string]*HeaderRef
-	securitySchemes map[string]*SecuritySchemeRef
-	links           map[string]*LinkRef
-	callbacks       map[string]*CallbackRef
+	schemas         map[string]*shared.Ref[Schema]
+	responses       map[string]*shared.Ref[Response]
+	parameters      map[string]*shared.Ref[Parameter]
+	examples        map[string]*shared.Ref[Example]
+	requestBodies   map[string]*shared.Ref[RequestBody]
+	headers         map[string]*shared.Ref[Header]
+	securitySchemes map[string]*shared.Ref[SecurityScheme]
+	links           map[string]*shared.Ref[Link]
+	callbacks       map[string]*shared.Ref[Callback]
 }
 
-func (c *Components) Schemas() map[string]*SchemaRef                 { return c.schemas }
-func (c *Components) Responses() map[string]*ResponseRef             { return c.responses }
-func (c *Components) Parameters() map[string]*ParameterRef           { return c.parameters }
-func (c *Components) Examples() map[string]*ExampleRef               { return c.examples }
-func (c *Components) RequestBodies() map[string]*RequestBodyRef      { return c.requestBodies }
-func (c *Components) Headers() map[string]*HeaderRef                 { return c.headers }
-func (c *Components) SecuritySchemes() map[string]*SecuritySchemeRef { return c.securitySchemes }
-func (c *Components) Links() map[string]*LinkRef                     { return c.links }
-func (c *Components) Callbacks() map[string]*CallbackRef             { return c.callbacks }
+func (c *Components) Schemas() map[string]*shared.Ref[Schema]                 { return c.schemas }
+func (c *Components) Responses() map[string]*shared.Ref[Response]             { return c.responses }
+func (c *Components) Parameters() map[string]*shared.Ref[Parameter]           { return c.parameters }
+func (c *Components) Examples() map[string]*shared.Ref[Example]               { return c.examples }
+func (c *Components) RequestBodies() map[string]*shared.Ref[RequestBody]      { return c.requestBodies }
+func (c *Components) Headers() map[string]*shared.Ref[Header]                 { return c.headers }
+func (c *Components) SecuritySchemes() map[string]*shared.Ref[SecurityScheme] { return c.securitySchemes }
+func (c *Components) Links() map[string]*shared.Ref[Link]                     { return c.links }
+func (c *Components) Callbacks() map[string]*shared.Ref[Callback]             { return c.callbacks }
 
 // NewComponents creates a new Components instance.
 func NewComponents(
-	schemas map[string]*SchemaRef,
-	responses map[string]*ResponseRef,
-	parameters map[string]*ParameterRef,
-	examples map[string]*ExampleRef,
-	requestBodies map[string]*RequestBodyRef,
-	headers map[string]*HeaderRef,
-	securitySchemes map[string]*SecuritySchemeRef,
-	links map[string]*LinkRef,
-	callbacks map[string]*CallbackRef,
+	schemas map[string]*shared.Ref[Schema],
+	responses map[string]*shared.Ref[Response],
+	parameters map[string]*shared.Ref[Parameter],
+	examples map[string]*shared.Ref[Example],
+	requestBodies map[string]*shared.Ref[RequestBody],
+	headers map[string]*shared.Ref[Header],
+	securitySchemes map[string]*shared.Ref[SecurityScheme],
+	links map[string]*shared.Ref[Link],
+	callbacks map[string]*shared.Ref[Callback],
 ) *Components {
 	return &Components{
 		schemas: schemas, responses: responses, parameters: parameters,

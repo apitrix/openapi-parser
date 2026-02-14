@@ -16,10 +16,10 @@ type Operation struct {
 	description  string
 	externalDocs *ExternalDocumentation
 	operationID  string
-	parameters   []*ParameterRef
-	requestBody  *RequestBodyRef
+	parameters   []*shared.Ref[Parameter]
+	requestBody  *shared.Ref[RequestBody]
 	responses    *Responses
-	callbacks    map[string]*CallbackRef
+	callbacks    map[string]*shared.Ref[Callback]
 	deprecated   bool
 	security     []SecurityRequirement
 	servers      []*Server
@@ -30,10 +30,10 @@ func (o *Operation) Summary() string                      { return o.summary }
 func (o *Operation) Description() string                  { return o.description }
 func (o *Operation) ExternalDocs() *ExternalDocumentation { return o.externalDocs }
 func (o *Operation) OperationID() string                  { return o.operationID }
-func (o *Operation) Parameters() []*ParameterRef          { return o.parameters }
-func (o *Operation) RequestBody() *RequestBodyRef         { return o.requestBody }
+func (o *Operation) Parameters() []*shared.Ref[Parameter]          { return o.parameters }
+func (o *Operation) RequestBody() *shared.Ref[RequestBody]         { return o.requestBody }
 func (o *Operation) Responses() *Responses                { return o.responses }
-func (o *Operation) Callbacks() map[string]*CallbackRef   { return o.callbacks }
+func (o *Operation) Callbacks() map[string]*shared.Ref[Callback]   { return o.callbacks }
 func (o *Operation) Deprecated() bool                     { return o.deprecated }
 func (o *Operation) Security() []SecurityRequirement      { return o.security }
 func (o *Operation) Servers() []*Server                   { return o.servers }
@@ -41,8 +41,8 @@ func (o *Operation) Servers() []*Server                   { return o.servers }
 // NewOperation creates a new Operation instance.
 func NewOperation(
 	tags []string, summary, description string, externalDocs *ExternalDocumentation,
-	operationID string, parameters []*ParameterRef, requestBody *RequestBodyRef,
-	responses *Responses, callbacks map[string]*CallbackRef, deprecated bool,
+	operationID string, parameters []*shared.Ref[Parameter], requestBody *shared.Ref[RequestBody],
+	responses *Responses, callbacks map[string]*shared.Ref[Callback], deprecated bool,
 	security []SecurityRequirement, servers []*Server,
 ) *Operation {
 	return &Operation{

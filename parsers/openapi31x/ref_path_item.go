@@ -1,13 +1,14 @@
 package openapi31x
 
 import (
+	"openapi-parser/models/shared"
 	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
 )
 
 // parsePathItemRef parses a PathItemRef from a yaml.Node.
-func parsePathItemRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.PathItemRef, error) {
+func parsePathItemRef(node *yaml.Node, ctx *ParseContext) (*shared.RefWithMeta[openapi31models.PathItem], error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -16,7 +17,7 @@ func parsePathItemRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.Path
 		return nil, ctx.errorAt(node, "pathItem must be an object")
 	}
 
-	ref := &openapi31models.PathItemRef{}
+	ref := &shared.RefWithMeta[openapi31models.PathItem]{}
 	ref.Trix.Source = ctx.nodeSource(node)
 	ref.VendorExtensions = parseNodeExtensions(node)
 

@@ -18,7 +18,7 @@ type Operation struct {
 	operationID  string
 	consumes     []string
 	produces     []string
-	parameters   []*ParameterRef
+	parameters   []*shared.Ref[Parameter]
 	responses    *Responses
 	schemes      []string
 	deprecated   bool
@@ -32,7 +32,7 @@ func (o *Operation) ExternalDocs() *ExternalDocs     { return o.externalDocs }
 func (o *Operation) OperationID() string             { return o.operationID }
 func (o *Operation) Consumes() []string              { return o.consumes }
 func (o *Operation) Produces() []string              { return o.produces }
-func (o *Operation) Parameters() []*ParameterRef     { return o.parameters }
+func (o *Operation) Parameters() []*shared.Ref[Parameter]     { return o.parameters }
 func (o *Operation) Responses() *Responses           { return o.responses }
 func (o *Operation) Schemes() []string               { return o.schemes }
 func (o *Operation) Deprecated() bool                { return o.deprecated }
@@ -42,7 +42,7 @@ func (o *Operation) Security() []SecurityRequirement { return o.security }
 func NewOperation(
 	tags []string, summary, description string, externalDocs *ExternalDocs,
 	operationID string, consumes, produces []string,
-	parameters []*ParameterRef, responses *Responses,
+	parameters []*shared.Ref[Parameter], responses *Responses,
 	schemes []string, deprecated bool, security []SecurityRequirement,
 ) *Operation {
 	return &Operation{

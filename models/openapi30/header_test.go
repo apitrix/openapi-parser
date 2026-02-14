@@ -1,13 +1,14 @@
 package openapi30
 
 import (
+	"openapi-parser/models/shared"
 	"encoding/json"
 	"testing"
 )
 
 func TestHeader_MarshalJSON_AllFields(t *testing.T) {
 	// Arrange
-	schema := &SchemaRef{}
+	schema := &shared.Ref[Schema]{}
 	schema.SetValue(NewSchema(SchemaFields{Type: "integer"}))
 	explode := true
 	h := NewHeader("Rate limit", true, false, false, "simple", &explode, false, schema, nil, nil, nil)

@@ -1,12 +1,13 @@
 package openapi31
 
 import (
+	"openapi-parser/models/shared"
 	"encoding/json"
 	"testing"
 )
 
 func TestMediaType_MarshalJSON_WithSchema(t *testing.T) {
-	schema := &SchemaRef{}
+	schema := &shared.RefWithMeta[Schema]{}
 	schema.SetValue(NewSchema(SchemaFields{Type: SchemaType{Single: "object"}}))
 	mt := NewMediaType(schema, nil, nil, nil)
 	got, err := json.Marshal(mt)

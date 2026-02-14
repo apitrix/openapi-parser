@@ -1,6 +1,7 @@
 package openapi20
 
 import (
+	"openapi-parser/models/shared"
 	openapi20models "openapi-parser/models/openapi20"
 
 	"gopkg.in/yaml.v3"
@@ -16,8 +17,8 @@ func parseResponses(node *yaml.Node, ctx *ParseContext) (*openapi20models.Respon
 		return nil, ctx.errorAt(node, "responses must be an object")
 	}
 
-	codes := make(map[string]*openapi20models.ResponseRef)
-	var defaultResp *openapi20models.ResponseRef
+	codes := make(map[string]*shared.Ref[openapi20models.Response])
+	var defaultResp *shared.Ref[openapi20models.Response]
 	var err error
 
 	for key, respNode := range nodeMapPairs(node) {
@@ -63,7 +64,7 @@ func parseResponse(node *yaml.Node, ctx *ParseContext) (*openapi20models.Respons
 	var err error
 
 	// Complex property - Schema (parsed first for constructor)
-	var schema *openapi20models.SchemaRef
+	var schema *shared.Ref[openapi20models.Schema]
 	var schemaErr error
 	if schemaNode := nodeGetValue(node, "schema"); schemaNode != nil {
 		schema, err = parseSchemaRef(schemaNode, ctx.push("schema"))

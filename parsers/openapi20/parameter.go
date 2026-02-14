@@ -1,6 +1,7 @@
 package openapi20
 
 import (
+	"openapi-parser/models/shared"
 	openapi20models "openapi-parser/models/openapi20"
 
 	"gopkg.in/yaml.v3"
@@ -19,7 +20,7 @@ func parseParameter(node *yaml.Node, ctx *ParseContext) (*openapi20models.Parame
 	var err error
 
 	// Body parameter - schema (parsed first for constructor)
-	var schema *openapi20models.SchemaRef
+	var schema *shared.Ref[openapi20models.Schema]
 	var schemaErr error
 	if schemaNode := nodeGetValue(node, "schema"); schemaNode != nil {
 		schema, err = parseSchemaRef(schemaNode, ctx.push("schema"))
@@ -90,7 +91,7 @@ func parseParameter(node *yaml.Node, ctx *ParseContext) (*openapi20models.Parame
 }
 
 // parseParameterRefs parses an array of ParameterRef objects.
-func parseParameterRefs(node *yaml.Node, ctx *ParseContext) ([]*openapi20models.ParameterRef, error) {
+func parseParameterRefs(node *yaml.Node, ctx *ParseContext) ([]*shared.Ref[openapi20models.Parameter], error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -99,7 +100,7 @@ func parseParameterRefs(node *yaml.Node, ctx *ParseContext) ([]*openapi20models.
 		return nil, ctx.errorAt(node, "parameters must be an array")
 	}
 
-	params := make([]*openapi20models.ParameterRef, 0, len(node.Content))
+	params := make([]*shared.Ref[openapi20models.Parameter], 0, len(node.Content))
 	for i, itemNode := range node.Content {
 		paramRef, err := parseParameterRef(itemNode, ctx.push(itoa(i)))
 		if err != nil {

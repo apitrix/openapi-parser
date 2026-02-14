@@ -1,6 +1,7 @@
 package openapi31x
 
 import (
+	"openapi-parser/models/shared"
 	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
@@ -8,7 +9,7 @@ import (
 
 // ParseNot parses the Schema.Not field.
 // Complex property: recursive SchemaRef
-func (p *schemaParser) ParseNot(parent *yaml.Node, c *ParseContext) (*openapi31models.SchemaRef, error) {
+func (p *schemaParser) ParseNot(parent *yaml.Node, c *ParseContext) (*shared.RefWithMeta[openapi31models.Schema], error) {
 	node := nodeGetValue(parent, "not")
 	if node == nil {
 		return nil, nil

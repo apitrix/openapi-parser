@@ -12,15 +12,15 @@ import (
 type Responses struct {
 	Node // embedded - provides VendorExtensions and Trix
 
-	defaultResp *ResponseRef
-	codes       map[string]*ResponseRef // HTTP status codes (e.g., "200", "404")
+	defaultResp *shared.Ref[Response]
+	codes       map[string]*shared.Ref[Response] // HTTP status codes (e.g., "200", "404")
 }
 
-func (r *Responses) Default() *ResponseRef          { return r.defaultResp }
-func (r *Responses) Codes() map[string]*ResponseRef { return r.codes }
+func (r *Responses) Default() *shared.Ref[Response]          { return r.defaultResp }
+func (r *Responses) Codes() map[string]*shared.Ref[Response] { return r.codes }
 
 // NewResponses creates a new Responses instance.
-func NewResponses(defaultResp *ResponseRef, codes map[string]*ResponseRef) *Responses {
+func NewResponses(defaultResp *shared.Ref[Response], codes map[string]*shared.Ref[Response]) *Responses {
 	return &Responses{defaultResp: defaultResp, codes: codes}
 }
 

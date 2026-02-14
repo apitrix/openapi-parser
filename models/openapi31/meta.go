@@ -1,24 +1,15 @@
 package openapi31
 
+import "openapi-parser/models/shared"
+
 // Location represents a position in the source file.
-type Location struct {
-	Line   int `json:"-" yaml:"-"` // 1-based line number
-	Column int `json:"-" yaml:"-"` // 1-based column number
-}
+type Location = shared.Location
 
 // NodeSource contains source location and raw parsed data for a node.
-type NodeSource struct {
-	Start Location    `json:"-" yaml:"-"` // Start position
-	End   Location    `json:"-" yaml:"-"` // End position
-	Raw   interface{} `json:"-" yaml:"-"` // Raw parsed data (map/slice/scalar)
-}
+type NodeSource = shared.NodeSource
 
 // ParseError represents a parsing error associated with a specific node.
-type ParseError struct {
-	Message string   `json:"-" yaml:"-"` // Human-readable error message
-	Path    []string `json:"-" yaml:"-"` // JSON path where the error occurred
-	Kind    string   `json:"-" yaml:"-"` // Error kind: "error" or "unknown_field"
-}
+type ParseError = shared.ParseError
 
 // Trix contains all library-level metadata and functionality.
 // Everything under Trix is provided by the apitrix library,
@@ -31,10 +22,10 @@ type Trix struct {
 	// These are nil/empty unless the resolver has run.
 
 	// ResolvedDynamicRef holds the schema resolved from $dynamicRef (Schema only).
-	ResolvedDynamicRef *SchemaRef `json:"-" yaml:"-"`
+	ResolvedDynamicRef *shared.RefWithMeta[Schema] `json:"-" yaml:"-"`
 
 	// ResolvedMapping holds discriminator mapping values resolved to schema refs (Discriminator only).
-	ResolvedMapping map[string]*SchemaRef `json:"-" yaml:"-"`
+	ResolvedMapping map[string]*shared.RefWithMeta[Schema] `json:"-" yaml:"-"`
 
 	// ResolvedOperation holds the operation resolved from operationRef (Link only).
 	ResolvedOperation *Operation `json:"-" yaml:"-"`

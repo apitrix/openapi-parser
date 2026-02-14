@@ -23,7 +23,7 @@ type PathItem struct {
 	patch       *Operation
 	trace       *Operation
 	servers     []*Server
-	parameters  []*ParameterRef
+	parameters  []*shared.RefWithMeta[Parameter]
 }
 
 func (p *PathItem) Ref() string                 { return p.ref }
@@ -38,7 +38,7 @@ func (p *PathItem) Head() *Operation            { return p.head }
 func (p *PathItem) Patch() *Operation           { return p.patch }
 func (p *PathItem) Trace() *Operation           { return p.trace }
 func (p *PathItem) Servers() []*Server          { return p.servers }
-func (p *PathItem) Parameters() []*ParameterRef { return p.parameters }
+func (p *PathItem) Parameters() []*shared.RefWithMeta[Parameter] { return p.parameters }
 
 // SetProperty sets a named property on the PathItem.
 // Used by parsers for post-construction field assignment.
@@ -69,7 +69,7 @@ func (p *PathItem) SetProperty(name string, value interface{}) {
 	case "servers":
 		p.servers = value.([]*Server)
 	case "parameters":
-		p.parameters = value.([]*ParameterRef)
+		p.parameters = value.([]*shared.RefWithMeta[Parameter])
 	}
 }
 

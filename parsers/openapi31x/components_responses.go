@@ -1,19 +1,20 @@
 package openapi31x
 
 import (
+	"openapi-parser/models/shared"
 	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
 )
 
 // parseComponentsResponses parses the Components.Responses field.
-func parseComponentsResponses(parent *yaml.Node, ctx *ParseContext) (map[string]*openapi31models.ResponseRef, error) {
+func parseComponentsResponses(parent *yaml.Node, ctx *ParseContext) (map[string]*shared.RefWithMeta[openapi31models.Response], error) {
 	node := nodeGetValue(parent, "responses")
 	if node == nil || !nodeIsMapping(node) {
 		return nil, nil
 	}
 
-	responses := make(map[string]*openapi31models.ResponseRef)
+	responses := make(map[string]*shared.RefWithMeta[openapi31models.Response])
 	rctx := ctx.push("responses")
 	for name, respNode := range nodeMapPairs(node) {
 		respRef, err := parseResponseRef(respNode, rctx.push(name))

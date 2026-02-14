@@ -12,18 +12,18 @@ type Response struct {
 	Node // embedded - provides VendorExtensions and Trix
 
 	description string
-	schema      *SchemaRef
+	schema      *shared.Ref[Schema]
 	headers     map[string]*Header
 	examples    map[string]interface{}
 }
 
 func (r *Response) Description() string              { return r.description }
-func (r *Response) Schema() *SchemaRef               { return r.schema }
+func (r *Response) Schema() *shared.Ref[Schema]               { return r.schema }
 func (r *Response) Headers() map[string]*Header      { return r.headers }
 func (r *Response) Examples() map[string]interface{} { return r.examples }
 
 // NewResponse creates a new Response instance.
-func NewResponse(description string, schema *SchemaRef, headers map[string]*Header, examples map[string]interface{}) *Response {
+func NewResponse(description string, schema *shared.Ref[Schema], headers map[string]*Header, examples map[string]interface{}) *Response {
 	return &Response{
 		description: description, schema: schema,
 		headers: headers, examples: examples,

@@ -1,13 +1,14 @@
 package openapi31x
 
 import (
+	"openapi-parser/models/shared"
 	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
 )
 
 // parseLinkRef parses a LinkRef from a yaml.Node.
-func parseLinkRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.LinkRef, error) {
+func parseLinkRef(node *yaml.Node, ctx *ParseContext) (*shared.RefWithMeta[openapi31models.Link], error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -16,7 +17,7 @@ func parseLinkRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.LinkRef,
 		return nil, ctx.errorAt(node, "link must be an object")
 	}
 
-	ref := &openapi31models.LinkRef{}
+	ref := &shared.RefWithMeta[openapi31models.Link]{}
 	ref.Trix.Source = ctx.nodeSource(node)
 	ref.VendorExtensions = parseNodeExtensions(node)
 

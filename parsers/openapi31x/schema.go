@@ -1,6 +1,7 @@
 package openapi31x
 
 import (
+	"openapi-parser/models/shared"
 	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
@@ -62,7 +63,7 @@ func (p *schemaParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mode
 	}
 
 	// Additional properties (special handling for bool vs schema)
-	var additionalProperties *openapi31models.SchemaRef
+	var additionalProperties *shared.RefWithMeta[openapi31models.Schema]
 	var additionalPropertiesAllowed *bool
 	addPropsResult, err := p.ParseAdditionalProperties(node, ctx)
 	if err != nil {

@@ -20,9 +20,9 @@ type Parameter struct {
 	style           string
 	explode         *bool
 	allowReserved   bool
-	schema          *SchemaRef
+	schema          *shared.Ref[Schema]
 	example         interface{}
-	examples        map[string]*ExampleRef
+	examples        map[string]*shared.Ref[Example]
 	content         map[string]*MediaType
 }
 
@@ -35,16 +35,16 @@ func (p *Parameter) AllowEmptyValue() bool            { return p.allowEmptyValue
 func (p *Parameter) Style() string                    { return p.style }
 func (p *Parameter) Explode() *bool                   { return p.explode }
 func (p *Parameter) AllowReserved() bool              { return p.allowReserved }
-func (p *Parameter) Schema() *SchemaRef               { return p.schema }
+func (p *Parameter) Schema() *shared.Ref[Schema]               { return p.schema }
 func (p *Parameter) Example() interface{}             { return p.example }
-func (p *Parameter) Examples() map[string]*ExampleRef { return p.examples }
+func (p *Parameter) Examples() map[string]*shared.Ref[Example] { return p.examples }
 func (p *Parameter) Content() map[string]*MediaType   { return p.content }
 
 // NewParameter creates a new Parameter instance.
 func NewParameter(
 	name, in, description string, required, deprecated, allowEmptyValue bool,
 	style string, explode *bool, allowReserved bool,
-	schema *SchemaRef, example interface{}, examples map[string]*ExampleRef,
+	schema *shared.Ref[Schema], example interface{}, examples map[string]*shared.Ref[Example],
 	content map[string]*MediaType,
 ) *Parameter {
 	return &Parameter{

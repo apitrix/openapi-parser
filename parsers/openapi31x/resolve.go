@@ -1,6 +1,7 @@
 package openapi31x
 
 import (
+	modelshared "openapi-parser/models/shared"
 	"fmt"
 
 	openapi31models "openapi-parser/models/openapi31"
@@ -162,7 +163,7 @@ func resolvePathItem(pi *openapi31models.PathItem, r *shared.RefResolver, resolv
 	return nil
 }
 
-func resolvePathItemRef(ref *openapi31models.PathItemRef, r *shared.RefResolver, resolving map[string]bool) error {
+func resolvePathItemRef(ref *modelshared.RefWithMeta[openapi31models.PathItem], r *shared.RefResolver, resolving map[string]bool) error {
 	if ref == nil || ref.RawCircular() {
 		return nil
 	}
@@ -236,7 +237,7 @@ func resolveOperation(op *openapi31models.Operation, r *shared.RefResolver, reso
 // Individual ref type resolvers
 // =============================================================================
 
-func resolveSchemaRef(ref *openapi31models.SchemaRef, r *shared.RefResolver, resolving map[string]bool) error {
+func resolveSchemaRef(ref *modelshared.RefWithMeta[openapi31models.Schema], r *shared.RefResolver, resolving map[string]bool) error {
 	if ref == nil || ref.RawCircular() {
 		return nil
 	}
@@ -352,7 +353,7 @@ func resolveSchema(schema *openapi31models.Schema, r *shared.RefResolver, resolv
 			ctx := newParseContext(result.Node, shared.All())
 			resolved, parseErr := parseSharedSchema(result.Node, ctx)
 			if parseErr == nil {
-				ref := openapi31models.NewSchemaRef("")
+				ref := modelshared.NewRefWithMeta[openapi31models.Schema]("")
 				ref.SetValue(resolved)
 				schema.Trix.ResolvedDynamicRef = ref
 			}
@@ -361,14 +362,14 @@ func resolveSchema(schema *openapi31models.Schema, r *shared.RefResolver, resolv
 
 	// Resolve discriminator.mapping values
 	if schema.Discriminator() != nil && len(schema.Discriminator().Mapping()) > 0 {
-		resolved := make(map[string]*openapi31models.SchemaRef)
+		resolved := make(map[string]*modelshared.RefWithMeta[openapi31models.Schema])
 		for key, val := range schema.Discriminator().Mapping() {
 			mapResult, mapErr := r.ResolveMapping(val)
 			if mapErr == nil {
 				ctx := newParseContext(mapResult.Node, shared.All())
 				s, parseErr := parseSharedSchema(mapResult.Node, ctx)
 				if parseErr == nil {
-					ref := openapi31models.NewSchemaRef(val)
+					ref := modelshared.NewRefWithMeta[openapi31models.Schema](val)
 					ref.SetValue(s)
 					resolved[key] = ref
 				}
@@ -382,7 +383,7 @@ func resolveSchema(schema *openapi31models.Schema, r *shared.RefResolver, resolv
 	return nil
 }
 
-func resolveResponseRef(ref *openapi31models.ResponseRef, r *shared.RefResolver, resolving map[string]bool) error {
+func resolveResponseRef(ref *modelshared.RefWithMeta[openapi31models.Response], r *shared.RefResolver, resolving map[string]bool) error {
 	if ref == nil || ref.RawCircular() {
 		return nil
 	}
@@ -431,7 +432,7 @@ func resolveResponseRef(ref *openapi31models.ResponseRef, r *shared.RefResolver,
 	return nil
 }
 
-func resolveParameterRef(ref *openapi31models.ParameterRef, r *shared.RefResolver, resolving map[string]bool) error {
+func resolveParameterRef(ref *modelshared.RefWithMeta[openapi31models.Parameter], r *shared.RefResolver, resolving map[string]bool) error {
 	if ref == nil || ref.RawCircular() {
 		return nil
 	}
@@ -473,7 +474,7 @@ func resolveParameterRef(ref *openapi31models.ParameterRef, r *shared.RefResolve
 	return nil
 }
 
-func resolveExampleRef(ref *openapi31models.ExampleRef, r *shared.RefResolver, _ map[string]bool) error {
+func resolveExampleRef(ref *modelshared.RefWithMeta[openapi31models.Example], r *shared.RefResolver, _ map[string]bool) error {
 	if ref == nil || ref.RawCircular() {
 		return nil
 	}
@@ -504,7 +505,7 @@ func resolveExampleRef(ref *openapi31models.ExampleRef, r *shared.RefResolver, _
 	return nil
 }
 
-func resolveRequestBodyRef(ref *openapi31models.RequestBodyRef, r *shared.RefResolver, resolving map[string]bool) error {
+func resolveRequestBodyRef(ref *modelshared.RefWithMeta[openapi31models.RequestBody], r *shared.RefResolver, resolving map[string]bool) error {
 	if ref == nil || ref.RawCircular() {
 		return nil
 	}
@@ -543,7 +544,7 @@ func resolveRequestBodyRef(ref *openapi31models.RequestBodyRef, r *shared.RefRes
 	return nil
 }
 
-func resolveHeaderRef(ref *openapi31models.HeaderRef, r *shared.RefResolver, resolving map[string]bool) error {
+func resolveHeaderRef(ref *modelshared.RefWithMeta[openapi31models.Header], r *shared.RefResolver, resolving map[string]bool) error {
 	if ref == nil || ref.RawCircular() {
 		return nil
 	}
@@ -585,7 +586,7 @@ func resolveHeaderRef(ref *openapi31models.HeaderRef, r *shared.RefResolver, res
 	return nil
 }
 
-func resolveSecuritySchemeRef(ref *openapi31models.SecuritySchemeRef, r *shared.RefResolver, _ map[string]bool) error {
+func resolveSecuritySchemeRef(ref *modelshared.RefWithMeta[openapi31models.SecurityScheme], r *shared.RefResolver, _ map[string]bool) error {
 	if ref == nil || ref.RawCircular() {
 		return nil
 	}
@@ -616,7 +617,7 @@ func resolveSecuritySchemeRef(ref *openapi31models.SecuritySchemeRef, r *shared.
 	return nil
 }
 
-func resolveLinkRef(ref *openapi31models.LinkRef, r *shared.RefResolver, _ map[string]bool) error {
+func resolveLinkRef(ref *modelshared.RefWithMeta[openapi31models.Link], r *shared.RefResolver, _ map[string]bool) error {
 	if ref == nil || ref.RawCircular() {
 		return nil
 	}
@@ -647,7 +648,7 @@ func resolveLinkRef(ref *openapi31models.LinkRef, r *shared.RefResolver, _ map[s
 	return nil
 }
 
-func resolveCallbackRef(ref *openapi31models.CallbackRef, r *shared.RefResolver, resolving map[string]bool) error {
+func resolveCallbackRef(ref *modelshared.RefWithMeta[openapi31models.Callback], r *shared.RefResolver, resolving map[string]bool) error {
 	if ref == nil || ref.RawCircular() {
 		return nil
 	}
@@ -903,7 +904,7 @@ func initPathItemDone(pi *openapi31models.PathItem) {
 	}
 }
 
-func initPathItemRefDone(ref *openapi31models.PathItemRef) {
+func initPathItemRefDone(ref *modelshared.RefWithMeta[openapi31models.PathItem]) {
 	if ref == nil {
 		return
 	}
@@ -939,7 +940,7 @@ func initOperationDone(op *openapi31models.Operation) {
 	}
 }
 
-func initSchemaRefDone(ref *openapi31models.SchemaRef) {
+func initSchemaRefDone(ref *modelshared.RefWithMeta[openapi31models.Schema]) {
 	if ref == nil {
 		return
 	}
@@ -987,7 +988,7 @@ func initSchemaDone(s *openapi31models.Schema) {
 	initSchemaRefDone(s.UnevaluatedProperties())
 }
 
-func initResponseRefDone(ref *openapi31models.ResponseRef) {
+func initResponseRefDone(ref *modelshared.RefWithMeta[openapi31models.Response]) {
 	if ref == nil {
 		return
 	}
@@ -1008,7 +1009,7 @@ func initResponseRefDone(ref *openapi31models.ResponseRef) {
 	}
 }
 
-func initParameterRefDone(ref *openapi31models.ParameterRef) {
+func initParameterRefDone(ref *modelshared.RefWithMeta[openapi31models.Parameter]) {
 	if ref == nil {
 		return
 	}
@@ -1024,7 +1025,7 @@ func initParameterRefDone(ref *openapi31models.ParameterRef) {
 	}
 }
 
-func initExampleRefDone(ref *openapi31models.ExampleRef) {
+func initExampleRefDone(ref *modelshared.RefWithMeta[openapi31models.Example]) {
 	if ref == nil {
 		return
 	}
@@ -1033,7 +1034,7 @@ func initExampleRefDone(ref *openapi31models.ExampleRef) {
 	}
 }
 
-func initRequestBodyRefDone(ref *openapi31models.RequestBodyRef) {
+func initRequestBodyRefDone(ref *modelshared.RefWithMeta[openapi31models.RequestBody]) {
 	if ref == nil {
 		return
 	}
@@ -1048,7 +1049,7 @@ func initRequestBodyRefDone(ref *openapi31models.RequestBodyRef) {
 	}
 }
 
-func initHeaderRefDone(ref *openapi31models.HeaderRef) {
+func initHeaderRefDone(ref *modelshared.RefWithMeta[openapi31models.Header]) {
 	if ref == nil {
 		return
 	}
@@ -1064,7 +1065,7 @@ func initHeaderRefDone(ref *openapi31models.HeaderRef) {
 	}
 }
 
-func initSecuritySchemeRefDone(ref *openapi31models.SecuritySchemeRef) {
+func initSecuritySchemeRefDone(ref *modelshared.RefWithMeta[openapi31models.SecurityScheme]) {
 	if ref == nil {
 		return
 	}
@@ -1073,7 +1074,7 @@ func initSecuritySchemeRefDone(ref *openapi31models.SecuritySchemeRef) {
 	}
 }
 
-func initLinkRefDone(ref *openapi31models.LinkRef) {
+func initLinkRefDone(ref *modelshared.RefWithMeta[openapi31models.Link]) {
 	if ref == nil {
 		return
 	}
@@ -1082,7 +1083,7 @@ func initLinkRefDone(ref *openapi31models.LinkRef) {
 	}
 }
 
-func initCallbackRefDone(ref *openapi31models.CallbackRef) {
+func initCallbackRefDone(ref *modelshared.RefWithMeta[openapi31models.Callback]) {
 	if ref == nil {
 		return
 	}

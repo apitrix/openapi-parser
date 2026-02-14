@@ -1,6 +1,7 @@
 package openapi31x
 
 import (
+	"openapi-parser/models/shared"
 	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
@@ -10,7 +11,7 @@ import (
 // which can be either a boolean or a schema reference.
 type AdditionalPropertiesResult struct {
 	Allowed   *bool          // If set, additionalProperties is a boolean
-	SchemaRef *openapi31models.SchemaRef // If set, additionalProperties is a schema
+	SchemaRef *shared.RefWithMeta[openapi31models.Schema] // If set, additionalProperties is a schema
 }
 
 // ParseAdditionalProperties parses the Schema.AdditionalProperties field.

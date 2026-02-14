@@ -18,9 +18,9 @@ type Header struct {
 	style           string
 	explode         *bool
 	allowReserved   bool
-	schema          *SchemaRef
+	schema          *shared.Ref[Schema]
 	example         interface{}
-	examples        map[string]*ExampleRef
+	examples        map[string]*shared.Ref[Example]
 	content         map[string]*MediaType
 }
 
@@ -31,16 +31,16 @@ func (h *Header) AllowEmptyValue() bool            { return h.allowEmptyValue }
 func (h *Header) Style() string                    { return h.style }
 func (h *Header) Explode() *bool                   { return h.explode }
 func (h *Header) AllowReserved() bool              { return h.allowReserved }
-func (h *Header) Schema() *SchemaRef               { return h.schema }
+func (h *Header) Schema() *shared.Ref[Schema]               { return h.schema }
 func (h *Header) Example() interface{}             { return h.example }
-func (h *Header) Examples() map[string]*ExampleRef { return h.examples }
+func (h *Header) Examples() map[string]*shared.Ref[Example] { return h.examples }
 func (h *Header) Content() map[string]*MediaType   { return h.content }
 
 // NewHeader creates a new Header instance.
 func NewHeader(
 	description string, required, deprecated, allowEmptyValue bool,
 	style string, explode *bool, allowReserved bool,
-	schema *SchemaRef, example interface{}, examples map[string]*ExampleRef,
+	schema *shared.Ref[Schema], example interface{}, examples map[string]*shared.Ref[Example],
 	content map[string]*MediaType,
 ) *Header {
 	return &Header{

@@ -1,6 +1,7 @@
 package openapi31x
 
 import (
+	"openapi-parser/models/shared"
 	"regexp"
 
 	openapi31models "openapi-parser/models/openapi31"
@@ -22,8 +23,8 @@ func parseSharedResponses(node *yaml.Node, ctx *ParseContext) (*openapi31models.
 		return nil, ctx.errorAt(node, "responses must be an object")
 	}
 
-	var defaultResp *openapi31models.ResponseRef
-	codes := make(map[string]*openapi31models.ResponseRef)
+	var defaultResp *shared.RefWithMeta[openapi31models.Response]
+	codes := make(map[string]*shared.RefWithMeta[openapi31models.Response])
 
 	for key, valueNode := range nodeMapPairs(node) {
 		// Skip extensions

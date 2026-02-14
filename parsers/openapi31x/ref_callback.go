@@ -1,13 +1,14 @@
 package openapi31x
 
 import (
+	"openapi-parser/models/shared"
 	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
 )
 
 // parseCallbackRef parses a CallbackRef from a yaml.Node.
-func parseCallbackRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.CallbackRef, error) {
+func parseCallbackRef(node *yaml.Node, ctx *ParseContext) (*shared.RefWithMeta[openapi31models.Callback], error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -16,7 +17,7 @@ func parseCallbackRef(node *yaml.Node, ctx *ParseContext) (*openapi31models.Call
 		return nil, ctx.errorAt(node, "callback must be an object")
 	}
 
-	ref := &openapi31models.CallbackRef{}
+	ref := &shared.RefWithMeta[openapi31models.Callback]{}
 	ref.Trix.Source = ctx.nodeSource(node)
 	ref.VendorExtensions = parseNodeExtensions(node)
 

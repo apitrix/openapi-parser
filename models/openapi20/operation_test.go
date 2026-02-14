@@ -1,13 +1,14 @@
 package openapi20
 
 import (
+	"openapi-parser/models/shared"
 	"encoding/json"
 	"testing"
 )
 
 func TestOperation_MarshalJSON_AllFields(t *testing.T) {
 	// Arrange
-	okRef := &ResponseRef{}
+	okRef := &shared.Ref[Response]{}
 	okRef.SetValue(NewResponse("OK", nil, nil, nil))
 	resp := NewResponses(
 		okRef,
@@ -40,7 +41,7 @@ func TestOperation_MarshalJSON_AllFields(t *testing.T) {
 
 func TestOperation_MarshalJSON_Minimal(t *testing.T) {
 	// Arrange
-	okRef := &ResponseRef{}
+	okRef := &shared.Ref[Response]{}
 	okRef.SetValue(NewResponse("OK", nil, nil, nil))
 	resp := NewResponses(
 		okRef,

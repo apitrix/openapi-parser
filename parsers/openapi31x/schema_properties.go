@@ -1,6 +1,7 @@
 package openapi31x
 
 import (
+	"openapi-parser/models/shared"
 	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
@@ -8,13 +9,13 @@ import (
 
 // ParseProperties parses the Schema.Properties field.
 // Complex property: map of SchemaRef
-func (p *schemaParser) ParseProperties(parent *yaml.Node, c *ParseContext) (map[string]*openapi31models.SchemaRef, error) {
+func (p *schemaParser) ParseProperties(parent *yaml.Node, c *ParseContext) (map[string]*shared.RefWithMeta[openapi31models.Schema], error) {
 	node := nodeGetValue(parent, "properties")
 	if node == nil || !nodeIsMapping(node) {
 		return nil, nil
 	}
 
-	props := make(map[string]*openapi31models.SchemaRef)
+	props := make(map[string]*shared.RefWithMeta[openapi31models.Schema])
 	pctx := c.Push("properties")
 	for name, propNode := range nodeMapPairs(node) {
 		ref, err := parseSchemaRef(propNode, pctx.push(name))

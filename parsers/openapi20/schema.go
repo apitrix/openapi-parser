@@ -1,6 +1,7 @@
 package openapi20
 
 import (
+	"openapi-parser/models/shared"
 	openapi20models "openapi-parser/models/openapi20"
 
 	"gopkg.in/yaml.v3"
@@ -29,7 +30,7 @@ func parseSchema(node *yaml.Node, ctx *ParseContext) (*openapi20models.Schema, e
 	}
 
 	// Complex property - Items
-	var items *openapi20models.SchemaRef
+	var items *shared.Ref[openapi20models.Schema]
 	if itemsNode := nodeGetValue(node, "items"); itemsNode != nil {
 		items, err = parseSchemaRef(itemsNode, ctx.push("items"))
 		if err != nil {
@@ -38,7 +39,7 @@ func parseSchema(node *yaml.Node, ctx *ParseContext) (*openapi20models.Schema, e
 	}
 
 	// Complex property - Properties
-	var properties map[string]*openapi20models.SchemaRef
+	var properties map[string]*shared.Ref[openapi20models.Schema]
 	if propsNode := nodeGetValue(node, "properties"); propsNode != nil {
 		properties, err = parseSchemaProperties(propsNode, ctx.push("properties"))
 		if err != nil {
@@ -47,7 +48,7 @@ func parseSchema(node *yaml.Node, ctx *ParseContext) (*openapi20models.Schema, e
 	}
 
 	// Complex property - AdditionalProperties
-	var additionalProperties *openapi20models.SchemaRef
+	var additionalProperties *shared.Ref[openapi20models.Schema]
 	var additionalPropertiesAllowed *bool
 	if addPropsNode := nodeGetValue(node, "additionalProperties"); addPropsNode != nil {
 		// Can be boolean or schema
@@ -65,7 +66,7 @@ func parseSchema(node *yaml.Node, ctx *ParseContext) (*openapi20models.Schema, e
 	}
 
 	// Complex property - AllOf
-	var allOf []*openapi20models.SchemaRef
+	var allOf []*shared.Ref[openapi20models.Schema]
 	if allOfNode := nodeGetValue(node, "allOf"); allOfNode != nil {
 		allOf, err = parseSchemaRefs(allOfNode, ctx.push("allOf"))
 		if err != nil {
@@ -138,7 +139,7 @@ func parseSchema(node *yaml.Node, ctx *ParseContext) (*openapi20models.Schema, e
 }
 
 // parseSchemaProperties parses a map of schema properties.
-func parseSchemaProperties(node *yaml.Node, ctx *ParseContext) (map[string]*openapi20models.SchemaRef, error) {
+func parseSchemaProperties(node *yaml.Node, ctx *ParseContext) (map[string]*shared.Ref[openapi20models.Schema], error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -147,7 +148,7 @@ func parseSchemaProperties(node *yaml.Node, ctx *ParseContext) (map[string]*open
 		return nil, ctx.errorAt(node, "properties must be an object")
 	}
 
-	props := make(map[string]*openapi20models.SchemaRef)
+	props := make(map[string]*shared.Ref[openapi20models.Schema])
 
 	for key, propNode := range nodeMapPairs(node) {
 		propRef, err := parseSchemaRef(propNode, ctx.push(key))
@@ -161,7 +162,7 @@ func parseSchemaProperties(node *yaml.Node, ctx *ParseContext) (map[string]*open
 }
 
 // parseSchemaRefs parses an array of SchemaRef objects.
-func parseSchemaRefs(node *yaml.Node, ctx *ParseContext) ([]*openapi20models.SchemaRef, error) {
+func parseSchemaRefs(node *yaml.Node, ctx *ParseContext) ([]*shared.Ref[openapi20models.Schema], error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -170,7 +171,7 @@ func parseSchemaRefs(node *yaml.Node, ctx *ParseContext) ([]*openapi20models.Sch
 		return nil, ctx.errorAt(node, "must be an array of schemas")
 	}
 
-	refs := make([]*openapi20models.SchemaRef, 0, len(node.Content))
+	refs := make([]*shared.Ref[openapi20models.Schema], 0, len(node.Content))
 	for i, itemNode := range node.Content {
 		ref, err := parseSchemaRef(itemNode, ctx.push(itoa(i)))
 		if err != nil {

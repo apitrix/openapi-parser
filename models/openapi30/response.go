@@ -12,18 +12,18 @@ type Response struct {
 	Node // embedded - provides VendorExtensions and Trix
 
 	description string
-	headers     map[string]*HeaderRef
+	headers     map[string]*shared.Ref[Header]
 	content     map[string]*MediaType
-	links       map[string]*LinkRef
+	links       map[string]*shared.Ref[Link]
 }
 
 func (r *Response) Description() string            { return r.description }
-func (r *Response) Headers() map[string]*HeaderRef { return r.headers }
+func (r *Response) Headers() map[string]*shared.Ref[Header] { return r.headers }
 func (r *Response) Content() map[string]*MediaType { return r.content }
-func (r *Response) Links() map[string]*LinkRef     { return r.links }
+func (r *Response) Links() map[string]*shared.Ref[Link]     { return r.links }
 
 // NewResponse creates a new Response instance.
-func NewResponse(description string, headers map[string]*HeaderRef, content map[string]*MediaType, links map[string]*LinkRef) *Response {
+func NewResponse(description string, headers map[string]*shared.Ref[Header], content map[string]*MediaType, links map[string]*shared.Ref[Link]) *Response {
 	return &Response{description: description, headers: headers, content: content, links: links}
 }
 

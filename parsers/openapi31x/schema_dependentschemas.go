@@ -1,6 +1,7 @@
 package openapi31x
 
 import (
+	"openapi-parser/models/shared"
 	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
@@ -8,13 +9,13 @@ import (
 
 // ParseDependentSchemas parses the Schema.DependentSchemas field.
 // JSON Schema 2020-12: schema-based conditional dependencies
-func (p *schemaParser) ParseDependentSchemas(parent *yaml.Node, c *ParseContext) (map[string]*openapi31models.SchemaRef, error) {
+func (p *schemaParser) ParseDependentSchemas(parent *yaml.Node, c *ParseContext) (map[string]*shared.RefWithMeta[openapi31models.Schema], error) {
 	node := nodeGetValue(parent, "dependentSchemas")
 	if node == nil || !nodeIsMapping(node) {
 		return nil, nil
 	}
 
-	schemas := make(map[string]*openapi31models.SchemaRef)
+	schemas := make(map[string]*shared.RefWithMeta[openapi31models.Schema])
 	dctx := c.Push("dependentSchemas")
 	for name, schemaNode := range nodeMapPairs(node) {
 		ref, err := parseSchemaRef(schemaNode, dctx.push(name))

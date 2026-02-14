@@ -1,13 +1,14 @@
 package openapi30x
 
 import (
+	"openapi-parser/models/shared"
 	openapi30models "openapi-parser/models/openapi30"
 
 	"gopkg.in/yaml.v3"
 )
 
 // parseHeaderRef parses a HeaderRef from a yaml.Node.
-func parseHeaderRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.HeaderRef, error) {
+func parseHeaderRef(node *yaml.Node, ctx *ParseContext) (*shared.Ref[openapi30models.Header], error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -16,7 +17,7 @@ func parseHeaderRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.Header
 		return nil, ctx.errorAt(node, "header must be an object")
 	}
 
-	ref := &openapi30models.HeaderRef{}
+	ref := &shared.Ref[openapi30models.Header]{}
 	ref.Trix.Source = ctx.nodeSource(node)
 	ref.VendorExtensions = parseNodeExtensions(node)
 

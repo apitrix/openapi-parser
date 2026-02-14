@@ -1,6 +1,7 @@
 package openapi31
 
 import (
+	"openapi-parser/models/shared"
 	"encoding/json"
 	"testing"
 )
@@ -55,11 +56,11 @@ func TestSchema_MarshalJSON_Const(t *testing.T) {
 }
 
 func TestSchema_MarshalJSON_IfThenElse(t *testing.T) {
-	ifSchema := &SchemaRef{}
+	ifSchema := &shared.RefWithMeta[Schema]{}
 	ifSchema.SetValue(NewSchema(SchemaFields{Type: SchemaType{Single: "string"}}))
-	thenSchema := &SchemaRef{}
+	thenSchema := &shared.RefWithMeta[Schema]{}
 	thenSchema.SetValue(NewSchema(SchemaFields{Format: "email"}))
-	elseSchema := &SchemaRef{}
+	elseSchema := &shared.RefWithMeta[Schema]{}
 	elseSchema.SetValue(NewSchema(SchemaFields{Format: "uri"}))
 	s := NewSchema(SchemaFields{If: ifSchema, Then: thenSchema, Else: elseSchema})
 	got, err := json.Marshal(s)
@@ -78,11 +79,11 @@ func TestSchema_MarshalJSON_IfThenElse(t *testing.T) {
 }
 
 func TestSchema_MarshalJSON_PrefixItems(t *testing.T) {
-	item1 := &SchemaRef{}
+	item1 := &shared.RefWithMeta[Schema]{}
 	item1.SetValue(NewSchema(SchemaFields{Type: SchemaType{Single: "string"}}))
-	item2 := &SchemaRef{}
+	item2 := &shared.RefWithMeta[Schema]{}
 	item2.SetValue(NewSchema(SchemaFields{Type: SchemaType{Single: "integer"}}))
-	s := NewSchema(SchemaFields{PrefixItems: []*SchemaRef{item1, item2}})
+	s := NewSchema(SchemaFields{PrefixItems: []*shared.RefWithMeta[Schema]{item1, item2}})
 	got, err := json.Marshal(s)
 	if err != nil {
 		t.Fatal(err)
@@ -122,9 +123,9 @@ func TestSchema_MarshalJSON_WithExtensions(t *testing.T) {
 }
 
 func TestSchema_MarshalJSON_AllOf(t *testing.T) {
-	ref1 := NewSchemaRef("#/components/schemas/Base")
-	ref2 := NewSchemaRef("#/components/schemas/Extended")
-	s := NewSchema(SchemaFields{AllOf: []*SchemaRef{ref1, ref2}})
+	ref1 := shared.NewRefWithMeta[Schema]("#/components/schemas/Base")
+	ref2 := shared.NewRefWithMeta[Schema]("#/components/schemas/Extended")
+	s := NewSchema(SchemaFields{AllOf: []*shared.RefWithMeta[Schema]{ref1, ref2}})
 	got, err := json.Marshal(s)
 	if err != nil {
 		t.Fatal(err)

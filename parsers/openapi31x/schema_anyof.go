@@ -1,6 +1,7 @@
 package openapi31x
 
 import (
+	"openapi-parser/models/shared"
 	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
@@ -8,13 +9,13 @@ import (
 
 // ParseAnyOf parses the Schema.AnyOf field.
 // Complex property: array of SchemaRef
-func (p *schemaParser) ParseAnyOf(parent *yaml.Node, c *ParseContext) ([]*openapi31models.SchemaRef, error) {
+func (p *schemaParser) ParseAnyOf(parent *yaml.Node, c *ParseContext) ([]*shared.RefWithMeta[openapi31models.Schema], error) {
 	node := nodeGetValue(parent, "anyOf")
 	if node == nil || !nodeIsSequence(node) {
 		return nil, nil
 	}
 
-	refs := make([]*openapi31models.SchemaRef, 0, len(node.Content))
+	refs := make([]*shared.RefWithMeta[openapi31models.Schema], 0, len(node.Content))
 	actx := c.Push("anyOf")
 	for i, itemNode := range node.Content {
 		ref, err := parseSchemaRef(itemNode, actx.push(itoa(i)))

@@ -1,19 +1,20 @@
 package openapi31x
 
 import (
+	"openapi-parser/models/shared"
 	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
 )
 
 // parseComponentsHeaders parses the Components.Headers field.
-func parseComponentsHeaders(parent *yaml.Node, ctx *ParseContext) (map[string]*openapi31models.HeaderRef, error) {
+func parseComponentsHeaders(parent *yaml.Node, ctx *ParseContext) (map[string]*shared.RefWithMeta[openapi31models.Header], error) {
 	node := nodeGetValue(parent, "headers")
 	if node == nil || !nodeIsMapping(node) {
 		return nil, nil
 	}
 
-	headers := make(map[string]*openapi31models.HeaderRef)
+	headers := make(map[string]*shared.RefWithMeta[openapi31models.Header])
 	hctx := ctx.push("headers")
 	for name, headerNode := range nodeMapPairs(node) {
 		headerRef, err := parseHeaderRef(headerNode, hctx.push(name))

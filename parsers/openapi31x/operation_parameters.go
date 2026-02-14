@@ -1,19 +1,20 @@
 package openapi31x
 
 import (
+	"openapi-parser/models/shared"
 	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
 )
 
 // parseOperationParameters parses the Operation.Parameters field.
-func parseOperationParameters(parent *yaml.Node, ctx *ParseContext) ([]*openapi31models.ParameterRef, error) {
+func parseOperationParameters(parent *yaml.Node, ctx *ParseContext) ([]*shared.RefWithMeta[openapi31models.Parameter], error) {
 	node := nodeGetValue(parent, "parameters")
 	if node == nil || !nodeIsSequence(node) {
 		return nil, nil
 	}
 
-	params := make([]*openapi31models.ParameterRef, 0, len(node.Content))
+	params := make([]*shared.RefWithMeta[openapi31models.Parameter], 0, len(node.Content))
 	pctx := ctx.push("parameters")
 	for i, paramNode := range node.Content {
 		paramRef, err := parseParameterRef(paramNode, pctx.push(itoa(i)))

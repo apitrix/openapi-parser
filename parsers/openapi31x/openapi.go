@@ -1,6 +1,7 @@
 package openapi31x
 
 import (
+	"openapi-parser/models/shared"
 	"strings"
 
 	openapi31models "openapi-parser/models/openapi31"
@@ -164,12 +165,12 @@ func parseOpenAPIPaths(node *yaml.Node, ctx *ParseContext) (*openapi31models.Pat
 }
 
 // parseOpenAPIWebhooks parses the OpenAPI.Webhooks field (new in 3.1).
-func parseOpenAPIWebhooks(node *yaml.Node, ctx *ParseContext) (map[string]*openapi31models.PathItemRef, error) {
+func parseOpenAPIWebhooks(node *yaml.Node, ctx *ParseContext) (map[string]*shared.RefWithMeta[openapi31models.PathItem], error) {
 	if !nodeIsMapping(node) {
 		return nil, ctx.errorAt(node, "webhooks must be an object")
 	}
 
-	webhooks := make(map[string]*openapi31models.PathItemRef)
+	webhooks := make(map[string]*shared.RefWithMeta[openapi31models.PathItem])
 
 	for key, webhookNode := range nodeMapPairs(node) {
 		// Skip extensions
