@@ -134,7 +134,7 @@ result, _ := openapi30x.ParseFile("api.yaml", &shared.ParseConfig{
 
 ### Accessing Resolved Values
 
-When `ParseFile` is used, resolution runs in a **background goroutine**. Each ref type (e.g. `SchemaRef`, `ResponseRef`) provides blocking and non-blocking accessors:
+When `ParseFile` is used, resolution runs in a **background goroutine**. The generic ref types (`shared.Ref[T]` and `shared.RefWithMeta[T]`) provide blocking and non-blocking accessors:
 
 | Method | Blocks? | Purpose |
 |--------|:-------:|---------|
@@ -159,35 +159,44 @@ ref := result.Document.Components().Schemas()["Pet"]
 ref.Value()  // nil (no done channel, no blocking)
 ```
 
-### Ref Model Types
+### Generic Ref Types
 
-Ref types exist per referenceable object. The set varies by OpenAPI version:
+All ref wrappers use two generic types defined in `models/shared/ref.go`:
 
-| Ref Type | 2.0 | 3.0 | 3.1 |
-|----------|:---:|:---:|:---:|
-| `SchemaRef` | ✅ | ✅ | ✅ |
-| `ParameterRef` | ✅ | ✅ | ✅ |
-| `ResponseRef` | ✅ | ✅ | ✅ |
-| `CallbackRef` | — | ✅ | ✅ |
-| `ExampleRef` | — | ✅ | ✅ |
-| `HeaderRef` | — | ✅ | ✅ |
-| `LinkRef` | — | ✅ | ✅ |
-| `PathItemRef` | — | ✅ | ✅ |
-| `RequestBodyRef` | — | ✅ | ✅ |
-| `SecuritySchemeRef` | — | ✅ | ✅ |
+| Generic Type | Used By | Extra Fields |
+|---|---|---|
+| `shared.Ref[T]` | OpenAPI 2.0 and 3.0 | — |
+| `shared.RefWithMeta[T]` | OpenAPI 3.1 | `Summary`, `Description` |
 
-Each ref type follows the same struct pattern:
+Referenceable model types vary by OpenAPI version:
+
+| Model Type `T` | 2.0 | 3.0 | 3.1 |
+|----------------|:---:|:---:|:---:|
+| `Schema` | ✅ | ✅ | ✅ |
+| `Parameter` | ✅ | ✅ | ✅ |
+| `Response` | ✅ | ✅ | ✅ |
+| `Callback` | — | ✅ | ✅ |
+| `Example` | — | ✅ | ✅ |
+| `Header` | — | ✅ | ✅ |
+| `Link` | — | ✅ | ✅ |
+| `PathItem` | — | ✅ | ✅ |
+| `RequestBody` | — | ✅ | ✅ |
+| `SecurityScheme` | — | ✅ | ✅ |
+
+The generic struct (shown for `Ref[T]`; `RefWithMeta[T]` adds `Summary` and `Description`):
 
 ```go
-type SchemaRef struct {
+type Ref[T any] struct {
     Node                           // embedded — VendorExtensions, Trix
     Ref      string                // the $ref string
-    value    *Schema               // resolved model (private)
+    value    *T                    // resolved model (private)
     circular bool                  // circular reference detected
     done     chan struct{}          // closed when resolution completes
     err      error                 // resolution error
 }
 ```
+
+Constructors: `shared.NewRef[T](ref)` and `shared.NewRefWithMeta[T](ref)`.
 
 ### Utility Functions
 
@@ -329,7 +338,7 @@ if err := ref.ResolveErr(); err != nil {
 | `parsers/shared/fetch.go` | `FetchURL()` — used by `ParseFile` for remote entry points |
 | `parsers/{version}/resolve.go` | Per-version resolve walk (tree traversal + ref resolution) |
 | `parsers/{version}/parse.go` | Entry points (`Parse`, `ParseFile`), background goroutine setup |
-| `models/{version}/ref_*.go` | Ref model structs with blocking `Value()`, `Circular()`, `MarkDone()` |
+| `models/shared/ref.go` | Generic `Ref[T]` and `RefWithMeta[T]` with blocking `Value()`, `Circular()`, `MarkDone()` |
 
 ---
 
@@ -343,7 +352,7 @@ The resolver builds an anchor index for the root document and external files. Re
 
 ```go
 // $ref: '#pet' resolves to the schema with $anchor: pet
-ref.Value()  // the resolved schema
+ref.Value() // the resolved schema
 ```
 
 ### 2. `$dynamicRef` / `$dynamicAnchor` (OpenAPI 3.1 only)
@@ -351,7 +360,7 @@ ref.Value()  // the resolved schema
 The resolver scans for `$dynamicAnchor` declarations and resolves `$dynamicRef` statically to the first matching anchor. The resolved schema is stored in `Trix.ResolvedDynamicRef`:
 
 ```go
-schema.Trix.ResolvedDynamicRef        // *SchemaRef — the resolved schema
+schema.Trix.ResolvedDynamicRef         // *shared.RefWithMeta[Schema]
 schema.Trix.ResolvedDynamicRef.Value() // the schema object
 ```
 
@@ -372,7 +381,7 @@ link.Trix.ResolvedOperation.OperationID()  // e.g. "getUser"
 Mapping values (both bare schema names like `"Dog"` and explicit refs like `"#/components/schemas/Dog"`) are resolved to schema refs. The result is stored in `Trix.ResolvedMapping` on the Discriminator:
 
 ```go
-disc.Trix.ResolvedMapping             // map[string]*SchemaRef
+disc.Trix.ResolvedMapping             // map[string]*shared.Ref[Schema] (3.0) or *shared.RefWithMeta[Schema] (3.1)
 disc.Trix.ResolvedMapping["dog"].Value() // the Dog schema
 ```
 
@@ -380,7 +389,7 @@ Bare names are automatically expanded: `"Dog"` → `#/components/schemas/Dog`.
 
 ### 5. `$ref` with Sibling Properties (3.0 vs 3.1)
 
-OpenAPI 3.0: `$ref` overrides all sibling properties. OpenAPI 3.1: `summary` and `description` siblings are preserved on `SchemaRef` and `PathItemRef`.
+OpenAPI 3.0: `$ref` overrides all sibling properties. OpenAPI 3.1: `summary` and `description` siblings are preserved on `shared.RefWithMeta[T]` (all 3.1 ref types).
 
 ### Summary Table
 
