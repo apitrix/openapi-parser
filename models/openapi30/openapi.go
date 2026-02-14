@@ -129,6 +129,9 @@ func (o *OpenAPI) marshalFields() []shared.Field {
 	return shared.AppendExtensions(fields, o.VendorExtensions)
 }
 
+// MarshalFields implements shared.MarshalFieldsProvider for export.
+func (o *OpenAPI) MarshalFields() []shared.Field { return o.marshalFields() }
+
 func (o *OpenAPI) MarshalJSON() ([]byte, error) {
 	return shared.MarshalFieldsJSON(o.marshalFields())
 }

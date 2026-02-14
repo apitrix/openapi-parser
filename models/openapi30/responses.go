@@ -68,4 +68,7 @@ func (r *Responses) marshalFields() []shared.Field {
 	return shared.AppendExtensions(fields, r.VendorExtensions)
 }
 
+// MarshalFields implements shared.MarshalFieldsProvider for export.
+func (r *Responses) MarshalFields() []shared.Field { return r.marshalFields() }
+
 var _ yaml.Marshaler = (*Responses)(nil)

@@ -79,6 +79,9 @@ func (e *Encoding) marshalFields() []shared.Field {
 	return shared.AppendExtensions(fields, e.VendorExtensions)
 }
 
+// MarshalFields implements shared.MarshalFieldsProvider for export.
+func (e *Encoding) MarshalFields() []shared.Field { return e.marshalFields() }
+
 func (e *Encoding) MarshalJSON() ([]byte, error) {
 	return shared.MarshalFieldsJSON(e.marshalFields())
 }

@@ -50,6 +50,15 @@ func (r *Ref[T]) ResolveErr() error {
 // RawValue returns the value without blocking. For use by the resolver.
 func (r *Ref[T]) RawValue() *T { return r.value }
 
+// RefInfo returns the $ref string and the resolved value (or nil).
+// Used by the export package to inspect refs without blocking.
+func (r *Ref[T]) RefInfo() (ref string, value interface{}) {
+	if r.value != nil {
+		return r.Ref, any(r.value)
+	}
+	return r.Ref, nil
+}
+
 // RawCircular returns the circular flag without blocking. For use by the resolver.
 func (r *Ref[T]) RawCircular() bool { return r.circular }
 
@@ -169,6 +178,15 @@ func (r *RefWithMeta[T]) ResolveErr() error {
 
 // RawValue returns the value without blocking. For use by the resolver.
 func (r *RefWithMeta[T]) RawValue() *T { return r.value }
+
+// RefInfo returns the $ref string and the resolved value (or nil).
+// Used by the export package to inspect refs without blocking.
+func (r *RefWithMeta[T]) RefInfo() (ref string, value interface{}) {
+	if r.value != nil {
+		return r.Ref, any(r.value)
+	}
+	return r.Ref, nil
+}
 
 // RawCircular returns the circular flag without blocking. For use by the resolver.
 func (r *RefWithMeta[T]) RawCircular() bool { return r.circular }

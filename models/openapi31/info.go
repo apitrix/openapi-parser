@@ -100,6 +100,9 @@ func (i *Info) marshalFields() []shared.Field {
 	return shared.AppendExtensions(fields, i.VendorExtensions)
 }
 
+// MarshalFields implements shared.MarshalFieldsProvider for export.
+func (i *Info) MarshalFields() []shared.Field { return i.marshalFields() }
+
 func (i *Info) MarshalJSON() ([]byte, error) {
 	return shared.MarshalFieldsJSON(i.marshalFields())
 }

@@ -56,6 +56,9 @@ func (r *RequestBody) marshalFields() []shared.Field {
 	return shared.AppendExtensions(fields, r.VendorExtensions)
 }
 
+// MarshalFields implements shared.MarshalFieldsProvider for export.
+func (r *RequestBody) MarshalFields() []shared.Field { return r.marshalFields() }
+
 func (r *RequestBody) MarshalJSON() ([]byte, error) {
 	return shared.MarshalFieldsJSON(r.marshalFields())
 }

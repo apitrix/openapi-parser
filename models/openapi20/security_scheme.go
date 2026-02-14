@@ -114,6 +114,9 @@ func (s *SecurityScheme) marshalFields() []shared.Field {
 	return shared.AppendExtensions(fields, s.VendorExtensions)
 }
 
+// MarshalFields implements shared.MarshalFieldsProvider for export.
+func (s *SecurityScheme) MarshalFields() []shared.Field { return s.marshalFields() }
+
 func (s *SecurityScheme) MarshalJSON() ([]byte, error) {
 	return shared.MarshalFieldsJSON(s.marshalFields())
 }

@@ -208,6 +208,9 @@ func (s *Swagger) marshalFields() []shared.Field {
 	return shared.AppendExtensions(fields, s.VendorExtensions)
 }
 
+// MarshalFields implements shared.MarshalFieldsProvider for export.
+func (s *Swagger) MarshalFields() []shared.Field { return s.marshalFields() }
+
 func (s *Swagger) MarshalJSON() ([]byte, error) {
 	return shared.MarshalFieldsJSON(s.marshalFields())
 }

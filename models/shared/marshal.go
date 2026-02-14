@@ -15,6 +15,12 @@ type Field struct {
 	Value interface{}
 }
 
+// MarshalFieldsProvider is implemented by model types that support field-based marshalling.
+// Used by the export package to build serializable trees with ref inlining.
+type MarshalFieldsProvider interface {
+	MarshalFields() []Field
+}
+
 // MarshalFieldsJSON marshals an ordered list of fields as a JSON object.
 // Fields whose values are considered empty (nil, zero-length, zero-value)
 // are omitted.

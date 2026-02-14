@@ -56,6 +56,9 @@ func (t *Tag) marshalFields() []shared.Field {
 	return shared.AppendExtensions(fields, t.VendorExtensions)
 }
 
+// MarshalFields implements shared.MarshalFieldsProvider for export.
+func (t *Tag) MarshalFields() []shared.Field { return t.marshalFields() }
+
 func (t *Tag) MarshalJSON() ([]byte, error) {
 	return shared.MarshalFieldsJSON(t.marshalFields())
 }

@@ -69,6 +69,9 @@ func (f *OAuthFlows) marshalFields() []shared.Field {
 	return shared.AppendExtensions(fields, f.VendorExtensions)
 }
 
+// MarshalFields implements shared.MarshalFieldsProvider for export.
+func (f *OAuthFlows) MarshalFields() []shared.Field { return f.marshalFields() }
+
 func (f *OAuthFlows) MarshalJSON() ([]byte, error) {
 	return shared.MarshalFieldsJSON(f.marshalFields())
 }

@@ -56,6 +56,9 @@ func (sv *ServerVariable) marshalFields() []shared.Field {
 	return shared.AppendExtensions(fields, sv.VendorExtensions)
 }
 
+// MarshalFields implements shared.MarshalFieldsProvider for export.
+func (sv *ServerVariable) MarshalFields() []shared.Field { return sv.marshalFields() }
+
 func (sv *ServerVariable) MarshalJSON() ([]byte, error) {
 	return shared.MarshalFieldsJSON(sv.marshalFields())
 }

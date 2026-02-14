@@ -49,6 +49,9 @@ func (l *License) marshalFields() []shared.Field {
 	return shared.AppendExtensions(fields, l.VendorExtensions)
 }
 
+// MarshalFields implements shared.MarshalFieldsProvider for export.
+func (l *License) MarshalFields() []shared.Field { return l.marshalFields() }
+
 func (l *License) MarshalJSON() ([]byte, error) {
 	return shared.MarshalFieldsJSON(l.marshalFields())
 }

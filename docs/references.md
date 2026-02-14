@@ -145,20 +145,71 @@ When resolution is enabled (via config), it runs in a **background goroutine**. 
 | `ResolveErr()` | ✅ | Returns resolution error; blocks until done |
 | `RawValue()` | ❌ | Returns value immediately (for resolver use) |
 
+Example OpenAPI spec with `$ref`:
+
+```yaml
+openapi: 3.0.3
+info: { title: Pet API, version: 1.0.0 }
+paths:
+  /pets:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+components:
+  schemas:
+    Pet:
+      type: object
+      properties:
+        name: { type: string }
+        id: { type: integer }
+```
+
+Patterns:
+
 ```go
-result, _ := openapi30x.ParseFile("api.yaml")
+apiYAML := []byte(`
+openapi: 3.0.3
+info: { title: Pet API, version: 1.0.0 }
+paths:
+  /pets:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+components:
+  schemas:
+    Pet:
+      type: object
+      properties:
+        name: { type: string }
+        id: { type: integer }
+`)
+
+result, _ := openapi30x.Parse(apiYAML)  // or ParseFile("api.yaml") / openapi20 / openapi31x
 
 // Pattern 1: Auto-blocking — blocks only when you access the ref
-petType := result.Document.Components().Schemas()["Pet"].Value().Type()
+schemaRef := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Content()["application/json"].Schema()
+petType := schemaRef.Value().Type()  // "object" — blocks until ref resolves
+// openapi20: .Schema() is on Response directly; use Definitions() for Pet
 
 // Pattern 2: Wait for all resolution first
 result.Wait()
 pet := result.Document.Components().Schemas()["Pet"].Value()
+// openapi20: result.Document.Definitions()["Pet"].Value()
 
 // Pattern 3: Parse without resolution — Value() returns nil immediately
-result, _ := openapi30x.Parse([]byte(data), openapi30x.None())
-ref := result.Document.Components().Schemas()["Pet"]
-ref.Value()  // nil (no done channel, no blocking)
+result, _ := openapi30x.Parse(apiYAML, openapi30x.None())
+schemaRef := result.Document.Paths().Items()["/pets"].Get().Responses().Codes()["200"].Value().Content()["application/json"].Schema()
+schemaRef.Value()  // nil (no done channel, no blocking)
 ```
 
 ### Generic Ref Types

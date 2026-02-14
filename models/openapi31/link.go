@@ -90,6 +90,9 @@ func (l *Link) marshalFields() []shared.Field {
 	return shared.AppendExtensions(fields, l.VendorExtensions)
 }
 
+// MarshalFields implements shared.MarshalFieldsProvider for export.
+func (l *Link) MarshalFields() []shared.Field { return l.marshalFields() }
+
 func (l *Link) MarshalJSON() ([]byte, error) {
 	return shared.MarshalFieldsJSON(l.marshalFields())
 }

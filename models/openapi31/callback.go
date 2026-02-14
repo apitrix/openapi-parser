@@ -45,6 +45,9 @@ func (c *Callback) marshalFields() []shared.Field {
 	return shared.AppendExtensions(fields, c.VendorExtensions)
 }
 
+// MarshalFields implements shared.MarshalFieldsProvider for export.
+func (c *Callback) MarshalFields() []shared.Field { return c.marshalFields() }
+
 func (c *Callback) MarshalJSON() ([]byte, error) {
 	return shared.MarshalFieldsJSON(c.marshalFields())
 }

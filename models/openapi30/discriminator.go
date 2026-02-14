@@ -46,6 +46,9 @@ func (d *Discriminator) marshalFields() []shared.Field {
 	return shared.AppendExtensions(fields, d.VendorExtensions)
 }
 
+// MarshalFields implements shared.MarshalFieldsProvider for export.
+func (d *Discriminator) MarshalFields() []shared.Field { return d.marshalFields() }
+
 func (d *Discriminator) MarshalJSON() ([]byte, error) {
 	return shared.MarshalFieldsJSON(d.marshalFields())
 }

@@ -66,6 +66,9 @@ func (m *MediaType) marshalFields() []shared.Field {
 	return shared.AppendExtensions(fields, m.VendorExtensions)
 }
 
+// MarshalFields implements shared.MarshalFieldsProvider for export.
+func (m *MediaType) MarshalFields() []shared.Field { return m.marshalFields() }
+
 func (m *MediaType) MarshalJSON() ([]byte, error) {
 	return shared.MarshalFieldsJSON(m.marshalFields())
 }

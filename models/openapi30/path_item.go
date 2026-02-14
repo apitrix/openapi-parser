@@ -165,6 +165,9 @@ func (pi *PathItem) marshalFields() []shared.Field {
 	return shared.AppendExtensions(fields, pi.VendorExtensions)
 }
 
+// MarshalFields implements shared.MarshalFieldsProvider for export.
+func (pi *PathItem) MarshalFields() []shared.Field { return pi.marshalFields() }
+
 func (pi *PathItem) MarshalJSON() ([]byte, error) {
 	return shared.MarshalFieldsJSON(pi.marshalFields())
 }
