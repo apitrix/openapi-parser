@@ -1,6 +1,7 @@
 package openapi20
 
 import (
+	"openapi-parser/parsers/shared"
 	openapi20models "openapi-parser/models/openapi20"
 
 	"gopkg.in/yaml.v3"
@@ -25,7 +26,11 @@ func parseSwagger(node *yaml.Node, ctx *ParseContext) (*openapi20models.Swagger,
 
 	// Simple properties - inline
 	swagger.SetProperty("host", nodeGetString(node, "host"))
-	swagger.SetProperty("basePath", nodeGetString(node, "basePath"))
+	basePath := nodeGetString(node, "basePath")
+	if basePath == "" && shared.ApplySpecDefaults(ctx.config) {
+		basePath = shared.DefaultBasePath
+	}
+	swagger.SetProperty("basePath", basePath)
 	if schemes := nodeGetStringSlice(node, "schemes"); schemes != nil {
 		swagger.SetProperty("schemes", schemes)
 	}

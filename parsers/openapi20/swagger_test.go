@@ -49,6 +49,30 @@ paths: {}
 	assert.Equal(t, "/api/v1", result.Document.BasePath())
 }
 
+func TestParseSwagger_BasePathDefault_ApplySpecDefaultsTrue(t *testing.T) {
+	yaml := `swagger: "2.0"
+info:
+  title: "Test"
+  version: "1.0"
+paths: {}
+`
+	result, err := Parse([]byte(yaml), All())
+	require.NoError(t, err)
+	assert.Equal(t, "/", result.Document.BasePath())
+}
+
+func TestParseSwagger_BasePathDefault_ApplySpecDefaultsFalse(t *testing.T) {
+	yaml := `swagger: "2.0"
+info:
+  title: "Test"
+  version: "1.0"
+paths: {}
+`
+	result, err := Parse([]byte(yaml), None())
+	require.NoError(t, err)
+	assert.Equal(t, "", result.Document.BasePath())
+}
+
 func TestParseSwagger_Schemes(t *testing.T) {
 	// Arrange
 	yaml := `swagger: "2.0"

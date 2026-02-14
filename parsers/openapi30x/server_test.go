@@ -199,7 +199,7 @@ info:
   version: "1.0"
 paths: {}
 `
-	result, err := Parse([]byte(yaml))
+	result, err := Parse([]byte(yaml), None())
 	require.NoError(t, err)
 	assert.Empty(t, result.Document.Servers())
 }

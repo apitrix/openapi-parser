@@ -203,3 +203,44 @@ paths: {}
 	assert.Equal(t, "a", result.Document.Info().Title())
 	assert.Equal(t, "1", result.Document.Info().Version())
 }
+
+// --- ApplySpecDefaults: servers ---
+
+func TestParseOpenAPI_ServersDefault_ApplySpecDefaultsTrue(t *testing.T) {
+	yaml := `openapi: "3.1.0"
+info:
+  title: "Test"
+  version: "1.0"
+paths: {}
+`
+	result, err := Parse([]byte(yaml), All())
+	require.NoError(t, err)
+	require.Len(t, result.Document.Servers(), 1)
+	assert.Equal(t, "/", result.Document.Servers()[0].URL())
+}
+
+func TestParseOpenAPI_ServersDefault_ApplySpecDefaultsFalse(t *testing.T) {
+	yaml := `openapi: "3.1.0"
+info:
+  title: "Test"
+  version: "1.0"
+paths: {}
+`
+	result, err := Parse([]byte(yaml), None())
+	require.NoError(t, err)
+	assert.Nil(t, result.Document.Servers())
+}
+
+func TestParseOpenAPI_ServersEmptyArray_ApplySpecDefaultsTrue(t *testing.T) {
+	yaml := `openapi: "3.1.0"
+info:
+  title: "Test"
+  version: "1.0"
+servers: []
+paths: {}
+`
+	result, err := Parse([]byte(yaml), All())
+	require.NoError(t, err)
+	require.Len(t, result.Document.Servers(), 1)
+	assert.Equal(t, "/", result.Document.Servers()[0].URL())
+}

@@ -12,6 +12,10 @@ type ParseConfig struct {
 
 	// ResolveExternalRefs enables resolution of external file and URL $refs.
 	ResolveExternalRefs bool
+
+	// ApplySpecDefaults fills in OpenAPI-specified default values when optional
+	// fields are absent (e.g., servers absent → [{ url: "/" }]).
+	ApplySpecDefaults bool
 }
 
 // All returns a config with all features enabled. This is the default
@@ -21,6 +25,7 @@ func All() *ParseConfig {
 		DetectUnknownFields: true,
 		ResolveInternalRefs: true,
 		ResolveExternalRefs: true,
+		ApplySpecDefaults:   true,
 	}
 }
 

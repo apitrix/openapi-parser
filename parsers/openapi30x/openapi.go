@@ -3,6 +3,7 @@ package openapi30x
 import (
 	"strings"
 
+	"openapi-parser/parsers/shared"
 	openapi30models "openapi-parser/models/openapi30"
 
 	"gopkg.in/yaml.v3"
@@ -28,11 +29,15 @@ func parseOpenAPI(node *yaml.Node, ctx *ParseContext) (*openapi30models.OpenAPI,
 	info, infoErr := parseOpenAPIInfo(infoNode, ctx.push("info"))
 
 	var servers []*openapi30models.Server
-	if serversNode := nodeGetValue(node, "servers"); serversNode != nil {
+	serversNode := nodeGetValue(node, "servers")
+	if serversNode != nil {
 		servers, err = parseSharedServers(serversNode, ctx.push("servers"))
 		if err != nil {
 			infoErr = err // will collect below
 		}
+	}
+	if shared.ServersAbsentOrEmpty(serversNode) && shared.ApplySpecDefaults(ctx.config) {
+		servers = []*openapi30models.Server{openapi30models.NewServer(shared.DefaultServersURL, "", nil)}
 	}
 
 	pathsNode := nodeGetValue(node, "paths")

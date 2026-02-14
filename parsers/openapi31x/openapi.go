@@ -1,9 +1,10 @@
 package openapi31x
 
 import (
-	"openapi-parser/models/shared"
 	"strings"
 
+	"openapi-parser/models/shared"
+	parsersshared "openapi-parser/parsers/shared"
 	openapi31models "openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
@@ -37,7 +38,8 @@ func parseOpenAPI(node *yaml.Node, ctx *ParseContext) (*openapi31models.OpenAPI,
 	}
 
 	// Complex properties - delegated
-	if serversNode := nodeGetValue(node, "servers"); serversNode != nil {
+	serversNode := nodeGetValue(node, "servers")
+	if serversNode != nil {
 		servers, err := parseSharedServers(serversNode, ctx.push("servers"))
 		if err != nil {
 			openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
@@ -45,6 +47,9 @@ func parseOpenAPI(node *yaml.Node, ctx *ParseContext) (*openapi31models.OpenAPI,
 		if servers != nil {
 			openapi.SetProperty("servers", servers)
 		}
+	}
+	if parsersshared.ServersAbsentOrEmpty(serversNode) && parsersshared.ApplySpecDefaults(ctx.config) {
+		openapi.SetProperty("servers", []*openapi31models.Server{openapi31models.NewServer(parsersshared.DefaultServersURL, "", nil)})
 	}
 
 	pathsNode := nodeGetValue(node, "paths")
