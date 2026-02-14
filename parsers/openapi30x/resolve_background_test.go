@@ -9,8 +9,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"openapi-parser/parsers/shared"
 )
 
 // slowSchemaServer starts an httptest server that serves a YAML schema
@@ -46,7 +44,7 @@ components:
 
 	// Act
 	start := time.Now()
-	result, err := parseAndResolve([]byte(spec), "/tmp", shared.All())
+	result, err := parseAndResolve([]byte(spec), "/tmp", All())
 	elapsed := time.Since(start)
 
 	// Assert
@@ -81,7 +79,7 @@ components:
     Pet:
       $ref: '%s/pet.yaml'`, srv.URL)
 
-	result, err := parseAndResolve([]byte(spec), "/tmp", shared.All())
+	result, err := parseAndResolve([]byte(spec), "/tmp", All())
 	require.NoError(t, err)
 
 	ref := result.Document.Components().Schemas()["Pet"]
@@ -119,7 +117,7 @@ components:
     Name:
       $ref: '%s/name.yaml'`, srv.URL)
 
-	result, err := parseAndResolve([]byte(spec), "/tmp", shared.All())
+	result, err := parseAndResolve([]byte(spec), "/tmp", All())
 	require.NoError(t, err)
 	require.NoError(t, result.Wait())
 

@@ -107,7 +107,7 @@ Each parser version (`openapi20`, `openapi30x`, `openapi31x`) provides three ent
 
 ### ParseConfig
 
-Resolution behavior is controlled by `shared.ParseConfig`:
+Resolution behavior is controlled by `ParseConfig` (exported by each parser package):
 
 ```go
 type ParseConfig struct {
@@ -119,15 +119,15 @@ type ParseConfig struct {
 
 | Preset | Internal | External | Unknown Fields |
 |--------|:--------:|:--------:|:--------------:|
-| `shared.All()` (default) | ✅ | ✅ | ✅ |
-| `shared.None()` | ❌ | ❌ | ❌ |
+| `openapi30x.All()` (default) | ✅ | ✅ | ✅ |
+| `openapi30x.None()` | ❌ | ❌ | ❌ |
 
 ```go
 // Default — all features enabled
 result, _ := openapi30x.ParseFile("api.yaml")
 
 // Only internal refs
-result, _ := openapi30x.ParseFile("api.yaml", &shared.ParseConfig{
+result, _ := openapi30x.ParseFile("api.yaml", &openapi30x.ParseConfig{
     ResolveInternalRefs: true,
 })
 ```

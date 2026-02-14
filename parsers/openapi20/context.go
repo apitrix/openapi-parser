@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	openapi20models "openapi-parser/models/openapi20"
-	"openapi-parser/parsers/shared"
 
 	"gopkg.in/yaml.v3"
 )
@@ -19,11 +18,11 @@ type ParseContext struct {
 	Parameters    *yaml.Node          // Cached parameters section
 	Responses     *yaml.Node          // Cached responses section
 	unknownFields *[]UnknownField     // Pointer to shared slice for accumulating unknown fields
-	config        *shared.ParseConfig // Feature flags controlling parsing behavior
+	config        *ParseConfig // Feature flags controlling parsing behavior
 }
 
 // newParseContext creates a new ParseContext from the document root.
-func newParseContext(root *yaml.Node, cfg *shared.ParseConfig) *ParseContext {
+func newParseContext(root *yaml.Node, cfg *ParseConfig) *ParseContext {
 	unknown := make([]UnknownField, 0)
 	pathStack := make([]string, 0, 16) // Pre-allocate for typical depth
 	ctx := &ParseContext{

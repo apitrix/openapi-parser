@@ -7,8 +7,6 @@ import (
 	"testing"
 	"time"
 
-	"openapi-parser/parsers/shared"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -45,7 +43,7 @@ definitions:
 
 	// Act
 	start := time.Now()
-	result, err := parseAndResolve([]byte(spec), "/tmp", shared.All())
+	result, err := parseAndResolve([]byte(spec), "/tmp", All())
 	elapsed := time.Since(start)
 
 	// Assert
@@ -74,7 +72,7 @@ definitions:
   Pet:
     $ref: '%s/pet.yaml'`, srv.URL)
 
-	result, err := parseAndResolve([]byte(spec), "/tmp", shared.All())
+	result, err := parseAndResolve([]byte(spec), "/tmp", All())
 	require.NoError(t, err)
 
 	ref := result.Document.Definitions()["Pet"]
@@ -111,7 +109,7 @@ definitions:
   Name:
     $ref: '%s/name.yaml'`, srv.URL)
 
-	result, err := parseAndResolve([]byte(spec), "/tmp", shared.All())
+	result, err := parseAndResolve([]byte(spec), "/tmp", All())
 	require.NoError(t, err)
 	require.NoError(t, result.Wait())
 

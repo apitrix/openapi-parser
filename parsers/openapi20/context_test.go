@@ -3,8 +3,6 @@ package openapi20
 import (
 	"testing"
 
-	"openapi-parser/parsers/shared"
-
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v3"
 )
@@ -20,7 +18,7 @@ func TestNewParseContext(t *testing.T) {
 	node := &yaml.Node{}
 
 	// Act
-	ctx := newParseContext(node, shared.All())
+	ctx := newParseContext(node, All())
 
 	// Assert
 	assert.NotNil(t, ctx)
@@ -33,7 +31,7 @@ func TestNewParseContext(t *testing.T) {
 func TestParseContext_Push(t *testing.T) {
 	// Arrange
 	node := &yaml.Node{}
-	ctx := newParseContext(node, shared.All())
+	ctx := newParseContext(node, All())
 
 	// Act
 	child := ctx.push("paths")
@@ -49,7 +47,7 @@ func TestParseContext_Push(t *testing.T) {
 func TestParseContext_CurrentPath(t *testing.T) {
 	// Arrange
 	node := &yaml.Node{}
-	ctx := newParseContext(node, shared.All())
+	ctx := newParseContext(node, All())
 	ctx = ctx.push("paths")
 	ctx = ctx.push("/pets")
 	ctx = ctx.push("get")
@@ -66,7 +64,7 @@ func TestParseContext_CurrentPath(t *testing.T) {
 func TestParseContext_Errorf(t *testing.T) {
 	// Arrange
 	node := &yaml.Node{}
-	ctx := newParseContext(node, shared.All())
+	ctx := newParseContext(node, All())
 	ctx = ctx.push("info")
 
 	// Act
@@ -83,7 +81,7 @@ func TestParseContext_Errorf(t *testing.T) {
 func TestParseContext_ErrorAt(t *testing.T) {
 	// Arrange
 	node := &yaml.Node{Line: 5, Column: 10}
-	ctx := newParseContext(node, shared.All())
+	ctx := newParseContext(node, All())
 	ctx = ctx.push("info")
 
 	// Act
@@ -109,7 +107,7 @@ x-extension: value
 	_ = yaml.Unmarshal([]byte(yamlContent), &node)
 	docNode := node.Content[0]
 
-	ctx := newParseContext(docNode, shared.All())
+	ctx := newParseContext(docNode, All())
 
 	// Act
 	ctx.detectUnknown(docNode, map[string]struct{}{"known": {}})
@@ -128,7 +126,7 @@ unknown: value
 	_ = yaml.Unmarshal([]byte(yamlContent), &node)
 	docNode := node.Content[0]
 
-	ctx := newParseContext(docNode, shared.None())
+	ctx := newParseContext(docNode, None())
 
 	// Act
 	result := ctx.detectUnknown(docNode, map[string]struct{}{"known": {}})
@@ -145,7 +143,7 @@ func TestParseContext_UnknownFieldsResult(t *testing.T) {
 	fields := []UnknownField{{Name: "test", Path: "root"}}
 	ctx := &ParseContext{
 		unknownFields: &fields,
-		config:        shared.All(),
+		config:        All(),
 	}
 
 	// Act
@@ -164,7 +162,7 @@ func TestParseContext_NodeSource(t *testing.T) {
 		Line:   10,
 		Column: 5,
 	}
-	ctx := newParseContext(node, shared.All())
+	ctx := newParseContext(node, All())
 
 	// Act
 	source := ctx.nodeSource(node)

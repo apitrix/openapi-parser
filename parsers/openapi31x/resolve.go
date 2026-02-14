@@ -180,7 +180,7 @@ func resolvePathItemRef(ref *modelshared.RefWithMeta[openapi31models.PathItem], 
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		val, err := parseOpenAPIPathsPathItem(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved pathItem ref %q: %w", ref.Ref, err))
@@ -263,7 +263,7 @@ func resolveSchemaRef(ref *modelshared.RefWithMeta[openapi31models.Schema], r *s
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		schema, err := parseSharedSchema(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved schema ref %q: %w", ref.Ref, err))
@@ -350,7 +350,7 @@ func resolveSchema(schema *openapi31models.Schema, r *shared.RefResolver, resolv
 	if schema.DynamicRef() != "" {
 		result, err := r.ResolveDynamicRef(schema.DynamicRef())
 		if err == nil && !result.Circular {
-			ctx := newParseContext(result.Node, shared.All())
+			ctx := newParseContext(result.Node, All())
 			resolved, parseErr := parseSharedSchema(result.Node, ctx)
 			if parseErr == nil {
 				ref := modelshared.NewRefWithMeta[openapi31models.Schema]("")
@@ -366,7 +366,7 @@ func resolveSchema(schema *openapi31models.Schema, r *shared.RefResolver, resolv
 		for key, val := range schema.Discriminator().Mapping() {
 			mapResult, mapErr := r.ResolveMapping(val)
 			if mapErr == nil {
-				ctx := newParseContext(mapResult.Node, shared.All())
+				ctx := newParseContext(mapResult.Node, All())
 				s, parseErr := parseSharedSchema(mapResult.Node, ctx)
 				if parseErr == nil {
 					ref := modelshared.NewRefWithMeta[openapi31models.Schema](val)
@@ -400,7 +400,7 @@ func resolveResponseRef(ref *modelshared.RefWithMeta[openapi31models.Response], 
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		val, err := parseSharedResponse(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved response ref %q: %w", ref.Ref, err))
@@ -449,7 +449,7 @@ func resolveParameterRef(ref *modelshared.RefWithMeta[openapi31models.Parameter]
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		val, err := parseSharedParameter(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved parameter ref %q: %w", ref.Ref, err))
@@ -491,7 +491,7 @@ func resolveExampleRef(ref *modelshared.RefWithMeta[openapi31models.Example], r 
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		val, err := parseSharedExample(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved example ref %q: %w", ref.Ref, err))
@@ -522,7 +522,7 @@ func resolveRequestBodyRef(ref *modelshared.RefWithMeta[openapi31models.RequestB
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		val, err := parseSharedRequestBody(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved requestBody ref %q: %w", ref.Ref, err))
@@ -561,7 +561,7 @@ func resolveHeaderRef(ref *modelshared.RefWithMeta[openapi31models.Header], r *s
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		val, err := parseSharedHeader(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved header ref %q: %w", ref.Ref, err))
@@ -603,7 +603,7 @@ func resolveSecuritySchemeRef(ref *modelshared.RefWithMeta[openapi31models.Secur
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		val, err := parseSharedSecurityScheme(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved securityScheme ref %q: %w", ref.Ref, err))
@@ -634,7 +634,7 @@ func resolveLinkRef(ref *modelshared.RefWithMeta[openapi31models.Link], r *share
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		val, err := parseSharedLink(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved link ref %q: %w", ref.Ref, err))
@@ -665,7 +665,7 @@ func resolveCallbackRef(ref *modelshared.RefWithMeta[openapi31models.Callback], 
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		val, err := parseSharedCallback(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved callback ref %q: %w", ref.Ref, err))

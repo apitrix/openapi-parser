@@ -24,7 +24,7 @@ type ParseResult struct {
 	Errors []*shared.ParseError
 
 	// Config is the ParseConfig that was used for this parse.
-	Config *shared.ParseConfig
+	Config *ParseConfig
 
 	// done is closed when background reference resolution is complete.
 	done chan struct{}
@@ -46,8 +46,8 @@ func (pr *ParseResult) Wait() error {
 // Parse parses OpenAPI 3.1/3.2 specification from bytes (JSON or YAML).
 // Uses yaml.Node for lossless parsing with line/column preservation.
 // An optional ParseConfig controls which features are enabled (nil = All).
-func Parse(data []byte, cfgs ...*shared.ParseConfig) (*ParseResult, error) {
-	cfg := shared.FirstConfig(cfgs)
+func Parse(data []byte, cfgs ...*ParseConfig) (*ParseResult, error) {
+	cfg := FirstConfig(cfgs)
 
 	var rootNode yaml.Node
 	if err := yaml.Unmarshal(data, &rootNode); err != nil {
@@ -81,7 +81,7 @@ func Parse(data []byte, cfgs ...*shared.ParseConfig) (*ParseResult, error) {
 
 // ParseReader parses OpenAPI 3.1/3.2 specification from an io.Reader.
 // An optional ParseConfig controls which features are enabled (nil = All).
-func ParseReader(r io.Reader, cfgs ...*shared.ParseConfig) (*ParseResult, error) {
+func ParseReader(r io.Reader, cfgs ...*ParseConfig) (*ParseResult, error) {
 	data, err := io.ReadAll(r)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read data: %w", err)
@@ -93,8 +93,8 @@ func ParseReader(r io.Reader, cfgs ...*shared.ParseConfig) (*ParseResult, error)
 // resolving all $ref references relative to the source location.
 // It auto-detects whether the input is a URL or a local file path.
 // An optional ParseConfig controls which features are enabled (nil = All).
-func ParseFile(pathOrURL string, cfgs ...*shared.ParseConfig) (*ParseResult, error) {
-	cfg := shared.FirstConfig(cfgs)
+func ParseFile(pathOrURL string, cfgs ...*ParseConfig) (*ParseResult, error) {
+	cfg := FirstConfig(cfgs)
 
 	var data []byte
 	var basePath string
@@ -124,7 +124,7 @@ func ParseFile(pathOrURL string, cfgs ...*shared.ParseConfig) (*ParseResult, err
 
 // parseAndResolve unmarshals YAML data, parses the OpenAPI document, and optionally
 // resolves all $ref references in the background based on the config.
-func parseAndResolve(data []byte, basePath string, cfg *shared.ParseConfig) (*ParseResult, error) {
+func parseAndResolve(data []byte, basePath string, cfg *ParseConfig) (*ParseResult, error) {
 	var rootNode yaml.Node
 	if err := yaml.Unmarshal(data, &rootNode); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal data: %w", err)
@@ -159,6 +159,7 @@ func parseAndResolve(data []byte, basePath string, cfg *shared.ParseConfig) (*Pa
 		pr.done = make(chan struct{})
 		go func() {
 			pr.resolveErr = Resolve(doc, docNode, basePath)
+			pr.Errors = flattenErrors(doc) // include resolution errors from refs
 			close(pr.done)
 		}()
 	}

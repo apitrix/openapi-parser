@@ -2,6 +2,7 @@ package shared
 
 import (
 	"encoding/json"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -58,8 +59,18 @@ func (r *Ref[T]) SetValue(v *T) { r.value = v }
 // SetCircular sets the circular flag.
 func (r *Ref[T]) SetCircular(c bool) { r.circular = c }
 
-// SetResolveErr sets the resolution error.
-func (r *Ref[T]) SetResolveErr(err error) { r.err = err }
+// SetResolveErr sets the resolution error and adds it to Trix.Errors
+// so it appears in ParseResult.Errors.
+func (r *Ref[T]) SetResolveErr(err error) {
+	r.err = err
+	if err != nil {
+		r.Trix.Errors = append(r.Trix.Errors, ParseError{
+			Path:    refPathFromRef(r.Ref),
+			Message: err.Error(),
+			Kind:    "resolve_error",
+		})
+	}
+}
 
 // InitDone initializes the done channel, signaling this ref needs async resolution.
 func (r *Ref[T]) InitDone() { r.done = make(chan struct{}) }
@@ -168,8 +179,18 @@ func (r *RefWithMeta[T]) SetValue(v *T) { r.value = v }
 // SetCircular sets the circular flag.
 func (r *RefWithMeta[T]) SetCircular(c bool) { r.circular = c }
 
-// SetResolveErr sets the resolution error.
-func (r *RefWithMeta[T]) SetResolveErr(err error) { r.err = err }
+// SetResolveErr sets the resolution error and adds it to Trix.Errors
+// so it appears in ParseResult.Errors.
+func (r *RefWithMeta[T]) SetResolveErr(err error) {
+	r.err = err
+	if err != nil {
+		r.Trix.Errors = append(r.Trix.Errors, ParseError{
+			Path:    refPathFromRef(r.Ref),
+			Message: err.Error(),
+			Kind:    "resolve_error",
+		})
+	}
+}
 
 // InitDone initializes the done channel, signaling this ref needs async resolution.
 func (r *RefWithMeta[T]) InitDone() { r.done = make(chan struct{}) }
@@ -233,3 +254,30 @@ func (r *RefWithMeta[T]) MarshalYAML() (interface{}, error) {
 }
 
 var _ yaml.Marshaler = (*RefWithMeta[struct{}])(nil)
+
+// refPathFromRef parses a $ref string into a JSON path.
+// "#/components/schemas/Pet" -> ["components", "schemas", "Pet"]
+// "file.yaml#/definitions/X" -> ["definitions", "X"] (pointer part only)
+func refPathFromRef(ref string) []string {
+	if ref == "" {
+		return nil
+	}
+	// Split on # to get pointer part
+	_, pointer := splitRef(ref)
+	if pointer == "" || pointer == "/" {
+		return nil
+	}
+	// Remove leading / and split
+	pointer = strings.TrimPrefix(pointer, "/")
+	if pointer == "" {
+		return nil
+	}
+	return strings.Split(pointer, "/")
+}
+
+func splitRef(ref string) (filePath, pointer string) {
+	if idx := strings.Index(ref, "#"); idx >= 0 {
+		return ref[:idx], ref[idx+1:]
+	}
+	return ref, ""
+}

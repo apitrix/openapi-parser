@@ -2,6 +2,7 @@ package openapi31x
 
 import (
 	openapi31models "openapi-parser/models/openapi31"
+	modelsShared "openapi-parser/models/shared"
 	"openapi-parser/parsers/shared"
 )
 
@@ -45,8 +46,11 @@ func flattenErrors(doc *openapi31models.OpenAPI) []*shared.ParseError {
 
 	// Webhooks
 	for _, ref := range doc.Webhooks() {
-		if ref != nil && ref.Value() != nil && !visited[ref.Value()] {
-			flattenPathItem(ref.Value(), &result, visited)
+		if ref != nil {
+			collectRefErrors(ref, &result)
+			if ref.Value() != nil && !visited[ref.Value()] {
+				flattenPathItem(ref.Value(), &result, visited)
+			}
 		}
 	}
 
@@ -55,53 +59,83 @@ func flattenErrors(doc *openapi31models.OpenAPI) []*shared.ParseError {
 		collectNodeErrors(&comp.ElementBase, &result)
 
 		for _, ref := range comp.Schemas() {
-			if ref != nil && ref.Value() != nil && !visited[ref.Value()] {
-				flattenSchema(ref.Value(), &result, visited)
+			if ref != nil {
+				collectRefErrors(ref, &result)
+				if ref.Value() != nil && !visited[ref.Value()] {
+					flattenSchema(ref.Value(), &result, visited)
+				}
 			}
 		}
 		for _, ref := range comp.Parameters() {
-			if ref != nil && ref.Value() != nil && !visited[ref.Value()] {
-				flattenParameter(ref.Value(), &result, visited)
+			if ref != nil {
+				collectRefErrors(ref, &result)
+				if ref.Value() != nil && !visited[ref.Value()] {
+					flattenParameter(ref.Value(), &result, visited)
+				}
 			}
 		}
 		for _, ref := range comp.Headers() {
-			if ref != nil && ref.Value() != nil && !visited[ref.Value()] {
-				flattenHeader(ref.Value(), &result, visited)
+			if ref != nil {
+				collectRefErrors(ref, &result)
+				if ref.Value() != nil && !visited[ref.Value()] {
+					flattenHeader(ref.Value(), &result, visited)
+				}
 			}
 		}
 		for _, ref := range comp.RequestBodies() {
-			if ref != nil && ref.Value() != nil && !visited[ref.Value()] {
-				flattenRequestBody(ref.Value(), &result, visited)
+			if ref != nil {
+				collectRefErrors(ref, &result)
+				if ref.Value() != nil && !visited[ref.Value()] {
+					flattenRequestBody(ref.Value(), &result, visited)
+				}
 			}
 		}
 		for _, ref := range comp.Responses() {
-			if ref != nil && ref.Value() != nil && !visited[ref.Value()] {
-				flattenResponse(ref.Value(), &result, visited)
+			if ref != nil {
+				collectRefErrors(ref, &result)
+				if ref.Value() != nil && !visited[ref.Value()] {
+					flattenResponse(ref.Value(), &result, visited)
+				}
 			}
 		}
 		for _, ref := range comp.SecuritySchemes() {
-			if ref != nil && ref.Value() != nil && !visited[ref.Value()] {
-				flattenSecurityScheme(ref.Value(), &result)
+			if ref != nil {
+				collectRefErrors(ref, &result)
+				if ref.Value() != nil && !visited[ref.Value()] {
+					flattenSecurityScheme(ref.Value(), &result)
+				}
 			}
 		}
 		for _, ref := range comp.Links() {
-			if ref != nil && ref.Value() != nil && !visited[ref.Value()] {
-				flattenLink(ref.Value(), &result)
+			if ref != nil {
+				collectRefErrors(ref, &result)
+				if ref.Value() != nil && !visited[ref.Value()] {
+					flattenLink(ref.Value(), &result)
+				}
 			}
 		}
 		for _, ref := range comp.Callbacks() {
-			if ref != nil && ref.Value() != nil && !visited[ref.Value()] {
-				flattenCallback(ref.Value(), &result, visited)
+			if ref != nil {
+				collectRefErrors(ref, &result)
+				if ref.Value() != nil && !visited[ref.Value()] {
+					flattenCallback(ref.Value(), &result, visited)
+				}
 			}
 		}
 		for _, ref := range comp.Examples() {
-			if ref != nil && ref.Value() != nil {
-				collectNodeErrors(&ref.Value().ElementBase, &result)
+			if ref != nil {
+				collectRefErrors(ref, &result)
+				if ref.Value() != nil {
+					collectNodeErrors(&ref.Value().ElementBase, &result)
+				}
 			}
 		}
 		for _, ref := range comp.PathItems() {
-			if ref != nil && ref.Value() != nil && !visited[ref.Value()] {
-				flattenPathItem(ref.Value(), &result, visited)
+			if ref != nil {
+				collectRefErrors(ref, &result)
+				if ref.Value() != nil && !visited[ref.Value()] {
+					flattenPathItem(ref.Value(), &result, visited)
+				}
 			}
 		}
 	}
@@ -157,8 +191,11 @@ func flattenPathItem(pi *openapi31models.PathItem, result *[]*shared.ParseError,
 	}
 
 	for _, ref := range pi.Parameters() {
-		if ref != nil && ref.Value() != nil {
-			flattenParameter(ref.Value(), result, visited)
+		if ref != nil {
+			collectRefErrors(ref, result)
+			if ref.Value() != nil {
+				flattenParameter(ref.Value(), result, visited)
+			}
 		}
 	}
 
@@ -174,27 +211,39 @@ func flattenOperation(op *openapi31models.Operation, result *[]*shared.ParseErro
 	collectNodeErrors(&op.ElementBase, result)
 
 	for _, ref := range op.Parameters() {
-		if ref != nil && ref.Value() != nil && !visited[ref.Value()] {
-			flattenParameter(ref.Value(), result, visited)
+		if ref != nil {
+			collectRefErrors(ref, result)
+			if ref.Value() != nil && !visited[ref.Value()] {
+				flattenParameter(ref.Value(), result, visited)
+			}
 		}
 	}
 
-	if rb := op.RequestBody(); rb != nil && rb.Value() != nil && !visited[rb.Value()] {
-		flattenRequestBody(rb.Value(), result, visited)
+	if rb := op.RequestBody(); rb != nil {
+		collectRefErrors(rb, result)
+		if rb.Value() != nil && !visited[rb.Value()] {
+			flattenRequestBody(rb.Value(), result, visited)
+		}
 	}
 
 	if resp := op.Responses(); resp != nil {
 		collectNodeErrors(&resp.ElementBase, result)
 		for _, ref := range resp.Codes() {
-			if ref != nil && ref.Value() != nil && !visited[ref.Value()] {
-				flattenResponse(ref.Value(), result, visited)
+			if ref != nil {
+				collectRefErrors(ref, result)
+				if ref.Value() != nil && !visited[ref.Value()] {
+					flattenResponse(ref.Value(), result, visited)
+				}
 			}
 		}
 	}
 
 	for _, ref := range op.Callbacks() {
-		if ref != nil && ref.Value() != nil && !visited[ref.Value()] {
-			flattenCallback(ref.Value(), result, visited)
+		if ref != nil {
+			collectRefErrors(ref, result)
+			if ref.Value() != nil && !visited[ref.Value()] {
+				flattenCallback(ref.Value(), result, visited)
+			}
 		}
 	}
 
@@ -210,12 +259,18 @@ func flattenParameter(p *openapi31models.Parameter, result *[]*shared.ParseError
 	visited[p] = true
 	collectNodeErrors(&p.ElementBase, result)
 
-	if s := p.Schema(); s != nil && s.Value() != nil {
-		flattenSchema(s.Value(), result, visited)
+	if s := p.Schema(); s != nil {
+		collectRefErrors(s, result)
+		if s.Value() != nil {
+			flattenSchema(s.Value(), result, visited)
+		}
 	}
 	for _, ref := range p.Examples() {
-		if ref != nil && ref.Value() != nil {
-			collectNodeErrors(&ref.Value().ElementBase, result)
+		if ref != nil {
+			collectRefErrors(ref, result)
+			if ref.Value() != nil {
+				collectNodeErrors(&ref.Value().ElementBase, result)
+			}
 		}
 	}
 	flattenContent(p.Content(), result, visited)
@@ -228,12 +283,18 @@ func flattenHeader(h *openapi31models.Header, result *[]*shared.ParseError, visi
 	visited[h] = true
 	collectNodeErrors(&h.ElementBase, result)
 
-	if s := h.Schema(); s != nil && s.Value() != nil {
-		flattenSchema(s.Value(), result, visited)
+	if s := h.Schema(); s != nil {
+		collectRefErrors(s, result)
+		if s.Value() != nil {
+			flattenSchema(s.Value(), result, visited)
+		}
 	}
 	for _, ref := range h.Examples() {
-		if ref != nil && ref.Value() != nil {
-			collectNodeErrors(&ref.Value().ElementBase, result)
+		if ref != nil {
+			collectRefErrors(ref, result)
+			if ref.Value() != nil {
+				collectNodeErrors(&ref.Value().ElementBase, result)
+			}
 		}
 	}
 	flattenContent(h.Content(), result, visited)
@@ -256,15 +317,21 @@ func flattenResponse(resp *openapi31models.Response, result *[]*shared.ParseErro
 	collectNodeErrors(&resp.ElementBase, result)
 
 	for _, ref := range resp.Headers() {
-		if ref != nil && ref.Value() != nil {
-			flattenHeader(ref.Value(), result, visited)
+		if ref != nil {
+			collectRefErrors(ref, result)
+			if ref.Value() != nil {
+				flattenHeader(ref.Value(), result, visited)
+			}
 		}
 	}
 	flattenContent(resp.Content(), result, visited)
 
 	for _, ref := range resp.Links() {
-		if ref != nil && ref.Value() != nil {
-			flattenLink(ref.Value(), result)
+		if ref != nil {
+			collectRefErrors(ref, result)
+			if ref.Value() != nil {
+				flattenLink(ref.Value(), result)
+			}
 		}
 	}
 }
@@ -276,12 +343,18 @@ func flattenContent(content map[string]*openapi31models.MediaType, result *[]*sh
 		}
 		collectNodeErrors(&mt.ElementBase, result)
 
-		if s := mt.Schema(); s != nil && s.Value() != nil {
-			flattenSchema(s.Value(), result, visited)
+		if s := mt.Schema(); s != nil {
+			collectRefErrors(s, result)
+			if s.Value() != nil {
+				flattenSchema(s.Value(), result, visited)
+			}
 		}
 		for _, ref := range mt.Examples() {
-			if ref != nil && ref.Value() != nil {
-				collectNodeErrors(&ref.Value().ElementBase, result)
+			if ref != nil {
+				collectRefErrors(ref, result)
+				if ref.Value() != nil {
+					collectNodeErrors(&ref.Value().ElementBase, result)
+				}
 			}
 		}
 		for _, enc := range mt.Encoding() {
@@ -311,63 +384,108 @@ func flattenSchema(s *openapi31models.Schema, result *[]*shared.ParseError, visi
 
 	// Composition keywords
 	for _, ref := range s.AllOf() {
-		if ref != nil && ref.Value() != nil {
-			flattenSchema(ref.Value(), result, visited)
+		if ref != nil {
+			collectRefErrors(ref, result)
+			if ref.Value() != nil {
+				flattenSchema(ref.Value(), result, visited)
+			}
 		}
 	}
 	for _, ref := range s.OneOf() {
-		if ref != nil && ref.Value() != nil {
-			flattenSchema(ref.Value(), result, visited)
+		if ref != nil {
+			collectRefErrors(ref, result)
+			if ref.Value() != nil {
+				flattenSchema(ref.Value(), result, visited)
+			}
 		}
 	}
 	for _, ref := range s.AnyOf() {
-		if ref != nil && ref.Value() != nil {
-			flattenSchema(ref.Value(), result, visited)
+		if ref != nil {
+			collectRefErrors(ref, result)
+			if ref.Value() != nil {
+				flattenSchema(ref.Value(), result, visited)
+			}
 		}
 	}
-	if n := s.Not(); n != nil && n.Value() != nil {
-		flattenSchema(n.Value(), result, visited)
+	if n := s.Not(); n != nil {
+		collectRefErrors(n, result)
+		if n.Value() != nil {
+			flattenSchema(n.Value(), result, visited)
+		}
 	}
-	if itm := s.Items(); itm != nil && itm.Value() != nil {
-		flattenSchema(itm.Value(), result, visited)
+	if itm := s.Items(); itm != nil {
+		collectRefErrors(itm, result)
+		if itm.Value() != nil {
+			flattenSchema(itm.Value(), result, visited)
+		}
 	}
 	for _, ref := range s.Properties() {
-		if ref != nil && ref.Value() != nil {
-			flattenSchema(ref.Value(), result, visited)
+		if ref != nil {
+			collectRefErrors(ref, result)
+			if ref.Value() != nil {
+				flattenSchema(ref.Value(), result, visited)
+			}
 		}
 	}
-	if ap := s.AdditionalProperties(); ap != nil && ap.Value() != nil {
-		flattenSchema(ap.Value(), result, visited)
+	if ap := s.AdditionalProperties(); ap != nil {
+		collectRefErrors(ap, result)
+		if ap.Value() != nil {
+			flattenSchema(ap.Value(), result, visited)
+		}
 	}
 
 	// 3.1 additions
-	if ifRef := s.If(); ifRef != nil && ifRef.Value() != nil {
-		flattenSchema(ifRef.Value(), result, visited)
+	if ifRef := s.If(); ifRef != nil {
+		collectRefErrors(ifRef, result)
+		if ifRef.Value() != nil {
+			flattenSchema(ifRef.Value(), result, visited)
+		}
 	}
-	if thenRef := s.Then(); thenRef != nil && thenRef.Value() != nil {
-		flattenSchema(thenRef.Value(), result, visited)
+	if thenRef := s.Then(); thenRef != nil {
+		collectRefErrors(thenRef, result)
+		if thenRef.Value() != nil {
+			flattenSchema(thenRef.Value(), result, visited)
+		}
 	}
-	if elseRef := s.Else(); elseRef != nil && elseRef.Value() != nil {
-		flattenSchema(elseRef.Value(), result, visited)
+	if elseRef := s.Else(); elseRef != nil {
+		collectRefErrors(elseRef, result)
+		if elseRef.Value() != nil {
+			flattenSchema(elseRef.Value(), result, visited)
+		}
 	}
 	for _, ref := range s.PrefixItems() {
-		if ref != nil && ref.Value() != nil {
-			flattenSchema(ref.Value(), result, visited)
+		if ref != nil {
+			collectRefErrors(ref, result)
+			if ref.Value() != nil {
+				flattenSchema(ref.Value(), result, visited)
+			}
 		}
 	}
 	for _, ref := range s.DependentSchemas() {
-		if ref != nil && ref.Value() != nil {
-			flattenSchema(ref.Value(), result, visited)
+		if ref != nil {
+			collectRefErrors(ref, result)
+			if ref.Value() != nil {
+				flattenSchema(ref.Value(), result, visited)
+			}
 		}
 	}
-	if cs := s.ContentSchema(); cs != nil && cs.Value() != nil {
-		flattenSchema(cs.Value(), result, visited)
+	if cs := s.ContentSchema(); cs != nil {
+		collectRefErrors(cs, result)
+		if cs.Value() != nil {
+			flattenSchema(cs.Value(), result, visited)
+		}
 	}
-	if ui := s.UnevaluatedItems(); ui != nil && ui.Value() != nil {
-		flattenSchema(ui.Value(), result, visited)
+	if ui := s.UnevaluatedItems(); ui != nil {
+		collectRefErrors(ui, result)
+		if ui.Value() != nil {
+			flattenSchema(ui.Value(), result, visited)
+		}
 	}
-	if up := s.UnevaluatedProperties(); up != nil && up.Value() != nil {
-		flattenSchema(up.Value(), result, visited)
+	if up := s.UnevaluatedProperties(); up != nil {
+		collectRefErrors(up, result)
+		if up.Value() != nil {
+			flattenSchema(up.Value(), result, visited)
+		}
 	}
 }
 
@@ -419,5 +537,15 @@ func modelParseErrorToShared(e openapi31models.ParseError) *shared.ParseError {
 		Path:    e.Path,
 		Message: e.Message,
 		Kind:    e.Kind,
+	}
+}
+
+// collectRefErrors collects Trix.Errors from a ref (including resolution errors).
+func collectRefErrors[T any](ref *modelsShared.RefWithMeta[T], result *[]*shared.ParseError) {
+	if ref == nil {
+		return
+	}
+	for _, e := range ref.Trix.Errors {
+		*result = append(*result, modelParseErrorToShared(e))
 	}
 }

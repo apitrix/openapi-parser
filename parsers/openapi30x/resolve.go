@@ -213,7 +213,7 @@ func resolveSchemaRef(ref *openapi30models.RefSchema, r *shared.RefResolver, res
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		schema, err := parseSharedSchema(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved schema ref %q: %w", ref.Ref, err))
@@ -272,7 +272,7 @@ func resolveSchema(schema *openapi30models.Schema, r *shared.RefResolver, resolv
 		for key, val := range schema.Discriminator().Mapping() {
 			mapResult, mapErr := r.ResolveMapping(val)
 			if mapErr == nil {
-				ctx := newParseContext(mapResult.Node, shared.All())
+				ctx := newParseContext(mapResult.Node, All())
 				s, parseErr := parseSharedSchema(mapResult.Node, ctx)
 				if parseErr == nil {
 					ref := openapi30models.NewRefSchema(val)
@@ -306,7 +306,7 @@ func resolveResponseRef(ref *openapi30models.RefResponse, r *shared.RefResolver,
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		val, err := parseSharedResponse(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved response ref %q: %w", ref.Ref, err))
@@ -355,7 +355,7 @@ func resolveParameterRef(ref *openapi30models.RefParameter, r *shared.RefResolve
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		val, err := parseSharedParameter(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved parameter ref %q: %w", ref.Ref, err))
@@ -397,7 +397,7 @@ func resolveExampleRef(ref *openapi30models.RefExample, r *shared.RefResolver, r
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		val, err := parseSharedExample(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved example ref %q: %w", ref.Ref, err))
@@ -428,7 +428,7 @@ func resolveRequestBodyRef(ref *openapi30models.RefRequestBody, r *shared.RefRes
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		val, err := parseSharedRequestBody(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved requestBody ref %q: %w", ref.Ref, err))
@@ -467,7 +467,7 @@ func resolveHeaderRef(ref *openapi30models.RefHeader, r *shared.RefResolver, res
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		val, err := parseSharedHeader(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved header ref %q: %w", ref.Ref, err))
@@ -509,7 +509,7 @@ func resolveSecuritySchemeRef(ref *openapi30models.RefSecurityScheme, r *shared.
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		val, err := parseSharedSecurityScheme(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved securityScheme ref %q: %w", ref.Ref, err))
@@ -540,7 +540,7 @@ func resolveLinkRef(ref *openapi30models.RefLink, r *shared.RefResolver, resolvi
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		val, err := parseSharedLink(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved link ref %q: %w", ref.Ref, err))
@@ -571,7 +571,7 @@ func resolveCallbackRef(ref *openapi30models.RefCallback, r *shared.RefResolver,
 			ref.MarkDone()
 			return nil
 		}
-		ctx := newParseContext(result.Node, shared.All())
+		ctx := newParseContext(result.Node, All())
 		val, err := parseSharedCallback(result.Node, ctx)
 		if err != nil {
 			ref.SetResolveErr(fmt.Errorf("parsing resolved callback ref %q: %w", ref.Ref, err))
