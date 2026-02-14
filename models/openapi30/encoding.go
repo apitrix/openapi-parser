@@ -12,17 +12,17 @@ type Encoding struct {
 	ElementBase // embedded - provides VendorExtensions and Trix
 
 	contentType   string
-	headers       map[string]*shared.Ref[Header]
+	headers       map[string]*RefHeader
 	style         string
 	explode       *bool
 	allowReserved bool
 }
 
-func (e *Encoding) ContentType() string                     { return e.contentType }
-func (e *Encoding) Headers() map[string]*shared.Ref[Header] { return e.headers }
-func (e *Encoding) Style() string                           { return e.style }
-func (e *Encoding) Explode() *bool                          { return e.explode }
-func (e *Encoding) AllowReserved() bool                     { return e.allowReserved }
+func (e *Encoding) ContentType() string            { return e.contentType }
+func (e *Encoding) Headers() map[string]*RefHeader { return e.headers }
+func (e *Encoding) Style() string                  { return e.style }
+func (e *Encoding) Explode() *bool                 { return e.explode }
+func (e *Encoding) AllowReserved() bool            { return e.allowReserved }
 
 func (e *Encoding) SetContentType(contentType string) error {
 	if err := e.Trix.RunHooks("contentType", e.contentType, contentType); err != nil {
@@ -31,7 +31,7 @@ func (e *Encoding) SetContentType(contentType string) error {
 	e.contentType = contentType
 	return nil
 }
-func (e *Encoding) SetHeaders(headers map[string]*shared.Ref[Header]) error {
+func (e *Encoding) SetHeaders(headers map[string]*RefHeader) error {
 	if err := e.Trix.RunHooks("headers", e.headers, headers); err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func (e *Encoding) SetAllowReserved(allowReserved bool) error {
 }
 
 // NewEncoding creates a new Encoding instance.
-func NewEncoding(contentType string, headers map[string]*shared.Ref[Header], style string, explode *bool, allowReserved bool) *Encoding {
+func NewEncoding(contentType string, headers map[string]*RefHeader, style string, explode *bool, allowReserved bool) *Encoding {
 	return &Encoding{contentType: contentType, headers: headers, style: style, explode: explode, allowReserved: allowReserved}
 }
 

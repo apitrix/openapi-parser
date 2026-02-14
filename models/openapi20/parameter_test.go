@@ -1,14 +1,13 @@
 package openapi20
 
 import (
-	"openapi-parser/models/shared"
 	"encoding/json"
 	"testing"
 )
 
 func TestParameter_MarshalJSON_BodyParam(t *testing.T) {
 	// Arrange
-	schema := &shared.Ref[Schema]{}
+	schema := &RefSchema{}
 	schema.SetValue(NewSchema(SchemaFields{Type: "object"}))
 	p := NewParameter(ParameterFields{
 		Name:        "body",

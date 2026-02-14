@@ -1,16 +1,15 @@
 package openapi30
 
 import (
-	"openapi-parser/models/shared"
 	"encoding/json"
 	"testing"
 )
 
 func TestComponents_MarshalJSON_WithSchemas(t *testing.T) {
 	// Arrange
-	petRef := &shared.Ref[Schema]{}
+	petRef := &RefSchema{}
 	petRef.SetValue(NewSchema(SchemaFields{Type: "object"}))
-	schemas := map[string]*shared.Ref[Schema]{
+	schemas := map[string]*RefSchema{
 		"Pet": petRef,
 	}
 	c := NewComponents(schemas, nil, nil, nil, nil, nil, nil, nil, nil)
@@ -56,14 +55,14 @@ func TestComponents_MarshalJSON_Empty(t *testing.T) {
 
 func TestComponents_MarshalJSON_Multiple(t *testing.T) {
 	// Arrange
-	petRef := &shared.Ref[Schema]{}
+	petRef := &RefSchema{}
 	petRef.SetValue(NewSchema(SchemaFields{Type: "object"}))
-	schemas := map[string]*shared.Ref[Schema]{
+	schemas := map[string]*RefSchema{
 		"Pet": petRef,
 	}
-	bearerRef := &shared.Ref[SecurityScheme]{}
+	bearerRef := &RefSecurityScheme{}
 	bearerRef.SetValue(NewSecurityScheme("http", "", "", "", "bearer", "", nil, ""))
-	secSchemes := map[string]*shared.Ref[SecurityScheme]{
+	secSchemes := map[string]*RefSecurityScheme{
 		"BearerAuth": bearerRef,
 	}
 	c := NewComponents(schemas, nil, nil, nil, nil, nil, secSchemes, nil, nil)

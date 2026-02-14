@@ -3,13 +3,11 @@ package openapi31
 import (
 	"errors"
 	"testing"
-
-	"openapi-parser/models/shared"
 )
 
 func TestComponents_SetSchemas_WithoutHook(t *testing.T) {
 	c := NewComponents()
-	schemas := map[string]*shared.RefWithMeta[Schema]{"Pet": shared.NewRefWithMeta[Schema]("#/components/schemas/Pet")}
+	schemas := map[string]*RefSchema{"Pet": NewRefSchema("#/components/schemas/Pet")}
 	err := c.SetSchemas(schemas)
 	if err != nil {
 		t.Fatalf("SetSchemas without hook should succeed, got %v", err)
@@ -25,7 +23,7 @@ func TestComponents_SetSchemas_WithHook_Rejects(t *testing.T) {
 	c.Trix.OnSet("schemas", func(field string, oldVal, newVal interface{}) error {
 		return rejectErr
 	})
-	schemas := map[string]*shared.RefWithMeta[Schema]{"Pet": shared.NewRefWithMeta[Schema]("#/components/schemas/Pet")}
+	schemas := map[string]*RefSchema{"Pet": NewRefSchema("#/components/schemas/Pet")}
 	err := c.SetSchemas(schemas)
 	if err != rejectErr {
 		t.Errorf("SetSchemas with rejecting hook should return error, got %v", err)
@@ -37,7 +35,7 @@ func TestComponents_SetSchemas_WithHook_Rejects(t *testing.T) {
 
 func TestComponents_SetResponses_WithoutHook(t *testing.T) {
 	c := NewComponents()
-	resp := map[string]*shared.RefWithMeta[Response]{"Ok": shared.NewRefWithMeta[Response]("#/components/responses/Ok")}
+	resp := map[string]*RefResponse{"Ok": NewRefResponse("#/components/responses/Ok")}
 	err := c.SetResponses(resp)
 	if err != nil {
 		t.Fatalf("SetResponses without hook should succeed, got %v", err)
@@ -49,7 +47,7 @@ func TestComponents_SetResponses_WithoutHook(t *testing.T) {
 
 func TestComponents_SetParameters_WithoutHook(t *testing.T) {
 	c := NewComponents()
-	params := map[string]*shared.RefWithMeta[Parameter]{"limit": shared.NewRefWithMeta[Parameter]("#/components/parameters/limit")}
+	params := map[string]*RefParameter{"limit": NewRefParameter("#/components/parameters/limit")}
 	err := c.SetParameters(params)
 	if err != nil {
 		t.Fatalf("SetParameters without hook should succeed, got %v", err)
@@ -61,7 +59,7 @@ func TestComponents_SetParameters_WithoutHook(t *testing.T) {
 
 func TestComponents_SetPathItems_WithoutHook(t *testing.T) {
 	c := NewComponents()
-	items := map[string]*shared.RefWithMeta[PathItem]{"PetPath": shared.NewRefWithMeta[PathItem]("#/components/pathItems/PetPath")}
+	items := map[string]*RefPathItem{"PetPath": NewRefPathItem("#/components/pathItems/PetPath")}
 	err := c.SetPathItems(items)
 	if err != nil {
 		t.Fatalf("SetPathItems without hook should succeed, got %v", err)

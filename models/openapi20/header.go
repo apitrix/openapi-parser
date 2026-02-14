@@ -39,16 +39,16 @@ func (h *Header) CollectionFormat() string { return h.collectionFormat }
 func (h *Header) Default() interface{}     { return h.defaultVal }
 func (h *Header) Maximum() *float64        { return h.maximum }
 func (h *Header) ExclusiveMaximum() bool   { return h.exclusiveMaximum }
-func (h *Header) Minimum() *float64         { return h.minimum }
+func (h *Header) Minimum() *float64        { return h.minimum }
 func (h *Header) ExclusiveMinimum() bool   { return h.exclusiveMinimum }
 func (h *Header) MaxLength() *uint64       { return h.maxLength }
 func (h *Header) MinLength() *uint64       { return h.minLength }
-func (h *Header) Pattern() string           { return h.pattern }
+func (h *Header) Pattern() string          { return h.pattern }
 func (h *Header) MaxItems() *uint64        { return h.maxItems }
 func (h *Header) MinItems() *uint64        { return h.minItems }
-func (h *Header) UniqueItems() bool         { return h.uniqueItems }
+func (h *Header) UniqueItems() bool        { return h.uniqueItems }
 func (h *Header) Enum() []interface{}      { return h.enum }
-func (h *Header) MultipleOf() *float64      { return h.multipleOf }
+func (h *Header) MultipleOf() *float64     { return h.multipleOf }
 
 func (h *Header) SetDescription(description string) error {
 	if err := h.Trix.RunHooks("description", h.description, description); err != nil {

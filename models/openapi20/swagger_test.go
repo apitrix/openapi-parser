@@ -1,7 +1,6 @@
 package openapi20
 
 import (
-	"openapi-parser/models/shared"
 	"encoding/json"
 	"testing"
 )
@@ -65,9 +64,9 @@ func TestSwagger_MarshalJSON_WithDefinitions(t *testing.T) {
 	doc := &Swagger{}
 	doc.SetProperty("swagger", "2.0")
 	doc.SetProperty("info", NewInfo("API", "", "", "1.0", nil, nil))
-	petRef := &shared.Ref[Schema]{}
+	petRef := &RefSchema{}
 	petRef.SetValue(NewSchema(SchemaFields{Type: "object"}))
-	doc.SetProperty("definitions", map[string]*shared.Ref[Schema]{
+	doc.SetProperty("definitions", map[string]*RefSchema{
 		"Pet": petRef,
 	})
 

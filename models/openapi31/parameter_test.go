@@ -1,13 +1,12 @@
 package openapi31
 
 import (
-	"openapi-parser/models/shared"
 	"encoding/json"
 	"testing"
 )
 
 func TestParameter_MarshalJSON_AllFields(t *testing.T) {
-	schemaRef := &shared.RefWithMeta[Schema]{}
+	schemaRef := &RefSchema{}
 	schemaRef.SetValue(NewSchema(SchemaFields{Type: SchemaType{Single: "integer"}}))
 	p := NewParameter(ParameterFields{
 		Name:        "limit",

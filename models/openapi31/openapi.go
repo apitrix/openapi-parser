@@ -16,23 +16,23 @@ type OpenAPI struct {
 	jsonSchemaDialect string
 	servers           []*Server
 	paths             *Paths
-	webhooks          map[string]*shared.RefWithMeta[PathItem]
+	webhooks          map[string]*RefPathItem
 	components        *Components
 	security          []SecurityRequirement
 	tags              []*Tag
 	externalDocs      *ExternalDocumentation
 }
 
-func (o *OpenAPI) OpenAPIVersion() string                             { return o.openAPI }
-func (o *OpenAPI) Info() *Info                                        { return o.info }
-func (o *OpenAPI) JsonSchemaDialect() string                          { return o.jsonSchemaDialect }
-func (o *OpenAPI) Servers() []*Server                                 { return o.servers }
-func (o *OpenAPI) Paths() *Paths                                      { return o.paths }
-func (o *OpenAPI) Webhooks() map[string]*shared.RefWithMeta[PathItem] { return o.webhooks }
-func (o *OpenAPI) Components() *Components                            { return o.components }
-func (o *OpenAPI) Security() []SecurityRequirement                    { return o.security }
-func (o *OpenAPI) Tags() []*Tag                                       { return o.tags }
-func (o *OpenAPI) ExternalDocs() *ExternalDocumentation               { return o.externalDocs }
+func (o *OpenAPI) OpenAPIVersion() string               { return o.openAPI }
+func (o *OpenAPI) Info() *Info                          { return o.info }
+func (o *OpenAPI) JsonSchemaDialect() string            { return o.jsonSchemaDialect }
+func (o *OpenAPI) Servers() []*Server                   { return o.servers }
+func (o *OpenAPI) Paths() *Paths                        { return o.paths }
+func (o *OpenAPI) Webhooks() map[string]*RefPathItem    { return o.webhooks }
+func (o *OpenAPI) Components() *Components              { return o.components }
+func (o *OpenAPI) Security() []SecurityRequirement      { return o.security }
+func (o *OpenAPI) Tags() []*Tag                         { return o.tags }
+func (o *OpenAPI) ExternalDocs() *ExternalDocumentation { return o.externalDocs }
 
 func (o *OpenAPI) SetOpenAPIVersion(openAPI string) error {
 	if err := o.Trix.RunHooks("openapi", o.openAPI, openAPI); err != nil {
@@ -69,7 +69,7 @@ func (o *OpenAPI) SetPaths(paths *Paths) error {
 	o.paths = paths
 	return nil
 }
-func (o *OpenAPI) SetWebhooks(webhooks map[string]*shared.RefWithMeta[PathItem]) error {
+func (o *OpenAPI) SetWebhooks(webhooks map[string]*RefPathItem) error {
 	if err := o.Trix.RunHooks("webhooks", o.webhooks, webhooks); err != nil {
 		return err
 	}
@@ -120,7 +120,7 @@ func (o *OpenAPI) SetProperty(name string, value interface{}) {
 	case "paths":
 		o.paths = value.(*Paths)
 	case "webhooks":
-		o.webhooks = value.(map[string]*shared.RefWithMeta[PathItem])
+		o.webhooks = value.(map[string]*RefPathItem)
 	case "components":
 		o.components = value.(*Components)
 	case "security":

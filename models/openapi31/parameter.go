@@ -20,25 +20,25 @@ type Parameter struct {
 	style           string
 	explode         *bool
 	allowReserved   bool
-	schema          *shared.RefWithMeta[Schema]
+	schema          *RefSchema
 	example         interface{}
-	examples        map[string]*shared.RefWithMeta[Example]
+	examples        map[string]*RefExample
 	content         map[string]*MediaType
 }
 
-func (p *Parameter) Name() string                                      { return p.name }
-func (p *Parameter) In() string                                        { return p.in }
-func (p *Parameter) Description() string                               { return p.description }
-func (p *Parameter) Required() bool                                    { return p.required }
-func (p *Parameter) Deprecated() bool                                  { return p.deprecated }
-func (p *Parameter) AllowEmptyValue() bool                             { return p.allowEmptyValue }
-func (p *Parameter) Style() string                                     { return p.style }
-func (p *Parameter) Explode() *bool                                    { return p.explode }
-func (p *Parameter) AllowReserved() bool                               { return p.allowReserved }
-func (p *Parameter) Schema() *shared.RefWithMeta[Schema]               { return p.schema }
-func (p *Parameter) Example() interface{}                              { return p.example }
-func (p *Parameter) Examples() map[string]*shared.RefWithMeta[Example] { return p.examples }
-func (p *Parameter) Content() map[string]*MediaType                    { return p.content }
+func (p *Parameter) Name() string                     { return p.name }
+func (p *Parameter) In() string                       { return p.in }
+func (p *Parameter) Description() string              { return p.description }
+func (p *Parameter) Required() bool                   { return p.required }
+func (p *Parameter) Deprecated() bool                 { return p.deprecated }
+func (p *Parameter) AllowEmptyValue() bool            { return p.allowEmptyValue }
+func (p *Parameter) Style() string                    { return p.style }
+func (p *Parameter) Explode() *bool                   { return p.explode }
+func (p *Parameter) AllowReserved() bool              { return p.allowReserved }
+func (p *Parameter) Schema() *RefSchema               { return p.schema }
+func (p *Parameter) Example() interface{}             { return p.example }
+func (p *Parameter) Examples() map[string]*RefExample { return p.examples }
+func (p *Parameter) Content() map[string]*MediaType   { return p.content }
 
 func (p *Parameter) SetName(name string) error {
 	if err := p.Trix.RunHooks("name", p.name, name); err != nil {
@@ -103,7 +103,7 @@ func (p *Parameter) SetAllowReserved(allowReserved bool) error {
 	p.allowReserved = allowReserved
 	return nil
 }
-func (p *Parameter) SetSchema(schema *shared.RefWithMeta[Schema]) error {
+func (p *Parameter) SetSchema(schema *RefSchema) error {
 	if err := p.Trix.RunHooks("schema", p.schema, schema); err != nil {
 		return err
 	}
@@ -117,7 +117,7 @@ func (p *Parameter) SetExample(example interface{}) error {
 	p.example = example
 	return nil
 }
-func (p *Parameter) SetExamples(examples map[string]*shared.RefWithMeta[Example]) error {
+func (p *Parameter) SetExamples(examples map[string]*RefExample) error {
 	if err := p.Trix.RunHooks("examples", p.examples, examples); err != nil {
 		return err
 	}
@@ -143,9 +143,9 @@ type ParameterFields struct {
 	Style           string
 	Explode         *bool
 	AllowReserved   bool
-	Schema          *shared.RefWithMeta[Schema]
+	Schema          *RefSchema
 	Example         interface{}
-	Examples        map[string]*shared.RefWithMeta[Example]
+	Examples        map[string]*RefExample
 	Content         map[string]*MediaType
 }
 

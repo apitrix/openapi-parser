@@ -23,22 +23,22 @@ type PathItem struct {
 	patch       *Operation
 	trace       *Operation
 	servers     []*Server
-	parameters  []*shared.RefWithMeta[Parameter]
+	parameters  []*RefParameter
 }
 
-func (p *PathItem) Ref() string                                  { return p.ref }
-func (p *PathItem) Summary() string                              { return p.summary }
-func (p *PathItem) Description() string                          { return p.description }
-func (p *PathItem) Get() *Operation                              { return p.get }
-func (p *PathItem) Put() *Operation                              { return p.put }
-func (p *PathItem) Post() *Operation                             { return p.post }
-func (p *PathItem) Delete() *Operation                           { return p.delete }
-func (p *PathItem) Options() *Operation                          { return p.options }
-func (p *PathItem) Head() *Operation                             { return p.head }
-func (p *PathItem) Patch() *Operation                            { return p.patch }
-func (p *PathItem) Trace() *Operation                            { return p.trace }
-func (p *PathItem) Servers() []*Server                           { return p.servers }
-func (p *PathItem) Parameters() []*shared.RefWithMeta[Parameter] { return p.parameters }
+func (p *PathItem) Ref() string                 { return p.ref }
+func (p *PathItem) Summary() string             { return p.summary }
+func (p *PathItem) Description() string         { return p.description }
+func (p *PathItem) Get() *Operation             { return p.get }
+func (p *PathItem) Put() *Operation             { return p.put }
+func (p *PathItem) Post() *Operation            { return p.post }
+func (p *PathItem) Delete() *Operation          { return p.delete }
+func (p *PathItem) Options() *Operation         { return p.options }
+func (p *PathItem) Head() *Operation            { return p.head }
+func (p *PathItem) Patch() *Operation           { return p.patch }
+func (p *PathItem) Trace() *Operation           { return p.trace }
+func (p *PathItem) Servers() []*Server          { return p.servers }
+func (p *PathItem) Parameters() []*RefParameter { return p.parameters }
 
 func (p *PathItem) SetRef(ref string) error {
 	if err := p.Trix.RunHooks("$ref", p.ref, ref); err != nil {
@@ -124,7 +124,7 @@ func (p *PathItem) SetServers(servers []*Server) error {
 	p.servers = servers
 	return nil
 }
-func (p *PathItem) SetParameters(parameters []*shared.RefWithMeta[Parameter]) error {
+func (p *PathItem) SetParameters(parameters []*RefParameter) error {
 	if err := p.Trix.RunHooks("parameters", p.parameters, parameters); err != nil {
 		return err
 	}
@@ -161,7 +161,7 @@ func (p *PathItem) SetProperty(name string, value interface{}) {
 	case "servers":
 		p.servers = value.([]*Server)
 	case "parameters":
-		p.parameters = value.([]*shared.RefWithMeta[Parameter])
+		p.parameters = value.([]*RefParameter)
 	}
 }
 

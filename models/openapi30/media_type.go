@@ -11,18 +11,18 @@ import (
 type MediaType struct {
 	ElementBase // embedded - provides VendorExtensions and Trix
 
-	schema   *shared.Ref[Schema]
+	schema   *RefSchema
 	example  interface{}
-	examples map[string]*shared.Ref[Example]
+	examples map[string]*RefExample
 	encoding map[string]*Encoding
 }
 
-func (mt *MediaType) Schema() *shared.Ref[Schema]               { return mt.schema }
-func (mt *MediaType) Example() interface{}                      { return mt.example }
-func (mt *MediaType) Examples() map[string]*shared.Ref[Example] { return mt.examples }
-func (mt *MediaType) Encoding() map[string]*Encoding            { return mt.encoding }
+func (mt *MediaType) Schema() *RefSchema               { return mt.schema }
+func (mt *MediaType) Example() interface{}             { return mt.example }
+func (mt *MediaType) Examples() map[string]*RefExample { return mt.examples }
+func (mt *MediaType) Encoding() map[string]*Encoding   { return mt.encoding }
 
-func (mt *MediaType) SetSchema(schema *shared.Ref[Schema]) error {
+func (mt *MediaType) SetSchema(schema *RefSchema) error {
 	if err := mt.Trix.RunHooks("schema", mt.schema, schema); err != nil {
 		return err
 	}
@@ -36,7 +36,7 @@ func (mt *MediaType) SetExample(example interface{}) error {
 	mt.example = example
 	return nil
 }
-func (mt *MediaType) SetExamples(examples map[string]*shared.Ref[Example]) error {
+func (mt *MediaType) SetExamples(examples map[string]*RefExample) error {
 	if err := mt.Trix.RunHooks("examples", mt.examples, examples); err != nil {
 		return err
 	}
@@ -52,7 +52,7 @@ func (mt *MediaType) SetEncoding(encoding map[string]*Encoding) error {
 }
 
 // NewMediaType creates a new MediaType instance.
-func NewMediaType(schema *shared.Ref[Schema], example interface{}, examples map[string]*shared.Ref[Example], encoding map[string]*Encoding) *MediaType {
+func NewMediaType(schema *RefSchema, example interface{}, examples map[string]*RefExample, encoding map[string]*Encoding) *MediaType {
 	return &MediaType{schema: schema, example: example, examples: examples, encoding: encoding}
 }
 

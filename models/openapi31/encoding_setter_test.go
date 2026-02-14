@@ -3,8 +3,6 @@ package openapi31
 import (
 	"errors"
 	"testing"
-
-	"openapi-parser/models/shared"
 )
 
 func TestEncoding_SetContentType_WithoutHook(t *testing.T) {
@@ -35,7 +33,7 @@ func TestEncoding_SetContentType_WithHook_Rejects(t *testing.T) {
 
 func TestEncoding_SetHeaders_WithoutHook(t *testing.T) {
 	e := NewEncoding("", "", nil, nil, false)
-	headers := map[string]*shared.RefWithMeta[Header]{"X-Custom": shared.NewRefWithMeta[Header]("#/components/headers/X-Custom")}
+	headers := map[string]*RefHeader{"X-Custom": NewRefHeader("#/components/headers/X-Custom")}
 	err := e.SetHeaders(headers)
 	if err != nil {
 		t.Fatalf("SetHeaders without hook should succeed, got %v", err)

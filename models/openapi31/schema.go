@@ -31,35 +31,35 @@ type Schema struct {
 	required         []string
 	enum             []interface{}
 	schemaType       SchemaType
-	allOf            []*shared.RefWithMeta[Schema]
-	oneOf            []*shared.RefWithMeta[Schema]
-	anyOf            []*shared.RefWithMeta[Schema]
-	not              *shared.RefWithMeta[Schema]
-	items            *shared.RefWithMeta[Schema]
-	properties       map[string]*shared.RefWithMeta[Schema]
+	allOf            []*RefSchema
+	oneOf            []*RefSchema
+	anyOf            []*RefSchema
+	not              *RefSchema
+	items            *RefSchema
+	properties       map[string]*RefSchema
 	description      string
 	format           string
 	defaultVal       interface{}
 
 	// AdditionalProperties can be a boolean or a schema.
-	additionalProperties        *shared.RefWithMeta[Schema]
+	additionalProperties        *RefSchema
 	additionalPropertiesAllowed *bool
 
 	// JSON Schema 2020-12 new keywords
 	constVal              interface{}
-	ifSchema              *shared.RefWithMeta[Schema]
-	thenSchema            *shared.RefWithMeta[Schema]
-	elseSchema            *shared.RefWithMeta[Schema]
-	dependentSchemas      map[string]*shared.RefWithMeta[Schema]
-	prefixItems           []*shared.RefWithMeta[Schema]
+	ifSchema              *RefSchema
+	thenSchema            *RefSchema
+	elseSchema            *RefSchema
+	dependentSchemas      map[string]*RefSchema
+	prefixItems           []*RefSchema
 	anchor                string
 	dynamicRef            string
 	dynamicAnchor         string
 	contentEncoding       string
 	contentMediaType      string
-	contentSchema         *shared.RefWithMeta[Schema]
-	unevaluatedItems      *shared.RefWithMeta[Schema]
-	unevaluatedProperties *shared.RefWithMeta[Schema]
+	contentSchema         *RefSchema
+	unevaluatedItems      *RefSchema
+	unevaluatedProperties *RefSchema
 	examples              []interface{}
 
 	// OpenAPI extensions (still present in 3.1)
@@ -72,56 +72,56 @@ type Schema struct {
 	deprecated    bool
 }
 
-func (s *Schema) Title() string                                            { return s.title }
-func (s *Schema) MultipleOf() *float64                                     { return s.multipleOf }
-func (s *Schema) Maximum() *float64                                        { return s.maximum }
-func (s *Schema) ExclusiveMaximum() *float64                               { return s.exclusiveMaximum }
-func (s *Schema) Minimum() *float64                                        { return s.minimum }
-func (s *Schema) ExclusiveMinimum() *float64                               { return s.exclusiveMinimum }
-func (s *Schema) MaxLength() *uint64                                       { return s.maxLength }
-func (s *Schema) MinLength() *uint64                                       { return s.minLength }
-func (s *Schema) Pattern() string                                          { return s.pattern }
-func (s *Schema) MaxItems() *uint64                                        { return s.maxItems }
-func (s *Schema) MinItems() *uint64                                        { return s.minItems }
-func (s *Schema) UniqueItems() bool                                        { return s.uniqueItems }
-func (s *Schema) MaxProperties() *uint64                                   { return s.maxProperties }
-func (s *Schema) MinProperties() *uint64                                   { return s.minProperties }
-func (s *Schema) Required() []string                                       { return s.required }
-func (s *Schema) Enum() []interface{}                                      { return s.enum }
-func (s *Schema) Type() SchemaType                                         { return s.schemaType }
-func (s *Schema) AllOf() []*shared.RefWithMeta[Schema]                     { return s.allOf }
-func (s *Schema) OneOf() []*shared.RefWithMeta[Schema]                     { return s.oneOf }
-func (s *Schema) AnyOf() []*shared.RefWithMeta[Schema]                     { return s.anyOf }
-func (s *Schema) Not() *shared.RefWithMeta[Schema]                         { return s.not }
-func (s *Schema) Items() *shared.RefWithMeta[Schema]                       { return s.items }
-func (s *Schema) Properties() map[string]*shared.RefWithMeta[Schema]       { return s.properties }
-func (s *Schema) Description() string                                      { return s.description }
-func (s *Schema) Format() string                                           { return s.format }
-func (s *Schema) Default() interface{}                                     { return s.defaultVal }
-func (s *Schema) AdditionalProperties() *shared.RefWithMeta[Schema]        { return s.additionalProperties }
-func (s *Schema) AdditionalPropertiesAllowed() *bool                       { return s.additionalPropertiesAllowed }
-func (s *Schema) Const() interface{}                                       { return s.constVal }
-func (s *Schema) If() *shared.RefWithMeta[Schema]                          { return s.ifSchema }
-func (s *Schema) Then() *shared.RefWithMeta[Schema]                        { return s.thenSchema }
-func (s *Schema) Else() *shared.RefWithMeta[Schema]                        { return s.elseSchema }
-func (s *Schema) DependentSchemas() map[string]*shared.RefWithMeta[Schema] { return s.dependentSchemas }
-func (s *Schema) PrefixItems() []*shared.RefWithMeta[Schema]               { return s.prefixItems }
-func (s *Schema) Anchor() string                                           { return s.anchor }
-func (s *Schema) DynamicRef() string                                       { return s.dynamicRef }
-func (s *Schema) DynamicAnchor() string                                    { return s.dynamicAnchor }
-func (s *Schema) ContentEncoding() string                                  { return s.contentEncoding }
-func (s *Schema) ContentMediaType() string                                 { return s.contentMediaType }
-func (s *Schema) ContentSchema() *shared.RefWithMeta[Schema]               { return s.contentSchema }
-func (s *Schema) UnevaluatedItems() *shared.RefWithMeta[Schema]            { return s.unevaluatedItems }
-func (s *Schema) UnevaluatedProperties() *shared.RefWithMeta[Schema]       { return s.unevaluatedProperties }
-func (s *Schema) Examples() []interface{}                                  { return s.examples }
-func (s *Schema) Discriminator() *Discriminator                            { return s.discriminator }
-func (s *Schema) ReadOnly() bool                                           { return s.readOnly }
-func (s *Schema) WriteOnly() bool                                          { return s.writeOnly }
-func (s *Schema) XML() *XML                                                { return s.xml }
-func (s *Schema) ExternalDocs() *ExternalDocumentation                     { return s.externalDocs }
-func (s *Schema) Example() interface{}                                     { return s.example }
-func (s *Schema) Deprecated() bool                                         { return s.deprecated }
+func (s *Schema) Title() string                           { return s.title }
+func (s *Schema) MultipleOf() *float64                    { return s.multipleOf }
+func (s *Schema) Maximum() *float64                       { return s.maximum }
+func (s *Schema) ExclusiveMaximum() *float64              { return s.exclusiveMaximum }
+func (s *Schema) Minimum() *float64                       { return s.minimum }
+func (s *Schema) ExclusiveMinimum() *float64              { return s.exclusiveMinimum }
+func (s *Schema) MaxLength() *uint64                      { return s.maxLength }
+func (s *Schema) MinLength() *uint64                      { return s.minLength }
+func (s *Schema) Pattern() string                         { return s.pattern }
+func (s *Schema) MaxItems() *uint64                       { return s.maxItems }
+func (s *Schema) MinItems() *uint64                       { return s.minItems }
+func (s *Schema) UniqueItems() bool                       { return s.uniqueItems }
+func (s *Schema) MaxProperties() *uint64                  { return s.maxProperties }
+func (s *Schema) MinProperties() *uint64                  { return s.minProperties }
+func (s *Schema) Required() []string                      { return s.required }
+func (s *Schema) Enum() []interface{}                     { return s.enum }
+func (s *Schema) Type() SchemaType                        { return s.schemaType }
+func (s *Schema) AllOf() []*RefSchema                     { return s.allOf }
+func (s *Schema) OneOf() []*RefSchema                     { return s.oneOf }
+func (s *Schema) AnyOf() []*RefSchema                     { return s.anyOf }
+func (s *Schema) Not() *RefSchema                         { return s.not }
+func (s *Schema) Items() *RefSchema                       { return s.items }
+func (s *Schema) Properties() map[string]*RefSchema       { return s.properties }
+func (s *Schema) Description() string                     { return s.description }
+func (s *Schema) Format() string                          { return s.format }
+func (s *Schema) Default() interface{}                    { return s.defaultVal }
+func (s *Schema) AdditionalProperties() *RefSchema        { return s.additionalProperties }
+func (s *Schema) AdditionalPropertiesAllowed() *bool      { return s.additionalPropertiesAllowed }
+func (s *Schema) Const() interface{}                      { return s.constVal }
+func (s *Schema) If() *RefSchema                          { return s.ifSchema }
+func (s *Schema) Then() *RefSchema                        { return s.thenSchema }
+func (s *Schema) Else() *RefSchema                        { return s.elseSchema }
+func (s *Schema) DependentSchemas() map[string]*RefSchema { return s.dependentSchemas }
+func (s *Schema) PrefixItems() []*RefSchema               { return s.prefixItems }
+func (s *Schema) Anchor() string                          { return s.anchor }
+func (s *Schema) DynamicRef() string                      { return s.dynamicRef }
+func (s *Schema) DynamicAnchor() string                   { return s.dynamicAnchor }
+func (s *Schema) ContentEncoding() string                 { return s.contentEncoding }
+func (s *Schema) ContentMediaType() string                { return s.contentMediaType }
+func (s *Schema) ContentSchema() *RefSchema               { return s.contentSchema }
+func (s *Schema) UnevaluatedItems() *RefSchema            { return s.unevaluatedItems }
+func (s *Schema) UnevaluatedProperties() *RefSchema       { return s.unevaluatedProperties }
+func (s *Schema) Examples() []interface{}                 { return s.examples }
+func (s *Schema) Discriminator() *Discriminator           { return s.discriminator }
+func (s *Schema) ReadOnly() bool                          { return s.readOnly }
+func (s *Schema) WriteOnly() bool                         { return s.writeOnly }
+func (s *Schema) XML() *XML                               { return s.xml }
+func (s *Schema) ExternalDocs() *ExternalDocumentation    { return s.externalDocs }
+func (s *Schema) Example() interface{}                    { return s.example }
+func (s *Schema) Deprecated() bool                        { return s.deprecated }
 
 func (s *Schema) SetTitle(title string) error {
 	if err := s.Trix.RunHooks("title", s.title, title); err != nil {
@@ -242,42 +242,42 @@ func (s *Schema) SetType(schemaType SchemaType) error {
 	s.schemaType = schemaType
 	return nil
 }
-func (s *Schema) SetAllOf(allOf []*shared.RefWithMeta[Schema]) error {
+func (s *Schema) SetAllOf(allOf []*RefSchema) error {
 	if err := s.Trix.RunHooks("allOf", s.allOf, allOf); err != nil {
 		return err
 	}
 	s.allOf = allOf
 	return nil
 }
-func (s *Schema) SetOneOf(oneOf []*shared.RefWithMeta[Schema]) error {
+func (s *Schema) SetOneOf(oneOf []*RefSchema) error {
 	if err := s.Trix.RunHooks("oneOf", s.oneOf, oneOf); err != nil {
 		return err
 	}
 	s.oneOf = oneOf
 	return nil
 }
-func (s *Schema) SetAnyOf(anyOf []*shared.RefWithMeta[Schema]) error {
+func (s *Schema) SetAnyOf(anyOf []*RefSchema) error {
 	if err := s.Trix.RunHooks("anyOf", s.anyOf, anyOf); err != nil {
 		return err
 	}
 	s.anyOf = anyOf
 	return nil
 }
-func (s *Schema) SetNot(not *shared.RefWithMeta[Schema]) error {
+func (s *Schema) SetNot(not *RefSchema) error {
 	if err := s.Trix.RunHooks("not", s.not, not); err != nil {
 		return err
 	}
 	s.not = not
 	return nil
 }
-func (s *Schema) SetItems(items *shared.RefWithMeta[Schema]) error {
+func (s *Schema) SetItems(items *RefSchema) error {
 	if err := s.Trix.RunHooks("items", s.items, items); err != nil {
 		return err
 	}
 	s.items = items
 	return nil
 }
-func (s *Schema) SetProperties(properties map[string]*shared.RefWithMeta[Schema]) error {
+func (s *Schema) SetProperties(properties map[string]*RefSchema) error {
 	if err := s.Trix.RunHooks("properties", s.properties, properties); err != nil {
 		return err
 	}
@@ -305,7 +305,7 @@ func (s *Schema) SetDefault(defaultVal interface{}) error {
 	s.defaultVal = defaultVal
 	return nil
 }
-func (s *Schema) SetAdditionalProperties(additionalProperties *shared.RefWithMeta[Schema]) error {
+func (s *Schema) SetAdditionalProperties(additionalProperties *RefSchema) error {
 	if err := s.Trix.RunHooks("additionalProperties", s.additionalProperties, additionalProperties); err != nil {
 		return err
 	}
@@ -326,35 +326,35 @@ func (s *Schema) SetConst(constVal interface{}) error {
 	s.constVal = constVal
 	return nil
 }
-func (s *Schema) SetIf(ifSchema *shared.RefWithMeta[Schema]) error {
+func (s *Schema) SetIf(ifSchema *RefSchema) error {
 	if err := s.Trix.RunHooks("if", s.ifSchema, ifSchema); err != nil {
 		return err
 	}
 	s.ifSchema = ifSchema
 	return nil
 }
-func (s *Schema) SetThen(thenSchema *shared.RefWithMeta[Schema]) error {
+func (s *Schema) SetThen(thenSchema *RefSchema) error {
 	if err := s.Trix.RunHooks("then", s.thenSchema, thenSchema); err != nil {
 		return err
 	}
 	s.thenSchema = thenSchema
 	return nil
 }
-func (s *Schema) SetElse(elseSchema *shared.RefWithMeta[Schema]) error {
+func (s *Schema) SetElse(elseSchema *RefSchema) error {
 	if err := s.Trix.RunHooks("else", s.elseSchema, elseSchema); err != nil {
 		return err
 	}
 	s.elseSchema = elseSchema
 	return nil
 }
-func (s *Schema) SetDependentSchemas(dependentSchemas map[string]*shared.RefWithMeta[Schema]) error {
+func (s *Schema) SetDependentSchemas(dependentSchemas map[string]*RefSchema) error {
 	if err := s.Trix.RunHooks("dependentSchemas", s.dependentSchemas, dependentSchemas); err != nil {
 		return err
 	}
 	s.dependentSchemas = dependentSchemas
 	return nil
 }
-func (s *Schema) SetPrefixItems(prefixItems []*shared.RefWithMeta[Schema]) error {
+func (s *Schema) SetPrefixItems(prefixItems []*RefSchema) error {
 	if err := s.Trix.RunHooks("prefixItems", s.prefixItems, prefixItems); err != nil {
 		return err
 	}
@@ -396,21 +396,21 @@ func (s *Schema) SetContentMediaType(contentMediaType string) error {
 	s.contentMediaType = contentMediaType
 	return nil
 }
-func (s *Schema) SetContentSchema(contentSchema *shared.RefWithMeta[Schema]) error {
+func (s *Schema) SetContentSchema(contentSchema *RefSchema) error {
 	if err := s.Trix.RunHooks("contentSchema", s.contentSchema, contentSchema); err != nil {
 		return err
 	}
 	s.contentSchema = contentSchema
 	return nil
 }
-func (s *Schema) SetUnevaluatedItems(unevaluatedItems *shared.RefWithMeta[Schema]) error {
+func (s *Schema) SetUnevaluatedItems(unevaluatedItems *RefSchema) error {
 	if err := s.Trix.RunHooks("unevaluatedItems", s.unevaluatedItems, unevaluatedItems); err != nil {
 		return err
 	}
 	s.unevaluatedItems = unevaluatedItems
 	return nil
 }
-func (s *Schema) SetUnevaluatedProperties(unevaluatedProperties *shared.RefWithMeta[Schema]) error {
+func (s *Schema) SetUnevaluatedProperties(unevaluatedProperties *RefSchema) error {
 	if err := s.Trix.RunHooks("unevaluatedProperties", s.unevaluatedProperties, unevaluatedProperties); err != nil {
 		return err
 	}
@@ -524,34 +524,34 @@ type SchemaFields struct {
 	Required         []string
 	Enum             []interface{}
 	Type             SchemaType
-	AllOf            []*shared.RefWithMeta[Schema]
-	OneOf            []*shared.RefWithMeta[Schema]
-	AnyOf            []*shared.RefWithMeta[Schema]
-	Not              *shared.RefWithMeta[Schema]
-	Items            *shared.RefWithMeta[Schema]
-	Properties       map[string]*shared.RefWithMeta[Schema]
+	AllOf            []*RefSchema
+	OneOf            []*RefSchema
+	AnyOf            []*RefSchema
+	Not              *RefSchema
+	Items            *RefSchema
+	Properties       map[string]*RefSchema
 	Description      string
 	Format           string
 	Default          interface{}
 
-	AdditionalProperties        *shared.RefWithMeta[Schema]
+	AdditionalProperties        *RefSchema
 	AdditionalPropertiesAllowed *bool
 
 	// JSON Schema 2020-12
 	Const                 interface{}
-	If                    *shared.RefWithMeta[Schema]
-	Then                  *shared.RefWithMeta[Schema]
-	Else                  *shared.RefWithMeta[Schema]
-	DependentSchemas      map[string]*shared.RefWithMeta[Schema]
-	PrefixItems           []*shared.RefWithMeta[Schema]
+	If                    *RefSchema
+	Then                  *RefSchema
+	Else                  *RefSchema
+	DependentSchemas      map[string]*RefSchema
+	PrefixItems           []*RefSchema
 	Anchor                string
 	DynamicRef            string
 	DynamicAnchor         string
 	ContentEncoding       string
 	ContentMediaType      string
-	ContentSchema         *shared.RefWithMeta[Schema]
-	UnevaluatedItems      *shared.RefWithMeta[Schema]
-	UnevaluatedProperties *shared.RefWithMeta[Schema]
+	ContentSchema         *RefSchema
+	UnevaluatedItems      *RefSchema
+	UnevaluatedProperties *RefSchema
 	Examples              []interface{}
 
 	// OpenAPI extensions

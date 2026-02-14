@@ -37,7 +37,7 @@ func (it *Items) CollectionFormat() string { return it.collectionFormat }
 func (it *Items) Default() interface{}     { return it.defaultVal }
 func (it *Items) Maximum() *float64        { return it.maximum }
 func (it *Items) ExclusiveMaximum() bool   { return it.exclusiveMaximum }
-func (it *Items) Minimum() *float64       { return it.minimum }
+func (it *Items) Minimum() *float64        { return it.minimum }
 func (it *Items) ExclusiveMinimum() bool   { return it.exclusiveMinimum }
 func (it *Items) MaxLength() *uint64       { return it.maxLength }
 func (it *Items) MinLength() *uint64       { return it.minLength }
@@ -45,8 +45,8 @@ func (it *Items) Pattern() string          { return it.pattern }
 func (it *Items) MaxItems() *uint64        { return it.maxItems }
 func (it *Items) MinItems() *uint64        { return it.minItems }
 func (it *Items) UniqueItems() bool        { return it.uniqueItems }
-func (it *Items) Enum() []interface{}     { return it.enum }
-func (it *Items) MultipleOf() *float64    { return it.multipleOf }
+func (it *Items) Enum() []interface{}      { return it.enum }
+func (it *Items) MultipleOf() *float64     { return it.multipleOf }
 
 func (it *Items) SetType(itemType string) error {
 	if err := it.Trix.RunHooks("type", it.itemType, itemType); err != nil {

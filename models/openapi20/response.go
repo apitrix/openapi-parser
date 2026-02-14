@@ -12,14 +12,14 @@ type Response struct {
 	ElementBase // embedded - provides VendorExtensions and Trix
 
 	description string
-	schema      *shared.Ref[Schema]
+	schema      *RefSchema
 	headers     map[string]*Header
 	examples    map[string]interface{}
 }
 
 func (r *Response) Description() string              { return r.description }
-func (r *Response) Schema() *shared.Ref[Schema]      { return r.schema }
-func (r *Response) Headers() map[string]*Header     { return r.headers }
+func (r *Response) Schema() *RefSchema               { return r.schema }
+func (r *Response) Headers() map[string]*Header      { return r.headers }
 func (r *Response) Examples() map[string]interface{} { return r.examples }
 
 func (r *Response) SetDescription(description string) error {
@@ -29,7 +29,7 @@ func (r *Response) SetDescription(description string) error {
 	r.description = description
 	return nil
 }
-func (r *Response) SetSchema(schema *shared.Ref[Schema]) error {
+func (r *Response) SetSchema(schema *RefSchema) error {
 	if err := r.Trix.RunHooks("schema", r.schema, schema); err != nil {
 		return err
 	}
@@ -52,7 +52,7 @@ func (r *Response) SetExamples(examples map[string]interface{}) error {
 }
 
 // NewResponse creates a new Response instance.
-func NewResponse(description string, schema *shared.Ref[Schema], headers map[string]*Header, examples map[string]interface{}) *Response {
+func NewResponse(description string, schema *RefSchema, headers map[string]*Header, examples map[string]interface{}) *Response {
 	return &Response{
 		description: description, schema: schema,
 		headers: headers, examples: examples,

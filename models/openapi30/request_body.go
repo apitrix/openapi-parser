@@ -18,7 +18,7 @@ type RequestBody struct {
 
 func (rb *RequestBody) Description() string            { return rb.description }
 func (rb *RequestBody) Content() map[string]*MediaType { return rb.content }
-func (rb *RequestBody) Required() bool                { return rb.required }
+func (rb *RequestBody) Required() bool                 { return rb.required }
 
 func (rb *RequestBody) SetDescription(description string) error {
 	if err := rb.Trix.RunHooks("description", rb.description, description); err != nil {

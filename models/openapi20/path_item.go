@@ -19,18 +19,18 @@ type PathItem struct {
 	options    *Operation
 	head       *Operation
 	patch      *Operation
-	parameters []*shared.Ref[Parameter]
+	parameters []*RefParameter
 }
 
-func (pi *PathItem) Ref() string                          { return pi.ref }
-func (pi *PathItem) Get() *Operation                      { return pi.get }
-func (pi *PathItem) Put() *Operation                      { return pi.put }
-func (pi *PathItem) Post() *Operation                     { return pi.post }
-func (pi *PathItem) Delete() *Operation                   { return pi.delete }
-func (pi *PathItem) Options() *Operation                  { return pi.options }
-func (pi *PathItem) Head() *Operation                     { return pi.head }
-func (pi *PathItem) Patch() *Operation                    { return pi.patch }
-func (pi *PathItem) Parameters() []*shared.Ref[Parameter] { return pi.parameters }
+func (pi *PathItem) Ref() string                 { return pi.ref }
+func (pi *PathItem) Get() *Operation             { return pi.get }
+func (pi *PathItem) Put() *Operation             { return pi.put }
+func (pi *PathItem) Post() *Operation            { return pi.post }
+func (pi *PathItem) Delete() *Operation          { return pi.delete }
+func (pi *PathItem) Options() *Operation         { return pi.options }
+func (pi *PathItem) Head() *Operation            { return pi.head }
+func (pi *PathItem) Patch() *Operation           { return pi.patch }
+func (pi *PathItem) Parameters() []*RefParameter { return pi.parameters }
 
 func (pi *PathItem) SetRef(ref string) error {
 	if err := pi.Trix.RunHooks("$ref", pi.ref, ref); err != nil {
@@ -88,7 +88,7 @@ func (pi *PathItem) SetPatch(patch *Operation) error {
 	pi.patch = patch
 	return nil
 }
-func (pi *PathItem) SetParameters(parameters []*shared.Ref[Parameter]) error {
+func (pi *PathItem) SetParameters(parameters []*RefParameter) error {
 	if err := pi.Trix.RunHooks("parameters", pi.parameters, parameters); err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ func (pi *PathItem) SetParameters(parameters []*shared.Ref[Parameter]) error {
 func NewPathItem(
 	ref string,
 	get, put, post, del, options, head, patch *Operation,
-	parameters []*shared.Ref[Parameter],
+	parameters []*RefParameter,
 ) *PathItem {
 	return &PathItem{
 		ref: ref,

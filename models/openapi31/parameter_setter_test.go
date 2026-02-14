@@ -3,8 +3,6 @@ package openapi31
 import (
 	"errors"
 	"testing"
-
-	"openapi-parser/models/shared"
 )
 
 func TestParameter_SetName_WithoutHook(t *testing.T) {
@@ -68,7 +66,7 @@ func TestParameter_SetRequired_WithoutHook(t *testing.T) {
 
 func TestParameter_SetSchema_WithoutHook(t *testing.T) {
 	p := NewParameter(ParameterFields{})
-	ref := shared.NewRefWithMeta[Schema]("#/components/schemas/Pet")
+	ref := NewRefSchema("#/components/schemas/Pet")
 	err := p.SetSchema(ref)
 	if err != nil {
 		t.Fatalf("SetSchema without hook should succeed, got %v", err)

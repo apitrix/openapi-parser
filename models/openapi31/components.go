@@ -11,97 +11,97 @@ import (
 type Components struct {
 	ElementBase // embedded - provides VendorExtensions and Trix
 
-	schemas         map[string]*shared.RefWithMeta[Schema]
-	responses       map[string]*shared.RefWithMeta[Response]
-	parameters      map[string]*shared.RefWithMeta[Parameter]
-	examples        map[string]*shared.RefWithMeta[Example]
-	requestBodies   map[string]*shared.RefWithMeta[RequestBody]
-	headers         map[string]*shared.RefWithMeta[Header]
-	securitySchemes map[string]*shared.RefWithMeta[SecurityScheme]
-	links           map[string]*shared.RefWithMeta[Link]
-	callbacks       map[string]*shared.RefWithMeta[Callback]
-	pathItems       map[string]*shared.RefWithMeta[PathItem]
+	schemas         map[string]*RefSchema
+	responses       map[string]*RefResponse
+	parameters      map[string]*RefParameter
+	examples        map[string]*RefExample
+	requestBodies   map[string]*RefRequestBody
+	headers         map[string]*RefHeader
+	securitySchemes map[string]*RefSecurityScheme
+	links           map[string]*RefLink
+	callbacks       map[string]*RefCallback
+	pathItems       map[string]*RefPathItem
 }
 
-func (c *Components) Schemas() map[string]*shared.RefWithMeta[Schema]       { return c.schemas }
-func (c *Components) Responses() map[string]*shared.RefWithMeta[Response]   { return c.responses }
-func (c *Components) Parameters() map[string]*shared.RefWithMeta[Parameter] { return c.parameters }
-func (c *Components) Examples() map[string]*shared.RefWithMeta[Example]     { return c.examples }
-func (c *Components) RequestBodies() map[string]*shared.RefWithMeta[RequestBody] {
+func (c *Components) Schemas() map[string]*RefSchema       { return c.schemas }
+func (c *Components) Responses() map[string]*RefResponse   { return c.responses }
+func (c *Components) Parameters() map[string]*RefParameter { return c.parameters }
+func (c *Components) Examples() map[string]*RefExample     { return c.examples }
+func (c *Components) RequestBodies() map[string]*RefRequestBody {
 	return c.requestBodies
 }
-func (c *Components) Headers() map[string]*shared.RefWithMeta[Header] { return c.headers }
-func (c *Components) SecuritySchemes() map[string]*shared.RefWithMeta[SecurityScheme] {
+func (c *Components) Headers() map[string]*RefHeader { return c.headers }
+func (c *Components) SecuritySchemes() map[string]*RefSecurityScheme {
 	return c.securitySchemes
 }
-func (c *Components) Links() map[string]*shared.RefWithMeta[Link]         { return c.links }
-func (c *Components) Callbacks() map[string]*shared.RefWithMeta[Callback] { return c.callbacks }
-func (c *Components) PathItems() map[string]*shared.RefWithMeta[PathItem] { return c.pathItems }
+func (c *Components) Links() map[string]*RefLink         { return c.links }
+func (c *Components) Callbacks() map[string]*RefCallback { return c.callbacks }
+func (c *Components) PathItems() map[string]*RefPathItem { return c.pathItems }
 
-func (c *Components) SetSchemas(schemas map[string]*shared.RefWithMeta[Schema]) error {
+func (c *Components) SetSchemas(schemas map[string]*RefSchema) error {
 	if err := c.Trix.RunHooks("schemas", c.schemas, schemas); err != nil {
 		return err
 	}
 	c.schemas = schemas
 	return nil
 }
-func (c *Components) SetResponses(responses map[string]*shared.RefWithMeta[Response]) error {
+func (c *Components) SetResponses(responses map[string]*RefResponse) error {
 	if err := c.Trix.RunHooks("responses", c.responses, responses); err != nil {
 		return err
 	}
 	c.responses = responses
 	return nil
 }
-func (c *Components) SetParameters(parameters map[string]*shared.RefWithMeta[Parameter]) error {
+func (c *Components) SetParameters(parameters map[string]*RefParameter) error {
 	if err := c.Trix.RunHooks("parameters", c.parameters, parameters); err != nil {
 		return err
 	}
 	c.parameters = parameters
 	return nil
 }
-func (c *Components) SetExamples(examples map[string]*shared.RefWithMeta[Example]) error {
+func (c *Components) SetExamples(examples map[string]*RefExample) error {
 	if err := c.Trix.RunHooks("examples", c.examples, examples); err != nil {
 		return err
 	}
 	c.examples = examples
 	return nil
 }
-func (c *Components) SetRequestBodies(requestBodies map[string]*shared.RefWithMeta[RequestBody]) error {
+func (c *Components) SetRequestBodies(requestBodies map[string]*RefRequestBody) error {
 	if err := c.Trix.RunHooks("requestBodies", c.requestBodies, requestBodies); err != nil {
 		return err
 	}
 	c.requestBodies = requestBodies
 	return nil
 }
-func (c *Components) SetHeaders(headers map[string]*shared.RefWithMeta[Header]) error {
+func (c *Components) SetHeaders(headers map[string]*RefHeader) error {
 	if err := c.Trix.RunHooks("headers", c.headers, headers); err != nil {
 		return err
 	}
 	c.headers = headers
 	return nil
 }
-func (c *Components) SetSecuritySchemes(securitySchemes map[string]*shared.RefWithMeta[SecurityScheme]) error {
+func (c *Components) SetSecuritySchemes(securitySchemes map[string]*RefSecurityScheme) error {
 	if err := c.Trix.RunHooks("securitySchemes", c.securitySchemes, securitySchemes); err != nil {
 		return err
 	}
 	c.securitySchemes = securitySchemes
 	return nil
 }
-func (c *Components) SetLinks(links map[string]*shared.RefWithMeta[Link]) error {
+func (c *Components) SetLinks(links map[string]*RefLink) error {
 	if err := c.Trix.RunHooks("links", c.links, links); err != nil {
 		return err
 	}
 	c.links = links
 	return nil
 }
-func (c *Components) SetCallbacks(callbacks map[string]*shared.RefWithMeta[Callback]) error {
+func (c *Components) SetCallbacks(callbacks map[string]*RefCallback) error {
 	if err := c.Trix.RunHooks("callbacks", c.callbacks, callbacks); err != nil {
 		return err
 	}
 	c.callbacks = callbacks
 	return nil
 }
-func (c *Components) SetPathItems(pathItems map[string]*shared.RefWithMeta[PathItem]) error {
+func (c *Components) SetPathItems(pathItems map[string]*RefPathItem) error {
 	if err := c.Trix.RunHooks("pathItems", c.pathItems, pathItems); err != nil {
 		return err
 	}
@@ -114,25 +114,25 @@ func (c *Components) SetPathItems(pathItems map[string]*shared.RefWithMeta[PathI
 func (c *Components) SetProperty(name string, value interface{}) {
 	switch name {
 	case "schemas":
-		c.schemas = value.(map[string]*shared.RefWithMeta[Schema])
+		c.schemas = value.(map[string]*RefSchema)
 	case "responses":
-		c.responses = value.(map[string]*shared.RefWithMeta[Response])
+		c.responses = value.(map[string]*RefResponse)
 	case "parameters":
-		c.parameters = value.(map[string]*shared.RefWithMeta[Parameter])
+		c.parameters = value.(map[string]*RefParameter)
 	case "examples":
-		c.examples = value.(map[string]*shared.RefWithMeta[Example])
+		c.examples = value.(map[string]*RefExample)
 	case "requestBodies":
-		c.requestBodies = value.(map[string]*shared.RefWithMeta[RequestBody])
+		c.requestBodies = value.(map[string]*RefRequestBody)
 	case "headers":
-		c.headers = value.(map[string]*shared.RefWithMeta[Header])
+		c.headers = value.(map[string]*RefHeader)
 	case "securitySchemes":
-		c.securitySchemes = value.(map[string]*shared.RefWithMeta[SecurityScheme])
+		c.securitySchemes = value.(map[string]*RefSecurityScheme)
 	case "links":
-		c.links = value.(map[string]*shared.RefWithMeta[Link])
+		c.links = value.(map[string]*RefLink)
 	case "callbacks":
-		c.callbacks = value.(map[string]*shared.RefWithMeta[Callback])
+		c.callbacks = value.(map[string]*RefCallback)
 	case "pathItems":
-		c.pathItems = value.(map[string]*shared.RefWithMeta[PathItem])
+		c.pathItems = value.(map[string]*RefPathItem)
 	}
 }
 

@@ -3,8 +3,6 @@ package openapi30
 import (
 	"errors"
 	"testing"
-
-	"openapi-parser/models/shared"
 )
 
 func TestPathItem_SetRef_WithoutHook(t *testing.T) {
@@ -69,7 +67,7 @@ func TestPathItem_SetGet_WithoutHook(t *testing.T) {
 
 func TestPathItem_SetParameters_WithoutHook(t *testing.T) {
 	pi := NewPathItem("", "", "", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	params := []*shared.Ref[Parameter]{shared.NewRef[Parameter]("#/components/parameters/1")}
+	params := []*RefParameter{NewRefParameter("#/components/parameters/1")}
 	err := pi.SetParameters(params)
 	if err != nil {
 		t.Fatalf("SetParameters without hook should succeed, got %v", err)

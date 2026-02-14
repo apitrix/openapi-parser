@@ -3,8 +3,6 @@ package openapi20
 import (
 	"errors"
 	"testing"
-
-	"openapi-parser/models/shared"
 )
 
 func TestPathItem_SetRef_WithoutHook(t *testing.T) {
@@ -61,7 +59,7 @@ func TestPathItem_SetGet_WithoutHook(t *testing.T) {
 
 func TestPathItem_SetParameters_WithoutHook(t *testing.T) {
 	pi := NewPathItem("", nil, nil, nil, nil, nil, nil, nil, nil)
-	params := []*shared.Ref[Parameter]{shared.NewRef[Parameter]("#/params/1")}
+	params := []*RefParameter{NewRefParameter("#/params/1")}
 	err := pi.SetParameters(params)
 	if err != nil {
 		t.Fatalf("SetParameters without hook should succeed, got %v", err)
@@ -77,7 +75,7 @@ func TestPathItem_SetParameters_WithHook_Rejects(t *testing.T) {
 	pi.Trix.OnSet("parameters", func(field string, oldVal, newVal interface{}) error {
 		return rejectErr
 	})
-	params := []*shared.Ref[Parameter]{shared.NewRef[Parameter]("#/params/1")}
+	params := []*RefParameter{NewRefParameter("#/params/1")}
 	err := pi.SetParameters(params)
 	if err != rejectErr {
 		t.Errorf("SetParameters with rejecting hook should return error, got %v", err)

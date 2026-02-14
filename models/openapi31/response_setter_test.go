@@ -3,8 +3,6 @@ package openapi31
 import (
 	"errors"
 	"testing"
-
-	"openapi-parser/models/shared"
 )
 
 func TestResponse_SetDescription_WithoutHook(t *testing.T) {
@@ -35,7 +33,7 @@ func TestResponse_SetDescription_WithHook_Rejects(t *testing.T) {
 
 func TestResponse_SetHeaders_WithoutHook(t *testing.T) {
 	r := NewResponse("", nil, nil, nil)
-	headers := map[string]*shared.RefWithMeta[Header]{"X-Rate": shared.NewRefWithMeta[Header]("#/components/headers/X-Rate")}
+	headers := map[string]*RefHeader{"X-Rate": NewRefHeader("#/components/headers/X-Rate")}
 	err := r.SetHeaders(headers)
 	if err != nil {
 		t.Fatalf("SetHeaders without hook should succeed, got %v", err)
@@ -59,7 +57,7 @@ func TestResponse_SetContent_WithoutHook(t *testing.T) {
 
 func TestResponse_SetLinks_WithoutHook(t *testing.T) {
 	r := NewResponse("", nil, nil, nil)
-	links := map[string]*shared.RefWithMeta[Link]{"next": shared.NewRefWithMeta[Link]("#/components/links/next")}
+	links := map[string]*RefLink{"next": NewRefLink("#/components/links/next")}
 	err := r.SetLinks(links)
 	if err != nil {
 		t.Fatalf("SetLinks without hook should succeed, got %v", err)

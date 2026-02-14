@@ -1,7 +1,6 @@
 package openapi20
 
 import (
-	"openapi-parser/models/shared"
 	"encoding/json"
 	"testing"
 )
@@ -46,7 +45,7 @@ func TestSchema_MarshalJSON_AdditionalPropertiesBool(t *testing.T) {
 
 func TestSchema_MarshalJSON_AdditionalPropertiesSchema(t *testing.T) {
 	// Arrange
-	addProps := &shared.Ref[Schema]{}
+	addProps := &RefSchema{}
 	addProps.SetValue(NewSchema(SchemaFields{Type: "string"}))
 	s := NewSchema(SchemaFields{
 		Type:                 "object",
@@ -68,11 +67,11 @@ func TestSchema_MarshalJSON_AdditionalPropertiesSchema(t *testing.T) {
 
 func TestSchema_MarshalJSON_AllOf(t *testing.T) {
 	// Arrange
-	inlineRef := &shared.Ref[Schema]{}
+	inlineRef := &RefSchema{}
 	inlineRef.SetValue(NewSchema(SchemaFields{Type: "object"}))
 	s := NewSchema(SchemaFields{
-		AllOf: []*shared.Ref[Schema]{
-			shared.NewRef[Schema]("#/definitions/Base"),
+		AllOf: []*RefSchema{
+			NewRefSchema("#/definitions/Base"),
 			inlineRef,
 		},
 	})

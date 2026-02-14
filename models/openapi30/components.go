@@ -11,86 +11,86 @@ import (
 type Components struct {
 	ElementBase // embedded - provides VendorExtensions and Trix
 
-	schemas         map[string]*shared.Ref[Schema]
-	responses       map[string]*shared.Ref[Response]
-	parameters      map[string]*shared.Ref[Parameter]
-	examples        map[string]*shared.Ref[Example]
-	requestBodies   map[string]*shared.Ref[RequestBody]
-	headers         map[string]*shared.Ref[Header]
-	securitySchemes map[string]*shared.Ref[SecurityScheme]
-	links           map[string]*shared.Ref[Link]
-	callbacks       map[string]*shared.Ref[Callback]
+	schemas         map[string]*RefSchema
+	responses       map[string]*RefResponse
+	parameters      map[string]*RefParameter
+	examples        map[string]*RefExample
+	requestBodies   map[string]*RefRequestBody
+	headers         map[string]*RefHeader
+	securitySchemes map[string]*RefSecurityScheme
+	links           map[string]*RefLink
+	callbacks       map[string]*RefCallback
 }
 
-func (c *Components) Schemas() map[string]*shared.Ref[Schema]            { return c.schemas }
-func (c *Components) Responses() map[string]*shared.Ref[Response]        { return c.responses }
-func (c *Components) Parameters() map[string]*shared.Ref[Parameter]      { return c.parameters }
-func (c *Components) Examples() map[string]*shared.Ref[Example]          { return c.examples }
-func (c *Components) RequestBodies() map[string]*shared.Ref[RequestBody] { return c.requestBodies }
-func (c *Components) Headers() map[string]*shared.Ref[Header]            { return c.headers }
-func (c *Components) SecuritySchemes() map[string]*shared.Ref[SecurityScheme] {
+func (c *Components) Schemas() map[string]*RefSchema            { return c.schemas }
+func (c *Components) Responses() map[string]*RefResponse        { return c.responses }
+func (c *Components) Parameters() map[string]*RefParameter      { return c.parameters }
+func (c *Components) Examples() map[string]*RefExample          { return c.examples }
+func (c *Components) RequestBodies() map[string]*RefRequestBody { return c.requestBodies }
+func (c *Components) Headers() map[string]*RefHeader            { return c.headers }
+func (c *Components) SecuritySchemes() map[string]*RefSecurityScheme {
 	return c.securitySchemes
 }
-func (c *Components) Links() map[string]*shared.Ref[Link]         { return c.links }
-func (c *Components) Callbacks() map[string]*shared.Ref[Callback] { return c.callbacks }
+func (c *Components) Links() map[string]*RefLink         { return c.links }
+func (c *Components) Callbacks() map[string]*RefCallback { return c.callbacks }
 
-func (c *Components) SetSchemas(schemas map[string]*shared.Ref[Schema]) error {
+func (c *Components) SetSchemas(schemas map[string]*RefSchema) error {
 	if err := c.Trix.RunHooks("schemas", c.schemas, schemas); err != nil {
 		return err
 	}
 	c.schemas = schemas
 	return nil
 }
-func (c *Components) SetResponses(responses map[string]*shared.Ref[Response]) error {
+func (c *Components) SetResponses(responses map[string]*RefResponse) error {
 	if err := c.Trix.RunHooks("responses", c.responses, responses); err != nil {
 		return err
 	}
 	c.responses = responses
 	return nil
 }
-func (c *Components) SetParameters(parameters map[string]*shared.Ref[Parameter]) error {
+func (c *Components) SetParameters(parameters map[string]*RefParameter) error {
 	if err := c.Trix.RunHooks("parameters", c.parameters, parameters); err != nil {
 		return err
 	}
 	c.parameters = parameters
 	return nil
 }
-func (c *Components) SetExamples(examples map[string]*shared.Ref[Example]) error {
+func (c *Components) SetExamples(examples map[string]*RefExample) error {
 	if err := c.Trix.RunHooks("examples", c.examples, examples); err != nil {
 		return err
 	}
 	c.examples = examples
 	return nil
 }
-func (c *Components) SetRequestBodies(requestBodies map[string]*shared.Ref[RequestBody]) error {
+func (c *Components) SetRequestBodies(requestBodies map[string]*RefRequestBody) error {
 	if err := c.Trix.RunHooks("requestBodies", c.requestBodies, requestBodies); err != nil {
 		return err
 	}
 	c.requestBodies = requestBodies
 	return nil
 }
-func (c *Components) SetHeaders(headers map[string]*shared.Ref[Header]) error {
+func (c *Components) SetHeaders(headers map[string]*RefHeader) error {
 	if err := c.Trix.RunHooks("headers", c.headers, headers); err != nil {
 		return err
 	}
 	c.headers = headers
 	return nil
 }
-func (c *Components) SetSecuritySchemes(securitySchemes map[string]*shared.Ref[SecurityScheme]) error {
+func (c *Components) SetSecuritySchemes(securitySchemes map[string]*RefSecurityScheme) error {
 	if err := c.Trix.RunHooks("securitySchemes", c.securitySchemes, securitySchemes); err != nil {
 		return err
 	}
 	c.securitySchemes = securitySchemes
 	return nil
 }
-func (c *Components) SetLinks(links map[string]*shared.Ref[Link]) error {
+func (c *Components) SetLinks(links map[string]*RefLink) error {
 	if err := c.Trix.RunHooks("links", c.links, links); err != nil {
 		return err
 	}
 	c.links = links
 	return nil
 }
-func (c *Components) SetCallbacks(callbacks map[string]*shared.Ref[Callback]) error {
+func (c *Components) SetCallbacks(callbacks map[string]*RefCallback) error {
 	if err := c.Trix.RunHooks("callbacks", c.callbacks, callbacks); err != nil {
 		return err
 	}
@@ -100,15 +100,15 @@ func (c *Components) SetCallbacks(callbacks map[string]*shared.Ref[Callback]) er
 
 // NewComponents creates a new Components instance.
 func NewComponents(
-	schemas map[string]*shared.Ref[Schema],
-	responses map[string]*shared.Ref[Response],
-	parameters map[string]*shared.Ref[Parameter],
-	examples map[string]*shared.Ref[Example],
-	requestBodies map[string]*shared.Ref[RequestBody],
-	headers map[string]*shared.Ref[Header],
-	securitySchemes map[string]*shared.Ref[SecurityScheme],
-	links map[string]*shared.Ref[Link],
-	callbacks map[string]*shared.Ref[Callback],
+	schemas map[string]*RefSchema,
+	responses map[string]*RefResponse,
+	parameters map[string]*RefParameter,
+	examples map[string]*RefExample,
+	requestBodies map[string]*RefRequestBody,
+	headers map[string]*RefHeader,
+	securitySchemes map[string]*RefSecurityScheme,
+	links map[string]*RefLink,
+	callbacks map[string]*RefCallback,
 ) *Components {
 	return &Components{
 		schemas: schemas, responses: responses, parameters: parameters,

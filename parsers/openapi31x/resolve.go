@@ -1,8 +1,8 @@
 package openapi31x
 
 import (
-	modelshared "openapi-parser/models/shared"
 	"fmt"
+	modelshared "openapi-parser/models/shared"
 
 	openapi31models "openapi-parser/models/openapi31"
 	"openapi-parser/parsers/shared"

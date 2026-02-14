@@ -1,7 +1,6 @@
 package openapi20
 
 import (
-	"openapi-parser/models/shared"
 	openapi20models "openapi-parser/models/openapi20"
 
 	"gopkg.in/yaml.v3"
@@ -189,7 +188,7 @@ func parseSwaggerPaths(node *yaml.Node, ctx *ParseContext) (*openapi20models.Pat
 }
 
 // parseSwaggerDefinitions parses the Swagger.Definitions field.
-func parseSwaggerDefinitions(node *yaml.Node, ctx *ParseContext) (map[string]*shared.Ref[openapi20models.Schema], error) {
+func parseSwaggerDefinitions(node *yaml.Node, ctx *ParseContext) (map[string]*openapi20models.RefSchema, error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -198,7 +197,7 @@ func parseSwaggerDefinitions(node *yaml.Node, ctx *ParseContext) (map[string]*sh
 		return nil, ctx.errorAt(node, "definitions must be an object")
 	}
 
-	definitions := make(map[string]*shared.Ref[openapi20models.Schema])
+	definitions := make(map[string]*openapi20models.RefSchema)
 
 	for key, schemaNode := range nodeMapPairs(node) {
 		// Skip extensions
@@ -217,7 +216,7 @@ func parseSwaggerDefinitions(node *yaml.Node, ctx *ParseContext) (map[string]*sh
 }
 
 // parseSwaggerParameters parses the Swagger.Parameters field.
-func parseSwaggerParameters(node *yaml.Node, ctx *ParseContext) (map[string]*shared.Ref[openapi20models.Parameter], error) {
+func parseSwaggerParameters(node *yaml.Node, ctx *ParseContext) (map[string]*openapi20models.RefParameter, error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -226,7 +225,7 @@ func parseSwaggerParameters(node *yaml.Node, ctx *ParseContext) (map[string]*sha
 		return nil, ctx.errorAt(node, "parameters must be an object")
 	}
 
-	parameters := make(map[string]*shared.Ref[openapi20models.Parameter])
+	parameters := make(map[string]*openapi20models.RefParameter)
 
 	for key, paramNode := range nodeMapPairs(node) {
 		// Skip extensions
@@ -245,7 +244,7 @@ func parseSwaggerParameters(node *yaml.Node, ctx *ParseContext) (map[string]*sha
 }
 
 // parseSwaggerResponses parses the Swagger.Responses field.
-func parseSwaggerResponses(node *yaml.Node, ctx *ParseContext) (map[string]*shared.Ref[openapi20models.Response], error) {
+func parseSwaggerResponses(node *yaml.Node, ctx *ParseContext) (map[string]*openapi20models.RefResponse, error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -254,7 +253,7 @@ func parseSwaggerResponses(node *yaml.Node, ctx *ParseContext) (map[string]*shar
 		return nil, ctx.errorAt(node, "responses must be an object")
 	}
 
-	responses := make(map[string]*shared.Ref[openapi20models.Response])
+	responses := make(map[string]*openapi20models.RefResponse)
 
 	for key, respNode := range nodeMapPairs(node) {
 		// Skip extensions

@@ -17,7 +17,7 @@ type Tag struct {
 }
 
 func (t *Tag) Name() string                         { return t.name }
-func (t *Tag) Description() string                 { return t.description }
+func (t *Tag) Description() string                  { return t.description }
 func (t *Tag) ExternalDocs() *ExternalDocumentation { return t.externalDocs }
 
 func (t *Tag) SetName(name string) error {

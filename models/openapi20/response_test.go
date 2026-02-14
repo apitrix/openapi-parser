@@ -1,14 +1,13 @@
 package openapi20
 
 import (
-	"openapi-parser/models/shared"
 	"encoding/json"
 	"testing"
 )
 
 func TestResponse_MarshalJSON_AllFields(t *testing.T) {
 	// Arrange
-	schema := &shared.Ref[Schema]{}
+	schema := &RefSchema{}
 	schema.SetValue(NewSchema(SchemaFields{Type: "object"}))
 	headers := map[string]*Header{
 		"X-Rate-Limit": NewHeader(HeaderFields{Type: "integer"}),

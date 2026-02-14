@@ -18,25 +18,25 @@ type Operation struct {
 	operationID  string
 	consumes     []string
 	produces     []string
-	parameters   []*shared.Ref[Parameter]
+	parameters   []*RefParameter
 	responses    *Responses
 	schemes      []string
 	deprecated   bool
 	security     []SecurityRequirement
 }
 
-func (o *Operation) Tags() []string                       { return o.tags }
-func (o *Operation) Summary() string                      { return o.summary }
-func (o *Operation) Description() string                  { return o.description }
-func (o *Operation) ExternalDocs() *ExternalDocs           { return o.externalDocs }
-func (o *Operation) OperationID() string                  { return o.operationID }
-func (o *Operation) Consumes() []string                   { return o.consumes }
-func (o *Operation) Produces() []string                   { return o.produces }
-func (o *Operation) Parameters() []*shared.Ref[Parameter] { return o.parameters }
-func (o *Operation) Responses() *Responses                 { return o.responses }
-func (o *Operation) Schemes() []string                    { return o.schemes }
-func (o *Operation) Deprecated() bool                     { return o.deprecated }
-func (o *Operation) Security() []SecurityRequirement      { return o.security }
+func (o *Operation) Tags() []string                  { return o.tags }
+func (o *Operation) Summary() string                 { return o.summary }
+func (o *Operation) Description() string             { return o.description }
+func (o *Operation) ExternalDocs() *ExternalDocs     { return o.externalDocs }
+func (o *Operation) OperationID() string             { return o.operationID }
+func (o *Operation) Consumes() []string              { return o.consumes }
+func (o *Operation) Produces() []string              { return o.produces }
+func (o *Operation) Parameters() []*RefParameter     { return o.parameters }
+func (o *Operation) Responses() *Responses           { return o.responses }
+func (o *Operation) Schemes() []string               { return o.schemes }
+func (o *Operation) Deprecated() bool                { return o.deprecated }
+func (o *Operation) Security() []SecurityRequirement { return o.security }
 
 func (o *Operation) SetTags(tags []string) error {
 	if err := o.Trix.RunHooks("tags", o.tags, tags); err != nil {
@@ -87,7 +87,7 @@ func (o *Operation) SetProduces(produces []string) error {
 	o.produces = produces
 	return nil
 }
-func (o *Operation) SetParameters(parameters []*shared.Ref[Parameter]) error {
+func (o *Operation) SetParameters(parameters []*RefParameter) error {
 	if err := o.Trix.RunHooks("parameters", o.parameters, parameters); err != nil {
 		return err
 	}
@@ -127,7 +127,7 @@ func (o *Operation) SetSecurity(security []SecurityRequirement) error {
 func NewOperation(
 	tags []string, summary, description string, externalDocs *ExternalDocs,
 	operationID string, consumes, produces []string,
-	parameters []*shared.Ref[Parameter], responses *Responses,
+	parameters []*RefParameter, responses *Responses,
 	schemes []string, deprecated bool, security []SecurityRequirement,
 ) *Operation {
 	return &Operation{

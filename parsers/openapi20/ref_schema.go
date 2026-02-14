@@ -1,14 +1,13 @@
 package openapi20
 
 import (
-	"openapi-parser/models/shared"
 	openapi20models "openapi-parser/models/openapi20"
 
 	"gopkg.in/yaml.v3"
 )
 
 // parseSchemaRef parses a SchemaRef (either $ref or inline schema) from a yaml.Node.
-func parseSchemaRef(node *yaml.Node, ctx *ParseContext) (*shared.Ref[openapi20models.Schema], error) {
+func parseSchemaRef(node *yaml.Node, ctx *ParseContext) (*openapi20models.RefSchema, error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -17,7 +16,7 @@ func parseSchemaRef(node *yaml.Node, ctx *ParseContext) (*shared.Ref[openapi20mo
 		return nil, ctx.errorAt(node, "schema must be an object")
 	}
 
-	ref := &shared.Ref[openapi20models.Schema]{}
+	ref := &openapi20models.RefSchema{}
 
 	// Check if it's a reference
 	if nodeHasRef(node) {

@@ -1,7 +1,6 @@
 package openapi20
 
 import (
-	"openapi-parser/models/shared"
 	openapi20models "openapi-parser/models/openapi20"
 
 	"gopkg.in/yaml.v3"
@@ -73,7 +72,7 @@ func parsePathItem(node *yaml.Node, ctx *ParseContext) (*openapi20models.PathIte
 	}
 
 	// Path-level parameters
-	var parameters []*shared.Ref[openapi20models.Parameter]
+	var parameters []*openapi20models.RefParameter
 	if paramsNode := nodeGetValue(node, "parameters"); paramsNode != nil {
 		parameters, err = parseParameterRefs(paramsNode, ctx.push("parameters"))
 		if err != nil {

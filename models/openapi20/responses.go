@@ -12,21 +12,21 @@ import (
 type Responses struct {
 	ElementBase // embedded - provides VendorExtensions and Trix
 
-	defaultResp *shared.Ref[Response]
-	codes       map[string]*shared.Ref[Response] // HTTP status codes (e.g., "200", "404")
+	defaultResp *RefResponse
+	codes       map[string]*RefResponse // HTTP status codes (e.g., "200", "404")
 }
 
-func (r *Responses) Default() *shared.Ref[Response]          { return r.defaultResp }
-func (r *Responses) Codes() map[string]*shared.Ref[Response] { return r.codes }
+func (r *Responses) Default() *RefResponse          { return r.defaultResp }
+func (r *Responses) Codes() map[string]*RefResponse { return r.codes }
 
-func (r *Responses) SetDefault(defaultResp *shared.Ref[Response]) error {
+func (r *Responses) SetDefault(defaultResp *RefResponse) error {
 	if err := r.Trix.RunHooks("default", r.defaultResp, defaultResp); err != nil {
 		return err
 	}
 	r.defaultResp = defaultResp
 	return nil
 }
-func (r *Responses) SetCodes(codes map[string]*shared.Ref[Response]) error {
+func (r *Responses) SetCodes(codes map[string]*RefResponse) error {
 	if err := r.Trix.RunHooks("codes", r.codes, codes); err != nil {
 		return err
 	}
@@ -35,7 +35,7 @@ func (r *Responses) SetCodes(codes map[string]*shared.Ref[Response]) error {
 }
 
 // NewResponses creates a new Responses instance.
-func NewResponses(defaultResp *shared.Ref[Response], codes map[string]*shared.Ref[Response]) *Responses {
+func NewResponses(defaultResp *RefResponse, codes map[string]*RefResponse) *Responses {
 	return &Responses{defaultResp: defaultResp, codes: codes}
 }
 

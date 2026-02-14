@@ -24,11 +24,11 @@ type SecurityScheme struct {
 func (s *SecurityScheme) Type() string              { return s.securityType }
 func (s *SecurityScheme) Description() string       { return s.description }
 func (s *SecurityScheme) Name() string              { return s.name }
-func (s *SecurityScheme) In() string                 { return s.in }
-func (s *SecurityScheme) Flow() string               { return s.flow }
-func (s *SecurityScheme) AuthorizationURL() string   { return s.authorizationURL }
+func (s *SecurityScheme) In() string                { return s.in }
+func (s *SecurityScheme) Flow() string              { return s.flow }
+func (s *SecurityScheme) AuthorizationURL() string  { return s.authorizationURL }
 func (s *SecurityScheme) TokenURL() string          { return s.tokenURL }
-func (s *SecurityScheme) Scopes() map[string]string  { return s.scopes }
+func (s *SecurityScheme) Scopes() map[string]string { return s.scopes }
 
 func (s *SecurityScheme) SetType(securityType string) error {
 	if err := s.Trix.RunHooks("type", s.securityType, securityType); err != nil {

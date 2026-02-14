@@ -1,7 +1,6 @@
 package openapi31
 
 import (
-	"openapi-parser/models/shared"
 	"encoding/json"
 	"testing"
 )
@@ -28,7 +27,7 @@ func TestOpenAPI_MarshalJSON_Minimal(t *testing.T) {
 func TestOpenAPI_MarshalJSON_WithWebhooks(t *testing.T) {
 	info := NewInfo("Test API", "", "", "", "1.0.0", nil, nil)
 	doc := NewOpenAPI("3.1.0", info)
-	doc.SetProperty("webhooks", map[string]*shared.RefWithMeta[PathItem]{
+	doc.SetProperty("webhooks", map[string]*RefPathItem{
 		"newPet": {Ref: "#/components/pathItems/NewPet"},
 	})
 	got, err := json.Marshal(doc)

@@ -3,13 +3,11 @@ package openapi30
 import (
 	"errors"
 	"testing"
-
-	"openapi-parser/models/shared"
 )
 
 func TestMediaType_SetSchema_WithoutHook(t *testing.T) {
 	mt := NewMediaType(nil, nil, nil, nil)
-	ref := shared.NewRef[Schema]("#/components/schemas/Pet")
+	ref := NewRefSchema("#/components/schemas/Pet")
 	err := mt.SetSchema(ref)
 	if err != nil {
 		t.Fatalf("SetSchema without hook should succeed, got %v", err)
@@ -25,7 +23,7 @@ func TestMediaType_SetSchema_WithHook_Rejects(t *testing.T) {
 	mt.Trix.OnSet("schema", func(field string, oldVal, newVal interface{}) error {
 		return rejectErr
 	})
-	ref := shared.NewRef[Schema]("#/components/schemas/Pet")
+	ref := NewRefSchema("#/components/schemas/Pet")
 	err := mt.SetSchema(ref)
 	if err != rejectErr {
 		t.Errorf("SetSchema with rejecting hook should return error, got %v", err)
@@ -48,7 +46,7 @@ func TestMediaType_SetExample_WithoutHook(t *testing.T) {
 
 func TestMediaType_SetExamples_WithoutHook(t *testing.T) {
 	mt := NewMediaType(nil, nil, nil, nil)
-	examples := map[string]*shared.Ref[Example]{"ex1": shared.NewRef[Example]("#/components/examples/ex1")}
+	examples := map[string]*RefExample{"ex1": NewRefExample("#/components/examples/ex1")}
 	err := mt.SetExamples(examples)
 	if err != nil {
 		t.Fatalf("SetExamples without hook should succeed, got %v", err)

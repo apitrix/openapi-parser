@@ -32,10 +32,10 @@ type Schema struct {
 	enum                        []interface{}
 	schemaType                  string
 	format                      string
-	allOf                       []*shared.Ref[Schema]
-	items                       *shared.Ref[Schema]
-	properties                  map[string]*shared.Ref[Schema]
-	additionalProperties        *shared.Ref[Schema]
+	allOf                       []*RefSchema
+	items                       *RefSchema
+	properties                  map[string]*RefSchema
+	additionalProperties        *RefSchema
 	additionalPropertiesAllowed *bool
 
 	// Swagger 2.0 specific fields
@@ -46,36 +46,36 @@ type Schema struct {
 	example       interface{}
 }
 
-func (s *Schema) Title() string                              { return s.title }
-func (s *Schema) Description() string                         { return s.description }
-func (s *Schema) Default() interface{}                        { return s.defaultVal }
-func (s *Schema) MultipleOf() *float64                       { return s.multipleOf }
-func (s *Schema) Maximum() *float64                           { return s.maximum }
-func (s *Schema) ExclusiveMaximum() bool                     { return s.exclusiveMaximum }
-func (s *Schema) Minimum() *float64                          { return s.minimum }
-func (s *Schema) ExclusiveMinimum() bool                     { return s.exclusiveMinimum }
-func (s *Schema) MaxLength() *uint64                         { return s.maxLength }
-func (s *Schema) MinLength() *uint64                         { return s.minLength }
-func (s *Schema) Pattern() string                            { return s.pattern }
-func (s *Schema) MaxItems() *uint64                          { return s.maxItems }
-func (s *Schema) MinItems() *uint64                          { return s.minItems }
-func (s *Schema) UniqueItems() bool                          { return s.uniqueItems }
-func (s *Schema) MaxProperties() *uint64                     { return s.maxProperties }
-func (s *Schema) MinProperties() *uint64                      { return s.minProperties }
-func (s *Schema) Required() []string                         { return s.required }
-func (s *Schema) Enum() []interface{}                        { return s.enum }
-func (s *Schema) Type() string                               { return s.schemaType }
-func (s *Schema) Format() string                             { return s.format }
-func (s *Schema) AllOf() []*shared.Ref[Schema]               { return s.allOf }
-func (s *Schema) Items() *shared.Ref[Schema]                 { return s.items }
-func (s *Schema) Properties() map[string]*shared.Ref[Schema] { return s.properties }
-func (s *Schema) AdditionalProperties() *shared.Ref[Schema]  { return s.additionalProperties }
-func (s *Schema) AdditionalPropertiesAllowed() *bool         { return s.additionalPropertiesAllowed }
-func (s *Schema) Discriminator() string                      { return s.discriminator }
-func (s *Schema) ReadOnly() bool                             { return s.readOnly }
-func (s *Schema) XML() *XML                                  { return s.xml }
-func (s *Schema) ExternalDocs() *ExternalDocs                 { return s.externalDocs }
-func (s *Schema) Example() interface{}                       { return s.example }
+func (s *Schema) Title() string                      { return s.title }
+func (s *Schema) Description() string                { return s.description }
+func (s *Schema) Default() interface{}               { return s.defaultVal }
+func (s *Schema) MultipleOf() *float64               { return s.multipleOf }
+func (s *Schema) Maximum() *float64                  { return s.maximum }
+func (s *Schema) ExclusiveMaximum() bool             { return s.exclusiveMaximum }
+func (s *Schema) Minimum() *float64                  { return s.minimum }
+func (s *Schema) ExclusiveMinimum() bool             { return s.exclusiveMinimum }
+func (s *Schema) MaxLength() *uint64                 { return s.maxLength }
+func (s *Schema) MinLength() *uint64                 { return s.minLength }
+func (s *Schema) Pattern() string                    { return s.pattern }
+func (s *Schema) MaxItems() *uint64                  { return s.maxItems }
+func (s *Schema) MinItems() *uint64                  { return s.minItems }
+func (s *Schema) UniqueItems() bool                  { return s.uniqueItems }
+func (s *Schema) MaxProperties() *uint64             { return s.maxProperties }
+func (s *Schema) MinProperties() *uint64             { return s.minProperties }
+func (s *Schema) Required() []string                 { return s.required }
+func (s *Schema) Enum() []interface{}                { return s.enum }
+func (s *Schema) Type() string                       { return s.schemaType }
+func (s *Schema) Format() string                     { return s.format }
+func (s *Schema) AllOf() []*RefSchema                { return s.allOf }
+func (s *Schema) Items() *RefSchema                  { return s.items }
+func (s *Schema) Properties() map[string]*RefSchema  { return s.properties }
+func (s *Schema) AdditionalProperties() *RefSchema   { return s.additionalProperties }
+func (s *Schema) AdditionalPropertiesAllowed() *bool { return s.additionalPropertiesAllowed }
+func (s *Schema) Discriminator() string              { return s.discriminator }
+func (s *Schema) ReadOnly() bool                     { return s.readOnly }
+func (s *Schema) XML() *XML                          { return s.xml }
+func (s *Schema) ExternalDocs() *ExternalDocs        { return s.externalDocs }
+func (s *Schema) Example() interface{}               { return s.example }
 
 func (s *Schema) SetTitle(title string) error {
 	if err := s.Trix.RunHooks("title", s.title, title); err != nil {
@@ -217,28 +217,28 @@ func (s *Schema) SetFormat(format string) error {
 	s.format = format
 	return nil
 }
-func (s *Schema) SetAllOf(allOf []*shared.Ref[Schema]) error {
+func (s *Schema) SetAllOf(allOf []*RefSchema) error {
 	if err := s.Trix.RunHooks("allOf", s.allOf, allOf); err != nil {
 		return err
 	}
 	s.allOf = allOf
 	return nil
 }
-func (s *Schema) SetItems(items *shared.Ref[Schema]) error {
+func (s *Schema) SetItems(items *RefSchema) error {
 	if err := s.Trix.RunHooks("items", s.items, items); err != nil {
 		return err
 	}
 	s.items = items
 	return nil
 }
-func (s *Schema) SetProperties(properties map[string]*shared.Ref[Schema]) error {
+func (s *Schema) SetProperties(properties map[string]*RefSchema) error {
 	if err := s.Trix.RunHooks("properties", s.properties, properties); err != nil {
 		return err
 	}
 	s.properties = properties
 	return nil
 }
-func (s *Schema) SetAdditionalProperties(additionalProperties *shared.Ref[Schema]) error {
+func (s *Schema) SetAdditionalProperties(additionalProperties *RefSchema) error {
 	if err := s.Trix.RunHooks("additionalProperties", s.additionalProperties, additionalProperties); err != nil {
 		return err
 	}
@@ -310,10 +310,10 @@ type SchemaFields struct {
 	Enum                        []interface{}
 	Type                        string
 	Format                      string
-	AllOf                       []*shared.Ref[Schema]
-	Items                       *shared.Ref[Schema]
-	Properties                  map[string]*shared.Ref[Schema]
-	AdditionalProperties        *shared.Ref[Schema]
+	AllOf                       []*RefSchema
+	Items                       *RefSchema
+	Properties                  map[string]*RefSchema
+	AdditionalProperties        *RefSchema
 	AdditionalPropertiesAllowed *bool
 	Discriminator               string
 	ReadOnly                    bool

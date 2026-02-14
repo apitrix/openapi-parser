@@ -1,14 +1,13 @@
 package openapi30x
 
 import (
-	"openapi-parser/models/shared"
 	openapi30models "openapi-parser/models/openapi30"
 
 	"gopkg.in/yaml.v3"
 )
 
 // ParseSchema parses the MediaType.Schema field.
-func (p *mediaTypeParser) ParseSchema(parent *yaml.Node, c *ParseContext) (*shared.Ref[openapi30models.Schema], error) {
+func (p *mediaTypeParser) ParseSchema(parent *yaml.Node, c *ParseContext) (*openapi30models.RefSchema, error) {
 	node := nodeGetValue(parent, "schema")
 	if node == nil {
 		return nil, nil

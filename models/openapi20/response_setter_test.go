@@ -3,8 +3,6 @@ package openapi20
 import (
 	"errors"
 	"testing"
-
-	"openapi-parser/models/shared"
 )
 
 func TestResponse_SetDescription_WithoutHook(t *testing.T) {
@@ -49,7 +47,7 @@ func TestResponse_SetDescription_WithHook_Passes(t *testing.T) {
 
 func TestResponse_SetSchema_WithoutHook(t *testing.T) {
 	r := NewResponse("", nil, nil, nil)
-	ref := shared.NewRef[Schema]("#/definitions/Pet")
+	ref := NewRefSchema("#/definitions/Pet")
 	err := r.SetSchema(ref)
 	if err != nil {
 		t.Fatalf("SetSchema without hook should succeed, got %v", err)

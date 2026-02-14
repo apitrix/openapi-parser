@@ -1,14 +1,13 @@
 package openapi20
 
 import (
-	"openapi-parser/models/shared"
 	openapi20models "openapi-parser/models/openapi20"
 
 	"gopkg.in/yaml.v3"
 )
 
 // parseResponseRef parses a ResponseRef (either $ref or inline response) from a yaml.Node.
-func parseResponseRef(node *yaml.Node, ctx *ParseContext) (*shared.Ref[openapi20models.Response], error) {
+func parseResponseRef(node *yaml.Node, ctx *ParseContext) (*openapi20models.RefResponse, error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -17,7 +16,7 @@ func parseResponseRef(node *yaml.Node, ctx *ParseContext) (*shared.Ref[openapi20
 		return nil, ctx.errorAt(node, "response must be an object")
 	}
 
-	ref := &shared.Ref[openapi20models.Response]{}
+	ref := &openapi20models.RefResponse{}
 
 	// Check if it's a reference
 	if nodeHasRef(node) {

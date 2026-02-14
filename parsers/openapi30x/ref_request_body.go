@@ -1,14 +1,13 @@
 package openapi30x
 
 import (
-	"openapi-parser/models/shared"
 	openapi30models "openapi-parser/models/openapi30"
 
 	"gopkg.in/yaml.v3"
 )
 
 // parseRequestBodyRef parses a RequestBodyRef from a yaml.Node.
-func parseRequestBodyRef(node *yaml.Node, ctx *ParseContext) (*shared.Ref[openapi30models.RequestBody], error) {
+func parseRequestBodyRef(node *yaml.Node, ctx *ParseContext) (*openapi30models.RefRequestBody, error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -17,7 +16,7 @@ func parseRequestBodyRef(node *yaml.Node, ctx *ParseContext) (*shared.Ref[openap
 		return nil, ctx.errorAt(node, "requestBody must be an object")
 	}
 
-	ref := &shared.Ref[openapi30models.RequestBody]{}
+	ref := &openapi30models.RefRequestBody{}
 	ref.Trix.Source = ctx.nodeSource(node)
 	ref.VendorExtensions = parseNodeExtensions(node)
 

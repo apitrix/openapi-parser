@@ -3,13 +3,11 @@ package openapi30
 import (
 	"errors"
 	"testing"
-
-	"openapi-parser/models/shared"
 )
 
 func TestComponents_SetSchemas_WithoutHook(t *testing.T) {
 	c := NewComponents(nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	schemas := map[string]*shared.Ref[Schema]{"Pet": shared.NewRef[Schema]("#/components/schemas/Pet")}
+	schemas := map[string]*RefSchema{"Pet": NewRefSchema("#/components/schemas/Pet")}
 	err := c.SetSchemas(schemas)
 	if err != nil {
 		t.Fatalf("SetSchemas without hook should succeed, got %v", err)
@@ -25,7 +23,7 @@ func TestComponents_SetSchemas_WithHook_Rejects(t *testing.T) {
 	c.Trix.OnSet("schemas", func(field string, oldVal, newVal interface{}) error {
 		return rejectErr
 	})
-	schemas := map[string]*shared.Ref[Schema]{"Pet": shared.NewRef[Schema]("#/components/schemas/Pet")}
+	schemas := map[string]*RefSchema{"Pet": NewRefSchema("#/components/schemas/Pet")}
 	err := c.SetSchemas(schemas)
 	if err != rejectErr {
 		t.Errorf("SetSchemas with rejecting hook should return error, got %v", err)
@@ -37,7 +35,7 @@ func TestComponents_SetSchemas_WithHook_Rejects(t *testing.T) {
 
 func TestComponents_SetResponses_WithoutHook(t *testing.T) {
 	c := NewComponents(nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	resp := map[string]*shared.Ref[Response]{"Ok": shared.NewRef[Response]("#/components/responses/Ok")}
+	resp := map[string]*RefResponse{"Ok": NewRefResponse("#/components/responses/Ok")}
 	err := c.SetResponses(resp)
 	if err != nil {
 		t.Fatalf("SetResponses without hook should succeed, got %v", err)
@@ -49,7 +47,7 @@ func TestComponents_SetResponses_WithoutHook(t *testing.T) {
 
 func TestComponents_SetParameters_WithoutHook(t *testing.T) {
 	c := NewComponents(nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	params := map[string]*shared.Ref[Parameter]{"limit": shared.NewRef[Parameter]("#/components/parameters/limit")}
+	params := map[string]*RefParameter{"limit": NewRefParameter("#/components/parameters/limit")}
 	err := c.SetParameters(params)
 	if err != nil {
 		t.Fatalf("SetParameters without hook should succeed, got %v", err)
@@ -61,7 +59,7 @@ func TestComponents_SetParameters_WithoutHook(t *testing.T) {
 
 func TestComponents_SetHeaders_WithoutHook(t *testing.T) {
 	c := NewComponents(nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	headers := map[string]*shared.Ref[Header]{"X-Rate": shared.NewRef[Header]("#/components/headers/X-Rate")}
+	headers := map[string]*RefHeader{"X-Rate": NewRefHeader("#/components/headers/X-Rate")}
 	err := c.SetHeaders(headers)
 	if err != nil {
 		t.Fatalf("SetHeaders without hook should succeed, got %v", err)
@@ -73,7 +71,7 @@ func TestComponents_SetHeaders_WithoutHook(t *testing.T) {
 
 func TestComponents_SetSecuritySchemes_WithoutHook(t *testing.T) {
 	c := NewComponents(nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	ss := map[string]*shared.Ref[SecurityScheme]{"apiKey": shared.NewRef[SecurityScheme]("#/components/securitySchemes/apiKey")}
+	ss := map[string]*RefSecurityScheme{"apiKey": NewRefSecurityScheme("#/components/securitySchemes/apiKey")}
 	err := c.SetSecuritySchemes(ss)
 	if err != nil {
 		t.Fatalf("SetSecuritySchemes without hook should succeed, got %v", err)
@@ -85,7 +83,7 @@ func TestComponents_SetSecuritySchemes_WithoutHook(t *testing.T) {
 
 func TestComponents_SetLinks_WithoutHook(t *testing.T) {
 	c := NewComponents(nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	links := map[string]*shared.Ref[Link]{"next": shared.NewRef[Link]("#/components/links/next")}
+	links := map[string]*RefLink{"next": NewRefLink("#/components/links/next")}
 	err := c.SetLinks(links)
 	if err != nil {
 		t.Fatalf("SetLinks without hook should succeed, got %v", err)
@@ -97,7 +95,7 @@ func TestComponents_SetLinks_WithoutHook(t *testing.T) {
 
 func TestComponents_SetCallbacks_WithoutHook(t *testing.T) {
 	c := NewComponents(nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	cb := map[string]*shared.Ref[Callback]{"ev": shared.NewRef[Callback]("#/components/callbacks/ev")}
+	cb := map[string]*RefCallback{"ev": NewRefCallback("#/components/callbacks/ev")}
 	err := c.SetCallbacks(cb)
 	if err != nil {
 		t.Fatalf("SetCallbacks without hook should succeed, got %v", err)

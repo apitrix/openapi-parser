@@ -28,9 +28,9 @@ type HookFunc func(field string, oldVal, newVal interface{}) error
 // Everything under Trix is provided by the apitrix library,
 // not part of the OpenAPI specification itself.
 type Trix struct {
-	Source NodeSource   `json:"-" yaml:"-"` // Source location info
-	Errors []ParseError `json:"-" yaml:"-"` // Parsing errors attached to this node
-	hooks  map[string][]HookFunc            // lazy-initialized; nil until first OnSet
+	Source NodeSource            `json:"-" yaml:"-"` // Source location info
+	Errors []ParseError          `json:"-" yaml:"-"` // Parsing errors attached to this node
+	hooks  map[string][]HookFunc // lazy-initialized; nil until first OnSet
 }
 
 // OnSet registers a hook that runs before a field is set.

@@ -3,8 +3,6 @@ package openapi20
 import (
 	"errors"
 	"testing"
-
-	"openapi-parser/models/shared"
 )
 
 func TestOperation_SetTags_WithoutHook(t *testing.T) {
@@ -183,7 +181,7 @@ func TestOperation_SetExternalDocs_WithoutHook(t *testing.T) {
 
 func TestOperation_SetParameters_WithoutHook(t *testing.T) {
 	op := NewOperation(nil, "", "", nil, "", nil, nil, nil, nil, nil, false, nil)
-	params := []*shared.Ref[Parameter]{shared.NewRef[Parameter]("#/params/1")}
+	params := []*RefParameter{NewRefParameter("#/params/1")}
 	err := op.SetParameters(params)
 	if err != nil {
 		t.Fatalf("SetParameters without hook should succeed, got %v", err)
@@ -195,7 +193,7 @@ func TestOperation_SetParameters_WithoutHook(t *testing.T) {
 
 func TestOperation_SetResponses_WithoutHook(t *testing.T) {
 	op := NewOperation(nil, "", "", nil, "", nil, nil, nil, nil, nil, false, nil)
-	resp := NewResponses(nil, map[string]*shared.Ref[Response]{"200": shared.NewRef[Response]("#/responses/ok")})
+	resp := NewResponses(nil, map[string]*RefResponse{"200": NewRefResponse("#/responses/ok")})
 	err := op.SetResponses(resp)
 	if err != nil {
 		t.Fatalf("SetResponses without hook should succeed, got %v", err)

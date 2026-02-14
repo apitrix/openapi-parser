@@ -1,7 +1,6 @@
 package openapi20
 
 import (
-	modelshared "openapi-parser/models/shared"
 	"fmt"
 
 	openapi20models "openapi-parser/models/openapi20"
@@ -115,7 +114,7 @@ func resolveOperation(op *openapi20models.Operation, r *shared.RefResolver, reso
 // Individual ref type resolvers
 // =============================================================================
 
-func resolveSchemaRef(ref *modelshared.Ref[openapi20models.Schema], r *shared.RefResolver, resolving map[string]bool) error {
+func resolveSchemaRef(ref *openapi20models.RefSchema, r *shared.RefResolver, resolving map[string]bool) error {
 	if ref == nil || ref.RawCircular() {
 		return nil
 	}
@@ -181,7 +180,7 @@ func resolveSchema(schema *openapi20models.Schema, r *shared.RefResolver, resolv
 	return resolveSchemaRef(schema.AdditionalProperties(), r, resolving)
 }
 
-func resolveResponseRef(ref *modelshared.Ref[openapi20models.Response], r *shared.RefResolver, resolving map[string]bool) error {
+func resolveResponseRef(ref *openapi20models.RefResponse, r *shared.RefResolver, resolving map[string]bool) error {
 	if ref == nil || ref.RawCircular() {
 		return nil
 	}
@@ -216,7 +215,7 @@ func resolveResponseRef(ref *modelshared.Ref[openapi20models.Response], r *share
 	return nil
 }
 
-func resolveParameterRef(ref *modelshared.Ref[openapi20models.Parameter], r *shared.RefResolver, resolving map[string]bool) error {
+func resolveParameterRef(ref *openapi20models.RefParameter, r *shared.RefResolver, resolving map[string]bool) error {
 	if ref == nil || ref.RawCircular() {
 		return nil
 	}
@@ -312,7 +311,7 @@ func initOperationDone(op *openapi20models.Operation) {
 	}
 }
 
-func initSchemaRefDone(ref *modelshared.Ref[openapi20models.Schema]) {
+func initSchemaRefDone(ref *openapi20models.RefSchema) {
 	if ref == nil {
 		return
 	}
@@ -339,7 +338,7 @@ func initSchemaDone(schema *openapi20models.Schema) {
 	initSchemaRefDone(schema.AdditionalProperties())
 }
 
-func initParameterRefDone(ref *modelshared.Ref[openapi20models.Parameter]) {
+func initParameterRefDone(ref *openapi20models.RefParameter) {
 	if ref == nil {
 		return
 	}
@@ -352,7 +351,7 @@ func initParameterRefDone(ref *modelshared.Ref[openapi20models.Parameter]) {
 	}
 }
 
-func initResponseRefDone(ref *modelshared.Ref[openapi20models.Response]) {
+func initResponseRefDone(ref *openapi20models.RefResponse) {
 	if ref == nil {
 		return
 	}

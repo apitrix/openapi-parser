@@ -1,8 +1,8 @@
 package openapi31x
 
 import (
-	"openapi-parser/models/shared"
 	openapi31models "openapi-parser/models/openapi31"
+	"openapi-parser/models/shared"
 
 	"gopkg.in/yaml.v3"
 )

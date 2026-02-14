@@ -3,8 +3,6 @@ package openapi30
 import (
 	"errors"
 	"testing"
-
-	"openapi-parser/models/shared"
 )
 
 func TestSchema_SetTitle_WithoutHook(t *testing.T) {
@@ -101,7 +99,7 @@ func TestSchema_SetRequired_WithoutHook(t *testing.T) {
 
 func TestSchema_SetProperties_WithoutHook(t *testing.T) {
 	s := NewSchema(SchemaFields{})
-	props := map[string]*shared.Ref[Schema]{"name": shared.NewRef[Schema]("#/components/schemas/name")}
+	props := map[string]*RefSchema{"name": NewRefSchema("#/components/schemas/name")}
 	err := s.SetProperties(props)
 	if err != nil {
 		t.Fatalf("SetProperties without hook should succeed, got %v", err)
@@ -113,7 +111,7 @@ func TestSchema_SetProperties_WithoutHook(t *testing.T) {
 
 func TestSchema_SetItems_WithoutHook(t *testing.T) {
 	s := NewSchema(SchemaFields{})
-	ref := shared.NewRef[Schema]("#/components/schemas/item")
+	ref := NewRefSchema("#/components/schemas/item")
 	err := s.SetItems(ref)
 	if err != nil {
 		t.Fatalf("SetItems without hook should succeed, got %v", err)

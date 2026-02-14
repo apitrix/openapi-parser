@@ -1,14 +1,13 @@
 package openapi30
 
 import (
-	"openapi-parser/models/shared"
 	"encoding/json"
 	"testing"
 )
 
 func TestOperation_MarshalJSON_AllFields(t *testing.T) {
 	// Arrange
-	defaultRef := &shared.Ref[Response]{}
+	defaultRef := &RefResponse{}
 	defaultRef.SetValue(NewResponse("OK", nil, nil, nil))
 	resp := NewResponses(
 		defaultRef,

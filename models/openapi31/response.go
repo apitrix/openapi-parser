@@ -12,15 +12,15 @@ type Response struct {
 	ElementBase // embedded - provides VendorExtensions and Trix
 
 	description string
-	headers     map[string]*shared.RefWithMeta[Header]
+	headers     map[string]*RefHeader
 	content     map[string]*MediaType
-	links       map[string]*shared.RefWithMeta[Link]
+	links       map[string]*RefLink
 }
 
-func (r *Response) Description() string                             { return r.description }
-func (r *Response) Headers() map[string]*shared.RefWithMeta[Header] { return r.headers }
-func (r *Response) Content() map[string]*MediaType                  { return r.content }
-func (r *Response) Links() map[string]*shared.RefWithMeta[Link]     { return r.links }
+func (r *Response) Description() string            { return r.description }
+func (r *Response) Headers() map[string]*RefHeader { return r.headers }
+func (r *Response) Content() map[string]*MediaType { return r.content }
+func (r *Response) Links() map[string]*RefLink     { return r.links }
 
 func (r *Response) SetDescription(description string) error {
 	if err := r.Trix.RunHooks("description", r.description, description); err != nil {
@@ -29,7 +29,7 @@ func (r *Response) SetDescription(description string) error {
 	r.description = description
 	return nil
 }
-func (r *Response) SetHeaders(headers map[string]*shared.RefWithMeta[Header]) error {
+func (r *Response) SetHeaders(headers map[string]*RefHeader) error {
 	if err := r.Trix.RunHooks("headers", r.headers, headers); err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func (r *Response) SetContent(content map[string]*MediaType) error {
 	r.content = content
 	return nil
 }
-func (r *Response) SetLinks(links map[string]*shared.RefWithMeta[Link]) error {
+func (r *Response) SetLinks(links map[string]*RefLink) error {
 	if err := r.Trix.RunHooks("links", r.links, links); err != nil {
 		return err
 	}
@@ -52,7 +52,7 @@ func (r *Response) SetLinks(links map[string]*shared.RefWithMeta[Link]) error {
 }
 
 // NewResponse creates a new Response instance.
-func NewResponse(description string, headers map[string]*shared.RefWithMeta[Header], content map[string]*MediaType, links map[string]*shared.RefWithMeta[Link]) *Response {
+func NewResponse(description string, headers map[string]*RefHeader, content map[string]*MediaType, links map[string]*RefLink) *Response {
 	return &Response{description: description, headers: headers, content: content, links: links}
 }
 

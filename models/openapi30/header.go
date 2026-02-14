@@ -18,23 +18,23 @@ type Header struct {
 	style           string
 	explode         *bool
 	allowReserved   bool
-	schema          *shared.Ref[Schema]
+	schema          *RefSchema
 	example         interface{}
-	examples        map[string]*shared.Ref[Example]
+	examples        map[string]*RefExample
 	content         map[string]*MediaType
 }
 
-func (h *Header) Description() string                       { return h.description }
-func (h *Header) Required() bool                            { return h.required }
-func (h *Header) Deprecated() bool                          { return h.deprecated }
-func (h *Header) AllowEmptyValue() bool                     { return h.allowEmptyValue }
-func (h *Header) Style() string                             { return h.style }
-func (h *Header) Explode() *bool                            { return h.explode }
-func (h *Header) AllowReserved() bool                       { return h.allowReserved }
-func (h *Header) Schema() *shared.Ref[Schema]               { return h.schema }
-func (h *Header) Example() interface{}                      { return h.example }
-func (h *Header) Examples() map[string]*shared.Ref[Example] { return h.examples }
-func (h *Header) Content() map[string]*MediaType            { return h.content }
+func (h *Header) Description() string              { return h.description }
+func (h *Header) Required() bool                   { return h.required }
+func (h *Header) Deprecated() bool                 { return h.deprecated }
+func (h *Header) AllowEmptyValue() bool            { return h.allowEmptyValue }
+func (h *Header) Style() string                    { return h.style }
+func (h *Header) Explode() *bool                   { return h.explode }
+func (h *Header) AllowReserved() bool              { return h.allowReserved }
+func (h *Header) Schema() *RefSchema               { return h.schema }
+func (h *Header) Example() interface{}             { return h.example }
+func (h *Header) Examples() map[string]*RefExample { return h.examples }
+func (h *Header) Content() map[string]*MediaType   { return h.content }
 
 func (h *Header) SetDescription(description string) error {
 	if err := h.Trix.RunHooks("description", h.description, description); err != nil {
@@ -85,7 +85,7 @@ func (h *Header) SetAllowReserved(allowReserved bool) error {
 	h.allowReserved = allowReserved
 	return nil
 }
-func (h *Header) SetSchema(schema *shared.Ref[Schema]) error {
+func (h *Header) SetSchema(schema *RefSchema) error {
 	if err := h.Trix.RunHooks("schema", h.schema, schema); err != nil {
 		return err
 	}
@@ -99,7 +99,7 @@ func (h *Header) SetExample(example interface{}) error {
 	h.example = example
 	return nil
 }
-func (h *Header) SetExamples(examples map[string]*shared.Ref[Example]) error {
+func (h *Header) SetExamples(examples map[string]*RefExample) error {
 	if err := h.Trix.RunHooks("examples", h.examples, examples); err != nil {
 		return err
 	}
@@ -118,7 +118,7 @@ func (h *Header) SetContent(content map[string]*MediaType) error {
 func NewHeader(
 	description string, required, deprecated, allowEmptyValue bool,
 	style string, explode *bool, allowReserved bool,
-	schema *shared.Ref[Schema], example interface{}, examples map[string]*shared.Ref[Example],
+	schema *RefSchema, example interface{}, examples map[string]*RefExample,
 	content map[string]*MediaType,
 ) *Header {
 	return &Header{

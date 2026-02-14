@@ -19,9 +19,9 @@ type Swagger struct {
 	consumes            []string
 	produces            []string
 	paths               *Paths
-	definitions         map[string]*shared.Ref[Schema]
-	parameters          map[string]*shared.Ref[Parameter]
-	responses           map[string]*shared.Ref[Response]
+	definitions         map[string]*RefSchema
+	parameters          map[string]*RefParameter
+	responses           map[string]*RefResponse
 	securityDefinitions map[string]*SecurityScheme
 	security            []SecurityRequirement
 	tags                []*Tag
@@ -30,18 +30,18 @@ type Swagger struct {
 
 func (s *Swagger) SwaggerVersion() string                          { return s.swagger }
 func (s *Swagger) Info() *Info                                     { return s.info }
-func (s *Swagger) Host() string                                     { return s.host }
-func (s *Swagger) BasePath() string                                 { return s.basePath }
-func (s *Swagger) Schemes() []string                                { return s.schemes }
-func (s *Swagger) Consumes() []string                               { return s.consumes }
-func (s *Swagger) Produces() []string                               { return s.produces }
-func (s *Swagger) Paths() *Paths                                    { return s.paths }
-func (s *Swagger) Definitions() map[string]*shared.Ref[Schema]      { return s.definitions }
-func (s *Swagger) Parameters() map[string]*shared.Ref[Parameter]    { return s.parameters }
-func (s *Swagger) Responses() map[string]*shared.Ref[Response]     { return s.responses }
+func (s *Swagger) Host() string                                    { return s.host }
+func (s *Swagger) BasePath() string                                { return s.basePath }
+func (s *Swagger) Schemes() []string                               { return s.schemes }
+func (s *Swagger) Consumes() []string                              { return s.consumes }
+func (s *Swagger) Produces() []string                              { return s.produces }
+func (s *Swagger) Paths() *Paths                                   { return s.paths }
+func (s *Swagger) Definitions() map[string]*RefSchema              { return s.definitions }
+func (s *Swagger) Parameters() map[string]*RefParameter            { return s.parameters }
+func (s *Swagger) Responses() map[string]*RefResponse              { return s.responses }
 func (s *Swagger) SecurityDefinitions() map[string]*SecurityScheme { return s.securityDefinitions }
-func (s *Swagger) Security() []SecurityRequirement                  { return s.security }
-func (s *Swagger) Tags() []*Tag                                     { return s.tags }
+func (s *Swagger) Security() []SecurityRequirement                 { return s.security }
+func (s *Swagger) Tags() []*Tag                                    { return s.tags }
 func (s *Swagger) ExternalDocs() *ExternalDocs                     { return s.externalDocs }
 
 func (s *Swagger) SetSwaggerVersion(swagger string) error {
@@ -100,21 +100,21 @@ func (s *Swagger) SetPaths(paths *Paths) error {
 	s.paths = paths
 	return nil
 }
-func (s *Swagger) SetDefinitions(definitions map[string]*shared.Ref[Schema]) error {
+func (s *Swagger) SetDefinitions(definitions map[string]*RefSchema) error {
 	if err := s.Trix.RunHooks("definitions", s.definitions, definitions); err != nil {
 		return err
 	}
 	s.definitions = definitions
 	return nil
 }
-func (s *Swagger) SetParameters(parameters map[string]*shared.Ref[Parameter]) error {
+func (s *Swagger) SetParameters(parameters map[string]*RefParameter) error {
 	if err := s.Trix.RunHooks("parameters", s.parameters, parameters); err != nil {
 		return err
 	}
 	s.parameters = parameters
 	return nil
 }
-func (s *Swagger) SetResponses(responses map[string]*shared.Ref[Response]) error {
+func (s *Swagger) SetResponses(responses map[string]*RefResponse) error {
 	if err := s.Trix.RunHooks("responses", s.responses, responses); err != nil {
 		return err
 	}
@@ -171,11 +171,11 @@ func (s *Swagger) SetProperty(key string, value interface{}) {
 	case "paths":
 		s.paths = value.(*Paths)
 	case "definitions":
-		s.definitions = value.(map[string]*shared.Ref[Schema])
+		s.definitions = value.(map[string]*RefSchema)
 	case "parameters":
-		s.parameters = value.(map[string]*shared.Ref[Parameter])
+		s.parameters = value.(map[string]*RefParameter)
 	case "responses":
-		s.responses = value.(map[string]*shared.Ref[Response])
+		s.responses = value.(map[string]*RefResponse)
 	case "securityDefinitions":
 		s.securityDefinitions = value.(map[string]*SecurityScheme)
 	case "security":

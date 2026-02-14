@@ -3,8 +3,6 @@ package openapi30
 import (
 	"errors"
 	"testing"
-
-	"openapi-parser/models/shared"
 )
 
 func TestHeader_SetDescription_WithoutHook(t *testing.T) {
@@ -46,7 +44,7 @@ func TestHeader_SetRequired_WithoutHook(t *testing.T) {
 
 func TestHeader_SetSchema_WithoutHook(t *testing.T) {
 	h := NewHeader("", false, false, false, "", nil, false, nil, nil, nil, nil)
-	ref := shared.NewRef[Schema]("#/components/schemas/string")
+	ref := NewRefSchema("#/components/schemas/string")
 	err := h.SetSchema(ref)
 	if err != nil {
 		t.Fatalf("SetSchema without hook should succeed, got %v", err)

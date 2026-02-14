@@ -1,7 +1,6 @@
 package openapi30
 
 import (
-	"openapi-parser/models/shared"
 	"encoding/json"
 	"testing"
 )
@@ -44,7 +43,7 @@ func TestSchema_MarshalJSON_AdditionalPropertiesAsBoolean(t *testing.T) {
 
 func TestSchema_MarshalJSON_AdditionalPropertiesAsSchema(t *testing.T) {
 	// Arrange
-	propSchema := &shared.Ref[Schema]{}
+	propSchema := &RefSchema{}
 	propSchema.SetValue(NewSchema(SchemaFields{Type: "string"}))
 	s := NewSchema(SchemaFields{Type: "object", AdditionalProperties: propSchema})
 
@@ -103,9 +102,9 @@ func TestSchema_MarshalJSON_Nullable(t *testing.T) {
 
 func TestSchema_MarshalJSON_AllOf(t *testing.T) {
 	// Arrange
-	ref1 := shared.NewRef[Schema]("#/components/schemas/Base")
-	ref2 := shared.NewRef[Schema]("#/components/schemas/Extended")
-	s := NewSchema(SchemaFields{AllOf: []*shared.Ref[Schema]{ref1, ref2}})
+	ref1 := NewRefSchema("#/components/schemas/Base")
+	ref2 := NewRefSchema("#/components/schemas/Extended")
+	s := NewSchema(SchemaFields{AllOf: []*RefSchema{ref1, ref2}})
 
 	// Act
 	got, err := json.Marshal(s)

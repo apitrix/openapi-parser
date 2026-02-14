@@ -22,7 +22,7 @@ type Info struct {
 
 func (i *Info) Title() string          { return i.title }
 func (i *Info) Summary() string        { return i.summary }
-func (i *Info) Description() string   { return i.description }
+func (i *Info) Description() string    { return i.description }
 func (i *Info) TermsOfService() string { return i.termsOfService }
 func (i *Info) Contact() *Contact      { return i.contact }
 func (i *Info) License() *License      { return i.license }
