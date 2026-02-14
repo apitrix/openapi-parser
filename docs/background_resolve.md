@@ -55,7 +55,7 @@ Each ref type (e.g. `SchemaRef`, `ResponseRef`) has:
 | `RawCircular()` | ❌ No | Returns circular flag without blocking (resolver use only) |
 | `SetValue(v)` | ❌ No | Sets the resolved value (resolver use only) |
 | `SetCircular(c)` | ❌ No | Sets the circular flag (resolver use only) |
-| `SetResolveErr(e)` | ❌ No | Sets the resolution error (resolver use only) |
+| `SetResolveErr(e)` | ❌ No | Sets the resolution error and adds it to `Trix.Errors` (resolver use only) |
 | `InitDone()` | ❌ No | Creates the done channel |
 | `MarkDone()` | ❌ No | Closes the done channel, unblocking waiters |
 
@@ -64,7 +64,7 @@ Each ref type (e.g. `SchemaRef`, `ResponseRef`) has:
 `parseAndResolve()` orchestrates the flow:
 
 ```go
-func parseAndResolve(data []byte, basePath string, cfg *shared.ParseConfig) (*ParseResult, error) {
+func parseAndResolve(data []byte, basePath string, cfg *ParseConfig) (*ParseResult, error) {
     // 1. Parse YAML into document model
     doc, err := parseOpenAPI(docNode, ctx)
 
@@ -73,7 +73,8 @@ func parseAndResolve(data []byte, basePath string, cfg *shared.ParseConfig) (*Pa
     result.done = make(chan struct{})
     go func() {
         defer close(result.done)
-        Resolve(doc, docNode, basePath)
+        result.resolveErr = Resolve(doc, docNode, basePath)
+        result.Errors = flattenErrors(doc)  // include resolution errors from refs
     }()
 
     return result, nil  // Returns immediately
@@ -154,12 +155,20 @@ fmt.Println(ref.Value()) // <nil>
 
 ## Error Handling
 
-Resolution errors are stored **per-ref**, not globally:
+Resolution errors are stored **per-ref** and also added to `ParseResult.Errors` (after `Wait()` returns):
 
 ```go
 result, _ := openapi30x.ParseFile("api.yaml")
 result.Wait()
 
+// Via ParseResult.Errors (Kind == "resolve_error")
+for _, e := range result.Errors {
+    if e.Kind == "resolve_error" {
+        log.Printf("resolve error at %s: %s", e.Path, e.Message)
+    }
+}
+
+// Or per-ref
 ref := result.Document.Components().Schemas()["MissingSchema"]
 if err := ref.ResolveErr(); err != nil {
     // e.g. "resolving schema ref "missing.yaml#/Foo": file not found"

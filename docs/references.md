@@ -99,9 +99,11 @@ Each parser version (`openapi20`, `openapi30x`, `openapi31x`) provides three ent
 
 | Function | Resolves Refs? | Description |
 |----------|:-:|-------------|
-| `Parse(data []byte, cfg...)` | ❌ | Parse only — no resolution, no blocking |
-| `ParseReader(r io.Reader, cfg...)` | ❌ | Same as Parse, from an `io.Reader` |
-| `ParseFile(pathOrURL string, cfg...)` | ✅ | Parse + background resolve from file or URL |
+| `Parse(data []byte, cfg...)` | ✅ | Parse + background resolve to the best of its knowledge |
+| `ParseReader(r io.Reader, cfg...)` | ✅ | Same as Parse, from an `io.Reader` |
+| `ParseFile(pathOrURL string, cfg...)` | ✅ | Parse + background resolve from file or URL (full base path) |
+
+When config enables resolution (`ResolveInternalRefs` or `ResolveExternalRefs`), all three resolve refs to the best of their knowledge. Internal refs (`#/...`), absolute file paths, and URLs work; relative file paths require a base path (only `ParseFile` has one). Failed refs are added to `ParseResult.Errors` with `Kind: "resolve_error"`.
 
 `ParseFile` auto-detects whether the input is a local file path or an HTTP/HTTPS URL.
 
@@ -134,7 +136,7 @@ result, _ := openapi30x.ParseFile("api.yaml", &openapi30x.ParseConfig{
 
 ### Accessing Resolved Values
 
-When `ParseFile` is used, resolution runs in a **background goroutine**. The generic ref types (`shared.Ref[T]` and `shared.RefWithMeta[T]`) provide blocking and non-blocking accessors:
+When resolution is enabled (via config), it runs in a **background goroutine**. The generic ref types (`shared.Ref[T]` and `shared.RefWithMeta[T]`) provide blocking and non-blocking accessors:
 
 | Method | Blocks? | Purpose |
 |--------|:-------:|---------|
@@ -154,7 +156,7 @@ result.Wait()
 pet := result.Document.Components().Schemas()["Pet"].Value()
 
 // Pattern 3: Parse without resolution — Value() returns nil immediately
-result, _ := openapi30x.Parse([]byte(data))
+result, _ := openapi30x.Parse([]byte(data), openapi30x.None())
 ref := result.Document.Components().Schemas()["Pet"]
 ref.Value()  // nil (no done channel, no blocking)
 ```
@@ -320,9 +322,20 @@ result.Wait()  // block until everything is done
 
 ### Error Handling
 
-Resolution errors are stored **per-ref**, not globally:
+Resolution errors are stored **per-ref** and also added to `ParseResult.Errors` (after `Wait()` returns):
 
 ```go
+result, _ := openapi30x.ParseFile("api.yaml")
+result.Wait()
+
+// Via ParseResult.Errors (includes resolve_error kind)
+for _, e := range result.Errors {
+    if e.Kind == "resolve_error" {
+        // e.Path, e.Message
+    }
+}
+
+// Or per-ref
 ref := result.Document.Components().Schemas()["MissingSchema"]
 if err := ref.ResolveErr(); err != nil {
     // e.g. "failed to resolve external ref \"missing.yaml\": file not found"
@@ -338,7 +351,7 @@ if err := ref.ResolveErr(); err != nil {
 | `parsers/shared/fetch.go` | `FetchURL()` — used by `ParseFile` for remote entry points |
 | `parsers/{version}/resolve.go` | Per-version resolve walk (tree traversal + ref resolution) |
 | `parsers/{version}/parse.go` | Entry points (`Parse`, `ParseFile`), background goroutine setup |
-| `models/shared/ref.go` | Generic `Ref[T]` and `RefWithMeta[T]` with blocking `Value()`, `Circular()`, `MarkDone()` |
+| `models/shared/ref.go` | Generic `Ref[T]` and `RefWithMeta[T]` with blocking `Value()`, `Circular()`, `MarkDone()`; `SetResolveErr` adds to `Trix.Errors` |
 
 ---
 

@@ -45,38 +45,13 @@ func (pr *ParseResult) Wait() error {
 
 // Parse parses OpenAPI 3.1/3.2 specification from bytes (JSON or YAML).
 // Uses yaml.Node for lossless parsing with line/column preservation.
-// An optional ParseConfig controls which features are enabled (nil = All).
+// When config enables resolution, resolves refs to the best of its knowledge:
+// internal refs (#/...), absolute paths, and URLs work; relative file paths fail.
+// Failed refs are added to ParseResult.Errors. An optional ParseConfig controls
+// which features are enabled (nil = All).
 func Parse(data []byte, cfgs ...*ParseConfig) (*ParseResult, error) {
 	cfg := FirstConfig(cfgs)
-
-	var rootNode yaml.Node
-	if err := yaml.Unmarshal(data, &rootNode); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal data: %w", err)
-	}
-
-	// Handle document node wrapper
-	var docNode *yaml.Node
-	if rootNode.Kind == yaml.DocumentNode && len(rootNode.Content) > 0 {
-		docNode = rootNode.Content[0]
-	} else {
-		docNode = &rootNode
-	}
-
-	if docNode.Kind != yaml.MappingNode {
-		return nil, fmt.Errorf("OpenAPI document must be an object")
-	}
-
-	ctx := newParseContext(docNode, cfg)
-	doc, err := parseOpenAPI(docNode, ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	return &ParseResult{
-		Document: doc,
-		Errors:   flattenErrors(doc),
-		Config:   cfg,
-	}, nil
+	return parseAndResolve(data, "", cfg)
 }
 
 // ParseReader parses OpenAPI 3.1/3.2 specification from an io.Reader.
