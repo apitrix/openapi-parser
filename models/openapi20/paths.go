@@ -10,7 +10,7 @@ import (
 // Paths holds the relative paths to individual endpoints.
 // https://swagger.io/specification/v2/#paths-object
 type Paths struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	// items maps paths to their definitions.
 	items map[string]*PathItem

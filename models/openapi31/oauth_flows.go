@@ -9,7 +9,7 @@ import (
 // OAuthFlows allows configuration of supported OAuth flows.
 // https://spec.openapis.org/oas/v3.1.0#oauth-flows-object
 type OAuthFlows struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	implicit          *OAuthFlow
 	password          *OAuthFlow

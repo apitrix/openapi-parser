@@ -9,7 +9,7 @@ import (
 // Header represents a Header Object.
 // https://spec.openapis.org/oas/v3.1.0#header-object
 type Header struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	description     string
 	required        bool
@@ -24,17 +24,17 @@ type Header struct {
 	content         map[string]*MediaType
 }
 
-func (h *Header) Description() string              { return h.description }
-func (h *Header) Required() bool                   { return h.required }
-func (h *Header) Deprecated() bool                 { return h.deprecated }
-func (h *Header) AllowEmptyValue() bool            { return h.allowEmptyValue }
-func (h *Header) Style() string                    { return h.style }
-func (h *Header) Explode() *bool                   { return h.explode }
-func (h *Header) AllowReserved() bool              { return h.allowReserved }
+func (h *Header) Description() string                               { return h.description }
+func (h *Header) Required() bool                                    { return h.required }
+func (h *Header) Deprecated() bool                                  { return h.deprecated }
+func (h *Header) AllowEmptyValue() bool                             { return h.allowEmptyValue }
+func (h *Header) Style() string                                     { return h.style }
+func (h *Header) Explode() *bool                                    { return h.explode }
+func (h *Header) AllowReserved() bool                               { return h.allowReserved }
 func (h *Header) Schema() *shared.RefWithMeta[Schema]               { return h.schema }
-func (h *Header) Example() interface{}             { return h.example }
+func (h *Header) Example() interface{}                              { return h.example }
 func (h *Header) Examples() map[string]*shared.RefWithMeta[Example] { return h.examples }
-func (h *Header) Content() map[string]*MediaType   { return h.content }
+func (h *Header) Content() map[string]*MediaType                    { return h.content }
 
 // HeaderFields holds all fields for constructing a Header.
 type HeaderFields struct {

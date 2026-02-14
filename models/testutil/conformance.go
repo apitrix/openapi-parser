@@ -128,9 +128,9 @@ func ExtractAccessibleFields(t reflect.Type) map[string]bool {
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 
-		// Handle embedded structs (skip Node - Go-specific)
+		// Handle embedded structs (skip ElementBase - Go-specific)
 		if field.Anonymous {
-			if field.Name != "Node" {
+			if field.Name != "ElementBase" {
 				for k, v := range ExtractAccessibleFields(field.Type) {
 					fields[k] = v
 				}

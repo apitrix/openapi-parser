@@ -9,7 +9,7 @@ import (
 // Tag adds metadata to a single tag used by the Operation Object.
 // https://swagger.io/specification/v2/#tag-object
 type Tag struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	name         string
 	description  string

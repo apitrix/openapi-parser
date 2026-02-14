@@ -9,7 +9,7 @@ import (
 // Info provides metadata about the API.
 // https://spec.openapis.org/oas/v3.1.0#info-object
 type Info struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	title          string
 	summary        string

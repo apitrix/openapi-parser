@@ -9,7 +9,7 @@ import (
 // Schema represents the Swagger 2.0 Schema Object (JSON Schema subset).
 // https://swagger.io/specification/v2/#schema-object
 type Schema struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	// JSON Schema fields
 	title                       string
@@ -46,36 +46,36 @@ type Schema struct {
 	example       interface{}
 }
 
-func (s *Schema) Title() string                      { return s.title }
-func (s *Schema) Description() string                { return s.description }
-func (s *Schema) Default() interface{}               { return s.defaultVal }
-func (s *Schema) MultipleOf() *float64               { return s.multipleOf }
-func (s *Schema) Maximum() *float64                  { return s.maximum }
-func (s *Schema) ExclusiveMaximum() bool             { return s.exclusiveMaximum }
-func (s *Schema) Minimum() *float64                  { return s.minimum }
-func (s *Schema) ExclusiveMinimum() bool             { return s.exclusiveMinimum }
-func (s *Schema) MaxLength() *uint64                 { return s.maxLength }
-func (s *Schema) MinLength() *uint64                 { return s.minLength }
-func (s *Schema) Pattern() string                    { return s.pattern }
-func (s *Schema) MaxItems() *uint64                  { return s.maxItems }
-func (s *Schema) MinItems() *uint64                  { return s.minItems }
-func (s *Schema) UniqueItems() bool                  { return s.uniqueItems }
-func (s *Schema) MaxProperties() *uint64             { return s.maxProperties }
-func (s *Schema) MinProperties() *uint64             { return s.minProperties }
-func (s *Schema) Required() []string                 { return s.required }
-func (s *Schema) Enum() []interface{}                { return s.enum }
-func (s *Schema) Type() string                       { return s.schemaType }
-func (s *Schema) Format() string                     { return s.format }
-func (s *Schema) AllOf() []*shared.Ref[Schema]                { return s.allOf }
-func (s *Schema) Items() *shared.Ref[Schema]                  { return s.items }
-func (s *Schema) Properties() map[string]*shared.Ref[Schema]  { return s.properties }
-func (s *Schema) AdditionalProperties() *shared.Ref[Schema]   { return s.additionalProperties }
-func (s *Schema) AdditionalPropertiesAllowed() *bool { return s.additionalPropertiesAllowed }
-func (s *Schema) Discriminator() string              { return s.discriminator }
-func (s *Schema) ReadOnly() bool                     { return s.readOnly }
-func (s *Schema) XML() *XML                          { return s.xml }
-func (s *Schema) ExternalDocs() *ExternalDocs        { return s.externalDocs }
-func (s *Schema) Example() interface{}               { return s.example }
+func (s *Schema) Title() string                              { return s.title }
+func (s *Schema) Description() string                        { return s.description }
+func (s *Schema) Default() interface{}                       { return s.defaultVal }
+func (s *Schema) MultipleOf() *float64                       { return s.multipleOf }
+func (s *Schema) Maximum() *float64                          { return s.maximum }
+func (s *Schema) ExclusiveMaximum() bool                     { return s.exclusiveMaximum }
+func (s *Schema) Minimum() *float64                          { return s.minimum }
+func (s *Schema) ExclusiveMinimum() bool                     { return s.exclusiveMinimum }
+func (s *Schema) MaxLength() *uint64                         { return s.maxLength }
+func (s *Schema) MinLength() *uint64                         { return s.minLength }
+func (s *Schema) Pattern() string                            { return s.pattern }
+func (s *Schema) MaxItems() *uint64                          { return s.maxItems }
+func (s *Schema) MinItems() *uint64                          { return s.minItems }
+func (s *Schema) UniqueItems() bool                          { return s.uniqueItems }
+func (s *Schema) MaxProperties() *uint64                     { return s.maxProperties }
+func (s *Schema) MinProperties() *uint64                     { return s.minProperties }
+func (s *Schema) Required() []string                         { return s.required }
+func (s *Schema) Enum() []interface{}                        { return s.enum }
+func (s *Schema) Type() string                               { return s.schemaType }
+func (s *Schema) Format() string                             { return s.format }
+func (s *Schema) AllOf() []*shared.Ref[Schema]               { return s.allOf }
+func (s *Schema) Items() *shared.Ref[Schema]                 { return s.items }
+func (s *Schema) Properties() map[string]*shared.Ref[Schema] { return s.properties }
+func (s *Schema) AdditionalProperties() *shared.Ref[Schema]  { return s.additionalProperties }
+func (s *Schema) AdditionalPropertiesAllowed() *bool         { return s.additionalPropertiesAllowed }
+func (s *Schema) Discriminator() string                      { return s.discriminator }
+func (s *Schema) ReadOnly() bool                             { return s.readOnly }
+func (s *Schema) XML() *XML                                  { return s.xml }
+func (s *Schema) ExternalDocs() *ExternalDocs                { return s.externalDocs }
+func (s *Schema) Example() interface{}                       { return s.example }
 
 // SchemaFields groups all schema properties for the constructor.
 type SchemaFields struct {

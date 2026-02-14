@@ -9,7 +9,7 @@ import (
 // ExternalDocs allows referencing external documentation.
 // https://swagger.io/specification/v2/#external-documentation-object
 type ExternalDocs struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	description string
 	url         string

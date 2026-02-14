@@ -9,7 +9,7 @@ import (
 // Header represents a Header Object in a response.
 // https://swagger.io/specification/v2/#header-object
 type Header struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	description      string
 	headerType       string

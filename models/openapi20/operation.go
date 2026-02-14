@@ -9,7 +9,7 @@ import (
 // Operation describes a single API operation on a path.
 // https://swagger.io/specification/v2/#operation-object
 type Operation struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	tags         []string
 	summary      string
@@ -25,18 +25,18 @@ type Operation struct {
 	security     []SecurityRequirement
 }
 
-func (o *Operation) Tags() []string                  { return o.tags }
-func (o *Operation) Summary() string                 { return o.summary }
-func (o *Operation) Description() string             { return o.description }
-func (o *Operation) ExternalDocs() *ExternalDocs     { return o.externalDocs }
-func (o *Operation) OperationID() string             { return o.operationID }
-func (o *Operation) Consumes() []string              { return o.consumes }
-func (o *Operation) Produces() []string              { return o.produces }
-func (o *Operation) Parameters() []*shared.Ref[Parameter]     { return o.parameters }
-func (o *Operation) Responses() *Responses           { return o.responses }
-func (o *Operation) Schemes() []string               { return o.schemes }
-func (o *Operation) Deprecated() bool                { return o.deprecated }
-func (o *Operation) Security() []SecurityRequirement { return o.security }
+func (o *Operation) Tags() []string                       { return o.tags }
+func (o *Operation) Summary() string                      { return o.summary }
+func (o *Operation) Description() string                  { return o.description }
+func (o *Operation) ExternalDocs() *ExternalDocs          { return o.externalDocs }
+func (o *Operation) OperationID() string                  { return o.operationID }
+func (o *Operation) Consumes() []string                   { return o.consumes }
+func (o *Operation) Produces() []string                   { return o.produces }
+func (o *Operation) Parameters() []*shared.Ref[Parameter] { return o.parameters }
+func (o *Operation) Responses() *Responses                { return o.responses }
+func (o *Operation) Schemes() []string                    { return o.schemes }
+func (o *Operation) Deprecated() bool                     { return o.deprecated }
+func (o *Operation) Security() []SecurityRequirement      { return o.security }
 
 // NewOperation creates a new Operation instance.
 func NewOperation(

@@ -9,7 +9,7 @@ import (
 // ExternalDocumentation allows referencing external documentation.
 // https://spec.openapis.org/oas/v3.1.0#external-documentation-object
 type ExternalDocumentation struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	description string
 	url         string

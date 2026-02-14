@@ -9,7 +9,7 @@ import (
 // License provides license information for the API.
 // https://spec.openapis.org/oas/v3.0.3#license-object
 type License struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	name string
 	url  string

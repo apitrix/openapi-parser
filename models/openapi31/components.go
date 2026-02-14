@@ -9,7 +9,7 @@ import (
 // Components holds reusable objects for the specification.
 // https://spec.openapis.org/oas/v3.1.0#components-object
 type Components struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	schemas         map[string]*shared.RefWithMeta[Schema]
 	responses       map[string]*shared.RefWithMeta[Response]
@@ -23,16 +23,20 @@ type Components struct {
 	pathItems       map[string]*shared.RefWithMeta[PathItem]
 }
 
-func (c *Components) Schemas() map[string]*shared.RefWithMeta[Schema]                 { return c.schemas }
-func (c *Components) Responses() map[string]*shared.RefWithMeta[Response]             { return c.responses }
-func (c *Components) Parameters() map[string]*shared.RefWithMeta[Parameter]           { return c.parameters }
-func (c *Components) Examples() map[string]*shared.RefWithMeta[Example]               { return c.examples }
-func (c *Components) RequestBodies() map[string]*shared.RefWithMeta[RequestBody]      { return c.requestBodies }
-func (c *Components) Headers() map[string]*shared.RefWithMeta[Header]                 { return c.headers }
-func (c *Components) SecuritySchemes() map[string]*shared.RefWithMeta[SecurityScheme] { return c.securitySchemes }
-func (c *Components) Links() map[string]*shared.RefWithMeta[Link]                     { return c.links }
-func (c *Components) Callbacks() map[string]*shared.RefWithMeta[Callback]             { return c.callbacks }
-func (c *Components) PathItems() map[string]*shared.RefWithMeta[PathItem]             { return c.pathItems }
+func (c *Components) Schemas() map[string]*shared.RefWithMeta[Schema]       { return c.schemas }
+func (c *Components) Responses() map[string]*shared.RefWithMeta[Response]   { return c.responses }
+func (c *Components) Parameters() map[string]*shared.RefWithMeta[Parameter] { return c.parameters }
+func (c *Components) Examples() map[string]*shared.RefWithMeta[Example]     { return c.examples }
+func (c *Components) RequestBodies() map[string]*shared.RefWithMeta[RequestBody] {
+	return c.requestBodies
+}
+func (c *Components) Headers() map[string]*shared.RefWithMeta[Header] { return c.headers }
+func (c *Components) SecuritySchemes() map[string]*shared.RefWithMeta[SecurityScheme] {
+	return c.securitySchemes
+}
+func (c *Components) Links() map[string]*shared.RefWithMeta[Link]         { return c.links }
+func (c *Components) Callbacks() map[string]*shared.RefWithMeta[Callback] { return c.callbacks }
+func (c *Components) PathItems() map[string]*shared.RefWithMeta[PathItem] { return c.pathItems }
 
 // SetProperty sets a named property on the Components.
 // Used by parsers for post-construction field assignment.

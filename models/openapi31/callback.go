@@ -10,7 +10,7 @@ import (
 // Callback is a map of possible out-of-band callbacks related to the parent operation.
 // https://spec.openapis.org/oas/v3.1.0#callback-object
 type Callback struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	paths map[string]*PathItem
 }

@@ -28,8 +28,8 @@ type Trix struct {
 	Errors []ParseError `json:"-" yaml:"-"` // Parsing errors attached to this node
 }
 
-// Node is embedded in all OpenAPI types to provide vendor extensions and library metadata.
-type Node struct {
+// ElementBase is embedded in all OpenAPI types to provide vendor extensions and library metadata.
+type ElementBase struct {
 	VendorExtensions map[string]interface{} `json:"-" yaml:"-"`
 	Trix             Trix                   `json:"-" yaml:"-"`
 }

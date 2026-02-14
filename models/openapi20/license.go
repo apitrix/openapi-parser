@@ -9,7 +9,7 @@ import (
 // License provides license information for the API.
 // https://swagger.io/specification/v2/#license-object
 type License struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	name string
 	url  string

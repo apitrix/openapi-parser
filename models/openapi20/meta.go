@@ -8,5 +8,5 @@ type NodeSource = shared.NodeSource
 type ParseError = shared.ParseError
 type Trix = shared.Trix
 
-// Node is embedded in all v20 types to provide vendor extensions and library metadata.
-type Node = shared.Node
+// ElementBase is embedded in all v20 types to provide vendor extensions and library metadata.
+type ElementBase = shared.ElementBase

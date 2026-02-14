@@ -9,7 +9,7 @@ import (
 // Operation describes a single API operation on a path.
 // https://spec.openapis.org/oas/v3.1.0#operation-object
 type Operation struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	tags         []string
 	summary      string
@@ -25,18 +25,18 @@ type Operation struct {
 	servers      []*Server
 }
 
-func (o *Operation) Tags() []string                       { return o.tags }
-func (o *Operation) Summary() string                      { return o.summary }
-func (o *Operation) Description() string                  { return o.description }
-func (o *Operation) ExternalDocs() *ExternalDocumentation { return o.externalDocs }
-func (o *Operation) OperationID() string                  { return o.operationID }
-func (o *Operation) Parameters() []*shared.RefWithMeta[Parameter]          { return o.parameters }
-func (o *Operation) RequestBody() *shared.RefWithMeta[RequestBody]         { return o.requestBody }
-func (o *Operation) Responses() *Responses                { return o.responses }
-func (o *Operation) Callbacks() map[string]*shared.RefWithMeta[Callback]   { return o.callbacks }
-func (o *Operation) Deprecated() bool                     { return o.deprecated }
-func (o *Operation) Security() []SecurityRequirement      { return o.security }
-func (o *Operation) Servers() []*Server                   { return o.servers }
+func (o *Operation) Tags() []string                                      { return o.tags }
+func (o *Operation) Summary() string                                     { return o.summary }
+func (o *Operation) Description() string                                 { return o.description }
+func (o *Operation) ExternalDocs() *ExternalDocumentation                { return o.externalDocs }
+func (o *Operation) OperationID() string                                 { return o.operationID }
+func (o *Operation) Parameters() []*shared.RefWithMeta[Parameter]        { return o.parameters }
+func (o *Operation) RequestBody() *shared.RefWithMeta[RequestBody]       { return o.requestBody }
+func (o *Operation) Responses() *Responses                               { return o.responses }
+func (o *Operation) Callbacks() map[string]*shared.RefWithMeta[Callback] { return o.callbacks }
+func (o *Operation) Deprecated() bool                                    { return o.deprecated }
+func (o *Operation) Security() []SecurityRequirement                     { return o.security }
+func (o *Operation) Servers() []*Server                                  { return o.servers }
 
 // SetProperty sets a named property on the Operation.
 // Used by parsers for post-construction field assignment.

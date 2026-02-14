@@ -9,7 +9,7 @@ import (
 // Ref represents a JSON Reference ($ref) or an inline value of type T.
 // Used by OpenAPI 2.0 and 3.0 models where $ref has no additional fields.
 type Ref[T any] struct {
-	Node
+	ElementBase
 	Ref      string `json:"$ref,omitempty" yaml:"$ref,omitempty"`
 	value    *T
 	circular bool
@@ -117,7 +117,7 @@ var _ yaml.Marshaler = (*Ref[struct{}])(nil)
 // RefWithMeta is like Ref but adds Summary and Description fields
 // as permitted by OpenAPI 3.1's extended $ref syntax.
 type RefWithMeta[T any] struct {
-	Node
+	ElementBase
 	Ref         string `json:"$ref,omitempty" yaml:"$ref,omitempty"`
 	Summary     string `json:"summary,omitempty" yaml:"summary,omitempty"`
 	Description string `json:"description,omitempty" yaml:"description,omitempty"`

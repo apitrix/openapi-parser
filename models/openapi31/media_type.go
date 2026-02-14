@@ -9,7 +9,7 @@ import (
 // MediaType provides schema and examples for a media type.
 // https://spec.openapis.org/oas/v3.1.0#media-type-object
 type MediaType struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	schema   *shared.RefWithMeta[Schema]
 	example  interface{}
@@ -18,9 +18,9 @@ type MediaType struct {
 }
 
 func (m *MediaType) Schema() *shared.RefWithMeta[Schema]               { return m.schema }
-func (m *MediaType) Example() interface{}             { return m.example }
+func (m *MediaType) Example() interface{}                              { return m.example }
 func (m *MediaType) Examples() map[string]*shared.RefWithMeta[Example] { return m.examples }
-func (m *MediaType) Encoding() map[string]*Encoding   { return m.encoding }
+func (m *MediaType) Encoding() map[string]*Encoding                    { return m.encoding }
 
 // NewMediaType creates a new MediaType instance.
 func NewMediaType(schema *shared.RefWithMeta[Schema], example interface{}, examples map[string]*shared.RefWithMeta[Example], encoding map[string]*Encoding) *MediaType {

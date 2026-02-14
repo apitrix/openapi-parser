@@ -9,7 +9,7 @@ import (
 // ServerVariable represents a server variable for URL template substitution.
 // https://spec.openapis.org/oas/v3.0.3#server-variable-object
 type ServerVariable struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	enum        []string
 	defaultVal  string

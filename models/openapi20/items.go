@@ -9,7 +9,7 @@ import (
 // Items describes the type of items in an array parameter.
 // https://swagger.io/specification/v2/#items-object
 type Items struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	itemType         string
 	format           string

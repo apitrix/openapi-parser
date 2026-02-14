@@ -28,8 +28,8 @@ type Trix struct {
 	ResolvedOperation *Operation `json:"-" yaml:"-"`
 }
 
-// Node is embedded in all v30 types to provide vendor extensions and library metadata.
-type Node struct {
+// ElementBase is embedded in all v30 types to provide vendor extensions and library metadata.
+type ElementBase struct {
 	VendorExtensions map[string]interface{} `json:"-" yaml:"-"`
 	Trix             Trix                   `json:"-" yaml:"-"`
 }

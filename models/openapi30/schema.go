@@ -9,7 +9,7 @@ import (
 // Schema represents the OpenAPI 3.0 Schema Object.
 // https://spec.openapis.org/oas/v3.0.3#schema-object
 type Schema struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	// JSON Schema fields
 	title            string
@@ -54,42 +54,42 @@ type Schema struct {
 	deprecated    bool
 }
 
-func (s *Schema) Title() string                        { return s.title }
-func (s *Schema) MultipleOf() *float64                 { return s.multipleOf }
-func (s *Schema) Maximum() *float64                    { return s.maximum }
-func (s *Schema) ExclusiveMaximum() bool               { return s.exclusiveMaximum }
-func (s *Schema) Minimum() *float64                    { return s.minimum }
-func (s *Schema) ExclusiveMinimum() bool               { return s.exclusiveMinimum }
-func (s *Schema) MaxLength() *uint64                   { return s.maxLength }
-func (s *Schema) MinLength() *uint64                   { return s.minLength }
-func (s *Schema) Pattern() string                      { return s.pattern }
-func (s *Schema) MaxItems() *uint64                    { return s.maxItems }
-func (s *Schema) MinItems() *uint64                    { return s.minItems }
-func (s *Schema) UniqueItems() bool                    { return s.uniqueItems }
-func (s *Schema) MaxProperties() *uint64               { return s.maxProperties }
-func (s *Schema) MinProperties() *uint64               { return s.minProperties }
-func (s *Schema) Required() []string                   { return s.required }
-func (s *Schema) Enum() []interface{}                  { return s.enum }
-func (s *Schema) Type() string                         { return s.schemaType }
-func (s *Schema) AllOf() []*shared.Ref[Schema]                  { return s.allOf }
-func (s *Schema) OneOf() []*shared.Ref[Schema]                  { return s.oneOf }
-func (s *Schema) AnyOf() []*shared.Ref[Schema]                  { return s.anyOf }
-func (s *Schema) Not() *shared.Ref[Schema]                      { return s.not }
-func (s *Schema) Items() *shared.Ref[Schema]                    { return s.items }
-func (s *Schema) Properties() map[string]*shared.Ref[Schema]    { return s.properties }
-func (s *Schema) Description() string                  { return s.description }
-func (s *Schema) Format() string                       { return s.format }
-func (s *Schema) Default() interface{}                 { return s.defaultVal }
-func (s *Schema) AdditionalProperties() *shared.Ref[Schema]     { return s.additionalProperties }
-func (s *Schema) AdditionalPropertiesAllowed() *bool   { return s.additionalPropertiesAllowed }
-func (s *Schema) Nullable() bool                       { return s.nullable }
-func (s *Schema) Discriminator() *Discriminator        { return s.discriminator }
-func (s *Schema) ReadOnly() bool                       { return s.readOnly }
-func (s *Schema) WriteOnly() bool                      { return s.writeOnly }
-func (s *Schema) XML() *XML                            { return s.xml }
-func (s *Schema) ExternalDocs() *ExternalDocumentation { return s.externalDocs }
-func (s *Schema) Example() interface{}                 { return s.example }
-func (s *Schema) Deprecated() bool                     { return s.deprecated }
+func (s *Schema) Title() string                              { return s.title }
+func (s *Schema) MultipleOf() *float64                       { return s.multipleOf }
+func (s *Schema) Maximum() *float64                          { return s.maximum }
+func (s *Schema) ExclusiveMaximum() bool                     { return s.exclusiveMaximum }
+func (s *Schema) Minimum() *float64                          { return s.minimum }
+func (s *Schema) ExclusiveMinimum() bool                     { return s.exclusiveMinimum }
+func (s *Schema) MaxLength() *uint64                         { return s.maxLength }
+func (s *Schema) MinLength() *uint64                         { return s.minLength }
+func (s *Schema) Pattern() string                            { return s.pattern }
+func (s *Schema) MaxItems() *uint64                          { return s.maxItems }
+func (s *Schema) MinItems() *uint64                          { return s.minItems }
+func (s *Schema) UniqueItems() bool                          { return s.uniqueItems }
+func (s *Schema) MaxProperties() *uint64                     { return s.maxProperties }
+func (s *Schema) MinProperties() *uint64                     { return s.minProperties }
+func (s *Schema) Required() []string                         { return s.required }
+func (s *Schema) Enum() []interface{}                        { return s.enum }
+func (s *Schema) Type() string                               { return s.schemaType }
+func (s *Schema) AllOf() []*shared.Ref[Schema]               { return s.allOf }
+func (s *Schema) OneOf() []*shared.Ref[Schema]               { return s.oneOf }
+func (s *Schema) AnyOf() []*shared.Ref[Schema]               { return s.anyOf }
+func (s *Schema) Not() *shared.Ref[Schema]                   { return s.not }
+func (s *Schema) Items() *shared.Ref[Schema]                 { return s.items }
+func (s *Schema) Properties() map[string]*shared.Ref[Schema] { return s.properties }
+func (s *Schema) Description() string                        { return s.description }
+func (s *Schema) Format() string                             { return s.format }
+func (s *Schema) Default() interface{}                       { return s.defaultVal }
+func (s *Schema) AdditionalProperties() *shared.Ref[Schema]  { return s.additionalProperties }
+func (s *Schema) AdditionalPropertiesAllowed() *bool         { return s.additionalPropertiesAllowed }
+func (s *Schema) Nullable() bool                             { return s.nullable }
+func (s *Schema) Discriminator() *Discriminator              { return s.discriminator }
+func (s *Schema) ReadOnly() bool                             { return s.readOnly }
+func (s *Schema) WriteOnly() bool                            { return s.writeOnly }
+func (s *Schema) XML() *XML                                  { return s.xml }
+func (s *Schema) ExternalDocs() *ExternalDocumentation       { return s.externalDocs }
+func (s *Schema) Example() interface{}                       { return s.example }
+func (s *Schema) Deprecated() bool                           { return s.deprecated }
 
 // NewSchema creates a new Schema instance.
 // Due to the large number of fields, callers should use NewSchemaFields.

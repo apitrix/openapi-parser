@@ -9,7 +9,7 @@ import (
 // Example represents an example of a media type.
 // https://spec.openapis.org/oas/v3.0.3#example-object
 type Example struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	summary       string
 	description   string

@@ -9,7 +9,7 @@ import (
 // Link represents a possible design-time link for a response.
 // https://spec.openapis.org/oas/v3.0.3#link-object
 type Link struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	operationRef string
 	operationID  string

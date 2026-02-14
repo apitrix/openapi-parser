@@ -9,7 +9,7 @@ import (
 // PathItem describes operations available on a single path.
 // https://spec.openapis.org/oas/v3.0.3#path-item-object
 type PathItem struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	ref         string
 	summary     string
@@ -26,18 +26,18 @@ type PathItem struct {
 	parameters  []*shared.Ref[Parameter]
 }
 
-func (pi *PathItem) Ref() string                 { return pi.ref }
-func (pi *PathItem) Summary() string             { return pi.summary }
-func (pi *PathItem) Description() string         { return pi.description }
-func (pi *PathItem) Get() *Operation             { return pi.get }
-func (pi *PathItem) Put() *Operation             { return pi.put }
-func (pi *PathItem) Post() *Operation            { return pi.post }
-func (pi *PathItem) Delete() *Operation          { return pi.delete }
-func (pi *PathItem) Options() *Operation         { return pi.options }
-func (pi *PathItem) Head() *Operation            { return pi.head }
-func (pi *PathItem) Patch() *Operation           { return pi.patch }
-func (pi *PathItem) Trace() *Operation           { return pi.trace }
-func (pi *PathItem) Servers() []*Server          { return pi.servers }
+func (pi *PathItem) Ref() string                          { return pi.ref }
+func (pi *PathItem) Summary() string                      { return pi.summary }
+func (pi *PathItem) Description() string                  { return pi.description }
+func (pi *PathItem) Get() *Operation                      { return pi.get }
+func (pi *PathItem) Put() *Operation                      { return pi.put }
+func (pi *PathItem) Post() *Operation                     { return pi.post }
+func (pi *PathItem) Delete() *Operation                   { return pi.delete }
+func (pi *PathItem) Options() *Operation                  { return pi.options }
+func (pi *PathItem) Head() *Operation                     { return pi.head }
+func (pi *PathItem) Patch() *Operation                    { return pi.patch }
+func (pi *PathItem) Trace() *Operation                    { return pi.trace }
+func (pi *PathItem) Servers() []*Server                   { return pi.servers }
 func (pi *PathItem) Parameters() []*shared.Ref[Parameter] { return pi.parameters }
 
 // NewPathItem creates a new PathItem instance.

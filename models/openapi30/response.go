@@ -9,7 +9,7 @@ import (
 // Response describes a single response from an API operation.
 // https://spec.openapis.org/oas/v3.0.3#response-object
 type Response struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	description string
 	headers     map[string]*shared.Ref[Header]
@@ -17,9 +17,9 @@ type Response struct {
 	links       map[string]*shared.Ref[Link]
 }
 
-func (r *Response) Description() string            { return r.description }
+func (r *Response) Description() string                     { return r.description }
 func (r *Response) Headers() map[string]*shared.Ref[Header] { return r.headers }
-func (r *Response) Content() map[string]*MediaType { return r.content }
+func (r *Response) Content() map[string]*MediaType          { return r.content }
 func (r *Response) Links() map[string]*shared.Ref[Link]     { return r.links }
 
 // NewResponse creates a new Response instance.

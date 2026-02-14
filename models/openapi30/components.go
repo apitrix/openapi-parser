@@ -9,7 +9,7 @@ import (
 // Components holds reusable objects for the specification.
 // https://spec.openapis.org/oas/v3.0.3#components-object
 type Components struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	schemas         map[string]*shared.Ref[Schema]
 	responses       map[string]*shared.Ref[Response]
@@ -22,15 +22,17 @@ type Components struct {
 	callbacks       map[string]*shared.Ref[Callback]
 }
 
-func (c *Components) Schemas() map[string]*shared.Ref[Schema]                 { return c.schemas }
-func (c *Components) Responses() map[string]*shared.Ref[Response]             { return c.responses }
-func (c *Components) Parameters() map[string]*shared.Ref[Parameter]           { return c.parameters }
-func (c *Components) Examples() map[string]*shared.Ref[Example]               { return c.examples }
-func (c *Components) RequestBodies() map[string]*shared.Ref[RequestBody]      { return c.requestBodies }
-func (c *Components) Headers() map[string]*shared.Ref[Header]                 { return c.headers }
-func (c *Components) SecuritySchemes() map[string]*shared.Ref[SecurityScheme] { return c.securitySchemes }
-func (c *Components) Links() map[string]*shared.Ref[Link]                     { return c.links }
-func (c *Components) Callbacks() map[string]*shared.Ref[Callback]             { return c.callbacks }
+func (c *Components) Schemas() map[string]*shared.Ref[Schema]            { return c.schemas }
+func (c *Components) Responses() map[string]*shared.Ref[Response]        { return c.responses }
+func (c *Components) Parameters() map[string]*shared.Ref[Parameter]      { return c.parameters }
+func (c *Components) Examples() map[string]*shared.Ref[Example]          { return c.examples }
+func (c *Components) RequestBodies() map[string]*shared.Ref[RequestBody] { return c.requestBodies }
+func (c *Components) Headers() map[string]*shared.Ref[Header]            { return c.headers }
+func (c *Components) SecuritySchemes() map[string]*shared.Ref[SecurityScheme] {
+	return c.securitySchemes
+}
+func (c *Components) Links() map[string]*shared.Ref[Link]         { return c.links }
+func (c *Components) Callbacks() map[string]*shared.Ref[Callback] { return c.callbacks }
 
 // NewComponents creates a new Components instance.
 func NewComponents(

@@ -9,7 +9,7 @@ import (
 // SecurityScheme defines a security scheme for the API.
 // https://spec.openapis.org/oas/v3.1.0#security-scheme-object
 type SecurityScheme struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	schemeType       string
 	description      string

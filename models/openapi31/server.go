@@ -9,7 +9,7 @@ import (
 // Server represents a server.
 // https://spec.openapis.org/oas/v3.1.0#server-object
 type Server struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	url         string
 	description string

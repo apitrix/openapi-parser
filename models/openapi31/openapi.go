@@ -9,7 +9,7 @@ import (
 // OpenAPI is the root document object of the OpenAPI specification.
 // https://spec.openapis.org/oas/v3.1.0#openapi-object
 type OpenAPI struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	openAPI           string
 	info              *Info
@@ -23,16 +23,16 @@ type OpenAPI struct {
 	externalDocs      *ExternalDocumentation
 }
 
-func (o *OpenAPI) OpenAPIVersion() string               { return o.openAPI }
-func (o *OpenAPI) Info() *Info                          { return o.info }
-func (o *OpenAPI) JsonSchemaDialect() string            { return o.jsonSchemaDialect }
-func (o *OpenAPI) Servers() []*Server                   { return o.servers }
-func (o *OpenAPI) Paths() *Paths                        { return o.paths }
-func (o *OpenAPI) Webhooks() map[string]*shared.RefWithMeta[PathItem]    { return o.webhooks }
-func (o *OpenAPI) Components() *Components              { return o.components }
-func (o *OpenAPI) Security() []SecurityRequirement      { return o.security }
-func (o *OpenAPI) Tags() []*Tag                         { return o.tags }
-func (o *OpenAPI) ExternalDocs() *ExternalDocumentation { return o.externalDocs }
+func (o *OpenAPI) OpenAPIVersion() string                             { return o.openAPI }
+func (o *OpenAPI) Info() *Info                                        { return o.info }
+func (o *OpenAPI) JsonSchemaDialect() string                          { return o.jsonSchemaDialect }
+func (o *OpenAPI) Servers() []*Server                                 { return o.servers }
+func (o *OpenAPI) Paths() *Paths                                      { return o.paths }
+func (o *OpenAPI) Webhooks() map[string]*shared.RefWithMeta[PathItem] { return o.webhooks }
+func (o *OpenAPI) Components() *Components                            { return o.components }
+func (o *OpenAPI) Security() []SecurityRequirement                    { return o.security }
+func (o *OpenAPI) Tags() []*Tag                                       { return o.tags }
+func (o *OpenAPI) ExternalDocs() *ExternalDocumentation               { return o.externalDocs }
 
 // SetProperty sets a named property on the OpenAPI document.
 // Used by parsers for post-construction field assignment.

@@ -9,7 +9,7 @@ import (
 // Discriminator is used for polymorphism support.
 // https://spec.openapis.org/oas/v3.0.3#discriminator-object
 type Discriminator struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	propertyName string
 	mapping      map[string]string

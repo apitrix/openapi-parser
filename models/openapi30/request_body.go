@@ -9,7 +9,7 @@ import (
 // RequestBody describes a single request body.
 // https://spec.openapis.org/oas/v3.0.3#request-body-object
 type RequestBody struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	description string
 	content     map[string]*MediaType

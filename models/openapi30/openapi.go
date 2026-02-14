@@ -9,7 +9,7 @@ import (
 // OpenAPI is the root document object of the OpenAPI specification.
 // https://spec.openapis.org/oas/v3.0.3#openapi-object
 type OpenAPI struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	openAPI      string
 	info         *Info

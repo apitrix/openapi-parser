@@ -187,7 +187,7 @@ The generic struct (shown for `Ref[T]`; `RefWithMeta[T]` adds `Summary` and `Des
 
 ```go
 type Ref[T any] struct {
-    Node                           // embedded — VendorExtensions, Trix
+    ElementBase                    // embedded — VendorExtensions, Trix
     Ref      string                // the $ref string
     value    *T                    // resolved model (private)
     circular bool                  // circular reference detected

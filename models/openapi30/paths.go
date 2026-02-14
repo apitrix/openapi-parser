@@ -10,7 +10,7 @@ import (
 // Paths holds the relative paths to individual endpoints.
 // https://spec.openapis.org/oas/v3.0.3#paths-object
 type Paths struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	// items maps paths to their definitions.
 	items map[string]*PathItem

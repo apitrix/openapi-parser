@@ -10,7 +10,7 @@ import (
 // Responses is a container for expected responses of an operation.
 // https://swagger.io/specification/v2/#responses-object
 type Responses struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	defaultResp *shared.Ref[Response]
 	codes       map[string]*shared.Ref[Response] // HTTP status codes (e.g., "200", "404")

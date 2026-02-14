@@ -58,8 +58,8 @@ func collectTrixErrors(v reflect.Value, visited map[uintptr]bool, result *[]*sha
 			field := v.Field(i)
 			fieldType := t.Field(i)
 
-			// Skip the Trix and Node fields (already handled above or not needed)
-			if fieldType.Name == "Trix" || fieldType.Name == "Node" {
+			// Skip the Trix and ElementBase fields (already handled above or not needed)
+			if fieldType.Name == "Trix" || fieldType.Name == "ElementBase" {
 				continue
 			}
 

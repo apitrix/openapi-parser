@@ -10,7 +10,7 @@ import (
 // Responses is a container for expected responses of an operation.
 // https://spec.openapis.org/oas/v3.1.0#responses-object
 type Responses struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	defaultResp *shared.RefWithMeta[Response]
 	codes       map[string]*shared.RefWithMeta[Response]

@@ -16,17 +16,17 @@ func flattenErrors(doc *openapi31models.OpenAPI) []*shared.ParseError {
 	var result []*shared.ParseError
 	visited := make(map[interface{}]bool)
 
-	collectNodeErrors(&doc.Node, &result)
+	collectNodeErrors(&doc.ElementBase, &result)
 	visited[doc] = true
 
 	// Info
 	if info := doc.Info(); info != nil {
-		collectNodeErrors(&info.Node, &result)
+		collectNodeErrors(&info.ElementBase, &result)
 		if c := info.Contact(); c != nil {
-			collectNodeErrors(&c.Node, &result)
+			collectNodeErrors(&c.ElementBase, &result)
 		}
 		if l := info.License(); l != nil {
-			collectNodeErrors(&l.Node, &result)
+			collectNodeErrors(&l.ElementBase, &result)
 		}
 	}
 
@@ -37,7 +37,7 @@ func flattenErrors(doc *openapi31models.OpenAPI) []*shared.ParseError {
 
 	// Paths
 	if paths := doc.Paths(); paths != nil {
-		collectNodeErrors(&paths.Node, &result)
+		collectNodeErrors(&paths.ElementBase, &result)
 		for _, pi := range paths.Items() {
 			flattenPathItem(pi, &result, visited)
 		}
@@ -52,7 +52,7 @@ func flattenErrors(doc *openapi31models.OpenAPI) []*shared.ParseError {
 
 	// Components
 	if comp := doc.Components(); comp != nil {
-		collectNodeErrors(&comp.Node, &result)
+		collectNodeErrors(&comp.ElementBase, &result)
 
 		for _, ref := range comp.Schemas() {
 			if ref != nil && ref.Value() != nil && !visited[ref.Value()] {
@@ -96,7 +96,7 @@ func flattenErrors(doc *openapi31models.OpenAPI) []*shared.ParseError {
 		}
 		for _, ref := range comp.Examples() {
 			if ref != nil && ref.Value() != nil {
-				collectNodeErrors(&ref.Value().Node, &result)
+				collectNodeErrors(&ref.Value().ElementBase, &result)
 			}
 		}
 		for _, ref := range comp.PathItems() {
@@ -109,22 +109,22 @@ func flattenErrors(doc *openapi31models.OpenAPI) []*shared.ParseError {
 	// Tags
 	for _, tag := range doc.Tags() {
 		if tag != nil {
-			collectNodeErrors(&tag.Node, &result)
+			collectNodeErrors(&tag.ElementBase, &result)
 			if ed := tag.ExternalDocs(); ed != nil {
-				collectNodeErrors(&ed.Node, &result)
+				collectNodeErrors(&ed.ElementBase, &result)
 			}
 		}
 	}
 
 	// ExternalDocs
 	if ed := doc.ExternalDocs(); ed != nil {
-		collectNodeErrors(&ed.Node, &result)
+		collectNodeErrors(&ed.ElementBase, &result)
 	}
 
 	return result
 }
 
-func collectNodeErrors(node *openapi31models.Node, result *[]*shared.ParseError) {
+func collectNodeErrors(node *openapi31models.ElementBase, result *[]*shared.ParseError) {
 	for _, e := range node.Trix.Errors {
 		*result = append(*result, modelParseErrorToShared(e))
 	}
@@ -134,10 +134,10 @@ func flattenServer(s *openapi31models.Server, result *[]*shared.ParseError) {
 	if s == nil {
 		return
 	}
-	collectNodeErrors(&s.Node, result)
+	collectNodeErrors(&s.ElementBase, result)
 	for _, sv := range s.Variables() {
 		if sv != nil {
-			collectNodeErrors(&sv.Node, result)
+			collectNodeErrors(&sv.ElementBase, result)
 		}
 	}
 }
@@ -147,7 +147,7 @@ func flattenPathItem(pi *openapi31models.PathItem, result *[]*shared.ParseError,
 		return
 	}
 	visited[pi] = true
-	collectNodeErrors(&pi.Node, result)
+	collectNodeErrors(&pi.ElementBase, result)
 
 	for _, op := range []*openapi31models.Operation{
 		pi.Get(), pi.Put(), pi.Post(), pi.Delete(),
@@ -171,7 +171,7 @@ func flattenOperation(op *openapi31models.Operation, result *[]*shared.ParseErro
 	if op == nil {
 		return
 	}
-	collectNodeErrors(&op.Node, result)
+	collectNodeErrors(&op.ElementBase, result)
 
 	for _, ref := range op.Parameters() {
 		if ref != nil && ref.Value() != nil && !visited[ref.Value()] {
@@ -184,7 +184,7 @@ func flattenOperation(op *openapi31models.Operation, result *[]*shared.ParseErro
 	}
 
 	if resp := op.Responses(); resp != nil {
-		collectNodeErrors(&resp.Node, result)
+		collectNodeErrors(&resp.ElementBase, result)
 		for _, ref := range resp.Codes() {
 			if ref != nil && ref.Value() != nil && !visited[ref.Value()] {
 				flattenResponse(ref.Value(), result, visited)
@@ -208,14 +208,14 @@ func flattenParameter(p *openapi31models.Parameter, result *[]*shared.ParseError
 		return
 	}
 	visited[p] = true
-	collectNodeErrors(&p.Node, result)
+	collectNodeErrors(&p.ElementBase, result)
 
 	if s := p.Schema(); s != nil && s.Value() != nil {
 		flattenSchema(s.Value(), result, visited)
 	}
 	for _, ref := range p.Examples() {
 		if ref != nil && ref.Value() != nil {
-			collectNodeErrors(&ref.Value().Node, result)
+			collectNodeErrors(&ref.Value().ElementBase, result)
 		}
 	}
 	flattenContent(p.Content(), result, visited)
@@ -226,14 +226,14 @@ func flattenHeader(h *openapi31models.Header, result *[]*shared.ParseError, visi
 		return
 	}
 	visited[h] = true
-	collectNodeErrors(&h.Node, result)
+	collectNodeErrors(&h.ElementBase, result)
 
 	if s := h.Schema(); s != nil && s.Value() != nil {
 		flattenSchema(s.Value(), result, visited)
 	}
 	for _, ref := range h.Examples() {
 		if ref != nil && ref.Value() != nil {
-			collectNodeErrors(&ref.Value().Node, result)
+			collectNodeErrors(&ref.Value().ElementBase, result)
 		}
 	}
 	flattenContent(h.Content(), result, visited)
@@ -244,7 +244,7 @@ func flattenRequestBody(rb *openapi31models.RequestBody, result *[]*shared.Parse
 		return
 	}
 	visited[rb] = true
-	collectNodeErrors(&rb.Node, result)
+	collectNodeErrors(&rb.ElementBase, result)
 	flattenContent(rb.Content(), result, visited)
 }
 
@@ -253,7 +253,7 @@ func flattenResponse(resp *openapi31models.Response, result *[]*shared.ParseErro
 		return
 	}
 	visited[resp] = true
-	collectNodeErrors(&resp.Node, result)
+	collectNodeErrors(&resp.ElementBase, result)
 
 	for _, ref := range resp.Headers() {
 		if ref != nil && ref.Value() != nil {
@@ -274,19 +274,19 @@ func flattenContent(content map[string]*openapi31models.MediaType, result *[]*sh
 		if mt == nil {
 			continue
 		}
-		collectNodeErrors(&mt.Node, result)
+		collectNodeErrors(&mt.ElementBase, result)
 
 		if s := mt.Schema(); s != nil && s.Value() != nil {
 			flattenSchema(s.Value(), result, visited)
 		}
 		for _, ref := range mt.Examples() {
 			if ref != nil && ref.Value() != nil {
-				collectNodeErrors(&ref.Value().Node, result)
+				collectNodeErrors(&ref.Value().ElementBase, result)
 			}
 		}
 		for _, enc := range mt.Encoding() {
 			if enc != nil {
-				collectNodeErrors(&enc.Node, result)
+				collectNodeErrors(&enc.ElementBase, result)
 			}
 		}
 	}
@@ -297,16 +297,16 @@ func flattenSchema(s *openapi31models.Schema, result *[]*shared.ParseError, visi
 		return
 	}
 	visited[s] = true
-	collectNodeErrors(&s.Node, result)
+	collectNodeErrors(&s.ElementBase, result)
 
 	if d := s.Discriminator(); d != nil {
-		collectNodeErrors(&d.Node, result)
+		collectNodeErrors(&d.ElementBase, result)
 	}
 	if x := s.XML(); x != nil {
-		collectNodeErrors(&x.Node, result)
+		collectNodeErrors(&x.ElementBase, result)
 	}
 	if ed := s.ExternalDocs(); ed != nil {
-		collectNodeErrors(&ed.Node, result)
+		collectNodeErrors(&ed.ElementBase, result)
 	}
 
 	// Composition keywords
@@ -375,16 +375,16 @@ func flattenSecurityScheme(ss *openapi31models.SecurityScheme, result *[]*shared
 	if ss == nil {
 		return
 	}
-	collectNodeErrors(&ss.Node, result)
+	collectNodeErrors(&ss.ElementBase, result)
 
 	if flows := ss.Flows(); flows != nil {
-		collectNodeErrors(&flows.Node, result)
+		collectNodeErrors(&flows.ElementBase, result)
 		for _, flow := range []*openapi31models.OAuthFlow{
 			flows.Implicit(), flows.Password(),
 			flows.ClientCredentials(), flows.AuthorizationCode(),
 		} {
 			if flow != nil {
-				collectNodeErrors(&flow.Node, result)
+				collectNodeErrors(&flow.ElementBase, result)
 			}
 		}
 	}
@@ -394,7 +394,7 @@ func flattenLink(l *openapi31models.Link, result *[]*shared.ParseError) {
 	if l == nil {
 		return
 	}
-	collectNodeErrors(&l.Node, result)
+	collectNodeErrors(&l.ElementBase, result)
 	if s := l.Server(); s != nil {
 		flattenServer(s, result)
 	}
@@ -405,7 +405,7 @@ func flattenCallback(cb *openapi31models.Callback, result *[]*shared.ParseError,
 		return
 	}
 	visited[cb] = true
-	collectNodeErrors(&cb.Node, result)
+	collectNodeErrors(&cb.ElementBase, result)
 	for _, pi := range cb.Paths() {
 		if pi != nil {
 			flattenPathItem(pi, result, visited)

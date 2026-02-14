@@ -9,7 +9,7 @@ import (
 // XML provides additional metadata for XML serialization.
 // https://swagger.io/specification/v2/#xml-object
 type XML struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	name      string
 	namespace string

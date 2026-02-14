@@ -9,7 +9,7 @@ import (
 // Contact provides contact information for the API.
 // https://spec.openapis.org/oas/v3.1.0#contact-object
 type Contact struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	name  string
 	url   string

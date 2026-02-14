@@ -9,7 +9,7 @@ import (
 // Swagger is the root document object of the Swagger 2.0 specification.
 // https://swagger.io/specification/v2/#swagger-object
 type Swagger struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	swagger             string
 	info                *Info
@@ -36,9 +36,9 @@ func (s *Swagger) Schemes() []string                               { return s.sc
 func (s *Swagger) Consumes() []string                              { return s.consumes }
 func (s *Swagger) Produces() []string                              { return s.produces }
 func (s *Swagger) Paths() *Paths                                   { return s.paths }
-func (s *Swagger) Definitions() map[string]*shared.Ref[Schema]              { return s.definitions }
-func (s *Swagger) Parameters() map[string]*shared.Ref[Parameter]            { return s.parameters }
-func (s *Swagger) Responses() map[string]*shared.Ref[Response]              { return s.responses }
+func (s *Swagger) Definitions() map[string]*shared.Ref[Schema]     { return s.definitions }
+func (s *Swagger) Parameters() map[string]*shared.Ref[Parameter]   { return s.parameters }
+func (s *Swagger) Responses() map[string]*shared.Ref[Response]     { return s.responses }
 func (s *Swagger) SecurityDefinitions() map[string]*SecurityScheme { return s.securityDefinitions }
 func (s *Swagger) Security() []SecurityRequirement                 { return s.security }
 func (s *Swagger) Tags() []*Tag                                    { return s.tags }

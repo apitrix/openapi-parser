@@ -9,7 +9,7 @@ import (
 // PathItem describes operations available on a single path.
 // https://spec.openapis.org/oas/v3.1.0#path-item-object
 type PathItem struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	ref         string
 	summary     string
@@ -26,18 +26,18 @@ type PathItem struct {
 	parameters  []*shared.RefWithMeta[Parameter]
 }
 
-func (p *PathItem) Ref() string                 { return p.ref }
-func (p *PathItem) Summary() string             { return p.summary }
-func (p *PathItem) Description() string         { return p.description }
-func (p *PathItem) Get() *Operation             { return p.get }
-func (p *PathItem) Put() *Operation             { return p.put }
-func (p *PathItem) Post() *Operation            { return p.post }
-func (p *PathItem) Delete() *Operation          { return p.delete }
-func (p *PathItem) Options() *Operation         { return p.options }
-func (p *PathItem) Head() *Operation            { return p.head }
-func (p *PathItem) Patch() *Operation           { return p.patch }
-func (p *PathItem) Trace() *Operation           { return p.trace }
-func (p *PathItem) Servers() []*Server          { return p.servers }
+func (p *PathItem) Ref() string                                  { return p.ref }
+func (p *PathItem) Summary() string                              { return p.summary }
+func (p *PathItem) Description() string                          { return p.description }
+func (p *PathItem) Get() *Operation                              { return p.get }
+func (p *PathItem) Put() *Operation                              { return p.put }
+func (p *PathItem) Post() *Operation                             { return p.post }
+func (p *PathItem) Delete() *Operation                           { return p.delete }
+func (p *PathItem) Options() *Operation                          { return p.options }
+func (p *PathItem) Head() *Operation                             { return p.head }
+func (p *PathItem) Patch() *Operation                            { return p.patch }
+func (p *PathItem) Trace() *Operation                            { return p.trace }
+func (p *PathItem) Servers() []*Server                           { return p.servers }
 func (p *PathItem) Parameters() []*shared.RefWithMeta[Parameter] { return p.parameters }
 
 // SetProperty sets a named property on the PathItem.

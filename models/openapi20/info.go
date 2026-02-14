@@ -9,7 +9,7 @@ import (
 // Info provides metadata about the API.
 // https://swagger.io/specification/v2/#info-object
 type Info struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	title          string
 	description    string

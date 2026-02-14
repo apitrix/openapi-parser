@@ -9,7 +9,7 @@ import (
 // Tag adds metadata to a single tag used by the Operation Object.
 // https://spec.openapis.org/oas/v3.0.3#tag-object
 type Tag struct {
-	Node // embedded - provides VendorExtensions and Trix
+	ElementBase // embedded - provides VendorExtensions and Trix
 
 	name         string
 	description  string
