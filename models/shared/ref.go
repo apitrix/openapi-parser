@@ -3,6 +3,7 @@ package shared
 import (
 	"encoding/json"
 	"strings"
+	"sync"
 
 	"gopkg.in/yaml.v3"
 )
@@ -16,6 +17,7 @@ type Ref[T any] struct {
 	circular bool
 	done     chan struct{} // closed when resolution completes; nil for inline
 	err      error         // resolution error, if any
+	doneOnce sync.Once     // ensures MarkDone only closes once
 }
 
 // NewRef creates a new Ref with the given $ref string.
@@ -85,10 +87,13 @@ func (r *Ref[T]) SetResolveErr(err error) {
 func (r *Ref[T]) InitDone() { r.done = make(chan struct{}) }
 
 // MarkDone closes the done channel, unblocking any waiters.
+// Safe to call multiple times; only closes once.
 func (r *Ref[T]) MarkDone() {
-	if r.done != nil {
-		close(r.done)
-	}
+	r.doneOnce.Do(func() {
+		if r.done != nil {
+			close(r.done)
+		}
+	})
 }
 
 // Done returns the done channel for waiting on resolution.
@@ -145,6 +150,7 @@ type RefWithMeta[T any] struct {
 	circular    bool
 	done        chan struct{} // closed when resolution completes; nil for inline
 	err         error         // resolution error, if any
+	doneOnce    sync.Once     // ensures MarkDone only closes once
 }
 
 // NewRefWithMeta creates a new RefWithMeta with the given $ref string.
@@ -214,10 +220,13 @@ func (r *RefWithMeta[T]) SetResolveErr(err error) {
 func (r *RefWithMeta[T]) InitDone() { r.done = make(chan struct{}) }
 
 // MarkDone closes the done channel, unblocking any waiters.
+// Safe to call multiple times; only closes once.
 func (r *RefWithMeta[T]) MarkDone() {
-	if r.done != nil {
-		close(r.done)
-	}
+	r.doneOnce.Do(func() {
+		if r.done != nil {
+			close(r.done)
+		}
+	})
 }
 
 // Done returns the done channel for waiting on resolution.
