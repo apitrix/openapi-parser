@@ -3,7 +3,7 @@ package openapi30
 import (
 	"testing"
 
-	"openapi-parser/models/testutil"
+	"github.com/apitrix/openapi-parser/models/testutil"
 )
 
 // allTypes lists all OpenAPI 3.0 model types for conformance testing.

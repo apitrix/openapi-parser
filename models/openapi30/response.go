@@ -1,7 +1,7 @@
 package openapi30
 
 import (
-	"openapi-parser/models/shared"
+	"github.com/apitrix/openapi-parser/models/shared"
 
 	"gopkg.in/yaml.v3"
 )

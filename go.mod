@@ -1,4 +1,4 @@
-module openapi-parser
+module github.com/apitrix/openapi-parser
 
 go 1.26
 

@@ -1,6 +1,6 @@
 package openapi31x
 
-import "openapi-parser/parsers/shared"
+import "github.com/apitrix/openapi-parser/parsers/shared"
 
 // ParseConfig controls which features are enabled during parsing.
 // Use this alias instead of shared.ParseConfig when calling Parse, ParseReader, or ParseFile.

@@ -1,8 +1,8 @@
 package openapi20
 
 import (
-	"openapi-parser/parsers/shared"
-	openapi20models "openapi-parser/models/openapi20"
+	"github.com/apitrix/openapi-parser/parsers/shared"
+	openapi20models "github.com/apitrix/openapi-parser/models/openapi20"
 
 	"gopkg.in/yaml.v3"
 )

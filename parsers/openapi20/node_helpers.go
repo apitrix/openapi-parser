@@ -3,7 +3,7 @@ package openapi20
 import (
 	"iter"
 
-	"openapi-parser/parsers/shared"
+	"github.com/apitrix/openapi-parser/parsers/shared"
 
 	"gopkg.in/yaml.v3"
 )

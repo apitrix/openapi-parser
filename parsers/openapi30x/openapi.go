@@ -3,8 +3,8 @@ package openapi30x
 import (
 	"strings"
 
-	"openapi-parser/parsers/shared"
-	openapi30models "openapi-parser/models/openapi30"
+	"github.com/apitrix/openapi-parser/parsers/shared"
+	openapi30models "github.com/apitrix/openapi-parser/models/openapi30"
 
 	"gopkg.in/yaml.v3"
 )

@@ -1,6 +1,6 @@
 package openapi31
 
-import "openapi-parser/models/shared"
+import "github.com/apitrix/openapi-parser/models/shared"
 
 // Location represents a position in the source file.
 type Location = shared.Location

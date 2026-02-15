@@ -1,6 +1,6 @@
 package openapi20
 
-import "openapi-parser/models/shared"
+import "github.com/apitrix/openapi-parser/models/shared"
 
 // Type aliases for shared meta types.
 type Location = shared.Location

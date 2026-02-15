@@ -1,10 +1,10 @@
 package openapi31x
 
 import (
-	"openapi-parser/models/shared"
+	"github.com/apitrix/openapi-parser/models/shared"
 	"regexp"
 
-	openapi31models "openapi-parser/models/openapi31"
+	openapi31models "github.com/apitrix/openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
 )

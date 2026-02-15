@@ -4,8 +4,8 @@ import (
 	"errors"
 	"strings"
 
-	openapi30models "openapi-parser/models/openapi30"
-	"openapi-parser/parsers/shared"
+	openapi30models "github.com/apitrix/openapi-parser/models/openapi30"
+	"github.com/apitrix/openapi-parser/parsers/shared"
 )
 
 // ParseError represents an error that occurred during parsing,

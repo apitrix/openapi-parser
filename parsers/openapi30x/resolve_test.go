@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"openapi-parser/parsers/shared"
+	"github.com/apitrix/openapi-parser/parsers/shared"
 
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"

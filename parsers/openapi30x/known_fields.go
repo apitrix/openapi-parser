@@ -1,6 +1,6 @@
 package openapi30x
 
-import "openapi-parser/parsers/shared"
+import "github.com/apitrix/openapi-parser/parsers/shared"
 
 // Known fields for each OpenAPI 3.0.x object type.
 // These are used for detecting unknown/unrecognized fields during parsing.

@@ -1,168 +1,123 @@
 # OpenAPI Parser
 
-A Go library for parsing OpenAPI 2.0, 3.0, and 3.1 specifications with full source location metadata, `$ref` resolution, circular reference detection, and unknown field detection.
-
-## Features
-
-- **Multi-version support** — OpenAPI 2.0 (Swagger), 3.0.x, and 3.1.x / 3.2.x
-- **JSON and YAML** — Parses both formats seamlessly via `yaml.v3`
-- **`$ref` resolution** — Local JSON pointers and external file references with caching
-- **Circular reference detection** — Marks self-referencing schemas with `Circular = true` instead of infinite recursion
-- **Source location metadata** — Line and column numbers preserved for every parsed element via `Trix.Source`
-- **Unknown field detection** — Identifies typos, misplaced properties, and unsupported fields
-- **Vendor extension support** — Captures `x-*` vendor extension fields in `VendorExtensions`
-- **Reference types** — Typed `*Ref` wrappers distinguish `$ref` strings from inline objects
-- **Raw data access** — Original parsed structure available for tooling
-
-## Installation
+Go library for parsing OpenAPI 2.0, 3.0, and 3.1 specifications.
 
 ```bash
-go get openapi-parser
+go get github.com/apitrix/openapi-parser
 ```
 
-## Quick Start
+## Parse
 
 ```go
-package main
+result, _ := openapi30x.Parse(data)          // from bytes
+result, _ := openapi30x.ParseFile("api.yaml") // from file (resolves $ref)
+result, _ := openapi30x.ParseReader(r)        // from io.Reader
+```
 
-import (
-    "fmt"
-    "os"
+All parsers share the same API: `openapi20`, `openapi30x`, `openapi31x`.
 
-    "openapi-parser/parsers/openapi30x"
-)
+## Config
 
-func main() {
-    data, _ := os.ReadFile("openapi.yaml")
+`nil` config enables everything. Use flags to control individual features:
 
-    result, err := openapi30x.Parse(data)
-    if err != nil {
-        panic(err)
+```go
+result, _ := openapi30x.Parse(data, &openapi30x.ParseConfig{
+    ResolveInternalRefs: true,
+    ResolveExternalRefs: true,
+    DetectUnknownFields: true,
+    ApplySpecDefaults:   true,
+})
+```
+
+## Source locations
+
+Every element carries line/column via `Trix.Source`:
+
+```go
+info := result.Document.Info()
+fmt.Println(info.Trix.Source.Start.Line, info.Trix.Source.Start.Column)
+```
+
+## $ref resolution
+
+Refs resolve in the background. `Value()` blocks until resolved:
+
+```go
+result, _ := openapi30x.ParseFile("api.yaml")
+result.Wait() // wait for all refs
+
+schemaRef := mediaType.Schema()
+schemaRef.Ref         // "$ref" string, e.g. "#/components/schemas/Pet"
+schemaRef.Value()     // resolved *Schema (blocks until ready)
+schemaRef.Circular()  // true if circular reference detected
+schemaRef.ResolveErr() // resolution error, if any
+```
+
+See [docs/references.md](docs/references.md) and [docs/background_resolve.md](docs/background_resolve.md).
+
+## Unknown field detection
+
+Fields not in the OpenAPI spec appear in `result.Errors` with `Kind == "unknown_field"`:
+
+```go
+result, _ := openapi30x.Parse(data) // DetectUnknownFields on by default
+for _, e := range result.Errors {
+    if e.Kind == "unknown_field" {
+        fmt.Println(e.Path, e.Message, e.Line)
     }
-
-    fmt.Printf("Title: %s\n", result.Document.Info.Title)
-    fmt.Printf("Version: %s\n", result.Document.Info.Version)
-
-    // Source location is available on every element via the Trix namespace
-    fmt.Printf("Info defined at line %d\n", result.Document.Info.Trix.Source.Start.Line)
 }
 ```
 
-### Parsing from a File (with `$ref` Resolution)
+See [docs/unknown_fields.md](docs/unknown_fields.md).
 
-`ParseFile` reads the file, parses it, and resolves all `$ref` references (local and external) relative to the file's directory:
+## Spec defaults
+
+When enabled, fills in spec-defined defaults (e.g. missing `servers` becomes `[{url: "/"}]`):
 
 ```go
-result, err := openapi30x.ParseFile("./specs/openapi.yaml")
+result, _ := openapi30x.Parse(data) // ApplySpecDefaults on by default
+servers := result.Document.Servers()
+// servers[0].URL() == "/" when servers was absent
 ```
 
-This works identically across all three parser versions.
+See [docs/defaults.md](docs/defaults.md).
 
-## API
+## Vendor extensions
 
-### Parse Functions
-
-Each parser package (`openapi20`, `openapi30x`, `openapi31x`) exposes the same surface:
-
-| Function | Description |
-|----------|-------------|
-| `Parse(data []byte)` | Parse from bytes, returns `*ParseResult` |
-| `ParseReader(r io.Reader)` | Parse from an io.Reader, returns `*ParseResult` |
-| `ParseFile(pathOrURL string)` | Parse from file path or URL with full `$ref` resolution, returns `*ParseResult` |
-
-### Detecting Unknown Fields
-
-All parse functions always return unknown fields in the result:
+`x-*` fields are captured on every element:
 
 ```go
-result, err := openapi30x.Parse(data)
-if err != nil {
-    log.Fatal(err)
-}
-
-for _, field := range result.UnknownFields {
-    fmt.Printf("Unknown field '%s' at %s (line %d)\n",
-        field.Key, field.Path, field.Line)
-}
+info := result.Document.Info()
+fmt.Println(info.VendorExtensions["x-custom"])
 ```
 
-### Reference Types
+## Setters and hooks
 
-Fields that can be `$ref` or inline use typed wrapper structs:
+All fields have setters. Hooks run before mutation and can reject changes:
 
 ```go
-schema := operation.RequestBody.Value.Content["application/json"].Schema
-
-if schema.Ref != "" {
-    fmt.Println("Reference to:", schema.Ref)
-} else {
-    fmt.Println("Inline schema type:", schema.Value.Type)
-}
-
-// Circular references are flagged, not followed
-if schema.Circular {
-    fmt.Println("This is a circular reference")
-}
+info := result.Document.Info()
+info.Trix.OnSet("title", func(field string, oldVal, newVal any) error {
+    if newVal.(string) == "" {
+        return fmt.Errorf("title cannot be empty")
+    }
+    return nil
+})
+err := info.SetTitle("New Title")
 ```
 
-## Project Structure
+See [docs/setters-and-hooks.md](docs/setters-and-hooks.md).
 
-```
-openapi-parser/
-├── models/
-│   ├── openapi20/          # Swagger 2.0 model types
-│   ├── openapi30/          # OpenAPI 3.0 model types
-│   └── openapi31/          # OpenAPI 3.1 model types
-├── parsers/
-│   ├── internal/shared/    # Shared utilities, RefResolver, node helpers
-│   ├── openapi20/          # OpenAPI 2.0 parser
-│   ├── openapi30x/         # OpenAPI 3.0.x parser
-│   └── openapi31x/         # OpenAPI 3.1.x / 3.2.x parser
-└── docs/                   # Documentation
-```
+## Errors
 
-## Model Architecture
-
-Every parsed object embeds `Node`, which cleanly separates spec fields from library metadata:
+All errors (parse, unknown fields, resolve) are in `result.Errors`:
 
 ```go
-type Node struct {
-    VendorExtensions map[string]interface{} // x-* vendor extension fields
-    Trix             Trix                   // Library-level metadata (apitrix)
-}
-
-type Trix struct {
-    Source NodeSource // Source location info (line/column)
-}
-
-type NodeSource struct {
-    Start Location    // Start line/column (1-based)
-    End   Location    // End line/column (1-based)
-    Raw   interface{} // Original parsed data
+for _, e := range result.Errors {
+    fmt.Println(e.Kind, e.Path, e.Message) // "error", "unknown_field", or "resolve_error"
 }
 ```
-
-**Design principle:** Spec-defined fields live directly on the model struct. Everything provided by the library lives under `Trix`. Vendor extensions (`x-*`) live in `VendorExtensions`.
-
-```go
-// Spec fields — direct access
-fmt.Println(doc.Info.Title)
-
-// Library metadata — under Trix
-fmt.Println(doc.Info.Trix.Source.Start.Line)
-
-// Vendor extensions
-fmt.Println(doc.Info.VendorExtensions["x-custom"])
-```
-
-This enables IDE integration with go-to-definition, precise error messages, and linting tools.
-
-## Dependencies
-
-- [gopkg.in/yaml.v3](https://gopkg.in/yaml.v3) — YAML parsing with node-level source locations
-- [github.com/spf13/afero](https://github.com/spf13/afero) — Filesystem abstraction for testable file I/O
-- [github.com/stretchr/testify](https://github.com/stretchr/testify) — Test assertions
 
 ## License
 
-MIT License
+MIT

@@ -3,8 +3,8 @@ package openapi20
 import (
 	"reflect"
 
-	openapi20models "openapi-parser/models/openapi20"
-	"openapi-parser/parsers/shared"
+	openapi20models "github.com/apitrix/openapi-parser/models/openapi20"
+	"github.com/apitrix/openapi-parser/parsers/shared"
 )
 
 // flattenErrors recursively walks the parsed document tree and collects

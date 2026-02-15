@@ -3,9 +3,9 @@ package openapi31x
 import (
 	"strings"
 
-	"openapi-parser/models/shared"
-	parsersshared "openapi-parser/parsers/shared"
-	openapi31models "openapi-parser/models/openapi31"
+	"github.com/apitrix/openapi-parser/models/shared"
+	parsersshared "github.com/apitrix/openapi-parser/parsers/shared"
+	openapi31models "github.com/apitrix/openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
 )

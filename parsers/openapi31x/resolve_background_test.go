@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	openapi31models "openapi-parser/models/openapi31"
+	openapi31models "github.com/apitrix/openapi-parser/models/openapi31"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

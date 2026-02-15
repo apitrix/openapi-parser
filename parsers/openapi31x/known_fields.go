@@ -1,6 +1,6 @@
 package openapi31x
 
-import "openapi-parser/parsers/shared"
+import "github.com/apitrix/openapi-parser/parsers/shared"
 
 // ============================================================================
 // Known field lists for OpenAPI 3.1 objects.

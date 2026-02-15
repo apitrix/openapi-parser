@@ -2,7 +2,7 @@
 //
 // This package parses YAML or JSON documents conforming to the Swagger 2.0 specification
 // (https://swagger.io/specification/v2/) into strongly-typed Go models defined in
-// the openapi-parser/models/openapi20 package.
+// the github.com/apitrix/openapi-parser/models/openapi20 package.
 //
 // # Usage
 //

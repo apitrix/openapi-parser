@@ -4,9 +4,9 @@ This package contains parsers for OpenAPI specifications:
 
 | Package | Specification | Go Import |
 |---------|---------------|-----------|
-| `openapi20` | OpenAPI 2.0 (Swagger) | `openapi-parser/parsers/openapi20` |
-| `openapi30x` | OpenAPI 3.0.x | `openapi-parser/parsers/openapi30x` |
-| `openapi31x` | OpenAPI 3.1.x / 3.2.x | `openapi-parser/parsers/openapi31x` |
+| `openapi20` | OpenAPI 2.0 (Swagger) | `github.com/apitrix/openapi-parser/parsers/openapi20` |
+| `openapi30x` | OpenAPI 3.0.x | `github.com/apitrix/openapi-parser/parsers/openapi30x` |
+| `openapi31x` | OpenAPI 3.1.x / 3.2.x | `github.com/apitrix/openapi-parser/parsers/openapi31x` |
 
 All parsers share identical architecture and a common `internal/shared` package.
 
@@ -59,39 +59,19 @@ Common utilities extracted across all three parsers:
 ## Usage
 
 ```go
-// OpenAPI 3.1
-import "openapi-parser/parsers/openapi31x"
-result, err := openapi31x.Parse(data)
-fmt.Println(result.Document.Info.Title)
-
 // OpenAPI 3.0
-import "openapi-parser/parsers/openapi30x"
+import "github.com/apitrix/openapi-parser/parsers/openapi30x"
 result, err := openapi30x.Parse(data)
-
-// OpenAPI 2.0 (Swagger)
-import "openapi-parser/parsers/openapi20"
-result, err := openapi20.Parse(data)
+fmt.Println(result.Document.Info().Title())
 
 // Parse from file with full $ref resolution
 result, err := openapi30x.ParseFile("openapi.yaml")
+result.Wait() // block until refs resolved
 
-// Unknown fields are always available in the result
-result, err := openapi30x.Parse(data)
-for _, f := range result.UnknownFields {
-    log.Printf("Unknown: %s at %s", f.Key, f.Path)
-}
-
-// Check for parse-time issues on nodes (errors + unknown fields)
-result, err := openapi30x.Parse(data)
-if err != nil {
-    log.Fatal(err) // fatal: bad YAML or unsupported version
-}
-for _, e := range result.Document.Info.Trix.Errors {
-    switch e.Kind {
-    case "error":
-        log.Printf("parse error: %s", e.Message)
-    case "unknown_field":
-        log.Printf("unknown field: %s", e.Message)
+// Errors (parse, unknown fields, resolve) in result.Errors
+for _, e := range result.Errors {
+    if e.Kind == "unknown_field" {
+        log.Printf("Unknown: %s", e.Message)
     }
 }
 ```

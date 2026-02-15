@@ -3,7 +3,7 @@ package openapi20
 import (
 	"testing"
 
-	"openapi-parser/parsers/shared"
+	"github.com/apitrix/openapi-parser/parsers/shared"
 
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"

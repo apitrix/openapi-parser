@@ -92,8 +92,8 @@ Setters follow the pattern `Set` + getter name:
 
 Setters are available on all model types in:
 
-- `openapi-parser/models/openapi20` (Swagger 2.0)
-- `openapi-parser/models/openapi30` (OpenAPI 3.0.x)
-- `openapi-parser/models/openapi31` (OpenAPI 3.1.x)
+- `github.com/apitrix/openapi-parser/models/openapi20` (Swagger 2.0)
+- `github.com/apitrix/openapi-parser/models/openapi30` (OpenAPI 3.0.x)
+- `github.com/apitrix/openapi-parser/models/openapi31` (OpenAPI 3.1.x)
 
 Each unexported field with a getter has a corresponding setter that runs hooks before applying the change.

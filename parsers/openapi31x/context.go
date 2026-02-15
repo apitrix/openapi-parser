@@ -3,7 +3,7 @@ package openapi31x
 import (
 	"strings"
 
-	openapi31models "openapi-parser/models/openapi31"
+	openapi31models "github.com/apitrix/openapi-parser/models/openapi31"
 
 	"gopkg.in/yaml.v3"
 )

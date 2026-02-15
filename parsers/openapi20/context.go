@@ -3,7 +3,7 @@ package openapi20
 import (
 	"strings"
 
-	openapi20models "openapi-parser/models/openapi20"
+	openapi20models "github.com/apitrix/openapi-parser/models/openapi20"
 
 	"gopkg.in/yaml.v3"
 )

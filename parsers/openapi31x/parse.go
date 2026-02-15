@@ -7,8 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
-	openapi31models "openapi-parser/models/openapi31"
-	"openapi-parser/parsers/shared"
+	openapi31models "github.com/apitrix/openapi-parser/models/openapi31"
+	"github.com/apitrix/openapi-parser/parsers/shared"
 
 	"gopkg.in/yaml.v3"
 )

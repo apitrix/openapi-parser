@@ -6,47 +6,36 @@ All parse functions (`Parse`, `ParseReader`, `ParseFile`) always return unknown 
 
 ## Quick Start
 
+Unknown fields appear in `result.Errors` with `Kind == "unknown_field"`:
+
 ```go
-import "openapi-parser/parsers/openapi30x"
+import "github.com/apitrix/openapi-parser/parsers/openapi30x"
 
 result, err := openapi30x.Parse(data)
 if err != nil {
     log.Fatal(err)
 }
 
-// Use the parsed document
-doc := result.Document
-
-// Check for unknown fields
-if len(result.UnknownFields) > 0 {
-    for _, f := range result.UnknownFields {
-        log.Printf("Warning: unknown field '%s' at %s (line %d, col %d)",
-            f.Key, f.Path, f.Line, f.Column)
+for _, e := range result.Errors {
+    if e.Kind == "unknown_field" {
+        log.Printf("Unknown field at %v (line %d): %s", e.Path, e.Line, e.Message)
     }
 }
 ```
 
 ## API Reference
 
-### ParseResult
+### ParseResult.Errors
 
-All parse functions return `*ParseResult`:
-
-```go
-type ParseResult struct {
-    Document      *OpenAPI       // The parsed OpenAPI specification
-    UnknownFields []UnknownField // Fields not recognized as valid OpenAPI fields
-}
-```
-
-### UnknownField
+All parse functions return `*ParseResult` with `Errors []*ParseError`. Unknown fields are reported as `ParseError` with `Kind: "unknown_field"`:
 
 ```go
-type UnknownField struct {
-    Path   string // JSON path, e.g., "paths./pets.get.responses.200"
-    Key    string // The unknown field name
-    Line   int    // Source line number (1-based)
-    Column int    // Source column number (1-based)
+type ParseError struct {
+    Path    []string // JSON path
+    Message string   // Error message
+    Kind    string   // "error", "unknown_field", or "resolve_error"
+    Line    int      // Source line (1-based)
+    Column  int      // Source column (1-based)
 }
 ```
 

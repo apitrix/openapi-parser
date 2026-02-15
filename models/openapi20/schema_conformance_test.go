@@ -3,7 +3,7 @@ package openapi20
 import (
 	"testing"
 
-	"openapi-parser/models/testutil"
+	"github.com/apitrix/openapi-parser/models/testutil"
 )
 
 // allTypes lists all Swagger 2.0 model types for conformance testing.
