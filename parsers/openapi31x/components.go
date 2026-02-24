@@ -101,6 +101,15 @@ func parseOpenAPIComponents(node *yaml.Node, ctx *ParseContext) (*openapi31model
 		components.SetProperty("pathItems", pathItems)
 	}
 
+	// MediaTypes - new in 3.2
+	mediaTypes, err := parseComponentsMediaTypes(node, ctx)
+	if err != nil {
+		components.Trix.Errors = append(components.Trix.Errors, toParseError(err))
+	}
+	if mediaTypes != nil {
+		components.SetProperty("mediaTypes", mediaTypes)
+	}
+
 	components.VendorExtensions = parseNodeExtensions(node)
 	components.Trix.Source = ctx.nodeSource(node)
 

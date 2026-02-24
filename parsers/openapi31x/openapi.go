@@ -32,7 +32,10 @@ func parseOpenAPI(node *yaml.Node, ctx *ParseContext) (*openapi31models.OpenAPI,
 		openapi.Trix.Errors = append(openapi.Trix.Errors, toParseError(err))
 	}
 
-	// Simple property - jsonSchemaDialect
+	// Simple properties
+	if self := nodeGetString(node, "$self"); self != "" {
+		_ = openapi.SetSelf(self)
+	}
 	if dialect := nodeGetString(node, "jsonSchemaDialect"); dialect != "" {
 		openapi.SetProperty("jsonSchemaDialect", dialect)
 	}

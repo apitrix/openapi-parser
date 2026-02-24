@@ -12,6 +12,7 @@ type OpenAPI struct {
 	ElementBase // embedded - provides VendorExtensions and Trix
 
 	openAPI           string
+	self              string
 	info              *Info
 	jsonSchemaDialect string
 	servers           []*Server
@@ -24,6 +25,7 @@ type OpenAPI struct {
 }
 
 func (o *OpenAPI) OpenAPIVersion() string               { return o.openAPI }
+func (o *OpenAPI) Self() string                         { return o.self }
 func (o *OpenAPI) Info() *Info                          { return o.info }
 func (o *OpenAPI) JsonSchemaDialect() string            { return o.jsonSchemaDialect }
 func (o *OpenAPI) Servers() []*Server                   { return o.servers }
@@ -39,6 +41,13 @@ func (o *OpenAPI) SetOpenAPIVersion(openAPI string) error {
 		return err
 	}
 	o.openAPI = openAPI
+	return nil
+}
+func (o *OpenAPI) SetSelf(self string) error {
+	if err := o.Trix.RunHooks("$self", o.self, self); err != nil {
+		return err
+	}
+	o.self = self
 	return nil
 }
 func (o *OpenAPI) SetInfo(info *Info) error {
@@ -140,6 +149,7 @@ func NewOpenAPI(version string, info *Info) *OpenAPI {
 func (o *OpenAPI) marshalFields() []shared.Field {
 	fields := []shared.Field{
 		{Key: "openapi", Value: o.openAPI},
+		{Key: "$self", Value: o.self},
 		{Key: "info", Value: o.info},
 		{Key: "jsonSchemaDialect", Value: o.jsonSchemaDialect},
 		{Key: "servers", Value: o.servers},

@@ -21,9 +21,11 @@ type PathItem struct {
 	options     *Operation
 	head        *Operation
 	patch       *Operation
-	trace       *Operation
-	servers     []*Server
-	parameters  []*RefParameter
+	trace               *Operation
+	servers             []*Server
+	parameters          []*RefParameter
+	additionalOperations map[string]*Operation
+	query               *Operation
 }
 
 func (p *PathItem) Ref() string                 { return p.ref }
@@ -37,8 +39,10 @@ func (p *PathItem) Options() *Operation         { return p.options }
 func (p *PathItem) Head() *Operation            { return p.head }
 func (p *PathItem) Patch() *Operation           { return p.patch }
 func (p *PathItem) Trace() *Operation           { return p.trace }
-func (p *PathItem) Servers() []*Server          { return p.servers }
-func (p *PathItem) Parameters() []*RefParameter { return p.parameters }
+func (p *PathItem) Servers() []*Server                    { return p.servers }
+func (p *PathItem) Parameters() []*RefParameter           { return p.parameters }
+func (p *PathItem) AdditionalOperations() map[string]*Operation { return p.additionalOperations }
+func (p *PathItem) Query() *Operation                     { return p.query }
 
 func (p *PathItem) SetRef(ref string) error {
 	if err := p.Trix.RunHooks("$ref", p.ref, ref); err != nil {
@@ -131,6 +135,20 @@ func (p *PathItem) SetParameters(parameters []*RefParameter) error {
 	p.parameters = parameters
 	return nil
 }
+func (p *PathItem) SetAdditionalOperations(additionalOperations map[string]*Operation) error {
+	if err := p.Trix.RunHooks("additionalOperations", p.additionalOperations, additionalOperations); err != nil {
+		return err
+	}
+	p.additionalOperations = additionalOperations
+	return nil
+}
+func (p *PathItem) SetQuery(query *Operation) error {
+	if err := p.Trix.RunHooks("query", p.query, query); err != nil {
+		return err
+	}
+	p.query = query
+	return nil
+}
 
 // SetProperty sets a named property on the PathItem.
 // Used by parsers for post-construction field assignment.
@@ -162,6 +180,10 @@ func (p *PathItem) SetProperty(name string, value interface{}) {
 		p.servers = value.([]*Server)
 	case "parameters":
 		p.parameters = value.([]*RefParameter)
+	case "additionalOperations":
+		p.additionalOperations = value.(map[string]*Operation)
+	case "query":
+		p.query = value.(*Operation)
 	}
 }
 
@@ -185,6 +207,8 @@ func (p *PathItem) marshalFields() []shared.Field {
 		{Key: "trace", Value: p.trace},
 		{Key: "servers", Value: p.servers},
 		{Key: "parameters", Value: p.parameters},
+		{Key: "additionalOperations", Value: p.additionalOperations},
+		{Key: "query", Value: p.query},
 	}
 	return shared.AppendExtensions(fields, p.VendorExtensions)
 }

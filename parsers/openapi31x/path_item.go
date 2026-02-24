@@ -6,6 +6,27 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// parsePathItemAdditionalOperations parses the PathItem.additionalOperations field (OpenAPI 3.2).
+func parsePathItemAdditionalOperations(parent *yaml.Node, ctx *ParseContext) (map[string]*openapi31models.Operation, error) {
+	node := nodeGetValue(parent, "additionalOperations")
+	if node == nil || !nodeIsMapping(node) {
+		return nil, nil
+	}
+
+	ops := make(map[string]*openapi31models.Operation)
+	actx := ctx.push("additionalOperations")
+	for name, opNode := range nodeMapPairs(node) {
+		op, err := parseOperationFromNode(opNode, actx.push(name))
+		if err != nil {
+			return nil, err
+		}
+		if op != nil {
+			ops[name] = op
+		}
+	}
+	return ops, nil
+}
+
 // parseOpenAPIPathsPathItem parses a PathItem object from a yaml.Node.
 // OpenAPI 3.1.0 spec: https://spec.openapis.org/oas/v3.1.0#path-item-object
 func parseOpenAPIPathsPathItem(node *yaml.Node, ctx *ParseContext) (*openapi31models.PathItem, error) {
@@ -94,6 +115,23 @@ func parseOpenAPIPathsPathItem(node *yaml.Node, ctx *ParseContext) (*openapi31mo
 	}
 	if trace != nil {
 		pathItem.SetProperty("trace", trace)
+	}
+
+	// OpenAPI 3.2: query and additionalOperations
+	query, err := parseOpenAPIPathsPathItemOperation(node, "query", ctx)
+	if err != nil {
+		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
+	}
+	if query != nil {
+		pathItem.SetProperty("query", query)
+	}
+
+	additionalOps, err := parsePathItemAdditionalOperations(node, ctx)
+	if err != nil {
+		pathItem.Trix.Errors = append(pathItem.Trix.Errors, toParseError(err))
+	}
+	if additionalOps != nil {
+		pathItem.SetProperty("additionalOperations", additionalOps)
 	}
 
 	// Complex properties - delegated to dedicated files

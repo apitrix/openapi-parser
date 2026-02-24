@@ -37,6 +37,10 @@ func (p *exampleParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mod
 	example.VendorExtensions = parseNodeExtensions(node)
 	example.Trix.Source = ctx.nodeSource(node)
 
+	// Set OpenAPI 3.2 fields via setters
+	_ = example.SetDataValue(p.ParseDataValue(node))
+	_ = example.SetSerializedValue(p.ParseSerializedValue(node))
+
 	// Detect unknown fields
 	example.Trix.Errors = append(example.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, exampleKnownFieldsSet))...)
 
@@ -57,4 +61,12 @@ func (p *exampleParser) ParseValue(node *yaml.Node) interface{} {
 
 func (p *exampleParser) ParseExternalValue(node *yaml.Node) string {
 	return nodeGetString(node, "externalValue")
+}
+
+func (p *exampleParser) ParseDataValue(node *yaml.Node) interface{} {
+	return nodeGetAny(node, "dataValue")
+}
+
+func (p *exampleParser) ParseSerializedValue(node *yaml.Node) string {
+	return nodeGetString(node, "serializedValue")
 }

@@ -41,6 +41,7 @@ type RefSecurityScheme = shared.RefWithMeta[SecurityScheme]
 type RefLink = shared.RefWithMeta[Link]
 type RefCallback = shared.RefWithMeta[Callback]
 type RefPathItem = shared.RefWithMeta[PathItem]
+type RefMediaType = shared.RefWithMeta[MediaType]
 
 func NewRefSchema(ref string) *RefSchema           { return shared.NewRefWithMeta[Schema](ref) }
 func NewRefParameter(ref string) *RefParameter     { return shared.NewRefWithMeta[Parameter](ref) }
@@ -53,7 +54,8 @@ func NewRefSecurityScheme(ref string) *RefSecurityScheme {
 }
 func NewRefLink(ref string) *RefLink         { return shared.NewRefWithMeta[Link](ref) }
 func NewRefCallback(ref string) *RefCallback { return shared.NewRefWithMeta[Callback](ref) }
-func NewRefPathItem(ref string) *RefPathItem { return shared.NewRefWithMeta[PathItem](ref) }
+func NewRefPathItem(ref string) *RefPathItem   { return shared.NewRefWithMeta[PathItem](ref) }
+func NewRefMediaType(ref string) *RefMediaType { return shared.NewRefWithMeta[MediaType](ref) }
 
 // ElementBase is embedded in all v31 types to provide vendor extensions and library metadata.
 type ElementBase struct {

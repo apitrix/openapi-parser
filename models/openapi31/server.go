@@ -13,11 +13,13 @@ type Server struct {
 
 	url         string
 	description string
+	name        string
 	variables   map[string]*ServerVariable
 }
 
 func (s *Server) URL() string                           { return s.url }
 func (s *Server) Description() string                   { return s.description }
+func (s *Server) Name() string                           { return s.name }
 func (s *Server) Variables() map[string]*ServerVariable { return s.variables }
 
 func (s *Server) SetURL(url string) error {
@@ -32,6 +34,13 @@ func (s *Server) SetDescription(description string) error {
 		return err
 	}
 	s.description = description
+	return nil
+}
+func (s *Server) SetName(name string) error {
+	if err := s.Trix.RunHooks("name", s.name, name); err != nil {
+		return err
+	}
+	s.name = name
 	return nil
 }
 func (s *Server) SetVariables(variables map[string]*ServerVariable) error {
@@ -51,6 +60,7 @@ func (s *Server) marshalFields() []shared.Field {
 	fields := []shared.Field{
 		{Key: "url", Value: s.url},
 		{Key: "description", Value: s.description},
+		{Key: "name", Value: s.name},
 		{Key: "variables", Value: s.variables},
 	}
 	return shared.AppendExtensions(fields, s.VendorExtensions)

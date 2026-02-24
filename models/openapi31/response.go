@@ -11,17 +11,26 @@ import (
 type Response struct {
 	ElementBase // embedded - provides VendorExtensions and Trix
 
+	summary     string
 	description string
 	headers     map[string]*RefHeader
 	content     map[string]*MediaType
 	links       map[string]*RefLink
 }
 
-func (r *Response) Description() string            { return r.description }
+func (r *Response) Summary() string                 { return r.summary }
+func (r *Response) Description() string              { return r.description }
 func (r *Response) Headers() map[string]*RefHeader { return r.headers }
 func (r *Response) Content() map[string]*MediaType { return r.content }
 func (r *Response) Links() map[string]*RefLink     { return r.links }
 
+func (r *Response) SetSummary(summary string) error {
+	if err := r.Trix.RunHooks("summary", r.summary, summary); err != nil {
+		return err
+	}
+	r.summary = summary
+	return nil
+}
 func (r *Response) SetDescription(description string) error {
 	if err := r.Trix.RunHooks("description", r.description, description); err != nil {
 		return err
@@ -58,6 +67,7 @@ func NewResponse(description string, headers map[string]*RefHeader, content map[
 
 func (r *Response) marshalFields() []shared.Field {
 	fields := []shared.Field{
+		{Key: "summary", Value: r.summary},
 		{Key: "description", Value: r.description},
 		{Key: "headers", Value: r.headers},
 		{Key: "content", Value: r.content},

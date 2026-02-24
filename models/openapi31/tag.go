@@ -12,19 +12,32 @@ type Tag struct {
 	ElementBase // embedded - provides VendorExtensions and Trix
 
 	name         string
+	summary      string
 	description  string
 	externalDocs *ExternalDocumentation
+	parent       string
+	kind         string
 }
 
 func (t *Tag) Name() string                         { return t.name }
-func (t *Tag) Description() string                  { return t.description }
+func (t *Tag) Summary() string                      { return t.summary }
+func (t *Tag) Description() string                 { return t.description }
 func (t *Tag) ExternalDocs() *ExternalDocumentation { return t.externalDocs }
+func (t *Tag) Parent() string                      { return t.parent }
+func (t *Tag) Kind() string                         { return t.kind }
 
 func (t *Tag) SetName(name string) error {
 	if err := t.Trix.RunHooks("name", t.name, name); err != nil {
 		return err
 	}
 	t.name = name
+	return nil
+}
+func (t *Tag) SetSummary(summary string) error {
+	if err := t.Trix.RunHooks("summary", t.summary, summary); err != nil {
+		return err
+	}
+	t.summary = summary
 	return nil
 }
 func (t *Tag) SetDescription(description string) error {
@@ -41,6 +54,20 @@ func (t *Tag) SetExternalDocs(externalDocs *ExternalDocumentation) error {
 	t.externalDocs = externalDocs
 	return nil
 }
+func (t *Tag) SetParent(parent string) error {
+	if err := t.Trix.RunHooks("parent", t.parent, parent); err != nil {
+		return err
+	}
+	t.parent = parent
+	return nil
+}
+func (t *Tag) SetKind(kind string) error {
+	if err := t.Trix.RunHooks("kind", t.kind, kind); err != nil {
+		return err
+	}
+	t.kind = kind
+	return nil
+}
 
 // NewTag creates a new Tag instance.
 func NewTag(name, description string, externalDocs *ExternalDocumentation) *Tag {
@@ -50,8 +77,11 @@ func NewTag(name, description string, externalDocs *ExternalDocumentation) *Tag 
 func (t *Tag) marshalFields() []shared.Field {
 	fields := []shared.Field{
 		{Key: "name", Value: t.name},
+		{Key: "summary", Value: t.summary},
 		{Key: "description", Value: t.description},
 		{Key: "externalDocs", Value: t.externalDocs},
+		{Key: "parent", Value: t.parent},
+		{Key: "kind", Value: t.kind},
 	}
 	return shared.AppendExtensions(fields, t.VendorExtensions)
 }

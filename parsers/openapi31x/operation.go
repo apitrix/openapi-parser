@@ -15,12 +15,20 @@ func parseOpenAPIPathsPathItemOperation(parent *yaml.Node, method string, ctx *P
 	if node == nil {
 		return nil, nil
 	}
+	return parseOperationFromNode(node, ctx.push(method))
+}
 
-	if !nodeIsMapping(node) {
-		return nil, ctx.push(method).errorAt(node, "operation must be an object")
+// parseOperationFromNode parses an Operation from a yaml.Node.
+// Used by path item operations and additionalOperations (OpenAPI 3.2).
+func parseOperationFromNode(node *yaml.Node, opCtx *ParseContext) (*openapi31models.Operation, error) {
+	if node == nil {
+		return nil, nil
 	}
 
-	opCtx := ctx.push(method)
+	if !nodeIsMapping(node) {
+		return nil, opCtx.errorAt(node, "operation must be an object")
+	}
+
 	op := openapi31models.NewOperation()
 
 	// Simple properties

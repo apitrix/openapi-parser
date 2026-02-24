@@ -62,6 +62,11 @@ func (p *tagParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31models.
 	tag.Trix.Source = ctx.nodeSource(node)
 	tag.Trix.Errors = append(tag.Trix.Errors, errs...)
 
+	// Set OpenAPI 3.2 fields via setters
+	_ = tag.SetSummary(p.ParseSummary(node))
+	_ = tag.SetParent(p.ParseParent(node))
+	_ = tag.SetKind(p.ParseKind(node))
+
 	// Detect unknown fields
 	tag.Trix.Errors = append(tag.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, tagKnownFieldsSet))...)
 
@@ -74,4 +79,16 @@ func (p *tagParser) ParseName(node *yaml.Node) string {
 
 func (p *tagParser) ParseDescription(node *yaml.Node) string {
 	return nodeGetString(node, "description")
+}
+
+func (p *tagParser) ParseSummary(node *yaml.Node) string {
+	return nodeGetString(node, "summary")
+}
+
+func (p *tagParser) ParseParent(node *yaml.Node) string {
+	return nodeGetString(node, "parent")
+}
+
+func (p *tagParser) ParseKind(node *yaml.Node) string {
+	return nodeGetString(node, "kind")
 }

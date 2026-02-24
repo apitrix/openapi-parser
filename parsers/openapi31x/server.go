@@ -62,6 +62,9 @@ func (p *serverParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mode
 	server.Trix.Source = ctx.nodeSource(node)
 	server.Trix.Errors = append(server.Trix.Errors, errs...)
 
+	// Set OpenAPI 3.2 field via setter
+	_ = server.SetName(p.ParseName(node))
+
 	// Detect unknown fields
 	server.Trix.Errors = append(server.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, serverKnownFieldsSet))...)
 
@@ -74,4 +77,8 @@ func (p *serverParser) ParseURL(node *yaml.Node) string {
 
 func (p *serverParser) ParseDescription(node *yaml.Node) string {
 	return nodeGetString(node, "description")
+}
+
+func (p *serverParser) ParseName(node *yaml.Node) string {
+	return nodeGetString(node, "name")
 }

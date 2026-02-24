@@ -11,16 +11,20 @@ import (
 type Example struct {
 	ElementBase // embedded - provides VendorExtensions and Trix
 
-	summary       string
-	description   string
-	value         interface{}
-	externalValue string
+	summary        string
+	description    string
+	value          interface{}
+	externalValue  string
+	dataValue      interface{}
+	serializedValue string
 }
 
-func (e *Example) Summary() string       { return e.summary }
-func (e *Example) Description() string   { return e.description }
-func (e *Example) Value() interface{}    { return e.value }
-func (e *Example) ExternalValue() string { return e.externalValue }
+func (e *Example) Summary() string        { return e.summary }
+func (e *Example) Description() string    { return e.description }
+func (e *Example) Value() interface{}      { return e.value }
+func (e *Example) ExternalValue() string  { return e.externalValue }
+func (e *Example) DataValue() interface{} { return e.dataValue }
+func (e *Example) SerializedValue() string { return e.serializedValue }
 
 func (e *Example) SetSummary(summary string) error {
 	if err := e.Trix.RunHooks("summary", e.summary, summary); err != nil {
@@ -50,6 +54,20 @@ func (e *Example) SetExternalValue(externalValue string) error {
 	e.externalValue = externalValue
 	return nil
 }
+func (e *Example) SetDataValue(dataValue interface{}) error {
+	if err := e.Trix.RunHooks("dataValue", e.dataValue, dataValue); err != nil {
+		return err
+	}
+	e.dataValue = dataValue
+	return nil
+}
+func (e *Example) SetSerializedValue(serializedValue string) error {
+	if err := e.Trix.RunHooks("serializedValue", e.serializedValue, serializedValue); err != nil {
+		return err
+	}
+	e.serializedValue = serializedValue
+	return nil
+}
 
 // NewExample creates a new Example instance.
 func NewExample(summary, description string, value interface{}, externalValue string) *Example {
@@ -62,6 +80,8 @@ func (e *Example) marshalFields() []shared.Field {
 		{Key: "description", Value: e.description},
 		{Key: "value", Value: e.value},
 		{Key: "externalValue", Value: e.externalValue},
+		{Key: "dataValue", Value: e.dataValue},
+		{Key: "serializedValue", Value: e.serializedValue},
 	}
 	return shared.AppendExtensions(fields, e.VendorExtensions)
 }

@@ -9,7 +9,7 @@ import "github.com/apitrix/openapi-parser/parsers/shared"
 
 // OpenAPI Object
 var openAPIKnownFields = []string{
-	"openapi", "info", "jsonSchemaDialect", "servers",
+	"openapi", "$self", "info", "jsonSchemaDialect", "servers",
 	"paths", "webhooks", "components", "security", "tags", "externalDocs",
 }
 
@@ -39,7 +39,7 @@ var licenseKnownFieldsSet = shared.ToSet(licenseKnownFields)
 
 // Server Object
 var serverKnownFields = []string{
-	"url", "description", "variables",
+	"url", "description", "name", "variables",
 }
 
 var serverKnownFieldsSet = shared.ToSet(serverKnownFields)
@@ -55,7 +55,7 @@ var serverVariableKnownFieldsSet = shared.ToSet(serverVariableKnownFields)
 var componentsKnownFields = []string{
 	"schemas", "responses", "parameters", "examples",
 	"requestBodies", "headers", "securitySchemes", "links",
-	"callbacks", "pathItems",
+	"callbacks", "pathItems", "mediaTypes",
 }
 
 var componentsKnownFieldsSet = shared.ToSet(componentsKnownFields)
@@ -64,7 +64,7 @@ var componentsKnownFieldsSet = shared.ToSet(componentsKnownFields)
 var pathItemKnownFields = []string{
 	"$ref", "summary", "description",
 	"get", "put", "post", "delete", "options", "head", "patch", "trace",
-	"servers", "parameters",
+	"servers", "parameters", "additionalOperations", "query",
 }
 
 var pathItemKnownFieldsSet = shared.ToSet(pathItemKnownFields)
@@ -112,7 +112,8 @@ var requestBodyKnownFieldsSet = shared.ToSet(requestBodyKnownFields)
 
 // Media Type Object
 var mediaTypeKnownFields = []string{
-	"schema", "example", "examples", "encoding",
+	"description", "schema", "example", "examples", "encoding",
+	"itemSchema", "prefixEncoding", "itemEncoding",
 }
 
 var mediaTypeKnownFieldsSet = shared.ToSet(mediaTypeKnownFields)
@@ -120,6 +121,7 @@ var mediaTypeKnownFieldsSet = shared.ToSet(mediaTypeKnownFields)
 // Encoding Object
 var encodingKnownFields = []string{
 	"contentType", "headers", "style", "explode", "allowReserved",
+	"encoding", "prefixEncoding", "itemEncoding",
 }
 
 var encodingKnownFieldsSet = shared.ToSet(encodingKnownFields)
@@ -133,7 +135,7 @@ var responsesKnownFieldsSet = shared.ToSet(responsesKnownFields)
 
 // Response Object
 var responseKnownFields = []string{
-	"description", "headers", "content", "links",
+	"summary", "description", "headers", "content", "links",
 }
 
 var responseKnownFieldsSet = shared.ToSet(responseKnownFields)
@@ -148,6 +150,7 @@ var callbackKnownFieldsSet = shared.ToSet(callbackKnownFields)
 // Example Object
 var exampleKnownFields = []string{
 	"summary", "description", "value", "externalValue",
+	"dataValue", "serializedValue",
 }
 
 var exampleKnownFieldsSet = shared.ToSet(exampleKnownFields)
@@ -162,7 +165,7 @@ var linkKnownFieldsSet = shared.ToSet(linkKnownFields)
 
 // Tag Object
 var tagKnownFields = []string{
-	"name", "description", "externalDocs",
+	"name", "summary", "description", "externalDocs", "parent", "kind",
 }
 
 var tagKnownFieldsSet = shared.ToSet(tagKnownFields)

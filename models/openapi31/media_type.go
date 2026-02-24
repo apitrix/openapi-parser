@@ -11,16 +11,24 @@ import (
 type MediaType struct {
 	ElementBase // embedded - provides VendorExtensions and Trix
 
-	schema   *RefSchema
-	example  interface{}
-	examples map[string]*RefExample
-	encoding map[string]*Encoding
+	description    string
+	schema         *RefSchema
+	example        interface{}
+	examples       map[string]*RefExample
+	encoding       map[string]*Encoding
+	itemSchema     *RefSchema
+	prefixEncoding []*Encoding
+	itemEncoding   *Encoding
 }
 
+func (m *MediaType) Description() string               { return m.description }
 func (m *MediaType) Schema() *RefSchema               { return m.schema }
-func (m *MediaType) Example() interface{}             { return m.example }
-func (m *MediaType) Examples() map[string]*RefExample { return m.examples }
-func (m *MediaType) Encoding() map[string]*Encoding   { return m.encoding }
+func (m *MediaType) Example() interface{}               { return m.example }
+func (m *MediaType) Examples() map[string]*RefExample  { return m.examples }
+func (m *MediaType) Encoding() map[string]*Encoding    { return m.encoding }
+func (m *MediaType) ItemSchema() *RefSchema            { return m.itemSchema }
+func (m *MediaType) PrefixEncoding() []*Encoding       { return m.prefixEncoding }
+func (m *MediaType) ItemEncoding() *Encoding           { return m.itemEncoding }
 
 func (m *MediaType) SetSchema(schema *RefSchema) error {
 	if err := m.Trix.RunHooks("schema", m.schema, schema); err != nil {
@@ -50,6 +58,34 @@ func (m *MediaType) SetEncoding(encoding map[string]*Encoding) error {
 	m.encoding = encoding
 	return nil
 }
+func (m *MediaType) SetDescription(description string) error {
+	if err := m.Trix.RunHooks("description", m.description, description); err != nil {
+		return err
+	}
+	m.description = description
+	return nil
+}
+func (m *MediaType) SetItemSchema(itemSchema *RefSchema) error {
+	if err := m.Trix.RunHooks("itemSchema", m.itemSchema, itemSchema); err != nil {
+		return err
+	}
+	m.itemSchema = itemSchema
+	return nil
+}
+func (m *MediaType) SetPrefixEncoding(prefixEncoding []*Encoding) error {
+	if err := m.Trix.RunHooks("prefixEncoding", m.prefixEncoding, prefixEncoding); err != nil {
+		return err
+	}
+	m.prefixEncoding = prefixEncoding
+	return nil
+}
+func (m *MediaType) SetItemEncoding(itemEncoding *Encoding) error {
+	if err := m.Trix.RunHooks("itemEncoding", m.itemEncoding, itemEncoding); err != nil {
+		return err
+	}
+	m.itemEncoding = itemEncoding
+	return nil
+}
 
 // NewMediaType creates a new MediaType instance.
 func NewMediaType(schema *RefSchema, example interface{}, examples map[string]*RefExample, encoding map[string]*Encoding) *MediaType {
@@ -58,10 +94,14 @@ func NewMediaType(schema *RefSchema, example interface{}, examples map[string]*R
 
 func (m *MediaType) marshalFields() []shared.Field {
 	fields := []shared.Field{
+		{Key: "description", Value: m.description},
 		{Key: "schema", Value: m.schema},
 		{Key: "example", Value: m.example},
 		{Key: "examples", Value: m.examples},
 		{Key: "encoding", Value: m.encoding},
+		{Key: "itemSchema", Value: m.itemSchema},
+		{Key: "prefixEncoding", Value: m.prefixEncoding},
+		{Key: "itemEncoding", Value: m.itemEncoding},
 	}
 	return shared.AppendExtensions(fields, m.VendorExtensions)
 }

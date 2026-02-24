@@ -11,18 +11,24 @@ import (
 type Encoding struct {
 	ElementBase // embedded - provides VendorExtensions and Trix
 
-	contentType   string
-	headers       map[string]*RefHeader
-	style         string
-	explode       *bool
-	allowReserved bool
+	contentType    string
+	headers        map[string]*RefHeader
+	style          string
+	explode        *bool
+	allowReserved  bool
+	encoding       map[string]*Encoding
+	prefixEncoding []*Encoding
+	itemEncoding   *Encoding
 }
 
-func (e *Encoding) ContentType() string            { return e.contentType }
-func (e *Encoding) Headers() map[string]*RefHeader { return e.headers }
-func (e *Encoding) Style() string                  { return e.style }
-func (e *Encoding) Explode() *bool                 { return e.explode }
-func (e *Encoding) AllowReserved() bool            { return e.allowReserved }
+func (e *Encoding) ContentType() string             { return e.contentType }
+func (e *Encoding) Headers() map[string]*RefHeader   { return e.headers }
+func (e *Encoding) Style() string                   { return e.style }
+func (e *Encoding) Explode() *bool                  { return e.explode }
+func (e *Encoding) AllowReserved() bool             { return e.allowReserved }
+func (e *Encoding) Encoding() map[string]*Encoding  { return e.encoding }
+func (e *Encoding) PrefixEncoding() []*Encoding     { return e.prefixEncoding }
+func (e *Encoding) ItemEncoding() *Encoding         { return e.itemEncoding }
 
 func (e *Encoding) SetContentType(contentType string) error {
 	if err := e.Trix.RunHooks("contentType", e.contentType, contentType); err != nil {
@@ -59,6 +65,27 @@ func (e *Encoding) SetAllowReserved(allowReserved bool) error {
 	e.allowReserved = allowReserved
 	return nil
 }
+func (e *Encoding) SetEncoding(encoding map[string]*Encoding) error {
+	if err := e.Trix.RunHooks("encoding", e.encoding, encoding); err != nil {
+		return err
+	}
+	e.encoding = encoding
+	return nil
+}
+func (e *Encoding) SetPrefixEncoding(prefixEncoding []*Encoding) error {
+	if err := e.Trix.RunHooks("prefixEncoding", e.prefixEncoding, prefixEncoding); err != nil {
+		return err
+	}
+	e.prefixEncoding = prefixEncoding
+	return nil
+}
+func (e *Encoding) SetItemEncoding(itemEncoding *Encoding) error {
+	if err := e.Trix.RunHooks("itemEncoding", e.itemEncoding, itemEncoding); err != nil {
+		return err
+	}
+	e.itemEncoding = itemEncoding
+	return nil
+}
 
 // NewEncoding creates a new Encoding instance.
 func NewEncoding(contentType, style string, headers map[string]*RefHeader, explode *bool, allowReserved bool) *Encoding {
@@ -75,6 +102,9 @@ func (e *Encoding) marshalFields() []shared.Field {
 		{Key: "style", Value: e.style},
 		{Key: "explode", Value: e.explode},
 		{Key: "allowReserved", Value: e.allowReserved},
+		{Key: "encoding", Value: e.encoding},
+		{Key: "prefixEncoding", Value: e.prefixEncoding},
+		{Key: "itemEncoding", Value: e.itemEncoding},
 	}
 	return shared.AppendExtensions(fields, e.VendorExtensions)
 }

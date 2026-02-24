@@ -216,6 +216,22 @@ func methodToJSONPropertyName(name string) string {
 		return "deviceAuthorizationUrl"
 	case "DefaultMapping":
 		return "defaultMapping"
+	case "Self":
+		return "$self"
+	case "DataValue":
+		return "dataValue"
+	case "SerializedValue":
+		return "serializedValue"
+	case "ItemSchema":
+		return "itemSchema"
+	case "ItemEncoding":
+		return "itemEncoding"
+	case "PrefixEncoding":
+		return "prefixEncoding"
+	case "AdditionalOperations":
+		return "additionalOperations"
+	case "MediaTypes":
+		return "mediaTypes"
 	// Skip infrastructure methods
 	case "SetProperty":
 		return ""

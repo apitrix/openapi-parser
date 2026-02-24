@@ -56,6 +56,9 @@ func (p *responseParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mo
 	resp.Trix.Source = ctx.nodeSource(node)
 	resp.Trix.Errors = append(resp.Trix.Errors, errs...)
 
+	// Set OpenAPI 3.2 field via setter
+	_ = resp.SetSummary(p.ParseSummary(node))
+
 	// Detect unknown fields
 	resp.Trix.Errors = append(resp.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, responseKnownFieldsSet))...)
 
@@ -64,4 +67,8 @@ func (p *responseParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31mo
 
 func (p *responseParser) ParseDescription(node *yaml.Node) string {
 	return nodeGetString(node, "description")
+}
+
+func (p *responseParser) ParseSummary(node *yaml.Node) string {
+	return nodeGetString(node, "summary")
 }

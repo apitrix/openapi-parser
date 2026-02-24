@@ -21,6 +21,7 @@ type Components struct {
 	links           map[string]*RefLink
 	callbacks       map[string]*RefCallback
 	pathItems       map[string]*RefPathItem
+	mediaTypes      map[string]*RefMediaType
 }
 
 func (c *Components) Schemas() map[string]*RefSchema       { return c.schemas }
@@ -36,7 +37,8 @@ func (c *Components) SecuritySchemes() map[string]*RefSecurityScheme {
 }
 func (c *Components) Links() map[string]*RefLink         { return c.links }
 func (c *Components) Callbacks() map[string]*RefCallback { return c.callbacks }
-func (c *Components) PathItems() map[string]*RefPathItem { return c.pathItems }
+func (c *Components) PathItems() map[string]*RefPathItem   { return c.pathItems }
+func (c *Components) MediaTypes() map[string]*RefMediaType { return c.mediaTypes }
 
 func (c *Components) SetSchemas(schemas map[string]*RefSchema) error {
 	if err := c.Trix.RunHooks("schemas", c.schemas, schemas); err != nil {
@@ -108,6 +110,13 @@ func (c *Components) SetPathItems(pathItems map[string]*RefPathItem) error {
 	c.pathItems = pathItems
 	return nil
 }
+func (c *Components) SetMediaTypes(mediaTypes map[string]*RefMediaType) error {
+	if err := c.Trix.RunHooks("mediaTypes", c.mediaTypes, mediaTypes); err != nil {
+		return err
+	}
+	c.mediaTypes = mediaTypes
+	return nil
+}
 
 // SetProperty sets a named property on the Components.
 // Used by parsers for post-construction field assignment.
@@ -133,6 +142,8 @@ func (c *Components) SetProperty(name string, value interface{}) {
 		c.callbacks = value.(map[string]*RefCallback)
 	case "pathItems":
 		c.pathItems = value.(map[string]*RefPathItem)
+	case "mediaTypes":
+		c.mediaTypes = value.(map[string]*RefMediaType)
 	}
 }
 
@@ -153,6 +164,7 @@ func (c *Components) marshalFields() []shared.Field {
 		{Key: "links", Value: c.links},
 		{Key: "callbacks", Value: c.callbacks},
 		{Key: "pathItems", Value: c.pathItems},
+		{Key: "mediaTypes", Value: c.mediaTypes},
 	}
 	return shared.AppendExtensions(fields, c.VendorExtensions)
 }
