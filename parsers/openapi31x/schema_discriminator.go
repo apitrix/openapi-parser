@@ -29,6 +29,9 @@ func (p *schemaParser) ParseDiscriminator(parent *yaml.Node, c *ParseContext) (*
 	disc.VendorExtensions = parseNodeExtensions(node)
 	disc.Trix.Source = pctx.nodeSource(node)
 
+	// Set OpenAPI 3.2 field via setter
+	_ = disc.SetDefaultMapping(nodeGetString(node, "defaultMapping"))
+
 	// Detect unknown fields
 	disc.Trix.Errors = append(disc.Trix.Errors, unknownFieldParseErrors(pctx.detectUnknown(node, discriminatorKnownFieldsSet))...)
 

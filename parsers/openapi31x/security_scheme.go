@@ -50,6 +50,12 @@ func (p *securitySchemeParser) parse(node *yaml.Node, ctx *ParseContext) (*opena
 	scheme.Trix.Source = ctx.nodeSource(node)
 	scheme.Trix.Errors = append(scheme.Trix.Errors, errs...)
 
+	// Set OpenAPI 3.2 fields via setters
+	_ = scheme.SetOAuth2MetadataURL(p.ParseOAuth2MetadataURL(node))
+	if dep := p.ParseDeprecated(node); dep != nil {
+		_ = scheme.SetDeprecated(dep)
+	}
+
 	// Detect unknown fields
 	scheme.Trix.Errors = append(scheme.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, securitySchemeKnownFieldsSet))...)
 
@@ -82,4 +88,12 @@ func (p *securitySchemeParser) ParseBearerFormat(node *yaml.Node) string {
 
 func (p *securitySchemeParser) ParseOpenIDConnectURL(node *yaml.Node) string {
 	return nodeGetString(node, "openIdConnectUrl")
+}
+
+func (p *securitySchemeParser) ParseOAuth2MetadataURL(node *yaml.Node) string {
+	return nodeGetString(node, "oauth2MetadataUrl")
+}
+
+func (p *securitySchemeParser) ParseDeprecated(node *yaml.Node) *bool {
+	return nodeGetBoolPtr(node, "deprecated")
 }

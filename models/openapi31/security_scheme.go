@@ -11,14 +11,16 @@ import (
 type SecurityScheme struct {
 	ElementBase // embedded - provides VendorExtensions and Trix
 
-	schemeType       string
-	description      string
-	name             string
-	in               string
-	scheme           string
-	bearerFormat     string
-	flows            *OAuthFlows
-	openIDConnectURL string
+	schemeType         string
+	description        string
+	name               string
+	in                 string
+	scheme             string
+	bearerFormat       string
+	flows              *OAuthFlows
+	openIDConnectURL   string
+	oauth2MetadataURL  string
+	deprecated         *bool
 }
 
 func (s *SecurityScheme) Type() string             { return s.schemeType }
@@ -29,6 +31,8 @@ func (s *SecurityScheme) Scheme() string           { return s.scheme }
 func (s *SecurityScheme) BearerFormat() string     { return s.bearerFormat }
 func (s *SecurityScheme) Flows() *OAuthFlows       { return s.flows }
 func (s *SecurityScheme) OpenIDConnectURL() string { return s.openIDConnectURL }
+func (s *SecurityScheme) OAuth2MetadataURL() string { return s.oauth2MetadataURL }
+func (s *SecurityScheme) Deprecated() *bool { return s.deprecated }
 
 func (s *SecurityScheme) SetType(schemeType string) error {
 	if err := s.Trix.RunHooks("type", s.schemeType, schemeType); err != nil {
@@ -86,6 +90,20 @@ func (s *SecurityScheme) SetOpenIDConnectURL(openIDConnectURL string) error {
 	s.openIDConnectURL = openIDConnectURL
 	return nil
 }
+func (s *SecurityScheme) SetOAuth2MetadataURL(oauth2MetadataURL string) error {
+	if err := s.Trix.RunHooks("oauth2MetadataUrl", s.oauth2MetadataURL, oauth2MetadataURL); err != nil {
+		return err
+	}
+	s.oauth2MetadataURL = oauth2MetadataURL
+	return nil
+}
+func (s *SecurityScheme) SetDeprecated(deprecated *bool) error {
+	if err := s.Trix.RunHooks("deprecated", s.deprecated, deprecated); err != nil {
+		return err
+	}
+	s.deprecated = deprecated
+	return nil
+}
 
 // NewSecurityScheme creates a new SecurityScheme instance.
 func NewSecurityScheme(schemeType, description, name, in, scheme, bearerFormat, openIDConnectURL string, flows *OAuthFlows) *SecurityScheme {
@@ -106,6 +124,8 @@ func (s *SecurityScheme) marshalFields() []shared.Field {
 		{Key: "bearerFormat", Value: s.bearerFormat},
 		{Key: "flows", Value: s.flows},
 		{Key: "openIdConnectUrl", Value: s.openIDConnectURL},
+		{Key: "oauth2MetadataUrl", Value: s.oauth2MetadataURL},
+		{Key: "deprecated", Value: s.deprecated},
 	}
 	return shared.AppendExtensions(fields, s.VendorExtensions)
 }

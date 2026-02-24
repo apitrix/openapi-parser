@@ -11,12 +11,14 @@ import (
 type Discriminator struct {
 	ElementBase // embedded - provides VendorExtensions and Trix
 
-	propertyName string
-	mapping      map[string]string
+	propertyName  string
+	mapping       map[string]string
+	defaultMapping string
 }
 
-func (d *Discriminator) PropertyName() string       { return d.propertyName }
-func (d *Discriminator) Mapping() map[string]string { return d.mapping }
+func (d *Discriminator) PropertyName() string         { return d.propertyName }
+func (d *Discriminator) Mapping() map[string]string  { return d.mapping }
+func (d *Discriminator) DefaultMapping() string      { return d.defaultMapping }
 
 func (d *Discriminator) SetPropertyName(propertyName string) error {
 	if err := d.Trix.RunHooks("propertyName", d.propertyName, propertyName); err != nil {
@@ -32,6 +34,13 @@ func (d *Discriminator) SetMapping(mapping map[string]string) error {
 	d.mapping = mapping
 	return nil
 }
+func (d *Discriminator) SetDefaultMapping(defaultMapping string) error {
+	if err := d.Trix.RunHooks("defaultMapping", d.defaultMapping, defaultMapping); err != nil {
+		return err
+	}
+	d.defaultMapping = defaultMapping
+	return nil
+}
 
 // NewDiscriminator creates a new Discriminator instance.
 func NewDiscriminator(propertyName string, mapping map[string]string) *Discriminator {
@@ -42,6 +51,7 @@ func (d *Discriminator) marshalFields() []shared.Field {
 	fields := []shared.Field{
 		{Key: "propertyName", Value: d.propertyName},
 		{Key: "mapping", Value: d.mapping},
+		{Key: "defaultMapping", Value: d.defaultMapping},
 	}
 	return shared.AppendExtensions(fields, d.VendorExtensions)
 }

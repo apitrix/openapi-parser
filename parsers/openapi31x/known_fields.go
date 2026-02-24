@@ -170,7 +170,7 @@ var tagKnownFieldsSet = shared.ToSet(tagKnownFields)
 // Security Scheme Object
 var securitySchemeKnownFields = []string{
 	"type", "description", "name", "in", "scheme", "bearerFormat",
-	"flows", "openIdConnectUrl",
+	"flows", "openIdConnectUrl", "oauth2MetadataUrl", "deprecated",
 }
 
 var securitySchemeKnownFieldsSet = shared.ToSet(securitySchemeKnownFields)
@@ -178,6 +178,7 @@ var securitySchemeKnownFieldsSet = shared.ToSet(securitySchemeKnownFields)
 // OAuth Flows Object
 var oauthFlowsKnownFields = []string{
 	"implicit", "password", "clientCredentials", "authorizationCode",
+	"deviceAuthorization",
 }
 
 var oauthFlowsKnownFieldsSet = shared.ToSet(oauthFlowsKnownFields)
@@ -185,13 +186,14 @@ var oauthFlowsKnownFieldsSet = shared.ToSet(oauthFlowsKnownFields)
 // OAuth Flow Object
 var oauthFlowKnownFields = []string{
 	"authorizationUrl", "tokenUrl", "refreshUrl", "scopes",
+	"deviceAuthorizationUrl",
 }
 
 var oauthFlowKnownFieldsSet = shared.ToSet(oauthFlowKnownFields)
 
 // Discriminator Object
 var discriminatorKnownFields = []string{
-	"propertyName", "mapping",
+	"propertyName", "mapping", "defaultMapping",
 }
 
 var discriminatorKnownFieldsSet = shared.ToSet(discriminatorKnownFields)

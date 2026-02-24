@@ -210,6 +210,12 @@ func methodToJSONPropertyName(name string) string {
 		return "refreshUrl"
 	case "OpenIDConnectURL":
 		return "openIdConnectUrl"
+	case "OAuth2MetadataURL":
+		return "oauth2MetadataUrl"
+	case "DeviceAuthorizationURL":
+		return "deviceAuthorizationUrl"
+	case "DefaultMapping":
+		return "defaultMapping"
 	// Skip infrastructure methods
 	case "SetProperty":
 		return ""

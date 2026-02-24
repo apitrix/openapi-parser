@@ -49,12 +49,20 @@ func (p *oauthFlowsParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31
 		errs = append(errs, toParseError(err))
 	}
 
+	deviceAuthorization, err := p.ParseDeviceAuthorization(node, ctx)
+	if err != nil {
+		errs = append(errs, toParseError(err))
+	}
+
 	// Create via constructor
 	flows := openapi31models.NewOAuthFlows(implicit, password, clientCredentials, authorizationCode)
 
 	flows.VendorExtensions = parseNodeExtensions(node)
 	flows.Trix.Source = ctx.nodeSource(node)
 	flows.Trix.Errors = append(flows.Trix.Errors, errs...)
+
+	// Set OpenAPI 3.2 field via setter
+	_ = flows.SetDeviceAuthorization(deviceAuthorization)
 
 	// Detect unknown fields
 	flows.Trix.Errors = append(flows.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, oauthFlowsKnownFieldsSet))...)
@@ -92,4 +100,12 @@ func (p *oauthFlowsParser) ParseAuthorizationCode(parent *yaml.Node, c *ParseCon
 		return nil, nil
 	}
 	return parseSharedOAuthFlow(node, c.Push("authorizationCode"))
+}
+
+func (p *oauthFlowsParser) ParseDeviceAuthorization(parent *yaml.Node, c *ParseContext) (*openapi31models.OAuthFlow, error) {
+	node := nodeGetValue(parent, "deviceAuthorization")
+	if node == nil {
+		return nil, nil
+	}
+	return parseSharedOAuthFlow(node, c.Push("deviceAuthorization"))
 }

@@ -37,6 +37,9 @@ func (p *oauthFlowParser) parse(node *yaml.Node, ctx *ParseContext) (*openapi31m
 	flow.VendorExtensions = parseNodeExtensions(node)
 	flow.Trix.Source = ctx.nodeSource(node)
 
+	// Set OpenAPI 3.2 field via setter
+	_ = flow.SetDeviceAuthorizationURL(p.ParseDeviceAuthorizationURL(node))
+
 	// Detect unknown fields
 	flow.Trix.Errors = append(flow.Trix.Errors, unknownFieldParseErrors(ctx.detectUnknown(node, oauthFlowKnownFieldsSet))...)
 
@@ -57,4 +60,8 @@ func (p *oauthFlowParser) ParseRefreshURL(node *yaml.Node) string {
 
 func (p *oauthFlowParser) ParseScopes(node *yaml.Node) map[string]string {
 	return nodeGetStringMap(node, "scopes")
+}
+
+func (p *oauthFlowParser) ParseDeviceAuthorizationURL(node *yaml.Node) string {
+	return nodeGetString(node, "deviceAuthorizationUrl")
 }

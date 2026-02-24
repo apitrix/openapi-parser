@@ -11,16 +11,18 @@ import (
 type OAuthFlows struct {
 	ElementBase // embedded - provides VendorExtensions and Trix
 
-	implicit          *OAuthFlow
-	password          *OAuthFlow
-	clientCredentials *OAuthFlow
-	authorizationCode *OAuthFlow
+	implicit           *OAuthFlow
+	password           *OAuthFlow
+	clientCredentials  *OAuthFlow
+	authorizationCode  *OAuthFlow
+	deviceAuthorization *OAuthFlow
 }
 
-func (f *OAuthFlows) Implicit() *OAuthFlow          { return f.implicit }
-func (f *OAuthFlows) Password() *OAuthFlow          { return f.password }
-func (f *OAuthFlows) ClientCredentials() *OAuthFlow { return f.clientCredentials }
-func (f *OAuthFlows) AuthorizationCode() *OAuthFlow { return f.authorizationCode }
+func (f *OAuthFlows) Implicit() *OAuthFlow            { return f.implicit }
+func (f *OAuthFlows) Password() *OAuthFlow            { return f.password }
+func (f *OAuthFlows) ClientCredentials() *OAuthFlow  { return f.clientCredentials }
+func (f *OAuthFlows) AuthorizationCode() *OAuthFlow     { return f.authorizationCode }
+func (f *OAuthFlows) DeviceAuthorization() *OAuthFlow { return f.deviceAuthorization }
 
 func (f *OAuthFlows) SetImplicit(implicit *OAuthFlow) error {
 	if err := f.Trix.RunHooks("implicit", f.implicit, implicit); err != nil {
@@ -50,6 +52,13 @@ func (f *OAuthFlows) SetAuthorizationCode(authorizationCode *OAuthFlow) error {
 	f.authorizationCode = authorizationCode
 	return nil
 }
+func (f *OAuthFlows) SetDeviceAuthorization(deviceAuthorization *OAuthFlow) error {
+	if err := f.Trix.RunHooks("deviceAuthorization", f.deviceAuthorization, deviceAuthorization); err != nil {
+		return err
+	}
+	f.deviceAuthorization = deviceAuthorization
+	return nil
+}
 
 // NewOAuthFlows creates a new OAuthFlows instance.
 func NewOAuthFlows(implicit, password, clientCredentials, authorizationCode *OAuthFlow) *OAuthFlows {
@@ -65,6 +74,7 @@ func (f *OAuthFlows) marshalFields() []shared.Field {
 		{Key: "password", Value: f.password},
 		{Key: "clientCredentials", Value: f.clientCredentials},
 		{Key: "authorizationCode", Value: f.authorizationCode},
+		{Key: "deviceAuthorization", Value: f.deviceAuthorization},
 	}
 	return shared.AppendExtensions(fields, f.VendorExtensions)
 }

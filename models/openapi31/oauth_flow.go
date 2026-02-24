@@ -11,16 +11,18 @@ import (
 type OAuthFlow struct {
 	ElementBase // embedded - provides VendorExtensions and Trix
 
-	authorizationURL string
-	tokenURL         string
-	refreshURL       string
-	scopes           map[string]string
+	authorizationURL       string
+	tokenURL               string
+	refreshURL             string
+	scopes                 map[string]string
+	deviceAuthorizationURL string
 }
 
-func (f *OAuthFlow) AuthorizationURL() string  { return f.authorizationURL }
-func (f *OAuthFlow) TokenURL() string          { return f.tokenURL }
-func (f *OAuthFlow) RefreshURL() string        { return f.refreshURL }
-func (f *OAuthFlow) Scopes() map[string]string { return f.scopes }
+func (f *OAuthFlow) AuthorizationURL() string       { return f.authorizationURL }
+func (f *OAuthFlow) TokenURL() string               { return f.tokenURL }
+func (f *OAuthFlow) RefreshURL() string            { return f.refreshURL }
+func (f *OAuthFlow) Scopes() map[string]string     { return f.scopes }
+func (f *OAuthFlow) DeviceAuthorizationURL() string  { return f.deviceAuthorizationURL }
 
 func (f *OAuthFlow) SetAuthorizationURL(authorizationURL string) error {
 	if err := f.Trix.RunHooks("authorizationUrl", f.authorizationURL, authorizationURL); err != nil {
@@ -50,6 +52,13 @@ func (f *OAuthFlow) SetScopes(scopes map[string]string) error {
 	f.scopes = scopes
 	return nil
 }
+func (f *OAuthFlow) SetDeviceAuthorizationURL(deviceAuthorizationURL string) error {
+	if err := f.Trix.RunHooks("deviceAuthorizationUrl", f.deviceAuthorizationURL, deviceAuthorizationURL); err != nil {
+		return err
+	}
+	f.deviceAuthorizationURL = deviceAuthorizationURL
+	return nil
+}
 
 // NewOAuthFlow creates a new OAuthFlow instance.
 func NewOAuthFlow(authorizationURL, tokenURL, refreshURL string, scopes map[string]string) *OAuthFlow {
@@ -65,6 +74,7 @@ func (f *OAuthFlow) marshalFields() []shared.Field {
 		{Key: "tokenUrl", Value: f.tokenURL},
 		{Key: "refreshUrl", Value: f.refreshURL},
 		{Key: "scopes", Value: f.scopes},
+		{Key: "deviceAuthorizationUrl", Value: f.deviceAuthorizationURL},
 	}
 	return shared.AppendExtensions(fields, f.VendorExtensions)
 }
